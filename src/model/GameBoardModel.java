@@ -41,7 +41,14 @@ public class GameBoardModel {
 	
 	// Color manipulation methods
 	public static Color getColor(int row, int col) { return quilt.get(row)[col]; }
-	public static void setColor(Color c, int row, int col) { quilt.get(row)[col] = c; }
+	
+	public static void setColor(Color c, int row, int col) {
+		
+		if (row < 0) return; // Will cause out of bounds errors in cases where piece extends above top of board
+		
+		quilt.get(row)[col] = c;
+		
+	}
 	
 	// Scoring getters
 	public static int getLinesCompleted() { return linesCompleted; }
@@ -59,7 +66,8 @@ public class GameBoardModel {
 	// any lines removed as a result of adding this piece
 	public static List<Integer> addPiece(AbstractPiece p) {
 		
-		// Log all colors for this piece in the quilt
+		// Log all colors for this piece in the quilt that are within
+		// grid bounds
 		for (int[] litSquare : p.getLitSquares())
 			setColor(p.getColor(), litSquare[0], litSquare[1]);
 		
@@ -152,9 +160,12 @@ public class GameBoardModel {
 		
 	}
 	
+	// Checks in the negative row index range are valid since the
+	// piece can be rotated beyond the top border as it first
+	// emerges
 	public static boolean isSquareOccupied(int row, int col) { 
 		
-		return getColor(row, col) != null;
+		return (row < 0 ? false : getColor(row, col) != null);
 		
 	}
 	

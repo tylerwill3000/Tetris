@@ -11,6 +11,8 @@ import ui.GameBoardPanel;
 // XXX
 public class TBlock extends AbstractPiece {
 	
+	private static final int START_ROW = 1;
+	
 	private final static int[][][] orientationMap = {
 		
 		// Standard orientation:
@@ -64,12 +66,10 @@ public class TBlock extends AbstractPiece {
 	};
 	
 	private static final int[][] initialSquares = {
-		{4, GameBoardPanel.CENTER_OFFSET+1}
+		{START_ROW, GameBoardPanel.CENTER_OFFSET+1}
 	};
 	
-	public TBlock(Color color) { super(color); }
-
-	public int[][] getInitialSquares() { return initialSquares; }
+	public TBlock(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 

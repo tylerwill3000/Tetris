@@ -11,6 +11,8 @@ import ui.GameBoardPanel;
 // .XX
 public class SBlockL extends AbstractPiece {
 	
+	private static final int START_ROW = 1;
+	
 	private static final int[][][] orientationMap = {
 		
 		// Standard orientation:
@@ -58,12 +60,11 @@ public class SBlockL extends AbstractPiece {
 	};
 	
 	private static final int[][] initialSquares = {
-		{4, GameBoardPanel.CENTER_OFFSET+1},{4, GameBoardPanel.CENTER_OFFSET+2}
+		{START_ROW, GameBoardPanel.CENTER_OFFSET+1},
+		{START_ROW, GameBoardPanel.CENTER_OFFSET+2}
 	};
 	
-	public SBlockL(Color color) { super(color); }
-
-	public int[][] getInitialSquares() { return initialSquares; }
+	public SBlockL(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 

@@ -7,6 +7,8 @@ import ui.GameBoardPanel;
 
 public class Box extends AbstractPiece {
 	
+	private static final int START_ROW = 1;
+	
 	private static final int[][][] orientationMap = {
 		
 		// All the same configurations:
@@ -24,12 +26,11 @@ public class Box extends AbstractPiece {
 	};
 	
 	private static final int[][] initialSquares = {
-		{4, GameBoardPanel.CENTER_OFFSET},{4, GameBoardPanel.CENTER_OFFSET+1}
+		{0, GameBoardPanel.CENTER_OFFSET},
+		{0, GameBoardPanel.CENTER_OFFSET+1}
 	};
 	
-	public Box(Color color) { super(color); }
-
-	public int[][] getInitialSquares() { return initialSquares; }
+	public Box(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 

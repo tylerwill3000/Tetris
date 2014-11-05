@@ -15,7 +15,9 @@ public final class PieceFactory {
 	// new one to replace it
 	public static AbstractPiece receiveNextPiece() {
 		conveyorBelt.offer(generate());
-		return conveyorBelt.poll();
+		AbstractPiece toReturn = conveyorBelt.poll();
+		toReturn.determineInitialSquares();
+		return toReturn;
 	}
 	
 	// Peeks at the next piece. Used to determine what to

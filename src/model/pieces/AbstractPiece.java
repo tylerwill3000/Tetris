@@ -13,8 +13,10 @@ public abstract class AbstractPiece {
 	
 	// Location of piece on the game board.
 	// Corresponds to the bottom left corner
-	// of the bounding grid.
-	private int[] location = {4, GameBoardPanel.H_CELLS / 2};
+	// of the bounding grid. Start out on row 1
+	// instead of 0 (the top) since some pieces
+	// have two rows to display instead of 1
+	private int[] location;
 	
 	// Orientation of the piece. Used to index into the
 	// orientation map. Starts out at 0, the default
@@ -27,9 +29,15 @@ public abstract class AbstractPiece {
 	// Piece's color
 	private Color color;
 	
-	protected AbstractPiece(Color color) {
+	private int startRow;
+	
+	protected AbstractPiece(Color color, int startRow) {
+		
 		this.color = color;
-		this.litSquares = calcLitSquares();
+		this.startRow = startRow;
+		
+		location = new int[]{startRow, GameBoardPanel.CENTER_OFFSET};
+		
 	}
 	
 	// Location getters. Since some pieces can be placed with the bottom
@@ -56,6 +64,10 @@ public abstract class AbstractPiece {
 	
 	public int[][] getLitSquares() { return litSquares; }
 	
+	// This is used right before the piece is popped off the factory convery belt to
+	// determine which squares it initially occupies
+	public void determineInitialSquares() { litSquares = getInitialSquares(); }
+	
 	// Movement method. Each time a movement is made, the piece's
 	// lit squares must be recalculated
 	public void move(int rowMove, int colMove) {
@@ -77,20 +89,9 @@ public abstract class AbstractPiece {
 		
 	}
 	
-	// Checks to see whether there is room for the
-	// piece to emerge onto the board
-	public boolean canEmerge() {
-		
-		for (int[] square : getInitialSquares()) {
-			
-			if (GameBoardModel.isSquareOccupied(square[0], square[1]))
-				return false;
-			
-		}
-		
-		return true;
-		
-	}
+	// Lit squares will be set to null if there are
+	// no valid squares for the piece
+	public boolean canEmerge() { return litSquares != null; }
 	
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies on the
@@ -108,10 +109,11 @@ public abstract class AbstractPiece {
 			int row = location[0] + offset[0];
 			int col = location[1] + offset[1];
 			
-			// Make sure new square is legal before adding it
-			// to the list
-			if (GameBoardModel.isLegalSquare(row, col))
-				litSquares.add(new int[]{row, col});
+			// Even if the square is illegal, still add it. This is
+			// necessary in order for the canRotate method to work
+			// properly, since it will check the litSquares list
+			// on its own after it rotates the piece
+			litSquares.add(new int[]{row, col});
 			
 		}
 		
@@ -127,7 +129,7 @@ public abstract class AbstractPiece {
 		int downwardShift = 0;
 
 		while (canMove(1,0)) {
-			location[0]++;
+			move(1,0);
 			downwardShift++; 
 		}
 		
@@ -137,8 +139,7 @@ public abstract class AbstractPiece {
 		else {
 	
 			int[][] ghostSquares = calcLitSquares();
-			location[0] -= downwardShift; // Return piece to actual location
-			
+			setRow(location[0] - downwardShift); // Return piece to actual location
 			return ghostSquares;
 			
 		}
@@ -148,8 +149,8 @@ public abstract class AbstractPiece {
 	public boolean canMove(int rowMove, int colMove) {
 
 		// Make sure all new squares are legal
-		for (int[] litSquare : calcLitSquares()) {
-			
+		for (int[] litSquare : litSquares) {
+
 			int potentialRow = litSquare[0] + rowMove;
 			int potentialCol = litSquare[1] + colMove;
 			
@@ -171,17 +172,56 @@ public abstract class AbstractPiece {
 		int[][] destinationSquares = calcLitSquares();
 		rotate(orientationShift * -1); // Return piece to original position
 		
-		// If the rotation was successful, all 4 destination squares were valid
-		return destinationSquares.length == 4;
+		// Make sure all new squares are legal
+		for (int[] litSquare : destinationSquares) {
+			
+			if (!GameBoardModel.isLegalSquare(litSquare[0], litSquare[1]))
+				return false;
+		}
+		
+		return true;
+		
+	}
+	
+	// Initial squares are not always the same. Normally the
+	// whole piece will be shown. However, if there is not enough
+	// room to show the whole piece, but still enough room for
+	// it to fit on the board if pushed upwards, then the piece
+	// should still emerge with its location shifted up by 1
+	public int[][] getInitialSquares() {
+		
+		int[][] initials;
+		
+		for (int row = startRow; row >= 0; location[0]--, row--) {
+			
+			initials = calcLitSquares();
+			
+			// In order for these squares to be valid initial squares,
+			// they must have at least 1 visible square and must all
+			// be unoccupied
+			boolean hasVisibleSquares = false;
+			boolean allUnoccupied = true;
+			
+			// Run both checks against all squares
+			for (int[] square : initials) {
+				
+				if (square[0] >= 0) hasVisibleSquares = true;
+				
+				if (GameBoardModel.isSquareOccupied(square[0], square[1])) allUnoccupied = false;
+				
+			}
+			
+			// See if these squares pass the test
+			if (hasVisibleSquares && allUnoccupied)
+				return initials;
+			
+		}
+		
+		return null;
 		
 	}
 	
 	/** Abstract methods */
-	
-	// Returns a list of the squares initially occupied by the piece
-	// when it first emerges onto the board
-	public abstract int[][] getInitialSquares();
-	
 	// The grid coordinates of which squares the piece will
 	// occupy when displayed in the 'Next Piece' box
 	public abstract int[][] getNextPanelSquares();
@@ -191,4 +231,5 @@ public abstract class AbstractPiece {
 	// currently occupies. Each list corresponds to a
 	// unique orientation (0-3)
 	public abstract int[][][] getOrientationMap();
+	
 }

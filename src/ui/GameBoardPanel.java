@@ -27,7 +27,7 @@ import model.PieceFactory;
 public class GameBoardPanel extends AbstractPiecePainter {
 	
 	// Board dimensions
-	public static final int V_CELLS = 23; // 3 extra because of the "hidden" squares at the top
+	public static final int V_CELLS = 20;
 	public static final int H_CELLS = 10;
 	
 	// Amount to offset to get to the center of the board. Useful
@@ -48,23 +48,6 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	public GameBoardPanel() {
 		
 		super(V_CELLS, H_CELLS);
-		
-		// -3 to prevent the 3 hidden rows from displaying at top
-		setLayout(new GridLayout(V_CELLS-3, H_CELLS));
-		
-		// Add all JPanel objects to the panel, excluding
-		// those on the first 3 rows since they are't
-		// visible
-		for (int row = 3; row < V_CELLS; row++) {
-			
-			for (int col = 0; col < H_CELLS; col++) {
-				
-				add(JPanelGrid[row][col]);
-				
-			}
-			
-		}		
-	
 		setFocusable(true);
 		setPreferredSize(new Dimension(GameFrame.GAME_BOARD_PANEL_WIDTH,750));
 		
@@ -339,15 +322,15 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		
 		// Stores indices of next column / row that needs to
 		// be processed
-		int nextLeftCol = 0;
-		int nextBottomRow = V_CELLS-1;
-		int nextRightCol = H_CELLS-1;
-		int nextTopRow = 3; // Don't paint the invisible rows
+		int nextLeftCol = 0,
+			nextBottomRow = V_CELLS-1,
+			nextRightCol = H_CELLS-1,
+			nextTopRow = 0;
 		
 		// Total squares is equal to the dimensions of the 
 		// visible panels. Loop until the size of squares
 		// reaches this amount
-		int squareLimit = H_CELLS * (V_CELLS-3);
+		int squareLimit = H_CELLS * V_CELLS;
 		while (squares.size() < squareLimit) {
 			
 			// Get all cells in the next leftmost column

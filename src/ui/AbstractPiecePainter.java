@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
@@ -23,12 +24,11 @@ public abstract class AbstractPiecePainter extends JPanel {
 	// painted
 	protected AbstractPiece currentPiece;
 	
-	// JPanels are not added to the frame in this constructor since
-	// the game grid panel and next piece panel add them slightly
-	// differently. Therefore, each grid's respective constructor
-	// will handle this separately
 	protected AbstractPiecePainter(int rows, int cols) {
 		
+		// Set the grid layout and the matrix that
+		// represents it
+		setLayout(new GridLayout(rows, cols));
 		JPanelGrid = new JPanel[rows][cols];
 		
 		// Add all the initial panels
@@ -36,7 +36,9 @@ public abstract class AbstractPiecePainter extends JPanel {
 			
 			for (int j = 0; j < JPanelGrid[i].length; j++) {
 				
-				JPanelGrid[i][j] = new JPanel();
+				JPanel p = new JPanel();
+				JPanelGrid[i][j] = p;
+				add(p);				
 				
 			}
 			
@@ -51,7 +53,13 @@ public abstract class AbstractPiecePainter extends JPanel {
 	protected void paintSquares(int[][] squares, Color color) {
 
 		for (int[] square : squares) {
-
+			
+			// Prevent invisible squares off the top edge of the
+			// board from trying to be printed. This would only
+			// happen if the piece is immediately rotated right
+			// after it emerges
+			if (square[0] < 0) continue;
+			
 			JPanel panel = JPanelGrid[square[0]][square[1]];
 			panel.setBackground(color);
 			panel.setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -62,9 +70,14 @@ public abstract class AbstractPiecePainter extends JPanel {
 	
 	// Erases the squares specified by the list given
 	protected void eraseSquares(int[][] squares) {
-
-		for (int[] square : squares) 
+		
+		for (int[] square : squares) {
+			
+			if (square[0] < 0) continue;
+			
 			nullifyPanel(JPanelGrid[square[0]][square[1]]);
+			
+		}
 		
 	}
 	
