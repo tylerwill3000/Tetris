@@ -1,9 +1,6 @@
 package model.pieces;
 
-
 import java.awt.Color;
-
-import ui.GameBoardPanel;
 
 // LBLockL:
 // ..X.
@@ -65,16 +62,10 @@ public class LBlockL extends AbstractPiece {
 		{1,1},{2,1},{2,2},{2,3}
 	};
 	
-	private static final int[][] initialSquares = {
-		{START_ROW, GameBoardPanel.CENTER_OFFSET},
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+1},
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+2}
-	};
-	
 	public LBlockL(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 
-	public int[][][] getOrientationMap() { return orientationMap; }
+	public int[][] getOrientationMap(int orientation) { return orientationMap[orientation]; }
 	
 }

@@ -1,10 +1,6 @@
 
 package ui;
 
-import java.awt.GridLayout;
-
-import javax.swing.JPanel;
-
 @SuppressWarnings("serial")
 public class NextPiecePanel extends AbstractPiecePainter {
 	

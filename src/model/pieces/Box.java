@@ -3,8 +3,6 @@ package model.pieces;
 
 import java.awt.Color;
 
-import ui.GameBoardPanel;
-
 public class Box extends AbstractPiece {
 	
 	private static final int START_ROW = 1;
@@ -25,16 +23,11 @@ public class Box extends AbstractPiece {
 		{1,1},{1,2},{2,1},{2,2}
 	};
 	
-	private static final int[][] initialSquares = {
-		{0, GameBoardPanel.CENTER_OFFSET},
-		{0, GameBoardPanel.CENTER_OFFSET+1}
-	};
-	
 	public Box(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 
-	public int[][][] getOrientationMap() { return orientationMap; }
+	public int[][] getOrientationMap(int orientation) { return orientationMap[orientation]; }
 	
 	// Overridden, since the box can always be rotated
 	public boolean canRotate(int orientationShift) { return true; }

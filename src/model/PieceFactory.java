@@ -16,7 +16,7 @@ public final class PieceFactory {
 	public static AbstractPiece receiveNextPiece() {
 		conveyorBelt.offer(generate());
 		AbstractPiece toReturn = conveyorBelt.poll();
-		toReturn.determineInitialSquares();
+		toReturn.setInitialSquares();
 		return toReturn;
 	}
 	

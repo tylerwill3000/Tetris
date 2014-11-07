@@ -1,10 +1,6 @@
 package model.pieces;
 
-
-
 import java.awt.Color;
-
-import ui.GameBoardPanel;
 
 // TBlock:
 // .X.
@@ -65,14 +61,10 @@ public class TBlock extends AbstractPiece {
 		{1,2},{2,1},{2,2},{2,3}
 	};
 	
-	private static final int[][] initialSquares = {
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+1}
-	};
-	
 	public TBlock(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 
-	public int[][][] getOrientationMap() { return orientationMap; }
+	public int[][] getOrientationMap(int orientation) { return orientationMap[orientation]; }
 	
 }

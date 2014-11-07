@@ -1,10 +1,6 @@
 package model.pieces;
 
-
-
 import java.awt.Color;
-
-import ui.GameBoardPanel;
 
 // StraightLine:
 // .X..
@@ -63,16 +59,10 @@ public class StraightLine extends AbstractPiece {
 		{0,2},{1,2},{2,2},{3,2}
 	};
 	
-	private static final int[][] initialSquares = {
-		{START_ROW, GameBoardPanel.CENTER_OFFSET},
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+1},
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+2},
-		{START_ROW, GameBoardPanel.CENTER_OFFSET+3},
-	};
-	
 	public StraightLine(Color color) { super(color, START_ROW); }
 
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
 
-	public int[][][] getOrientationMap() { return orientationMap; }
+	public int[][] getOrientationMap(int orientation) { return orientationMap[orientation]; }
+	
 }

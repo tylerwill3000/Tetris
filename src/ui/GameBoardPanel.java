@@ -5,7 +5,6 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -50,6 +50,8 @@ public abstract class AbstractPiece {
 	}
 	public int getCol() { return location[1]; }
 	
+	// Movement methods. Each time a movement is made, the piece's
+	// lit squares must be recalculated
 	public void setRow(int newRow) {
 		location[0] = newRow;
 		litSquares = calcLitSquares();
@@ -60,22 +62,13 @@ public abstract class AbstractPiece {
 		litSquares = calcLitSquares();
 	}
 	
-	public Color getColor() { return color; }
 	
-	public int[][] getLitSquares() { return litSquares; }
-	
-	// This is used right before the piece is popped off the factory convery belt to
-	// determine which squares it initially occupies
-	public void determineInitialSquares() { litSquares = getInitialSquares(); }
-	
-	// Movement method. Each time a movement is made, the piece's
-	// lit squares must be recalculated
 	public void move(int rowMove, int colMove) {
 		location[0] += rowMove;
 		location[1] += colMove;
 		litSquares = calcLitSquares();
 	}
-	
+
 	public void rotate(int rotation) {
 	
 		orientation += rotation;
@@ -88,10 +81,10 @@ public abstract class AbstractPiece {
 		litSquares = calcLitSquares();
 		
 	}
+
+	public Color getColor() { return color; }
 	
-	// Lit squares will be set to null if there are
-	// no valid squares for the piece
-	public boolean canEmerge() { return litSquares != null; }
+	public int[][] getLitSquares() { return litSquares; }
 	
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies on the
@@ -102,7 +95,7 @@ public abstract class AbstractPiece {
 		
 		// Iterate over each offset value in the orientation map
 		// for the current orientation
-		for (int[] offset : getOrientationMap()[orientation]) {
+		for (int[] offset : getOrientationMap(orientation)) {
 			
 			// Obtain the square that should be lit by adding
 			// the offset to the current location
@@ -120,14 +113,14 @@ public abstract class AbstractPiece {
 		return litSquares.toArray(new int[litSquares.size()][2]);
 		
 	}
-	
+
 	// Returns the list of squares to highlight to show the piece's destination
 	// position were it to be placed immediately. Null is returned if the piece
 	// can't move downwards
 	public int[][] getGhostSquares() {
 		
 		int downwardShift = 0;
-
+	
 		while (canMove(1,0)) {
 			move(1,0);
 			downwardShift++; 
@@ -145,6 +138,10 @@ public abstract class AbstractPiece {
 		}
 		
 	}
+	
+	// Lit squares will be set to null if there are
+	// no valid squares for the piece
+	public boolean canEmerge() { return litSquares != null; }
 	
 	public boolean canMove(int rowMove, int colMove) {
 
@@ -183,12 +180,12 @@ public abstract class AbstractPiece {
 		
 	}
 	
-	// Initial squares are not always the same. Normally the
-	// whole piece will be shown. However, if there is not enough
-	// room to show the whole piece, but still enough room for
-	// it to fit on the board if pushed upwards, then the piece
-	// should still emerge with its location shifted up by 1
-	public int[][] getInitialSquares() {
+	// This is used right before the piece is popped off the factory conveyor belt to
+	// determine which squares it initially occupies. In some cases, the piece will
+	// be shifted up a single row if there is not enough room for it to occupy
+	// its normal initial squares. This method runs a loop until it finds suitable
+	// squares, setting them to null if none are found
+	public void setInitialSquares() {
 		
 		int[][] initials;
 		
@@ -211,17 +208,21 @@ public abstract class AbstractPiece {
 				
 			}
 			
-			// See if these squares pass the test
-			if (hasVisibleSquares && allUnoccupied)
-				return initials;
+			// See if these squares pass the test. If so, can return
+			// from the method
+			if (hasVisibleSquares && allUnoccupied) {
+				litSquares = initials;
+				return;
+			}
 			
 		}
 		
-		return null;
+		litSquares = null;
 		
 	}
 	
 	/** Abstract methods */
+	
 	// The grid coordinates of which squares the piece will
 	// occupy when displayed in the 'Next Piece' box
 	public abstract int[][] getNextPanelSquares();
@@ -230,6 +231,6 @@ public abstract class AbstractPiece {
 	// the piece's current location to the squares it
 	// currently occupies. Each list corresponds to a
 	// unique orientation (0-3)
-	public abstract int[][][] getOrientationMap();
+	public abstract int[][] getOrientationMap(int orientation);
 	
 }
