@@ -6,7 +6,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import model.pieces.AbstractPiece;
+import model.Piece;
 
 // Objects of this class are grid-based panels that are 
 // "paintable" - that is, they are able to have certain
@@ -21,8 +21,9 @@ public abstract class AbstractPiecePainter extends JPanel {
 	protected JPanel[][] JPanelGrid;
 	
 	// Current active piece on the panel that needs to be
-	// painted
-	protected AbstractPiece currentPiece;
+	// painted. Package-private so other UI elements can
+	// manipulate it
+	Piece currentPiece;
 	
 	protected AbstractPiecePainter(int rows, int cols) {
 		
@@ -46,12 +47,14 @@ public abstract class AbstractPiecePainter extends JPanel {
 		
 	}
 	
-	public void setCurrentPiece(AbstractPiece newPiece) { this.currentPiece = newPiece; }
-	public AbstractPiece getCurrentPiece() { return currentPiece; }
-	
-	// Paints the squares specified by the list given
+	// Paints the squares specified by the list given in the
+	// specified color
 	protected void paintSquares(int[][] squares, Color color) {
-
+		
+		// Can happen if you're trying to paint the ghost
+		// piece but the piece is already at the ghost position
+		if (squares == null) return;
+		
 		for (int[] square : squares) {
 			
 			// Prevent invisible squares off the top edge of the
@@ -70,6 +73,8 @@ public abstract class AbstractPiecePainter extends JPanel {
 	
 	// Erases the squares specified by the list given
 	protected void eraseSquares(int[][] squares) {
+		
+		if (squares == null) return;
 		
 		for (int[] square : squares) {
 			

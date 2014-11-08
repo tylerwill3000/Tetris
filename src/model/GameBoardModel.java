@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ui.GameBoardPanel;
-import model.pieces.AbstractPiece;
 
 // The GridModel class describes the current configuration
 // of placed pieces on the grid, as well as keeps track of
@@ -64,7 +63,7 @@ public class GameBoardModel {
 	// Adds the active squares for a piece to the quilt. Used when a piece
 	// is permanently placed somewhere. Returns a list of the indices of 
 	// any lines removed as a result of adding this piece
-	public static List<Integer> addPiece(AbstractPiece p) {
+	public static List<Integer> addPiece(Piece p) {
 		
 		// Log all colors for this piece in the quilt that are within
 		// grid bounds
@@ -83,7 +82,7 @@ public class GameBoardModel {
 	
 	// Returns a list of completed lines. Pass the piece that
 	// was just placed to narrow down the search
-	private static List<Integer> getCompleteLines(AbstractPiece justPlaced) {
+	private static List<Integer> getCompleteLines(Piece justPlaced) {
 		
 		List<Integer> completeLines = new ArrayList<Integer>();
 		

@@ -11,6 +11,11 @@ public class NextPiecePanel extends AbstractPiecePainter {
 	}
 	
 	public void eraseCurrentPiece() {
+		
+		// This is called every time the start button is pressed, so
+		// on the first run through the game current piece will be null
+		if (currentPiece == null) return;
+		
 		eraseSquares(currentPiece.getNextPanelSquares());
 	}
 	

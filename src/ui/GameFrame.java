@@ -1,6 +1,5 @@
 package ui;
 
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -8,12 +7,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import model.AudioManager;
-import model.FallTimerListener;
 import model.GameBoardModel;
+import model.Piece;
 import model.PieceFactory;
 
 import java.awt.BorderLayout;
@@ -25,8 +25,9 @@ import java.awt.event.*;
 @SuppressWarnings("serial")
 public class GameFrame extends JFrame {
 	
-	// Shared by multiple panels, so made a constant
+	// Borders used
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
+	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	
 	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 15);
 	
@@ -44,7 +45,92 @@ public class GameFrame extends JFrame {
 	private NextPiecePanel nextPiecePanel = new NextPiecePanel();
 	private ScorePanel scorePanel = new ScorePanel();	
 	
-	private Timer fallTimer = new Timer(500, new FallTimerListener(gameBoardPanel, nextPiecePanel, scorePanel));
+	// Controls the game flow
+	private Timer fallTimer = new Timer(500, new ActionListener() {
+		
+		public void actionPerformed(ActionEvent e) {
+			
+			if (gameBoardPanel.currentPiece.canMove(1,0)) 
+				gameBoardPanel.lowerPiece();
+	
+			else {
+		
+				gameBoardPanel.placePiece();
+
+				// Enable the keyboard if it was disabled
+				// as a result of the player hitting the space 
+				// bar to place the piece
+				if (!gameBoardPanel.isKeyboardEnabled())
+					gameBoardPanel.enableKeyboard();
+
+				// Generate a new piece. Before continuing, make sure
+				// it is able to emerge onto the board. If not, it's
+				// game over
+				Piece nextPiece = PieceFactory.receiveNextPiece();
+
+				if (!nextPiece.canEmerge()) {
+					
+					((Timer)e.getSource()).stop();
+					AudioManager.stopCurrentSoundtrack();
+					AudioManager.playGameOverSound();
+					scorePanel.refreshScoreInfo();
+					gameBoardPanel.disableKeyboard();
+					gameBoardPanel.paintGameOverFill();
+					
+					// Re-enable the start button
+					start.addActionListener(startButtonListener);
+					
+				}
+			
+				else {
+
+					gameBoardPanel.currentPiece = nextPiece;
+					scorePanel.refreshScoreInfo();
+					nextPiecePanel.eraseCurrentPiece();
+					nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+					nextPiecePanel.paintCurrentPiece();
+					gameBoardPanel.paintCurrentAndGhost();
+					
+				}
+				
+			}
+			
+		}
+		
+	});
+	
+	// Start button gets its own declared listener since I need to be able
+	// to control whether it's enabled / disabled
+	private ActionListener startButtonListener = new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			
+			// Clear all old data from the model
+			GameBoardModel.reset();
+			
+			// Clears all old data from any previous games
+			scorePanel.refreshScoreInfo();
+			
+			// Set and paint initial pieces
+			gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
+			nextPiecePanel.eraseCurrentPiece(); // In case the piece is still painted from a previous game
+			nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+			
+			gameBoardPanel.paintCurrentAndGhost();
+			nextPiecePanel.paintCurrentPiece();
+			
+			gameBoardPanel.enableKeyboard();
+			fallTimer.start();
+			AudioManager.playCurrentSoundtrack();
+			
+			// Start button is disabled once pressed. It will re-enable
+			// after game over
+			start.removeActionListener(this);
+			
+		}
+		
+	};
 	
 	public GameFrame() {
 		
@@ -65,35 +151,29 @@ public class GameFrame extends JFrame {
 		pause.setFocusable(false);
 		resume.setFocusable(false);
 		
-		start.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				// Clear all old data from the model
-				GameBoardModel.reset();
-				
-				// Set and paint initial pieces
-				gameBoardPanel.setCurrentPiece(PieceFactory.receiveNextPiece());
-				nextPiecePanel.setCurrentPiece(PieceFactory.peekAtNextPiece());
-				gameBoardPanel.paintCurrentAndGhost();
-				nextPiecePanel.paintCurrentPiece();
-				
-				gameBoardPanel.enableKeyboard();
-				fallTimer.start();
-				AudioManager.playCurrentSoundtrack();
-				
-			}
-		});
+		start.addActionListener(startButtonListener);
 		
 		pause.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent e) {
+				
+				// Disable the start button. Weird things happen
+				// if this is pressed while the game is paused
+				start.removeActionListener(startButtonListener);
+				
 				fallTimer.stop();
 				AudioManager.stopCurrentSoundtrack();
 				gameBoardPanel.disableKeyboard();
 			}
+			
 		});
 		
 		resume.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent e) {
+				
+				
+				
 				fallTimer.start();
 				AudioManager.playCurrentSoundtrack();
 				gameBoardPanel.enableKeyboard();
@@ -129,7 +209,7 @@ public class GameFrame extends JFrame {
 		
 		// Add both components to the next piece panel
 		nextPiecePanel.add(nextLabelContainer, BorderLayout.NORTH);
-		this.nextPiecePanel.setPreferredSize(new Dimension(GameFrame.INFO_PANEL_WIDTH,120));
+		this.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 110));
 		nextPiecePanel.add(this.nextPiecePanel, BorderLayout.CENTER);
 				
 		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
@@ -156,5 +236,6 @@ public class GameFrame extends JFrame {
 		return infoPanel;
 		
 	}
+
 	
 }

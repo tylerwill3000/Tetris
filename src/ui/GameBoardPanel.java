@@ -227,19 +227,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		
 		if (!GameBoardModel.isUsingGhostSquares()) return;
 		
-		int[][] ghostSquares = currentPiece.getGhostSquares();
-		
-		if (ghostSquares != null) {
-			
-			for (int[] ghostSquare : ghostSquares) {
-				
-				JPanel panel = JPanelGrid[ghostSquare[0]][ghostSquare[1]];
-				panel.setBackground(null); // Provides 'ghost' effect
-				panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-					
-			}
-			
-		}
+		paintSquares(currentPiece.getGhostSquares(), null);
 	
 	}
 	
@@ -248,69 +236,49 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	}
 	
 	private void eraseGhostPiece() {
-		
-		int[][] ghostSquares = currentPiece.getGhostSquares();
-		
-		if (ghostSquares != null) 
-			eraseSquares(ghostSquares);
-	
+		eraseSquares(currentPiece.getGhostSquares());
 	}
 	
-	// Fills in all squares in the grid in a spiral pattern. This is
-	// a really messy way to handle painting the game over squares,
-	// but it works alright for now
-	private Timer spiralTimer = new Timer(1, new ActionListener() {
-		
-		private boolean erasing = false;
-		private int currentSquare = 0;
-		
-		public void actionPerformed(ActionEvent e) {
+	// Fills in all squares in the grid in a spiral pattern.
+	public void paintGameOverFill() {
+
+		new Thread(new Runnable() {
 			
-			if (currentSquare == spiralSquares.length) {
+			private final static int SLEEP_INTERVAL = 6;
+			
+			public void run() {
 				
-				if (erasing == false) {
-				
-					// Run through 1 more cycle to erase
-					currentSquare = 0;
-					erasing = true;
+				// Run 1 loop to paint in all unoccupied squares
+				for (int[] square : spiralSquares) {
 					
-				}
-				else {
-					spiralTimer.stop();
-					GameBoardModel.reset();
-				}
-			}
-			else {
+					JPanel p = JPanelGrid[square[0]][square[1]];
 				
-				// Grab the JPanel object and the square
-				// coordinates
-				int[] square = spiralSquares[currentSquare];
-				JPanel p = JPanelGrid[square[0]][square[1]];
-				
-				if (erasing)
-					nullifyPanel(p);
-				
-				else {
-					
 					if (!GameBoardModel.isSquareOccupied(square[0], square[1])) {
 		
 						p.setBackground(PieceFactory.getRandomColor());
-						p.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+						p.setBorder(GameFrame.BEVEL_BORDER);
 						
 					}
+					
+					try { Thread.sleep(SLEEP_INTERVAL); }
+					catch (InterruptedException e) {}				
 				
 				}
 				
-				currentSquare++;
-			
+				// Run a second loop to erase all of them
+				for (int[] square : spiralSquares) {
+					
+					nullifyPanel(JPanelGrid[square[0]][square[1]]);
+				
+					try { Thread.sleep(SLEEP_INTERVAL); }
+					catch (InterruptedException e) {}				
+				
+				}
+				
 			}
 			
-		}
+		}).start();
 		
-	});
-	
-	public void paintGameOverFill() {
-		spiralTimer.start();
 	}
 	
 	// Builds the list of spiral squares. Squares are in order
