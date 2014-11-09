@@ -45,8 +45,9 @@ public class GameFrame extends JFrame {
 	private NextPiecePanel nextPiecePanel = new NextPiecePanel();
 	private ScorePanel scorePanel = new ScorePanel();	
 	
-	// Controls the game flow
-	private Timer fallTimer = new Timer(500, new ActionListener() {
+	// Controls the game flow. Doesn't matter what the initial delay is
+	//since it is set later
+	private Timer fallTimer = new Timer(0, new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			
@@ -56,7 +57,24 @@ public class GameFrame extends JFrame {
 			else {
 		
 				gameBoardPanel.placePiece();
-
+				
+				// Game is complete!
+				if (GameBoardModel.getLevel() == 11) {
+					fallTimer.stop();
+					return;					
+				}
+				
+				// Not the most elegant way to handle level up stuff, this works for now
+				if (GameBoardModel.justLeveled) {
+				
+					// Decrease timer delay
+					fallTimer.setDelay(GameBoardModel.getTimerDelay());
+					
+					scorePanel.flashLevelLabel();
+					GameBoardModel.justLeveled = false;
+					
+				}
+				
 				// Enable the keyboard if it was disabled
 				// as a result of the player hitting the space 
 				// bar to place the piece
@@ -70,7 +88,7 @@ public class GameFrame extends JFrame {
 
 				if (!nextPiece.canEmerge()) {
 					
-					((Timer)e.getSource()).stop();
+					fallTimer.stop();
 					AudioManager.stopCurrentSoundtrack();
 					AudioManager.playGameOverSound();
 					scorePanel.refreshScoreInfo();
@@ -88,6 +106,8 @@ public class GameFrame extends JFrame {
 					scorePanel.refreshScoreInfo();
 					nextPiecePanel.eraseCurrentPiece();
 					nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+					
+					// Paint new pieces
 					nextPiecePanel.paintCurrentPiece();
 					gameBoardPanel.paintCurrentAndGhost();
 					
@@ -103,20 +123,23 @@ public class GameFrame extends JFrame {
 	// to control whether it's enabled / disabled
 	private ActionListener startButtonListener = new ActionListener() {
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
+		public void actionPerformed(ActionEvent e) {
 			
 			// Clear all old data from the model
 			GameBoardModel.reset();
 			
-			// Clears all old data from any previous games
+			// Clears all old score info from previous games
 			scorePanel.refreshScoreInfo();
 			
-			// Set and paint initial pieces
+			// Reset timer delay to default value
+			fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
+			
+			// Set initial pieces
 			gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
 			nextPiecePanel.eraseCurrentPiece(); // In case the piece is still painted from a previous game
 			nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 			
+			// Paint initial pieces
 			gameBoardPanel.paintCurrentAndGhost();
 			nextPiecePanel.paintCurrentPiece();
 			
@@ -146,7 +169,7 @@ public class GameFrame extends JFrame {
 		
 		// Prevent all button components from receiving the focus
 		// when they are clicked - focus should always be on the
-		// game board frame
+		// game board panel
 		start.setFocusable(false);
 		pause.setFocusable(false);
 		resume.setFocusable(false);
@@ -171,8 +194,6 @@ public class GameFrame extends JFrame {
 		resume.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				
-				
 				
 				fallTimer.start();
 				AudioManager.playCurrentSoundtrack();
@@ -229,7 +250,7 @@ public class GameFrame extends JFrame {
 		ghostSquares.setFocusable(false);
 		
 		JPanel ghostContainer = new JPanel();
-		ghostContainer.setBorder(new EmptyBorder(10,10,10,10));
+		ghostContainer.setBorder(new EmptyBorder(20,10,20,10));
 		ghostContainer.add(ghostSquares);
 		infoPanel.add(ghostContainer, BorderLayout.SOUTH);
 		

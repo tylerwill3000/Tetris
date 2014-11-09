@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.Timer;
-
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
@@ -185,12 +183,12 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			// repainting each row					
 			for (int line = completeLines.get(0); line >= 0; line--)
 				paintRow(line);
-			
-			AudioManager.playClearLineSound();
-			
+		
 			// Play explosion sound if ultra line
-			//if (completeLines.size() == 4) AudioManager.playUltraLineSound();
-			
+			if (completeLines.size() == 4)
+				AudioManager.playUltraLineSound();
+			else
+				AudioManager.playClearLineSound();
 		}
 	
 	}
@@ -244,7 +242,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 
 		new Thread(new Runnable() {
 			
-			private final static int SLEEP_INTERVAL = 6;
+			private final static int SLEEP_INTERVAL = 9;
 			
 			public void run() {
 				

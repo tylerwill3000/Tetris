@@ -13,6 +13,8 @@ import ui.GameBoardPanel;
 // the game
 public class GameBoardModel {
 	
+	public static final int INITIAL_TIMER_DELAY = 600;
+	
 	// Represents colors on the game grid. Use a linked list since
 	// rows will need to be added to the front when rows are removed
 	private static LinkedList<Color[]> quilt;
@@ -28,7 +30,7 @@ public class GameBoardModel {
 		30
 	};
 	
-	private static final int LINES_PER_LEVEL = 20;
+	private static final int LINES_PER_LEVEL = 15;
 	
 	// Scoring info
 	private static int linesCompleted = 0;
@@ -37,6 +39,9 @@ public class GameBoardModel {
 	
 	// Ghost squares setting
 	private static boolean usingGhostSquares = true;
+	
+	// Flag for whether or not the player just increased level
+	public static boolean justLeveled = false;
 	
 	// Color manipulation methods
 	public static Color getColor(int row, int col) { return quilt.get(row)[col]; }
@@ -74,7 +79,8 @@ public class GameBoardModel {
 		// and if so, remove them
 		List<Integer> completeLines = getCompleteLines(p);
 		
-		if (!completeLines.isEmpty()) removeCompleteLines(completeLines);
+		if (!completeLines.isEmpty())
+			removeCompleteLines(completeLines);
 			
 		return completeLines;
 	
@@ -136,13 +142,8 @@ public class GameBoardModel {
 		
 	}
 	
-	// Removes all data from the quilt and resets scoring info
-	public static void reset() {
-		quilt = buildStartingQuilt();
-		score = 0;
-		linesCompleted = 0;
-		level = 1;
-	}
+	// Returns calculated timer delay based on current level
+	public static int getTimerDelay() { return INITIAL_TIMER_DELAY - 55 * (level - 1); }
 	
 	// Increases the player's score based on how many lines
 	// were cleared
@@ -154,7 +155,8 @@ public class GameBoardModel {
 		if (linesCompleted >= level * LINES_PER_LEVEL) {
 			AudioManager.stopCurrentSoundtrack();
 			level++;
-			AudioManager.playCurrentSoundtrack();			
+			if (level != 11) AudioManager.playCurrentSoundtrack();
+			justLeveled = true;
 		}
 		
 	}
@@ -183,6 +185,14 @@ public class GameBoardModel {
 		// generate an index out of bounds error when checking the quilt array
 		return isInBoundsSquare(row, col) && !isSquareOccupied(row, col);
 		
+	}
+	
+	// Removes all data from the quilt and resets scoring info
+	public static void reset() {
+		quilt = buildStartingQuilt();
+		score = 0;
+		linesCompleted = 0;
+		level = 1;
 	}
 	
 	// Builds the blank starting quilt

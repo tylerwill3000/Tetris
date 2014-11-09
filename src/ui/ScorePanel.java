@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
@@ -33,6 +34,29 @@ public class ScorePanel extends JPanel {
 		scoreLabel.setText("Score: " + GameBoardModel.getScore());
 		totalLinesLabel.setText("Lines: " + GameBoardModel.getLinesCompleted());
 		levelLabel.setText("Level: " + GameBoardModel.getLevel());
+	}
+	
+	// Used on level up to flash the level label a couple times to make
+	// it stand out
+	public void flashLevelLabel() {
+		
+		new Thread(new Runnable() {
+			
+			public void run() {
+				
+				for (int i = 1; i <= 60; i++) {
+					
+					levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : Color.YELLOW);
+					
+					try { Thread.sleep(50); }
+					catch (InterruptedException e) {}
+					
+				}
+				
+			}
+			
+		}).start();
+		
 	}
 	
 }
