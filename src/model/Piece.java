@@ -32,12 +32,12 @@ public class Piece {
 	// Used to index into the orientation map
 	private int orientation = 0;
 	
-	// Holds the currently lit squares to the piece.
+	// Holds the currently lit squares of the piece.
 	// Recalculated every time the piece moves or rotates
 	private int[][] litSquares;
 	
 	// Lit squares are not set until the piece comes off the factory conveyor belt, in case the
-	// piece needs to be shifted upwards a square first
+	// piece needs to be shifted upwards first
 	public Piece(Color color, int[][][] orientationMap, int[][] nextPanelSqaures, int startRow) {
 		
 		this.color = color;
@@ -85,7 +85,7 @@ public class Piece {
 
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies, based
-	// on its location
+	// on its location and orientation
 	public int[][] calcLitSquares() {
 		
 		List<int[]> litSquares = new ArrayList<int[]>();
@@ -146,7 +146,8 @@ public class Piece {
 	}
 	
 	// Lit squares will be set to null if there are
-	// no valid squares for the piece
+	// no valid squares for the piece to occupy when
+	// it first emerges
 	public boolean canEmerge() { return litSquares != null; }
 	
 	public boolean canMove(int rowMove, int colMove) {
@@ -206,14 +207,16 @@ public class Piece {
 				
 				if (square[0] >= 0) hasVisibleSquares = true;
 				
-				if (GameBoardModel.isSquareOccupied(square[0], square[1])) allUnoccupied = false;
+				if (GameBoardModel.isSquareOccupied(square[0], square[1])) {
+					allUnoccupied = false;
+					break; // Don't need to perform any more checks if there is an occupied square
+				}
 				
 			}
 			
 			// See if these squares pass the test. If so, can return
 			// from the method
-			if (hasVisibleSquares && allUnoccupied)
-				return;
+			if (hasVisibleSquares && allUnoccupied) return;
 			
 		}
 		

@@ -72,6 +72,7 @@ public final class PieceFactory {
 		for (int i = 1; i <= 2; i++) belt.offer(generate());
 		
 		return belt;
+		
 	}
 	
 }
@@ -438,6 +439,5 @@ class Ingredients {
 		{  {0,2},{1,2},{2,2},{3,2}  }, // Straight line
 		{  {1,1},{1,2},{1,3},{2,2}  } // T-block
 	};
-	
 	
 };

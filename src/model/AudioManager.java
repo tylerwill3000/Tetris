@@ -13,7 +13,6 @@ public class AudioManager {
 	// Soundtrack for the game. Current level is used to index into
 	// the array, so the first element (0) is null.
 	private static final AudioClip[] soundtrack = {
-		null,
 		Applet.newAudioClip(resources.getResource("audio/tetris-theme.wav")),
 		Applet.newAudioClip(resources.getResource("audio/bean-machine-1-4.wav")),
 		Applet.newAudioClip(resources.getResource("audio/tetris-music-3.wav")),
@@ -36,8 +35,8 @@ public class AudioManager {
 	
 	private AudioManager() {}
 	
-	public static void playCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()].loop(); }
-	public static void stopCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()].stop(); }
+	public static void playCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()-1].loop(); }
+	public static void stopCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()-1].stop(); }
 	
 	public static void playGameOverSound() { gameOver.play(); }
 	public static void playPiecePlacementSound() { placePiece.play(); }
