@@ -30,15 +30,12 @@ public class GameBoardModel {
 		30
 	};
 	
-	private static final int LINES_PER_LEVEL = 15;
+	private static final int LINES_PER_LEVEL = 1;
 	
 	// Scoring info
 	private static int linesCompleted = 0;
 	private static int score = 0;
 	private static int level = 1;
-	
-	// Ghost squares setting
-	private static boolean usingGhostSquares = true;
 	
 	// Flag for whether or not the player just increased level
 	public static boolean justLeveled = false;
@@ -58,10 +55,6 @@ public class GameBoardModel {
 	public static int getLinesCompleted() { return linesCompleted; }
 	public static int getScore() { return score; }
 	public static int getLevel() { return level; }
-	
-	// Ghost squares manipulation methods
-	public static void toggleGhostSquares() { usingGhostSquares = !usingGhostSquares; }
-	public static boolean isUsingGhostSquares() { return usingGhostSquares; }
 	
 	private GameBoardModel() {}
 	

@@ -59,4 +59,9 @@ public class ScorePanel extends JPanel {
 		
 	}
 	
+	public void flashWinMessage() {
+		levelLabel.setText("You Win!!!!");
+		flashLevelLabel();
+	}
+	
 }

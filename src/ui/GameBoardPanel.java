@@ -12,6 +12,7 @@ import java.util.Set;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
+import model.SettingsManager;
 
 // The GameBoardPanel is dedicated to the "View" portion
 // of the program - it paints the panel according to the
@@ -158,13 +159,11 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		eraseCurrentPiece();
 	}
 	
-	// Lowers the currently active piece down 1 square. Erasing / painting
-	// the ghost piece is necessary here in case the ghost squares checkbox
-	// is clicked mid-fall
+	// Lowers the currently active piece down 1 square
 	public void lowerPiece() {
-		eraseCurrentAndGhost();
+		eraseCurrentPiece();
 		currentPiece.move(1,0);
-		paintCurrentAndGhost();
+		paintCurrentPiece();
 	}
 	
 	// Sets the current piece's position in stone, removing
@@ -219,9 +218,9 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		paintSquares(currentPiece.getLitSquares(), currentPiece.getColor());
 	}
 	
-	private void paintGhostPiece() {
+	public void paintGhostPiece() {
 		
-		if (!GameBoardModel.isUsingGhostSquares()) return;
+		if (!SettingsManager.isUsingGhostSquares()) return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
 	
@@ -231,7 +230,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		eraseSquares(currentPiece.getLitSquares());
 	}
 	
-	private void eraseGhostPiece() {
+	public void eraseGhostPiece() {
 		eraseSquares(currentPiece.getGhostSquares());
 	}
 	

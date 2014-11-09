@@ -4,46 +4,48 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 import model.AudioManager;
 import model.GameBoardModel;
 import model.Piece;
 import model.PieceFactory;
+import model.SettingsManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.*;
 
 @SuppressWarnings("serial")
 public class GameFrame extends JFrame {
 	
-	// Borders used
+	// Game style constants
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
 	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	
 	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 15);
 	
+	// Dimension constants
 	public static final int GAME_BOARD_PANEL_WIDTH = 300;
 	public static final int INFO_PANEL_WIDTH = 150;
 	
+	// Major panel components
+	private GameBoardPanel gameBoardPanel = new GameBoardPanel();
+	private NextPiecePanel nextPiecePanel = new NextPiecePanel();
+	private ScorePanel scorePanel = new ScorePanel();
+	
+	// Minor GUI components
 	private JButton start = new JButton("Start");
 	private JButton pause = new JButton("Pause");
 	private JButton resume = new JButton("Resume");
-	
-	private JCheckBox ghostSquares = new JCheckBox("Ghost Squares", true);
-	
-	// All major panel components
-	private GameBoardPanel gameBoardPanel = new GameBoardPanel();
-	private NextPiecePanel nextPiecePanel = new NextPiecePanel();
-	private ScorePanel scorePanel = new ScorePanel();	
+	private JCheckBox ghostSquaresCbx = new JCheckBox("Ghost Squares", true);
+	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	
 	// Controls the game flow. Doesn't matter what the initial delay is
 	//since it is set later
@@ -51,29 +53,23 @@ public class GameFrame extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			if (gameBoardPanel.currentPiece.canMove(1,0)) 
+			// If the piece can be lowered, lower it and then return
+			if (gameBoardPanel.currentPiece.canMove(1,0)) {
 				gameBoardPanel.lowerPiece();
-	
+				return; 
+			}
+			
+			gameBoardPanel.placePiece();
+			
+			// See if game is complete by placing this piece
+			if (GameBoardModel.getLevel() == 11)
+				processGameComplete();
+			
 			else {
-		
-				gameBoardPanel.placePiece();
-				
-				// Game is complete!
-				if (GameBoardModel.getLevel() == 11) {
-					fallTimer.stop();
-					return;					
-				}
 				
 				// Not the most elegant way to handle level up stuff, this works for now
-				if (GameBoardModel.justLeveled) {
-				
-					// Decrease timer delay
-					fallTimer.setDelay(GameBoardModel.getTimerDelay());
-					
-					scorePanel.flashLevelLabel();
-					GameBoardModel.justLeveled = false;
-					
-				}
+				if (GameBoardModel.justLeveled)
+					processLevelUp();
 				
 				// Enable the keyboard if it was disabled
 				// as a result of the player hitting the space 
@@ -86,41 +82,72 @@ public class GameFrame extends JFrame {
 				// game over
 				Piece nextPiece = PieceFactory.receiveNextPiece();
 
-				if (!nextPiece.canEmerge()) {
-					
-					fallTimer.stop();
-					AudioManager.stopCurrentSoundtrack();
-					AudioManager.playGameOverSound();
-					scorePanel.refreshScoreInfo();
-					gameBoardPanel.disableKeyboard();
-					gameBoardPanel.paintGameOverFill();
-					
-					// Re-enable the start button
-					start.addActionListener(startButtonListener);
-					
-				}
+				if (!nextPiece.canEmerge())
+					processGameOver();
 			
 				else {
-
-					gameBoardPanel.currentPiece = nextPiece;
+					paintNewPieces(nextPiece);
 					scorePanel.refreshScoreInfo();
-					nextPiecePanel.eraseCurrentPiece();
-					nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
-					
-					// Paint new pieces
-					nextPiecePanel.paintCurrentPiece();
-					gameBoardPanel.paintCurrentAndGhost();
-					
 				}
 				
 			}
 			
 		}
 		
+		// Resets delay / flashes level label
+		private void processLevelUp() {
+			fallTimer.setDelay(GameBoardModel.getTimerDelay());
+			scorePanel.flashLevelLabel();
+			GameBoardModel.justLeveled = false;
+		}
+		
+		// What happens when the final level is cleared
+		private void processGameComplete() {
+			fallTimer.stop();
+			scorePanel.refreshScoreInfo(); // Gets final score to show up
+			scorePanel.flashWinMessage();
+			pause.removeActionListener(pauseButtonListener);
+			resume.removeActionListener(resumeButtonListener);
+			start.addActionListener(startButtonListener);
+		}
+		
+		// What happens when the next piece can't emerge
+		private void processGameOver() {
+			
+			fallTimer.stop();
+			
+			AudioManager.stopCurrentSoundtrack();
+			AudioManager.playGameOverSound();
+			
+			scorePanel.refreshScoreInfo();
+			gameBoardPanel.disableKeyboard();
+			gameBoardPanel.paintGameOverFill();
+			
+			// Re-enable the start button
+			start.addActionListener(startButtonListener);
+			
+			// Disable the pause / resume buttons again. They are
+			// re-enabled once the start button is pressed
+			pause.removeActionListener(pauseButtonListener);
+			resume.removeActionListener(resumeButtonListener);
+			
+		}
+		
+		// Erases the old pieces and paints the new one
+		private void paintNewPieces(Piece nextPiece) {
+			gameBoardPanel.currentPiece = nextPiece;
+			nextPiecePanel.eraseCurrentPiece();
+			nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+			
+			// Paint new pieces
+			nextPiecePanel.paintCurrentPiece();
+			gameBoardPanel.paintCurrentAndGhost();
+		}
+		
 	});
 	
-	// Start button gets its own declared listener since I need to be able
-	// to control whether it's enabled / disabled
+	// Buttons get declared listeners since I want to be able to control
+	// when they are enabled / disabled
 	private ActionListener startButtonListener = new ActionListener() {
 
 		public void actionPerformed(ActionEvent e) {
@@ -144,13 +171,39 @@ public class GameFrame extends JFrame {
 			nextPiecePanel.paintCurrentPiece();
 			
 			gameBoardPanel.enableKeyboard();
-			fallTimer.start();
-			AudioManager.playCurrentSoundtrack();
+			
+			// Enable pause / resume buttons. There is no reason for these to be
+			// enabled before the game starts
+			pause.addActionListener(pauseButtonListener);
+			resume.addActionListener(resumeButtonListener);
 			
 			// Start button is disabled once pressed. It will re-enable
 			// after game over
 			start.removeActionListener(this);
 			
+			fallTimer.start();
+			AudioManager.playCurrentSoundtrack();
+			
+		}
+		
+	};
+	
+	private ActionListener pauseButtonListener = new ActionListener() {
+		
+		public void actionPerformed(ActionEvent e) {			
+			fallTimer.stop();
+			AudioManager.stopCurrentSoundtrack();
+			gameBoardPanel.disableKeyboard();
+		}
+	
+	};
+	
+	private ActionListener resumeButtonListener = new ActionListener() {
+		
+		public void actionPerformed(ActionEvent e) {
+			fallTimer.start();
+			AudioManager.playCurrentSoundtrack();
+			gameBoardPanel.enableKeyboard();
 		}
 		
 	};
@@ -176,34 +229,10 @@ public class GameFrame extends JFrame {
 		
 		start.addActionListener(startButtonListener);
 		
-		pause.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				// Disable the start button. Weird things happen
-				// if this is pressed while the game is paused
-				start.removeActionListener(startButtonListener);
-				
-				fallTimer.stop();
-				AudioManager.stopCurrentSoundtrack();
-				gameBoardPanel.disableKeyboard();
-			}
-			
-		});
-		
-		resume.addActionListener(new ActionListener() {
-			
-			public void actionPerformed(ActionEvent e) {
-				
-				fallTimer.start();
-				AudioManager.playCurrentSoundtrack();
-				gameBoardPanel.enableKeyboard();
-			}
-		});
-		
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(GAME_BOARD_PANEL_WIDTH+INFO_PANEL_WIDTH,600);
+		setResizable(false); // I don't want to mess with trying to make this work right
 		setLocationRelativeTo(null);
 		setVisible(true);
 		
@@ -213,50 +242,62 @@ public class GameFrame extends JFrame {
 	private JPanel createInfoPanel() {
 		
 		JPanel infoPanel = new JPanel(new BorderLayout());
-		infoPanel.setBorder(LINE_BORDER);
 		
-		// 'Next Piece' panel
-		JPanel nextPiecePanel = new JPanel(new BorderLayout());
-		
-		// Put the next piece label into a container to give it
-		// some padding
-		JPanel nextLabelContainer = new JPanel();
-		nextLabelContainer.setBorder(new EmptyBorder(8,8,8,8));
-		
-		// Prepare the actual "Next Piece" JLabel
-		JLabel nextLabel = new JLabel("Next Piece");
-		nextLabel.setFont(LABEL_FONT);
-		nextLabelContainer.add(nextLabel);
-		
-		// Add both components to the next piece panel
-		nextPiecePanel.add(nextLabelContainer, BorderLayout.NORTH);
-		this.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 110));
-		nextPiecePanel.add(this.nextPiecePanel, BorderLayout.CENTER);
-				
+		// Configure and add the next piece panel
+		nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
+		nextPiecePanel.setBorder(new TitledBorder("Next Piece"));
 		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
-		
-		// Scoring info panel
-		scorePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 50));
-		scorePanel.setBorder(LINE_BORDER);
+			
+		// Configure and add the scoring panel. I don't think you're able
+		// to set the preferred size on components that are added to the
+		// center of a border layout - they simply expand to fill the empty
+		// space between the north and the south. Therefore, there is no
+		// point in trying to force the size on the scoring panel
+		scorePanel.setBorder(new TitledBorder("Scoring Info"));
 		infoPanel.add(scorePanel, BorderLayout.CENTER);
 		
-		// Add in ghost squares checkbox
-		ghostSquares.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				GameBoardModel.toggleGhostSquares();				
+		// Add in checkbox listeners
+		ghostSquaresCbx.addItemListener(new ItemListener() {
+			
+			public void itemStateChanged(ItemEvent e) {
+				
+				SettingsManager.toggleGhostSquares();
+				
+				if (ghostSquaresCbx.isSelected())
+					gameBoardPanel.paintGhostPiece();
+				else
+					gameBoardPanel.eraseGhostPiece();
+				
 			}
 		});
 		
-		ghostSquares.setFocusable(false);
+		musicCbx.addItemListener(new ItemListener() {
+			
+			public void itemStateChanged(ItemEvent e) {
+				
+				SettingsManager.toggleMusic();
+				
+				if (musicCbx.isSelected())
+					AudioManager.playCurrentSoundtrack();
+				else
+					AudioManager.stopCurrentSoundtrack();
+				
+			}
+			
+		});
 		
-		JPanel ghostContainer = new JPanel();
-		ghostContainer.setBorder(new EmptyBorder(20,10,20,10));
-		ghostContainer.add(ghostSquares);
-		infoPanel.add(ghostContainer, BorderLayout.SOUTH);
+		ghostSquaresCbx.setFocusable(false);
+		musicCbx.setFocusable(false);
+		
+		JPanel settingsPanel = new JPanel(new GridLayout(2,1));
+		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		settingsPanel.setBorder(new TitledBorder("Settings"));
+		settingsPanel.add(ghostSquaresCbx);
+		settingsPanel.add(musicCbx);
+		infoPanel.add(settingsPanel, BorderLayout.SOUTH);
 		
 		return infoPanel;
 		
 	}
-
 	
 }

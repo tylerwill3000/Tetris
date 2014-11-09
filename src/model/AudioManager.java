@@ -35,7 +35,11 @@ public class AudioManager {
 	
 	private AudioManager() {}
 	
-	public static void playCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()-1].loop(); }
+	public static void playCurrentSoundtrack() {
+		if (!SettingsManager.isPlayingMusic()) return;
+		soundtrack[GameBoardModel.getLevel()-1].loop();
+	}
+	
 	public static void stopCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()-1].stop(); }
 	
 	public static void playGameOverSound() { gameOver.play(); }
