@@ -427,7 +427,7 @@ class Ingredients {
 		1 // T-block
 	};
 	
-	// List of grid coordinates squares the piece occuppies when in
+	// List of grid coordinate squares the piece occupies when in
 	// the 'Next Piece' panel
 	public final static int[][][] NEXT_PANEL_SQUARES = {
 		{  {1,1},{1,2},{2,1},{2,2}  }, // Box
@@ -436,7 +436,7 @@ class Ingredients {
 		{  {1,1},{1,2},{2,2},{2,3}  }, // S-block L
 		{  {1,2},{1,3},{2,1},{2,2}  }, // S-block R
 		{  {0,2},{1,2},{2,2},{3,2}  }, // Straight line
-		{  {1,2},{2,1},{2,2},{2,3}  } // T-block
+		{  {1,1},{1,2},{1,3},{2,2}  } // T-block
 	};
 	
 	

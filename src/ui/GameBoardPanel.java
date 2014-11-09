@@ -1,8 +1,6 @@
 package ui;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
 
 import java.awt.Dimension;
 import java.awt.event.*;
@@ -32,10 +30,10 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	public static final int CENTER_OFFSET = H_CELLS / 2;
 	
 	// List of spiral squares in order from the top left corner going inwards
-	public static final int[][] spiralSquares = initSpiralSquares();
+	public static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
 	
 	// Tracks whether or not the keyboard is enabled. Used when
-	// placing a piece with spacebar, since it disables the 
+	// placing a piece with space bar, since it disables the 
 	// keyboard until the next piece is generated
 	private boolean keyboardEnabled;
 	
@@ -76,55 +74,55 @@ public class GameBoardPanel extends AbstractPiecePainter {
 				
 				case KeyEvent.VK_LEFT:
 					
-					eraseCurrentAndGhost();
-					
-					if (currentPiece.canMove(0,-1)) currentPiece.move(0,-1);
-					
-					paintCurrentAndGhost();
+					if (currentPiece.canMove(0,-1)) {
+						eraseCurrentAndGhost();
+						currentPiece.move(0,-1);
+						paintCurrentAndGhost();
+					}
 					
 					break;
 					
 				case KeyEvent.VK_RIGHT:
 					
-					eraseCurrentAndGhost();
-					
-					if (currentPiece.canMove(0,1)) currentPiece.move(0,1);
-					
-					paintCurrentAndGhost();
+					if (currentPiece.canMove(0,1)) {
+						eraseCurrentAndGhost();
+						currentPiece.move(0,1);
+						paintCurrentAndGhost();
+					}					
 					
 					break;
 					
 				case KeyEvent.VK_DOWN:
 					
-					eraseCurrentPiece();
-					
-					if (currentPiece.canMove(1,0)) currentPiece.move(1,0);
-					
-					paintCurrentPiece();
+					if (currentPiece.canMove(1,0)) {
+						eraseCurrentPiece();
+						currentPiece.move(1,0);
+						paintCurrentPiece();
+					}
 					
 					break;
 					
 				case KeyEvent.VK_UP:
 					
-					eraseCurrentAndGhost();
-					
 					if (pressed.size() > 1 && pressed.contains(KeyEvent.VK_CONTROL)) {
 					
 						if (currentPiece.canRotate(-1)) {
+							eraseCurrentAndGhost();
 							currentPiece.rotate(-1);
 							AudioManager.playCCWRotationSound();
+							paintCurrentAndGhost();
 						}
 					}
 					
 					else {
 						
 						if (currentPiece.canRotate(1)) {
+							eraseCurrentAndGhost();
 							currentPiece.rotate(1);
 							AudioManager.playCWRotationSound();
+							paintCurrentAndGhost();
 						}
 					}
-					
-					paintCurrentAndGhost();					
 					
 					break;
 					
@@ -205,7 +203,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			if (GameBoardModel.isSquareOccupied(row, cell)) {
 		
 				panel.setBackground(GameBoardModel.getColor(row, cell));
-				panel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				panel.setBorder(GameFrame.BEVEL_BORDER);
 				
 			}
 			
@@ -247,7 +245,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			public void run() {
 				
 				// Run 1 loop to paint in all unoccupied squares
-				for (int[] square : spiralSquares) {
+				for (int[] square : SPIRAL_SQUARES) {
 					
 					JPanel p = JPanelGrid[square[0]][square[1]];
 				
@@ -264,7 +262,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 				}
 				
 				// Run a second loop to erase all of them
-				for (int[] square : spiralSquares) {
+				for (int[] square : SPIRAL_SQUARES) {
 					
 					nullifyPanel(JPanelGrid[square[0]][square[1]]);
 				
@@ -281,7 +279,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	// Builds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
-	private static int[][] initSpiralSquares() {
+	private static List<int[]> initSpiralSquares() {
 		
 		List<int[]> squares = new ArrayList<int[]>();
 		
@@ -295,8 +293,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		// Total squares is equal to the dimensions of the 
 		// visible panels. Loop until the size of squares
 		// reaches this amount
-		int squareLimit = H_CELLS * V_CELLS;
-		while (squares.size() < squareLimit) {
+		while (squares.size() < H_CELLS * V_CELLS) {
 			
 			// Get all cells in the next leftmost column
 			for (int row = nextTopRow; row <= nextBottomRow; row++)
@@ -328,7 +325,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			
 		}
 		
-		return squares.toArray(new int[squares.size()][2]);
+		return squares;
 		
 	}
 	
