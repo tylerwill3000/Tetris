@@ -94,7 +94,7 @@ public class GameFrame extends JFrame {
 			
 		}
 		
-		// Resets delay / flashes level label
+		// Resets timer delay / flashes level label
 		private void processLevelUp() {
 			fallTimer.setDelay(GameBoardModel.getTimerDelay());
 			scorePanel.flashLevelLabel();
@@ -106,6 +106,10 @@ public class GameFrame extends JFrame {
 			fallTimer.stop();
 			scorePanel.refreshScoreInfo(); // Gets final score to show up
 			scorePanel.flashWinMessage();
+			
+			//AudioManager.playVictoryJingle();
+			
+			// Re-enable start button and disable pause /resume
 			pause.removeActionListener(pauseButtonListener);
 			resume.removeActionListener(resumeButtonListener);
 			start.addActionListener(startButtonListener);
@@ -133,15 +137,16 @@ public class GameFrame extends JFrame {
 			
 		}
 		
-		// Erases the old pieces and paints the new one
+		// Erases the old pieces and paints the new ones
 		private void paintNewPieces(Piece nextPiece) {
+			
 			gameBoardPanel.currentPiece = nextPiece;
 			nextPiecePanel.eraseCurrentPiece();
 			nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 			
-			// Paint new pieces
 			nextPiecePanel.paintCurrentPiece();
 			gameBoardPanel.paintCurrentAndGhost();
+			
 		}
 		
 	});
@@ -154,6 +159,10 @@ public class GameFrame extends JFrame {
 			
 			// Clear all old data from the model
 			GameBoardModel.reset();
+			
+			// Reprint all squares on the game board. Since
+			// the model was reset, they will all be blank
+			gameBoardPanel.fullReprint();
 			
 			// Clears all old score info from previous games
 			scorePanel.refreshScoreInfo();

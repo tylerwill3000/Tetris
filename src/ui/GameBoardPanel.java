@@ -276,6 +276,15 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		
 	}
 	
+	// Reprints all panels on the game board according to
+	// the grid model
+	public void fullReprint() {
+		
+		for (int i = 0; i < V_CELLS; i++)
+			paintRow(i);
+		
+	}
+	
 	// Builds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
 	private static List<int[]> initSpiralSquares() {

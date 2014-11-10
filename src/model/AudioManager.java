@@ -9,7 +9,7 @@ public class AudioManager {
 	// Provides a handle to the resource directory (aka class directory)
 	@SuppressWarnings("rawtypes")
 	private static final Class resources = new AudioManager().getClass();
-
+	
 	// Soundtrack for the game. Current level is used to index into
 	// the array, so the first element (0) is null.
 	private static final AudioClip[] soundtrack = {
@@ -48,5 +48,5 @@ public class AudioManager {
 	public static void playUltraLineSound() { ultraLine.play(); }
 	public static void playCWRotationSound() { swipeUp.play(); }
 	public static void playCCWRotationSound() { swipeDown.play(); }
-
+	
 }

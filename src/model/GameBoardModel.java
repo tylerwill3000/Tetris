@@ -144,12 +144,19 @@ public class GameBoardModel {
 		
 		score += completedLines * LINE_POINTS_MAP[completedLines];
 		
-		// Level up if gained enough lines
 		if (linesCompleted >= level * LINES_PER_LEVEL) {
+			
 			AudioManager.stopCurrentSoundtrack();
 			level++;
-			if (level != 11) AudioManager.playCurrentSoundtrack();
+			
+			// There is no looping soundtrack that is played
+			// once the game is won. The winning jingle will
+			// be initiated from the main fall timer listener
+			if (level != 11)
+				AudioManager.playCurrentSoundtrack();
+			
 			justLeveled = true;
+			
 		}
 		
 	}
@@ -186,6 +193,7 @@ public class GameBoardModel {
 		score = 0;
 		linesCompleted = 0;
 		level = 1;
+		justLeveled = false;
 	}
 	
 	// Builds the blank starting quilt
@@ -193,12 +201,9 @@ public class GameBoardModel {
 
 		LinkedList<Color[]> quilt = new LinkedList<Color[]>();
 		
-		for (int i = 0; i < GameBoardPanel.V_CELLS; i++) {
-			
+		for (int i = 0; i < GameBoardPanel.V_CELLS; i++) 
 			quilt.add(new Color[GameBoardPanel.H_CELLS]);
 			
-		}
-		
 		return quilt;
 		
 	}
