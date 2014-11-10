@@ -1,5 +1,7 @@
 package model;
 
+import javax.sound.sampled.*;
+
 import java.applet.Applet;
 import java.applet.AudioClip;
 

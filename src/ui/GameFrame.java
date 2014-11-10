@@ -274,8 +274,10 @@ public class GameFrame extends JFrame {
 				
 				if (ghostSquaresCbx.isSelected())
 					gameBoardPanel.paintGhostPiece();
-				else
+				else {
 					gameBoardPanel.eraseGhostPiece();
+					gameBoardPanel.paintCurrentPiece(); // In case ghost overlaps current piece
+				}
 				
 			}
 		});
