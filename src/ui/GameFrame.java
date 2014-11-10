@@ -27,7 +27,7 @@ import java.awt.event.*;
 public class GameFrame extends JFrame {
 	
 	// Game style constants
-	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
+	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 15);
 	
@@ -108,6 +108,8 @@ public class GameFrame extends JFrame {
 			scorePanel.flashWinMessage();
 			
 			//AudioManager.playVictoryJingle();
+			
+			gameBoardPanel.disableKeyboard();
 			
 			// Re-enable start button and disable pause /resume
 			pause.removeActionListener(pauseButtonListener);
@@ -274,12 +276,14 @@ public class GameFrame extends JFrame {
 				
 				if (ghostSquaresCbx.isSelected())
 					gameBoardPanel.paintGhostPiece();
-				else {
+				else 
 					gameBoardPanel.eraseGhostPiece();
-					gameBoardPanel.paintCurrentPiece(); // In case ghost overlaps current piece
-				}
+				
+				// In case ghost overlaps current piece
+				gameBoardPanel.paintCurrentPiece();
 				
 			}
+			
 		});
 		
 		musicCbx.addItemListener(new ItemListener() {
