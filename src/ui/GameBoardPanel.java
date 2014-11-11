@@ -243,6 +243,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			
 			public void run() {
 				
+				try { // In order to catch InterupptedException from calling Thread.sleep
+				
 				// Run 1 loop to paint in all unoccupied squares
 				for (int[] square : SPIRAL_SQUARES) {
 					
@@ -255,20 +257,18 @@ public class GameBoardPanel extends AbstractPiecePainter {
 						
 					}
 					
-					try { Thread.sleep(SLEEP_INTERVAL); }
-					catch (InterruptedException e) {}				
-				
+					Thread.sleep(SLEEP_INTERVAL);
+					
 				}
 				
 				// Run a second loop to erase all of them
 				for (int[] square : SPIRAL_SQUARES) {
-					
 					nullifyPanel(JPanelGrid[square[0]][square[1]]);
-				
-					try { Thread.sleep(SLEEP_INTERVAL); }
-					catch (InterruptedException e) {}				
+					Thread.sleep(SLEEP_INTERVAL);
+				}
 				
 				}
+				catch (InterruptedException e) {}
 				
 			}
 			

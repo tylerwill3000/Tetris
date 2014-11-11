@@ -44,15 +44,14 @@ public class ScorePanel extends JPanel {
 			
 			public void run() {
 				
-				for (int i = 1; i <= 60; i++) {
-					
-					levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : Color.YELLOW);
-					
-					try { Thread.sleep(50); }
-					catch (InterruptedException e) {}
-					
-				}
+				try {
 				
+					for (int i = 1; i <= 60; i++) {
+						levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : Color.YELLOW);
+						Thread.sleep(50);
+					}
+				}
+				catch (InterruptedException e) {}
 			}
 			
 		}).start();
