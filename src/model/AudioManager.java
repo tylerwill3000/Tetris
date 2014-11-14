@@ -12,6 +12,7 @@ public class AudioManager {
 	@SuppressWarnings("rawtypes")
 	private static final Class resources = new AudioManager().getClass();
 	
+/** Audio is not working at the moment. Commenting all this out until it gets fixed
 	// Soundtrack for the game. Current level is used to index into
 	// the array, so the first element (0) is null.
 	private static final AudioClip[] soundtrack = {
@@ -50,5 +51,18 @@ public class AudioManager {
 	public static void playUltraLineSound() { ultraLine.play(); }
 	public static void playCWRotationSound() { swipeUp.play(); }
 	public static void playCCWRotationSound() { swipeDown.play(); }
+	*/
+
+	public static void playCurrentSoundtrack() { return; }
+	
+	public static void stopCurrentSoundtrack() { return; }
+	
+	public static void playGameOverSound() { return; }
+	public static void playPiecePlacementSound() { return; }
+	public static void playClearLineSound() { return; }
+	public static void playUltraLineSound() { return; }
+	public static void playCWRotationSound() { return; }
+	public static void playCCWRotationSound() { return; }
+	
 	
 }

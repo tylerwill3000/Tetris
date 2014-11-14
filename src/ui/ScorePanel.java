@@ -40,27 +40,55 @@ public class ScorePanel extends JPanel {
 	// it stand out
 	public void flashLevelLabel() {
 		
-		new Thread(new Runnable() {
-			
-			public void run() {
-				
-				try {
-				
-					for (int i = 1; i <= 60; i++) {
-						levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : Color.YELLOW);
-						Thread.sleep(50);
-					}
-				}
-				catch (InterruptedException e) {}
-			}
-			
-		}).start();
+		new Thread(new FlashText(Color.YELLOW)).start();
 		
 	}
 	
 	public void flashWinMessage() {
-		levelLabel.setText("You Win!!!!");
-		flashLevelLabel();
+		
+		new Thread(new FlashText("You Win!!!", Color.YELLOW)).start();
+
+	}
+	
+	public void flashGameOverMessage() {
+		
+		new Thread(new FlashText("Game Over!!!", Color.RED)).start();
+		
+	}
+	
+	// Thread task that can be configured to flash the level text a certain color
+	private class FlashText implements Runnable {
+		
+		private String textToFlash;
+		private Color flashColor;
+		
+		// Create a task to flash the default score label (used on level up)
+		public FlashText(Color flashColor) {
+			this.textToFlash = levelLabel.getText(); // Text doesn't change
+			this.flashColor = flashColor;
+		}
+		
+		// Create a task to flash a customized string
+		public FlashText(String textToFlash, Color flashColor) {
+			this.textToFlash = textToFlash;
+			this.flashColor = flashColor;
+		}
+		
+		public void run() {
+			
+			levelLabel.setText(textToFlash);
+			
+			try {
+				
+				for (int i = 1; i <= 60; i++) {
+					levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : flashColor);
+					Thread.sleep(50);
+				}
+			}
+			catch (InterruptedException e) {}
+			
+		}
+		
 	}
 	
 }

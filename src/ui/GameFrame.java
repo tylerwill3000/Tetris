@@ -122,6 +122,8 @@ public class GameFrame extends JFrame {
 			
 			fallTimer.stop();
 			
+			scorePanel.flashGameOverMessage();
+			
 			AudioManager.stopCurrentSoundtrack();
 			AudioManager.playGameOverSound();
 			
