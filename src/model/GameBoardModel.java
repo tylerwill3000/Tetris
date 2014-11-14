@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import ui.GameBoardPanel;
 
@@ -14,6 +16,11 @@ import ui.GameBoardPanel;
 public class GameBoardModel {
 	
 	public static final int INITIAL_TIMER_DELAY = 600;
+	
+	public static boolean isPaused = false;
+	
+	// Flag to detect if the space bar was pressed in the current timer interval
+	public static boolean spacePressed = false;
 	
 	// Represents colors on the game grid. Use a linked list since
 	// rows will need to be added to the front when rows are removed
@@ -30,7 +37,7 @@ public class GameBoardModel {
 		30
 	};
 	
-	private static final int LINES_PER_LEVEL = 5;
+	private static final int LINES_PER_LEVEL = 20;
 	
 	// Scoring info
 	private static int linesCompleted = 0;

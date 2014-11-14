@@ -16,9 +16,9 @@ public class ScorePanel extends JPanel {
 	private JLabel totalLinesLabel = new JLabel("Lines: 0", JLabel.CENTER);
 	private JLabel levelLabel = new JLabel("Level: 1", JLabel.CENTER);
 	
-	private final Thread FLASH_LEVEL_UP = new Thread(new FlashText(Color.YELLOW));
-	private final Thread FLASH_WIN = new Thread(new FlashText("You Win!!!", Color.YELLOW));
-	private final Thread FLASH_GAME_OVER = new Thread(new FlashText("Game Over!!!", Color.RED));
+	private final FlashText FLASH_LEVEL_UP = new FlashText(Color.YELLOW);
+	private final FlashText FLASH_WIN = new FlashText("You Win!!!", Color.YELLOW);
+	private final FlashText FLASH_GAME_OVER = new FlashText("Game Over!!!", Color.RED);
 	
 	public ScorePanel() {
 		
@@ -39,14 +39,12 @@ public class ScorePanel extends JPanel {
 		totalLinesLabel.setText("Lines: " + GameBoardModel.getLinesCompleted());
 		levelLabel.setText("Level: " + GameBoardModel.getLevel());
 	}
+
+	public void flashLevelLabel() { GameFrame.THREAD_EXECUTOR.execute(FLASH_LEVEL_UP); }
 	
-	// Used on level up to flash the level label a couple times to make
-	// it stand out
-	public void flashLevelLabel() { FLASH_LEVEL_UP.start(); }
+	public void flashWinMessage() { GameFrame.THREAD_EXECUTOR.execute(FLASH_WIN); }
 	
-	public void flashWinMessage() { FLASH_WIN.start(); }
-	
-	public void flashGameOverMessage() { FLASH_GAME_OVER.start(); }
+	public void flashGameOverMessage() { GameFrame.THREAD_EXECUTOR.execute(FLASH_GAME_OVER); }
 	
 	// Thread task that can be configured to flash the level text a certain color
 	private class FlashText implements Runnable {

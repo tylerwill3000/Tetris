@@ -12,7 +12,6 @@ import java.util.Set;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
-import model.SettingsManager;
 
 // The GameBoardPanel is dedicated to the "View" portion
 // of the program - it paints the panel according to the
@@ -32,6 +31,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	// List of spiral squares in order from the top left corner going inwards
 	public static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
+	
+	public Thread paintGameOverFill = new Thread(new PaintGameOverFill());
 	
 	// Tracks whether or not the keyboard is enabled. Used when
 	// placing a piece with space bar, since it disables the 
@@ -71,9 +72,13 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			
 			pressed.add(keyCode);			
 			
+			// Movement keys will not fire their actions if either the game is
+			// paused or the space key has been pressed during this interval
 			switch (keyCode) {
 				
 				case KeyEvent.VK_LEFT:
+					
+					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
 					
 					if (currentPiece.canMove(0,-1)) {
 						eraseCurrentAndGhost();
@@ -85,6 +90,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 					
 				case KeyEvent.VK_RIGHT:
 					
+					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
+					
 					if (currentPiece.canMove(0,1)) {
 						eraseCurrentAndGhost();
 						currentPiece.move(0,1);
@@ -95,6 +102,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 					
 				case KeyEvent.VK_DOWN:
 					
+					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
+					
 					if (currentPiece.canMove(1,0)) {
 						eraseCurrentPiece();
 						currentPiece.move(1,0);
@@ -104,6 +113,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 					break;
 					
 				case KeyEvent.VK_UP:
+					
+					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
 					
 					if (pressed.size() > 1 && pressed.contains(KeyEvent.VK_CONTROL)) {
 					
@@ -129,15 +140,34 @@ public class GameBoardPanel extends AbstractPiecePainter {
 					
 				case KeyEvent.VK_SPACE:
 					
+					if (GameBoardModel.isPaused) return;
+					
 					eraseCurrentPiece();
 					
-					while (currentPiece.canMove(1,0)) { currentPiece.move(1,0); }
+					while (currentPiece.canMove(1,0)) currentPiece.move(1,0);
 					
 					paintCurrentPiece();
 					
 					AudioManager.playPiecePlacementSound();
 					
-					disableKeyboard(); // Prevents player from moving the piece before it gets logged
+					GameBoardModel.spacePressed = true;
+					
+					break;
+				
+				case KeyEvent.VK_P:
+					
+					UIBox.menuButtonsPanel.pause.doClick(100);
+					break;
+					
+				case KeyEvent.VK_R:
+					
+					UIBox.menuButtonsPanel.resume.doClick(100);
+					break;
+					
+				case KeyEvent.VK_G:
+					
+					UIBox.menuButtonsPanel.giveUp.doClick();
+					break;
 				
 			}				
 			
@@ -220,7 +250,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	public void paintGhostPiece() {
 		
-		if (!SettingsManager.isUsingGhostSquares()) return;
+		if (!UIBox.ghostSquaresCbx.isSelected()) return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
 	
@@ -234,48 +264,6 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		eraseSquares(currentPiece.getGhostSquares());
 	}
 	
-	// Fills in all squares in the grid in a spiral pattern.
-	public void paintGameOverFill() {
-
-		new Thread(new Runnable() {
-			
-			private final static int SLEEP_INTERVAL = 9;
-			
-			public void run() {
-				
-				try { // In order to catch InterupptedException from calling Thread.sleep
-				
-				// Run 1 loop to paint in all unoccupied squares
-				for (int[] square : SPIRAL_SQUARES) {
-					
-					JPanel p = JPanelGrid[square[0]][square[1]];
-				
-					if (!GameBoardModel.isSquareOccupied(square[0], square[1])) {
-		
-						p.setBackground(PieceFactory.getRandomColor());
-						p.setBorder(GameFrame.BEVEL_BORDER);
-						
-					}
-					
-					Thread.sleep(SLEEP_INTERVAL);
-					
-				}
-				
-				// Run a second loop to erase all of them
-				for (int[] square : SPIRAL_SQUARES) {
-					nullifyPanel(JPanelGrid[square[0]][square[1]]);
-					Thread.sleep(SLEEP_INTERVAL);
-				}
-				
-				}
-				catch (InterruptedException e) {}
-				
-			}
-			
-		}).start();
-		
-	}
-	
 	// Reprints all panels on the game board according to
 	// the grid model
 	public void fullReprint() {
@@ -284,6 +272,9 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			paintRow(i);
 		
 	}
+	
+	// Fills in all squares in the grid in a spiral pattern.
+	public void paintGameOverFill() { GameFrame.THREAD_EXECUTOR.execute(paintGameOverFill); }
 	
 	// Builds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
@@ -334,6 +325,46 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		}
 		
 		return squares;
+		
+	}
+	
+	// Thread task class for painting the game over fill
+	private class PaintGameOverFill implements Runnable {
+	
+		private final static int SLEEP_INTERVAL = 9;
+		
+		public void run() {
+			
+			try { // In order to catch InterupptedException from calling Thread.sleep
+			
+			// Run 1 loop to paint in all unoccupied squares
+			for (int[] square : SPIRAL_SQUARES) {
+				
+				JPanel p = JPanelGrid[square[0]][square[1]];
+			
+				if (!GameBoardModel.isSquareOccupied(square[0], square[1])) {
+	
+					p.setBackground(PieceFactory.getRandomColor());
+					p.setBorder(GameFrame.BEVEL_BORDER);
+					
+				}
+				
+				Thread.sleep(SLEEP_INTERVAL);
+				
+			}
+			
+			// Run a second loop to erase all of them
+			for (int[] square : SPIRAL_SQUARES) {
+				nullifyPanel(JPanelGrid[square[0]][square[1]]);
+				Thread.sleep(SLEEP_INTERVAL);
+			}
+			
+			UIBox.menuButtonsPanel.start.addActionListener(UIBox.menuButtonsPanel.startButtonListener);
+			
+			}
+			catch (InterruptedException e) {}
+			
+		}
 		
 	}
 	
