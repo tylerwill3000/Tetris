@@ -30,7 +30,7 @@ public class GameBoardModel {
 		30
 	};
 	
-	private static final int LINES_PER_LEVEL = 20;
+	private static final int LINES_PER_LEVEL = 5;
 	
 	// Scoring info
 	private static int linesCompleted = 0;

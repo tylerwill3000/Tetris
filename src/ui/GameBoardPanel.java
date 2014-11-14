@@ -138,7 +138,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 					AudioManager.playPiecePlacementSound();
 					
 					disableKeyboard(); // Prevents player from moving the piece before it gets logged
-					
+				
 			}				
 			
 		}

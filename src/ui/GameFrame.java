@@ -240,6 +240,10 @@ public class GameFrame extends JFrame {
 		pause.setFocusable(false);
 		resume.setFocusable(false);
 		
+		start.setMnemonic('s');
+		pause.setMnemonic('p');
+		resume.setMnemonic('r');
+		
 		start.addActionListener(startButtonListener);
 		
 		setTitle("Tetris");

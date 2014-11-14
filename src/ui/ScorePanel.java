@@ -16,6 +16,10 @@ public class ScorePanel extends JPanel {
 	private JLabel totalLinesLabel = new JLabel("Lines: 0", JLabel.CENTER);
 	private JLabel levelLabel = new JLabel("Level: 1", JLabel.CENTER);
 	
+	private final Thread FLASH_LEVEL_UP = new Thread(new FlashText(Color.YELLOW));
+	private final Thread FLASH_WIN = new Thread(new FlashText("You Win!!!", Color.YELLOW));
+	private final Thread FLASH_GAME_OVER = new Thread(new FlashText("Game Over!!!", Color.RED));
+	
 	public ScorePanel() {
 		
 		setLayout(new GridLayout(3,1));
@@ -38,23 +42,11 @@ public class ScorePanel extends JPanel {
 	
 	// Used on level up to flash the level label a couple times to make
 	// it stand out
-	public void flashLevelLabel() {
-		
-		new Thread(new FlashText(Color.YELLOW)).start();
-		
-	}
+	public void flashLevelLabel() { FLASH_LEVEL_UP.start(); }
 	
-	public void flashWinMessage() {
-		
-		new Thread(new FlashText("You Win!!!", Color.YELLOW)).start();
-
-	}
+	public void flashWinMessage() { FLASH_WIN.start(); }
 	
-	public void flashGameOverMessage() {
-		
-		new Thread(new FlashText("Game Over!!!", Color.RED)).start();
-		
-	}
+	public void flashGameOverMessage() { FLASH_GAME_OVER.start(); }
 	
 	// Thread task that can be configured to flash the level text a certain color
 	private class FlashText implements Runnable {
@@ -84,6 +76,7 @@ public class ScorePanel extends JPanel {
 					levelLabel.setForeground(i % 2 == 0 ? Color.BLACK : flashColor);
 					Thread.sleep(50);
 				}
+				
 			}
 			catch (InterruptedException e) {}
 			
