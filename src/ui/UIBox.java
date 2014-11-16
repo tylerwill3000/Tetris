@@ -11,10 +11,7 @@ public class UIBox {
 	static ScorePanel scorePanel = new ScorePanel();
 	static MenuPanel menuPanel = new MenuPanel();
 	
-	static JCheckBox ghostSquaresCbx = new JCheckBox("Ghost Squares", true);
-	
-	// These are public so they can be seen by the AudioManager
-	public static JCheckBox musicCbx = new JCheckBox("Music", true);
-	public static JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
+	// This is public so it can be accessed by the AudioManager
+	public static SettingsPanel settingsPanel = new SettingsPanel();
 	
 }

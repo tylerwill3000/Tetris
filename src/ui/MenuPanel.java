@@ -59,6 +59,10 @@ public class MenuPanel extends JPanel {
 			// after game over
 			disableStartButton();
 			
+			// Enable checkbox listeners if they are disabled
+			if (!UIBox.settingsPanel.cbxsEnabled)
+				UIBox.settingsPanel.enableCbxListeners();
+			
 			UIBox.gameBoardPanel.fallTimer.start();
 			
 			AudioManager.beginCurrentSoundtrack();

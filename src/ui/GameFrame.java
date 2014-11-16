@@ -61,50 +61,14 @@ public class GameFrame extends JFrame {
 		UIBox.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
 		
 		
-		// Add in checkbox listeners
-		UIBox.ghostSquaresCbx.addItemListener(new ItemListener() {
-			
-			public void itemStateChanged(ItemEvent e) {
-				
-				
-				if (UIBox.ghostSquaresCbx.isSelected())
-					UIBox.gameBoardPanel.paintGhostPiece();
-				else 
-					UIBox.gameBoardPanel.eraseGhostPiece();
-				
-				// In case ghost overlaps current piece
-				UIBox.gameBoardPanel.paintCurrentPiece();
-				
-			}
-			
-		});
-		
-		UIBox.musicCbx.addItemListener(new ItemListener() {
-			
-			public void itemStateChanged(ItemEvent e) {
-				
-				if (UIBox.musicCbx.isSelected())
-					AudioManager.resumeCurrentSoundtrack();
-				else
-					AudioManager.stopCurrentSoundtrack();
-				
-			}
-			
-		});
-		
-		UIBox.ghostSquaresCbx.setFocusable(false);
-		UIBox.musicCbx.setFocusable(false);
-		UIBox.soundEffectsCbx.setFocusable(false);
-		
 		// Create a container panel to add the controls and
 		// settings panels to
 		JPanel controlsAndSettingsContainer = new JPanel(new BorderLayout());
 		JPanel controls = createControlsPanel();
-		JPanel settings = createSettingsPanel();
 		controls.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 140));
-		settings.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		UIBox.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
 		controlsAndSettingsContainer.add(controls, BorderLayout.NORTH);
-		controlsAndSettingsContainer.add(settings, BorderLayout.SOUTH);
+		controlsAndSettingsContainer.add(UIBox.settingsPanel, BorderLayout.SOUTH);
 		
 		// Add all components to the info panel
 		infoPanel.add(UIBox.nextPiecePanel, BorderLayout.NORTH);
@@ -126,17 +90,6 @@ public class GameFrame extends JFrame {
 		controls.add(new JLabel("Right: shift right"));
 		controls.add(new JLabel("Space: instant drop"));
 		return controls;
-		
-	}
-	
-	private JPanel createSettingsPanel() {
-		
-		JPanel settingsPanel = new JPanel(new GridLayout(3,1));
-		settingsPanel.setBorder(new TitledBorder("Settings"));
-		settingsPanel.add(UIBox.ghostSquaresCbx);
-		settingsPanel.add(UIBox.musicCbx);
-		settingsPanel.add(UIBox.soundEffectsCbx);
-		return settingsPanel;
 		
 	}
 	

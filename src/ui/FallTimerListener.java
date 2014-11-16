@@ -91,6 +91,9 @@ public class FallTimerListener implements ActionListener {
 		UIBox.menuPanel.disableResumeButton();
 		UIBox.menuPanel.disableGiveUpButton();
 		
+		// Disable the checkbox listeners
+		UIBox.settingsPanel.disableCbxListeners();
+		
 	}
 
 }

@@ -271,7 +271,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	void paintGhostPiece() {
 		
-		if (!UIBox.ghostSquaresCbx.isSelected()) return;
+		if (!UIBox.settingsPanel.ghostSquaresOn()) return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
 	

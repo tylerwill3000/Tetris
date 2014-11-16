@@ -37,7 +37,7 @@ public class AudioManager {
 	
 	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
-		if (UIBox.musicCbx.isSelected()) {
+		if (UIBox.settingsPanel.musicOn()) {
 			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 		}
@@ -45,7 +45,7 @@ public class AudioManager {
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
 	public static void resumeCurrentSoundtrack() {
-		if (UIBox.musicCbx.isSelected())
+		if (UIBox.settingsPanel.musicOn())
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
@@ -55,7 +55,7 @@ public class AudioManager {
 	}
 	
 	public static void playGameOverSound() {
-		if (UIBox.musicCbx.isSelected()) {
+		if (UIBox.settingsPanel.musicOn()) {
 			gameOver.start();
 			gameOver.setFramePosition(0);
 		}
@@ -72,7 +72,7 @@ public class AudioManager {
 	// frame position after playing
 	private static void playEffect(Clip effect) {
 		
-		if (UIBox.soundEffectsCbx.isSelected()) {
+		if (UIBox.settingsPanel.effectsOn()) {
 			effect.start();
 			effect.setFramePosition(0);
 			
