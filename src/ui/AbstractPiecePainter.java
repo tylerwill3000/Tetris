@@ -32,7 +32,8 @@ public abstract class AbstractPiecePainter extends JPanel {
 		setLayout(new GridLayout(rows, cols));
 		JPanelGrid = new JPanel[rows][cols];
 		
-		// Add all the initial panels
+		// Add all the initial panels to both the piece painter
+		// panel and the JPanel matrix
 		for (int i = 0; i < JPanelGrid.length; i++) {
 			
 			for (int j = 0; j < JPanelGrid[i].length; j++) {
@@ -94,7 +95,7 @@ public abstract class AbstractPiecePainter extends JPanel {
 	
 	// Abstract methods that will receive concrete implementations
 	// in both the game grid panel and the next piece panel classes
-	public abstract void paintCurrentPiece();
-	public abstract void eraseCurrentPiece();
+	abstract void paintCurrentPiece();
+	abstract void eraseCurrentPiece();
 	
 }

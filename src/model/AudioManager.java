@@ -1,68 +1,106 @@
 package model;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.sound.sampled.*;
 
-import java.applet.Applet;
-import java.applet.AudioClip;
+import ui.UIBox;
+
 
 // Singleton class to interface to the game's audio
 public class AudioManager {
 	
-	// Provides a handle to the resource directory (aka class directory)
-	@SuppressWarnings("rawtypes")
-	private static final Class resources = new AudioManager().getClass();
-	
-/** Audio is not working at the moment. Commenting all this out until it gets fixed
-	// Soundtrack for the game. Current level is used to index into
-	// the array, so the first element (0) is null.
-	private static final AudioClip[] soundtrack = {
-		Applet.newAudioClip(resources.getResource("audio/tetris-theme.wav")),
-		Applet.newAudioClip(resources.getResource("audio/bean-machine-1-4.wav")),
-		Applet.newAudioClip(resources.getResource("audio/tetris-music-3.wav")),
-		Applet.newAudioClip(resources.getResource("audio/metroid-kraid.wav")),
-		Applet.newAudioClip(resources.getResource("audio/sonic-scrap-brain-zone.wav")),
-		Applet.newAudioClip(resources.getResource("audio/chrono-trigger-bike-theme.wav")),
-		Applet.newAudioClip(resources.getResource("audio/mega-man-dr-wily.wav")),
-		Applet.newAudioClip(resources.getResource("audio/sonic-ice-cap-zone.wav")),
-		Applet.newAudioClip(resources.getResource("audio/bean-machine-9-12.wav")),
-		Applet.newAudioClip(resources.getResource("audio/chrono-trigger-final-battle.wav"))
+	// Soundtrack for the game
+	private static final Clip[] soundtrack = {
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/tetris-theme.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/bean-machine-1-4.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/tetris-music-3.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/metroid-kraid.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/sonic-scrap-brain-zone.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/chrono-trigger-bike-theme.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/mega-man-dr-wily.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/sonic-ice-cap-zone.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/bean-machine-9-12.wav"),
+		getAudioClip("C:/Users/Tyler/audio/soundtrack/chrono-trigger-final-battle.wav")
 	};
-	
-	// Sound effects
-	private static final AudioClip gameOver = Applet.newAudioClip(resources.getResource("audio/zelda-game-over.wav"));
-	private static final AudioClip placePiece = Applet.newAudioClip(resources.getResource("audio/effects/pipe.wav"));
-	private static final AudioClip clearLine = Applet.newAudioClip(resources.getResource("audio/effects/laser.wav"));
-	private static final AudioClip ultraLine = Applet.newAudioClip(resources.getResource("audio/effects/explosion.wav"));	
-	private static final AudioClip swipeUp = Applet.newAudioClip(resources.getResource("audio/effects/swish-up.wav"));
-	private static final AudioClip swipeDown = Applet.newAudioClip(resources.getResource("audio/effects/swish-down.wav"));
+
+	private static final Clip gameOver = getAudioClip("C:/Users/Tyler/audio/effects/zelda-game-over.wav");
+	private static final Clip pause = getAudioClip("C:/Users/Tyler/audio/effects/mario-64-pause.wav");
+	private static final Clip placePiece = getAudioClip("C:/Users/Tyler/audio/effects/pipe.wav");
+	private static final Clip clearLine = getAudioClip("C:/Users/Tyler/audio/effects/laser.wav");
+	private static final Clip ultraLine = getAudioClip("C:/Users/Tyler/audio/effects/explosion.wav");	
+	private static final Clip swipeUp = getAudioClip("C:/Users/Tyler/audio/effects/swish-up.wav");
+	private static final Clip swipeDown = getAudioClip("C:/Users/Tyler/audio/effects/swish-down.wav");
 	
 	private AudioManager() {}
 	
-	public static void playCurrentSoundtrack() {
-		if (!SettingsManager.isPlayingMusic()) return;
-		soundtrack[GameBoardModel.getLevel()-1].loop();
+	// Used when you want to start the soundtrack from the beginning
+	public static void beginCurrentSoundtrack() {
+		if (UIBox.musicCbx.isSelected()) {
+			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
+			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+		}
 	}
 	
-	public static void stopCurrentSoundtrack() { soundtrack[GameBoardModel.getLevel()-1].stop(); }
+	// Used when you want to resume playing the current soundtrack from where you left off
+	public static void resumeCurrentSoundtrack() {
+		if (UIBox.musicCbx.isSelected())
+			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+	}
 	
-	public static void playGameOverSound() { gameOver.play(); }
-	public static void playPiecePlacementSound() { placePiece.play(); }
-	public static void playClearLineSound() { clearLine.play(); }
-	public static void playUltraLineSound() { ultraLine.play(); }
-	public static void playCWRotationSound() { swipeUp.play(); }
-	public static void playCCWRotationSound() { swipeDown.play(); }
-	*/
-
-	public static void playCurrentSoundtrack() { return; }
+	// Used for both stopping and pausing
+	public static void stopCurrentSoundtrack() {
+		soundtrack[GameBoardModel.getLevel()-1].stop();
+	}
 	
-	public static void stopCurrentSoundtrack() { return; }
+	public static void playGameOverSound() {
+		if (UIBox.musicCbx.isSelected()) {
+			gameOver.start();
+			gameOver.setFramePosition(0);
+		}
+	}
 	
-	public static void playGameOverSound() { return; }
-	public static void playPiecePlacementSound() { return; }
-	public static void playClearLineSound() { return; }
-	public static void playUltraLineSound() { return; }
-	public static void playCWRotationSound() { return; }
-	public static void playCCWRotationSound() { return; }
+	public static void playPauseSound() { playEffect(pause); }
+	public static void playPiecePlacementSound() { playEffect(placePiece); }
+	public static void playClearLineSound() { playEffect(clearLine); }
+	public static void playUltraLineSound() { playEffect(ultraLine); }
+	public static void playCWRotationSound() { playEffect(swipeUp); }
+	public static void playCCWRotationSound() { playEffect(swipeDown); }
 	
+	// For playing small effect sounds. Resets the clip back to the starting
+	// frame position after playing
+	private static void playEffect(Clip effect) {
+		
+		if (UIBox.soundEffectsCbx.isSelected()) {
+			effect.start();
+			effect.setFramePosition(0);
+			
+		}
+	}
+	
+	// Returns a clip audio output device input line from the specified file string
+	private static Clip getAudioClip(String file) {
+		
+		// Attempt to initialize clip input object
+		Clip c;
+		
+		try {
+			
+			c = AudioSystem.getClip();
+			
+			// Add a new audio stream to the clip data line. Since I'm
+			// using a clip object, all data is loaded into memory at
+			// once as opposed to being read into a buffer and streamed
+			c.open(AudioSystem.getAudioInputStream(new File(file)));
+			return c;
+			
+		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		}
+	
+		return null;
+		
+	}
 	
 }

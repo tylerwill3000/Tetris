@@ -1,10 +1,15 @@
 
 package ui;
 
+import javax.swing.border.TitledBorder;
+
 @SuppressWarnings("serial")
 public class NextPiecePanel extends AbstractPiecePainter {
 	
-	public NextPiecePanel() { super(4,5); }
+	NextPiecePanel() {
+		super(4,5);
+		setBorder(new TitledBorder("Next Piece"));
+	}
 	
 	public void paintCurrentPiece() {
 		paintSquares(currentPiece.getNextPanelSquares(), currentPiece.getColor());

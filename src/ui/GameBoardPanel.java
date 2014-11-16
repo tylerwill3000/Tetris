@@ -1,24 +1,23 @@
 package ui;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
 
 // The GameBoardPanel is dedicated to the "View" portion
-// of the program - it paints the panel according to the
-// existing piece configuration as specified by the gridModel
+// of the game area - it paints the panel according to the
+// existing piece configuration as specified by the GameBoardModel
 // as well as the active piece configuration as specified by
 // the current piece
-@SuppressWarnings("serial")
 public class GameBoardPanel extends AbstractPiecePainter {
 	
 	// Board dimensions
@@ -26,201 +25,204 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	public static final int H_CELLS = 10;
 	
 	// Amount to offset to get to the center of the board. Useful
-	// when calculation initial squares for pieces
+	// when calculating initial squares for pieces
 	public static final int CENTER_OFFSET = H_CELLS / 2;
 	
 	// List of spiral squares in order from the top left corner going inwards
-	public static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
+	private static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
 	
-	public Thread paintGameOverFill = new Thread(new PaintGameOverFill());
+	Thread spiralAnimation = new Thread(new SpiralAnimation());
 	
-	// Tracks whether or not the keyboard is enabled. Used when
-	// placing a piece with space bar, since it disables the 
-	// keyboard until the next piece is generated
-	private boolean keyboardEnabled;
+	// Keyboard listeners
+	private PieceMovementInput pieceMovementInput = new PieceMovementInput();
+	private MenuHotkeyInput menuHotkeyInput = new MenuHotkeyInput();
 	
-	// Listener for the keyboard
-	private KeyboardInput keyboardInput = new KeyboardInput();
+	// Controls the game flow. Doesn't matter what the initial delay is
+	//since it is set later. Package private so it can be accessed by other
+	// UI elements through the UIBox
+	Timer fallTimer = new Timer(0, new FallTimerListener());
 	
-	public GameBoardPanel() {
-		
+	GameBoardPanel() {
 		super(V_CELLS, H_CELLS);
-		setFocusable(true);
-		setPreferredSize(new Dimension(GameFrame.GAME_BOARD_PANEL_WIDTH,750));
-		
+		addKeyListener(menuHotkeyInput);
+		setBorder(GameFrame.LINE_BORDER);
 	}
 	
-	public boolean isKeyboardEnabled() { return keyboardEnabled; }
-	
-	public void disableKeyboard() {
-		this.removeKeyListener(keyboardInput);
-		keyboardEnabled = false;
+	void enablePieceMovementInput() {
+		addKeyListener(pieceMovementInput);
 	}
 	
-	public void enableKeyboard() {
-		this.addKeyListener(keyboardInput);
-		keyboardEnabled = true;
+	void disablePieceMovementInput() {
+		removeKeyListener(pieceMovementInput);
 	}
 	
-	private class KeyboardInput extends KeyAdapter {
+	
+	// Listener for the piece movement input from the keyboard
+	private class PieceMovementInput extends KeyAdapter {
 		
-		private Set<Integer> pressed = new HashSet<Integer>();
-		
-		public void keyPressed(KeyEvent e) {
-			
-			int keyCode = e.getKeyCode();
-			
-			pressed.add(keyCode);			
+		public void keyPressed(KeyEvent e) {			
 			
 			// Movement keys will not fire their actions if either the game is
 			// paused or the space key has been pressed during this interval
-			switch (keyCode) {
+			if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
+			
+			switch (e.getKeyCode()) {
 				
-				case KeyEvent.VK_LEFT:
-					
-					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
-					
-					if (currentPiece.canMove(0,-1)) {
-						eraseCurrentAndGhost();
-						currentPiece.move(0,-1);
-						paintCurrentAndGhost();
-					}
-					
-					break;
-					
-				case KeyEvent.VK_RIGHT:
-					
-					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
-					
-					if (currentPiece.canMove(0,1)) {
-						eraseCurrentAndGhost();
-						currentPiece.move(0,1);
-						paintCurrentAndGhost();
-					}					
-					
-					break;
-					
-				case KeyEvent.VK_DOWN:
-					
-					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
-					
-					if (currentPiece.canMove(1,0)) {
-						eraseCurrentPiece();
-						currentPiece.move(1,0);
-						paintCurrentPiece();
-					}
-					
-					break;
-					
-				case KeyEvent.VK_UP:
-					
-					if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
-					
-					if (pressed.size() > 1 && pressed.contains(KeyEvent.VK_CONTROL)) {
-					
-						if (currentPiece.canRotate(-1)) {
-							eraseCurrentAndGhost();
-							currentPiece.rotate(-1);
-							AudioManager.playCCWRotationSound();
-							paintCurrentAndGhost();
-						}
-					}
-					
-					else {
-						
-						if (currentPiece.canRotate(1)) {
-							eraseCurrentAndGhost();
-							currentPiece.rotate(1);
-							AudioManager.playCWRotationSound();
-							paintCurrentAndGhost();
-						}
-					}
-					
-					break;
-					
-				case KeyEvent.VK_SPACE:
-					
-					if (GameBoardModel.isPaused) return;
-					
+			case KeyEvent.VK_LEFT:
+				
+				if (currentPiece.canMove(0,-1)) {
+					eraseCurrentAndGhost();
+					currentPiece.move(0,-1);
+					paintCurrentAndGhost();
+				}
+				
+				break;
+				
+			case KeyEvent.VK_RIGHT:
+				
+				if (currentPiece.canMove(0,1)) {
+					eraseCurrentAndGhost();
+					currentPiece.move(0,1);
+					paintCurrentAndGhost();
+				}					
+				
+				break;
+				
+			case KeyEvent.VK_DOWN:
+				
+				if (currentPiece.canMove(1,0)) {
 					eraseCurrentPiece();
-					
-					while (currentPiece.canMove(1,0)) currentPiece.move(1,0);
-					
+					currentPiece.move(1,0);
 					paintCurrentPiece();
-					
-					AudioManager.playPiecePlacementSound();
-					
-					GameBoardModel.spacePressed = true;
-					
-					break;
+				}
 				
-				case KeyEvent.VK_P:
+				break;
+				
+			case KeyEvent.VK_UP:
 					
-					UIBox.menuButtonsPanel.pause.doClick(100);
-					break;
-					
-				case KeyEvent.VK_R:
-					
-					UIBox.menuButtonsPanel.resume.doClick(100);
-					break;
-					
-				case KeyEvent.VK_G:
-					
-					UIBox.menuButtonsPanel.giveUp.doClick();
-					break;
+				if (currentPiece.canRotate(1)) {
+					eraseCurrentAndGhost();
+					currentPiece.rotate(1);
+					AudioManager.playCWRotationSound();
+					paintCurrentAndGhost();
+				}
+				
+				
+				break;
+				
+			case KeyEvent.VK_F:
+				
+				if (currentPiece.canRotate(-1)) {
+					eraseCurrentAndGhost();
+					currentPiece.rotate(-1);
+					AudioManager.playCCWRotationSound();
+					paintCurrentAndGhost();
+				}
+				
+				break;
+				
+			case KeyEvent.VK_SPACE:
+				
+				eraseCurrentPiece();
+				
+				while (currentPiece.canMove(1,0))
+					currentPiece.move(1,0);
+				
+				paintCurrentPiece();
+				
+				AudioManager.playPiecePlacementSound();
+				
+				GameBoardModel.spacePressed = true;
+				
+				break;
 				
 			}				
 			
 		}
 		
-		public void keyReleased(KeyEvent e) {
-			pressed.remove(e.getKeyCode());
+	}
+	
+	// Separate listener for menu hotkeys. This should never get disabled
+	private class MenuHotkeyInput extends KeyAdapter {
+		
+		public void keyPressed(KeyEvent e) {
+			
+			switch (e.getKeyCode()) {
+			
+			case KeyEvent.VK_S:
+				
+				UIBox.menuPanel.start.doClick();
+				break;
+			
+			case KeyEvent.VK_P:
+				
+				UIBox.menuPanel.pause.doClick();
+				break;
+				
+			case KeyEvent.VK_R:
+				
+				UIBox.menuPanel.resume.doClick();
+				break;
+				
+			case KeyEvent.VK_G:
+				
+				UIBox.menuPanel.giveUp.doClick();
+				break;
+				
+			}
+			
 		}
 		
 	}
 	
-	public void paintCurrentAndGhost() {
+	void paintCurrentAndGhost() {
 		paintGhostPiece();
 		paintCurrentPiece();
 	}
 	
-	public void eraseCurrentAndGhost() {
+	void eraseCurrentAndGhost() {
 		eraseGhostPiece();
 		eraseCurrentPiece();
 	}
 	
 	// Lowers the currently active piece down 1 square
-	public void lowerPiece() {
+	void lowerPiece() {
 		eraseCurrentPiece();
 		currentPiece.move(1,0);
 		paintCurrentPiece();
 	}
 	
 	// Sets the current piece's position in stone, removing
-	// any resulting complete lines
-	public void placePiece() {
-
-		// Log squares to the gridModel and receive the list
-		// of completed lines
-		List<Integer> completeLines = GameBoardModel.addPiece(currentPiece);
+	// any resulting complete lines and painting the new pieces
+	void placePiece() {
 		
+		// Log squares to the GameBoardModel for this piece and
+		// receive the map of completed lines
+		Map<Integer, Color[]> completeLines = GameBoardModel.addPiece(currentPiece);
+		
+		// Erase piece from next piece panel
+		UIBox.nextPiecePanel.eraseCurrentPiece();
+		
+		// Set new pieces for both panels
+		currentPiece = PieceFactory.receiveNextPiece();
+		UIBox.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+		
+		// Paint new piece for the next piece panel
+		UIBox.nextPiecePanel.paintCurrentPiece();
+		
+		// If there are completed lines, start the flash task and then paint
+		// the current game board pieces after it's done. Otherwise, paint
+		// them right away
 		if (!completeLines.isEmpty()) {
-			
-			// Iterate from the bottom completed line upwards,
-			// repainting each row					
-			for (int line = completeLines.get(0); line >= 0; line--)
-				paintRow(line);
-		
-			// Play explosion sound if ultra line
-			if (completeLines.size() == 4)
-				AudioManager.playUltraLineSound();
-			else
-				AudioManager.playClearLineSound();
+			GameBoardModel.removeCompleteLines(completeLines.keySet());
+			GameFrame.THREAD_EXECUTOR.execute(new FlashRowsTask(completeLines));
 		}
+		else
+			if (currentPiece.canEmerge()) paintCurrentAndGhost();
 	
 	}
 	
-	// Repaints the specified row on the game grid according to the gridModel
+	// Repaints the specified row according to the GameBoardModel
 	private void paintRow(int row) {
 		
 		// Iterate over all cell values in the row
@@ -244,11 +246,30 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		
 	}
 	
-	public void paintCurrentPiece() {
+	// Repaints the specified row according to the row index and color array provided
+	private void paintRow(int row, Color[] colors) {
+		
+		for (int col = 0; col < H_CELLS; col++) {
+			JPanelGrid[row][col].setBackground(colors[col]);
+			JPanelGrid[row][col].setBorder(GameFrame.BEVEL_BORDER);
+		}
+		
+	}
+	
+	// Flashes the specified row white (with no border)
+	private void flashRow(int row) {
+		
+		for (int cell = 0; cell < H_CELLS; cell++) {
+			JPanelGrid[row][cell].setBorder(null);
+			JPanelGrid[row][cell].setBackground(Color.WHITE);
+		}
+	}
+	
+	void paintCurrentPiece() {
 		paintSquares(currentPiece.getLitSquares(), currentPiece.getColor());
 	}
 	
-	public void paintGhostPiece() {
+	void paintGhostPiece() {
 		
 		if (!UIBox.ghostSquaresCbx.isSelected()) return;
 		
@@ -256,17 +277,17 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	}
 	
-	public void eraseCurrentPiece() {
+	void eraseCurrentPiece() {
 		eraseSquares(currentPiece.getLitSquares());
 	}
 	
-	public void eraseGhostPiece() {
+	void eraseGhostPiece() {
 		eraseSquares(currentPiece.getGhostSquares());
 	}
 	
 	// Reprints all panels on the game board according to
 	// the grid model
-	public void fullReprint() {
+	void fullReprint() {
 		
 		for (int i = 0; i < V_CELLS; i++)
 			paintRow(i);
@@ -274,7 +295,9 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	}
 	
 	// Fills in all squares in the grid in a spiral pattern.
-	public void paintGameOverFill() { GameFrame.THREAD_EXECUTOR.execute(paintGameOverFill); }
+	void startSpiralAnimation() {
+		GameFrame.THREAD_EXECUTOR.execute(spiralAnimation);
+	}
 	
 	// Builds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
@@ -327,9 +350,11 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		return squares;
 		
 	}
+
+/***************** Thread task classes *****************/	
 	
 	// Thread task class for painting the game over fill
-	private class PaintGameOverFill implements Runnable {
+	private class SpiralAnimation implements Runnable {
 	
 		private final static int SLEEP_INTERVAL = 9;
 		
@@ -359,10 +384,64 @@ public class GameBoardPanel extends AbstractPiecePainter {
 				Thread.sleep(SLEEP_INTERVAL);
 			}
 			
-			UIBox.menuButtonsPanel.start.addActionListener(UIBox.menuButtonsPanel.startButtonListener);
+			// Re-enable the start button once the spiral loop is completed
+			UIBox.menuPanel.enableStartButton();
 			
 			}
 			catch (InterruptedException e) {}
+			
+		}
+		
+	}
+	
+	// Thread task class for flashing a row a couple times.
+	// Used when lines are cleared
+	private class FlashRowsTask implements Runnable {
+		
+		private Map<Integer, Color[]> rowsToFlash;
+		
+		public FlashRowsTask(Map<Integer, Color[]> completeLines) {
+			this.rowsToFlash = completeLines;
+		}
+		
+		public void run() {
+			
+			// Flash the rows three times before clearing it
+			for (int i = 1; i <= 9; i ++) {
+				
+				for (Map.Entry<Integer, Color[]> entry : rowsToFlash.entrySet()) {
+					
+					if (i % 2 == 0)
+						paintRow(entry.getKey(), entry.getValue());
+					else
+						flashRow(entry.getKey());
+					
+				}
+				
+				try { Thread.sleep(20); } 
+				catch (InterruptedException e) {}
+				
+			}			
+			
+			
+			// Repaint the new piece configuration created from
+			// clearing the rows by iterating from the bottom completed
+			// line (which should be the first key in the
+			// map) upwards, repainting each row along the way
+			int firstRow = rowsToFlash.entrySet().iterator().next().getKey();
+			for (int line = firstRow; line >= 0; line--)
+				paintRow(line);
+		
+			// Play explosion sound if ultra line
+			if (rowsToFlash.size() == 4)
+				AudioManager.playUltraLineSound();
+			else
+				AudioManager.playClearLineSound();
+			
+			// Safe to paint the ghost piece now since it won't overwrite
+			// the flashing rows. Paint current too since it wasn't painted
+			// yet
+			paintCurrentAndGhost();
 			
 		}
 		

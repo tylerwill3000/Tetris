@@ -1,11 +1,10 @@
 package model;
 
 import java.awt.Color;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Map;
+import java.util.Set;
 
 import ui.GameBoardPanel;
 
@@ -66,31 +65,28 @@ public class GameBoardModel {
 	private GameBoardModel() {}
 	
 	// Adds the active squares for a piece to the quilt. Used when a piece
-	// is permanently placed somewhere. Returns a list of the indices of 
-	// any lines removed as a result of adding this piece
-	public static List<Integer> addPiece(Piece p) {
+	// is permanently placed somewhere. Returns the completed lines map
+	// (see method below for more detail on this)
+	public static Map<Integer, Color[]> addPiece(Piece p) {
 		
 		// Log all colors for this piece in the quilt that are within
 		// grid bounds
 		for (int[] litSquare : p.getLitSquares())
 			setColor(p.getColor(), litSquare[0], litSquare[1]);
 		
-		// See if adding the piece created any new complete lines,
-		// and if so, remove them
-		List<Integer> completeLines = getCompleteLines(p);
-		
-		if (!completeLines.isEmpty())
-			removeCompleteLines(completeLines);
-			
-		return completeLines;
+		// Return the list of completed lines
+		return getCompleteLines(p);
 	
 	}
 	
-	// Returns a list of completed lines. Pass the piece that
-	// was just placed to narrow down the search
-	private static List<Integer> getCompleteLines(Piece justPlaced) {
+	// Returns a map that maps the completed line row indices with
+	// the color arrays that they represent. I need to use a map here
+	// since the flash rows task needs a snapshot of what the rows
+	// looked like before they were removed from the model in order to
+	// know what to paint when it flashes them
+	private static Map<Integer, Color[]> getCompleteLines(Piece justPlaced) {
 		
-		List<Integer> completeLines = new ArrayList<Integer>();
+		Map<Integer, Color[]> completeLines = new LinkedHashMap<Integer, Color[]>();
 		
 		// Iterate from the bottom row of the piece's bounding
 		// matrix upwards to check for complete lines
@@ -101,7 +97,8 @@ public class GameBoardModel {
 		// lines
 		for (int row = startRow; row >= 0 && row > startRow - 4; row--) {
 			
-			if (isCompleteLine(row)) completeLines.add(row);
+			if (isCompleteLine(row))
+				completeLines.put(row, quilt.get(row));
 			
 		}
 		
@@ -118,14 +115,14 @@ public class GameBoardModel {
 	}
 	
 	// Removes the specified completed lines from the quilt
-	private static void removeCompleteLines(List<Integer> completeLines) {
+	public static void removeCompleteLines(Set<Integer> toRemove) {
 		
 		// Since removing a line essentially increases the row index value
 		// of all lines above it by 1, removing multiple lines in sequence
 		// requires an 'offset' to target the correct line. This offset
 		// is increased each time a line is removed
 		int offset = 0;
-		for (Integer line : completeLines) {
+		for (Integer line : toRemove) {
 			
 			quilt.remove(line.intValue() + offset);
 	
@@ -138,7 +135,7 @@ public class GameBoardModel {
 			
 		}
 		
-		increaseScore(completeLines.size());
+		increaseScore(toRemove.size());
 		
 	}
 	
@@ -151,7 +148,7 @@ public class GameBoardModel {
 		
 		score += completedLines * LINE_POINTS_MAP[completedLines];
 		
-		if (linesCompleted >= level * LINES_PER_LEVEL) {
+		while (linesCompleted >= level * LINES_PER_LEVEL) {
 			
 			AudioManager.stopCurrentSoundtrack();
 			level++;
@@ -160,7 +157,7 @@ public class GameBoardModel {
 			// once the game is won. The winning jingle will
 			// be initiated from the main fall timer listener
 			if (level != 11)
-				AudioManager.playCurrentSoundtrack();
+				AudioManager.beginCurrentSoundtrack();
 			
 			justLeveled = true;
 			

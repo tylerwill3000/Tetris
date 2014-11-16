@@ -5,32 +5,29 @@ import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import model.GameBoardModel;
 
 // Holds all scoring info
-@SuppressWarnings("serial")
 public class ScorePanel extends JPanel {
 	
 	private JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
 	private JLabel totalLinesLabel = new JLabel("Lines: 0", JLabel.CENTER);
 	private JLabel levelLabel = new JLabel("Level: 1", JLabel.CENTER);
 	
-	private final FlashText FLASH_LEVEL_UP = new FlashText(Color.YELLOW);
-	private final FlashText FLASH_WIN = new FlashText("You Win!!!", Color.YELLOW);
-	private final FlashText FLASH_GAME_OVER = new FlashText("Game Over!!!", Color.RED);
+	private final FlashTextTask FLASH_WIN = new FlashTextTask("You Win!!!", Color.YELLOW);
+	private final FlashTextTask FLASH_GAME_OVER = new FlashTextTask("Game Over!!!", Color.RED);
 	
-	public ScorePanel() {
+	ScorePanel() {
 		
 		setLayout(new GridLayout(3,1));
+		setBorder(new TitledBorder("Scoring Info"));
 		
-		scoreLabel.setFont(GameFrame.LABEL_FONT);
-		totalLinesLabel.setFont(GameFrame.LABEL_FONT);
-		levelLabel.setFont(GameFrame.LABEL_FONT);
-		
-		add(scoreLabel);
-		add(totalLinesLabel);
-		add(levelLabel);
+		for (JLabel l : new JLabel[]{scoreLabel, totalLinesLabel, levelLabel}) {
+			l.setFont(GameFrame.LABEL_FONT);
+			add(l);
+		}
 		
 	}
 	
@@ -39,27 +36,26 @@ public class ScorePanel extends JPanel {
 		totalLinesLabel.setText("Lines: " + GameBoardModel.getLinesCompleted());
 		levelLabel.setText("Level: " + GameBoardModel.getLevel());
 	}
-
-	public void flashLevelLabel() { GameFrame.THREAD_EXECUTOR.execute(FLASH_LEVEL_UP); }
+	
+	// Can't declare a static task for flashing the level label since the label changes
+	// each time!
+	public void flashLevelLabel() {
+		FlashTextTask task = new FlashTextTask(levelLabel.getText(), Color.YELLOW);
+		GameFrame.THREAD_EXECUTOR.execute(task);
+	}
 	
 	public void flashWinMessage() { GameFrame.THREAD_EXECUTOR.execute(FLASH_WIN); }
 	
 	public void flashGameOverMessage() { GameFrame.THREAD_EXECUTOR.execute(FLASH_GAME_OVER); }
 	
 	// Thread task that can be configured to flash the level text a certain color
-	private class FlashText implements Runnable {
+	private class FlashTextTask implements Runnable {
 		
 		private String textToFlash;
 		private Color flashColor;
 		
-		// Create a task to flash the default score label (used on level up)
-		public FlashText(Color flashColor) {
-			this.textToFlash = levelLabel.getText(); // Text doesn't change
-			this.flashColor = flashColor;
-		}
-		
 		// Create a task to flash a customized string
-		public FlashText(String textToFlash, Color flashColor) {
+		public FlashTextTask(String textToFlash, Color flashColor) {
 			this.textToFlash = textToFlash;
 			this.flashColor = flashColor;
 		}
