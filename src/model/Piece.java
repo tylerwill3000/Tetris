@@ -5,13 +5,17 @@ import java.util.List;
 
 import ui.GameBoardPanel;
 
-// Data-layer class that represents pieces.
+// Data-layer class that represents pieces. The primary functions
+// of this class are to provide methods for determining whether the
+// current piece can be moved in a certain direction, and if so,
+// to reassign it's current position to reflect the move
 public class Piece {
 	
 	private Color color;
 	
-	// Orientation map. Denotes which squares are lit up in
-	// the piece's bounding grid for each orientation
+	// Orientation map. Provides offsets to determine
+	// which squares are lit up in the piece's bounding
+	// grid for each orientation
 	private int[][][] orientationMap;
 	
 	// Denotes which squares are lit up when the piece is
@@ -30,11 +34,12 @@ public class Piece {
 	private int orientation = 0;
 	
 	// Holds the currently lit squares of the piece.
-	// Recalculated every time the piece moves or rotates
-	private int[][] litSquares;
+	// Recalculated every time the piece moves or rotates.
+	// Not set until the piece comes off the factory conveyor
+	// belt, in case the piece needs to be shifted updwards
+	// first
+	private int[][] litSquares = null;
 	
-	// Lit squares are not set until the piece comes off the factory conveyor belt, in case the
-	// piece needs to be shifted upwards first
 	public Piece(Color color, int[][][] orientationMap, int[][] nextPanelSqaures, int startRow) {
 		
 		this.color = color;
@@ -47,7 +52,7 @@ public class Piece {
 	
 	// Location getters. Since some pieces can be placed with the bottom
 	// row of their bounding matrix empty, it can cause the location to
-	// extend beyond the number of vertical cells, so perform a qGUIck
+	// extend beyond the number of vertical cells, so perform a quick
 	// check to prevent an out of bounds index from getting returned if
 	// this is the case
 	public int getRow() {
@@ -83,7 +88,7 @@ public class Piece {
 
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies, based
-	// on its location and orientation
+	// on its current location and orientation
 	public int[][] calcLitSquares() {
 		
 		List<int[]> litSquares = new ArrayList<int[]>();
@@ -105,6 +110,8 @@ public class Piece {
 			
 		}
 		
+		// All of my painting methods require arrays to work properly,
+		// so convert the lit squares to an array before returning
 		return litSquares.toArray(new int[litSquares.size()][2]);
 		
 	}
@@ -117,8 +124,9 @@ public class Piece {
 		int downwardShift = 0;
 		
 		// Keep track of the current lit squares for the piece, since it will
-		// be shifted downwards. Prevents me from having to recalculate the
-		// lit squares when the piece is returned to its original location
+		// be logically shifted downwards. This prevents me from having to
+		// recalculate the lit squares when the piece is returned to its
+		// original location
 		int[][] currentLitSquares = litSquares;
 	
 		while (canMove(1,0)) {
@@ -168,18 +176,18 @@ public class Piece {
 	// Checks to see if the piece can be rotated. Pass 1 for CW, -1 for CCW
 	public boolean canRotate(int orientationShift) {
 		
-		// BGUIld a list of squares that will be active if the
-		// piece is rotated
+		// Build a list of squares that will be active if the
+		// piece is rotated by logically rotating the piece
+		// and then calculating the lit squares from the new
+		// position
 		rotate(orientationShift);
 		int[][] destinationSquares = calcLitSquares();
 		rotate(orientationShift * -1); // Return piece to original position
 		
 		// Make sure all new squares are legal
-		for (int[] litSquare : destinationSquares) {
-			
+		for (int[] litSquare : destinationSquares) 
 			if (!GameBoardModel.isLegalSquare(litSquare[0], litSquare[1]))
 				return false;
-		}
 		
 		return true;
 		
@@ -187,40 +195,24 @@ public class Piece {
 	
 	// This is used right before the piece is popped off the factory conveyor belt to
 	// determine which squares it initially occupies. In some cases, the piece will
-	// be shifted up a single row if there is not enough room for it to occupy
-	// its normal initial squares.
+	// be shifted up a few rows if there is not enough room for it to occupy
+	// its normal initial squares. If the loop is exhausted (i.e. no valid initial
+	// squares were found), it will cause game over, since lit squares will remain
+	// assigned to null
 	public void setInitialSquares() {
 		
+		// Decrement location each iteration to test the next row above
 		for (int row = startRow; row >= 0; location[0]--, row--) {
 			
-			// Set the lit squares before testing if they are valid
-			litSquares = calcLitSquares();
+			// Set candidate squares
+			int[][] candidateInitialSquares = calcLitSquares();
 			
-			// Flags to track whether the test passed or not
-			boolean hasVisibleSquares = false;
-			boolean allUnoccupied = true; // Assume true until proven false
-			
-			// Run both checks against all current lit squares
-			for (int[] square : litSquares) {
-				
-				if (square[0] >= 0) hasVisibleSquares = true;
-				
-				if (GameBoardModel.isSquareOccupied(square[0], square[1])) {
-					allUnoccupied = false;
-					break; // Don't need to perform any more checks if there is an occupied square
-				}
-				
+			if (GameBoardModel.areValidInitialSquares(candidateInitialSquares)) {
+				litSquares = candidateInitialSquares;
+				return;
 			}
 			
-			// See if these squares pass the test. If so, can return
-			// from the method
-			if (hasVisibleSquares && allUnoccupied) return;
-			
 		}
-		
-		// This will cause a game over, since the piece will
-		// not have any valid squares to occupy at the start
-		litSquares = null;
 		
 	}
 	

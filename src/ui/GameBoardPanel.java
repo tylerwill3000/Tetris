@@ -30,6 +30,7 @@ public class GameBoardPanel extends GridPainter {
 	private static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
 	
 	Thread spiralAnimation = new Thread(new SpiralAnimation());
+	Thread clearAnimation = new Thread(new ClearAnimation());
 	
 	// Keyboard listeners
 	private PieceMovementInput pieceMovementInput = new PieceMovementInput();
@@ -251,6 +252,11 @@ public class GameBoardPanel extends GridPainter {
 		GameFrame.THREAD_EXECUTOR.execute(spiralAnimation);
 	}
 	
+	// Erases all squares in the grid after filling them bottom to top
+	void startClearAnimation() {
+		GameFrame.THREAD_EXECUTOR.execute(clearAnimation);
+	}
+	
 	// BGUIlds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
 	private static List<int[]> initSpiralSquares() {
@@ -319,12 +325,8 @@ public class GameBoardPanel extends GridPainter {
 				
 				JPanel p = JPanelGrid[square[0]][square[1]];
 			
-				if (!GameBoardModel.isSquareOccupied(square[0], square[1])) {
-	
-					p.setBackground(PieceFactory.getRandomColor());
-					p.setBorder(GameFrame.BEVEL_BORDER);
-					
-				}
+				if (!GameBoardModel.isSquareOccupied(square[0], square[1]))
+					paintSquare(p, PieceFactory.getRandomColor());
 				
 				Thread.sleep(SLEEP_INTERVAL);
 				
@@ -345,7 +347,51 @@ public class GameBoardPanel extends GridPainter {
 		}
 		
 	}
-
+	
+	// Runnable task class that is started upon game complete
+	// to clear the board. Fills all rows bottom to top, and then
+	// clears all rows top to bottom
+	private class ClearAnimation implements Runnable {
+		
+		private final static int SLEEP_INTERVAL = 80;
+		
+		public void run() {
+			
+			try {
+			
+			// Fill all rows bottom to top
+			for (int row = V_CELLS - 1; row >= 0; row --) {
+				
+				for (int col = 0; col < H_CELLS; col++) {
+					
+					JPanel p = JPanelGrid[row][col];
+					
+					if (!GameBoardModel.isSquareOccupied(row, col))
+						paintSquare(p, PieceFactory.getRandomColor());
+					
+				}
+				
+				Thread.sleep(SLEEP_INTERVAL);
+				
+			}
+			
+			// Clear all rows top to bottom
+			for (int row = 0; row < V_CELLS; row ++) {
+				
+				for (int col = 0; col < H_CELLS; col++)
+					eraseSquare(JPanelGrid[row][col]);					
+				
+				Thread.sleep(SLEEP_INTERVAL);
+				
+			}
+			
+			}
+			catch (InterruptedException e) {}
+			
+		}
+		
+	}
+	
 	// Thread task class for flashing a row a couple times.
 	// Used when lines are cleared
 	class FlashRowsTask implements Runnable {

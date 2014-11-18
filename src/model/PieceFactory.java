@@ -3,7 +3,7 @@ package model;
 import java.awt.Color;
 import java.util.LinkedList;
 
-// Used to churn out new pieces at random
+// Used to churn out new pieces at random off a virtual 'conveyor belt'
 public final class PieceFactory {
 	
 	private static LinkedList<Piece> conveyorBelt = initConveyorBelt();
@@ -11,18 +11,25 @@ public final class PieceFactory {
 	// Pops the first piece off the conveyor belt and adds a
 	// new one to replace it
 	public static Piece receiveNextPiece() {
+		
 		conveyorBelt.offer(generate());
 		Piece nextPiece = conveyorBelt.poll();
+		
+		// These are dynamic, since piece might have to be
+		// shifted upwards a couple squares
 		nextPiece.setInitialSquares();
+		
 		return nextPiece;
+		
 	}
 	
 	// Peeks at the next piece. Used to determine what to
-	// display in the next box
+	// display in the 'next piece' panel
 	public static Piece peekAtNextPiece() {
 		return conveyorBelt.peek();		
 	}
 	
+	// Generates a random Piece object
 	private static Piece generate() {
 		
 		// Generate a random number that will
@@ -39,7 +46,7 @@ public final class PieceFactory {
 		
 	}
 	
-	// Returns random number in specified range
+	// Returns a random number within the specified range
 	private static int randInRange(int min, int max) {
 		
 		return (int)(Math.random() * (max - min + 1)) + min;
@@ -48,7 +55,7 @@ public final class PieceFactory {
 	
 	public static Color getRandomColor() {
 	
-		switch (randInRange(1,7)) {
+		switch (randInRange(1,9)) {
 			
 			case 1: return Color.RED;
 			case 2: return Color.ORANGE;
@@ -57,6 +64,8 @@ public final class PieceFactory {
 			case 5: return Color.BLUE;
 			case 6: return Color.CYAN;	
 			case 7: return Color.PINK;
+			case 8: return Color.MAGENTA;
+			case 9: return Color.LIGHT_GRAY;
 		
 		}
 		
@@ -64,6 +73,7 @@ public final class PieceFactory {
 		
 	}
 	
+	// Builds the initial piece conveyor belt with 2 pieces
 	private static LinkedList<Piece> initConveyorBelt() {
 		
 		LinkedList<Piece> belt = new LinkedList<Piece>();
@@ -400,11 +410,11 @@ class Ingredients {
 	 *  in each collection is added in the same exact order. For
 	 *  example, since the data for the "Box" piece is the first element
 	 *  in one collection ,it must also be the first element in all
-	 *  other collections. This allows me to use be able to use only 1
+	 *  other collections. This allows me to only have to use a single integer
 	 *  index to gather all necessary piece information
 	 */
 	
-	// Essentially a collection of all the maps declared above
+	// A collection of all the maps declared above
 	public final static int[][][][] ORIENTATION_MAPS = {
 		BOX_ORIENTATIONS,
 		L_BLOCK_L_ORIENTATIONS,

@@ -28,8 +28,11 @@ public class AudioManager {
 		getAudioClip("audio/soundtrack/chrono-trigger-final-battle.wav")
 	};
 	
+	// Non-looping soundtrack clips
+	private static final Clip gameOver = getAudioClip("audio/soundtrack/zelda-game-over.wav");
+	private static final Clip victoryFanfare = getAudioClip("audio/soundtrack/ff1-victory-fanfare.wav");
+	
 	// Effects
-	private static final Clip gameOver = getAudioClip("audio/effects/zelda-game-over.wav");
 	private static final Clip pause = getAudioClip("audio/effects/mario-64-pause.wav");
 	private static final Clip placePiece = getAudioClip("audio/effects/pipe.wav");
 	private static final Clip clearLine = getAudioClip("audio/effects/laser.wav");
@@ -41,8 +44,16 @@ public class AudioManager {
 	
 	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
-		soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
-		soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+		if (GUI.settingsPanel.musicOn()) {
+			
+			// In case a new game is started before the victory jingle is finished
+			// from a previous game (rare occurrence, but possible)
+			if (victoryFanfare.isRunning())
+				victoryFanfare.stop();			
+			
+			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
+			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+		}
 	}
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
@@ -63,6 +74,13 @@ public class AudioManager {
 		}
 	}
 	
+	public static void playVictoryFanfare() {
+		if (GUI.settingsPanel.musicOn()) {
+			victoryFanfare.start();
+			victoryFanfare.setFramePosition(0);
+		}
+	}
+	
 	public static void playPauseSound() { playEffect(pause); }
 	public static void playPiecePlacementSound() { playEffect(placePiece); }
 	
@@ -74,7 +92,6 @@ public class AudioManager {
 			playEffect(clearLine);
 	}
 	
-	public static void playUltraLineSound() { playEffect(ultraLine); }
 	public static void playCWRotationSound() { playEffect(swipeUp); }
 	public static void playCCWRotationSound() { playEffect(swipeDown); }
 	

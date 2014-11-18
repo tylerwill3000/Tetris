@@ -28,13 +28,13 @@ public class Controller {
 			else {
 				
 				// Obtain a list of all complete lines (if any) that
-				// result from adding this piece
+				// result from permanently adding this piece to the board
 				List<Integer> completeLines = GameBoardModel.addPiece(GUI.gameBoardPanel.currentPiece);
 				
 				if (!completeLines.isEmpty()) {
 					
-					// TODO I need to fix the flashing task
-					/* Execute a new flashing rows task for these complete lines
+					/* TODO I need to fix the flashing task
+					// Execute a new flashing rows task for these complete lines
 					Thread flash = new Thread(GUI.gameBoardPanel.new FlashRowsTask(completeLines));
 					GameFrame.THREAD_EXECUTOR.execute(flash);*/
 					
@@ -120,6 +120,9 @@ public class Controller {
 		
 		GUI.scorePanel.flashWinMessage();
 		GUI.gameBoardPanel.disablePieceMovementInput();
+		GUI.gameBoardPanel.startClearAnimation();
+		
+		AudioManager.playVictoryFanfare();
 		
 		// Disable all buttons but the start button
 		GUI.menuPanel.enableStartButton();
