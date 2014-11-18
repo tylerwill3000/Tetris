@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
 
 import model.Piece;
 
@@ -17,7 +16,7 @@ public class GridPainter extends JPanel {
 	// Holds all the JPanel objects for the panel
 	protected JPanel[][] JPanelGrid;
 	
-	// Package-private so other UI elements can manipulate it
+	// Package-private so other GUI elements can manipulate it
 	Piece currentPiece;
 	
 	protected GridPainter(int rows, int cols) {
@@ -51,8 +50,7 @@ public class GridPainter extends JPanel {
 	}
 	
 	// Erases the color in any given square. Pass the panel
-	// object that represents the square
-	// Removes the color and border from a panel
+	// object that represents the square.
 	protected void eraseSquare(JPanel p) {
 		p.setBackground(null);
 		p.setBorder(null);

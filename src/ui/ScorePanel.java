@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 
 import model.GameBoardModel;
 
-// Holds all scoring info
+// Dedicated to the "View" portion of the scoring data
 public class ScorePanel extends JPanel {
 	
 	private JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
@@ -31,6 +31,7 @@ public class ScorePanel extends JPanel {
 		
 	}
 	
+	// Pulls the current data from the GameBoardModel and then displays it
 	public void refreshScoreInfo() {
 		scoreLabel.setText("Score: " + GameBoardModel.getScore());
 		totalLinesLabel.setText("Lines: " + GameBoardModel.getLinesCompleted());

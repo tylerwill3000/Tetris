@@ -9,14 +9,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
-import model.AudioManager;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,10 +22,10 @@ public class GameFrame extends JFrame {
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
 	
-	// Game style constants
+	// GGUI style constants
 	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 15);
+	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
 	
 	// Dimension constants
 	private static final int GAME_BOARD_PANEL_WIDTH = 300;
@@ -37,12 +34,12 @@ public class GameFrame extends JFrame {
 	GameFrame() {
 		
 		// Configure the game board panel before placing
-		UIBox.gameBoardPanel.setFocusable(true);
-		UIBox.gameBoardPanel.setPreferredSize(new Dimension(GameFrame.GAME_BOARD_PANEL_WIDTH, 750));
+		GUI.gameBoardPanel.setFocusable(true);
+		GUI.gameBoardPanel.setPreferredSize(new Dimension(GameFrame.GAME_BOARD_PANEL_WIDTH, 750));
 		
-		add(UIBox.gameBoardPanel, BorderLayout.WEST);
+		add(GUI.gameBoardPanel, BorderLayout.WEST);
 		add(createInfoPanel(), BorderLayout.CENTER);
-		add(UIBox.menuPanel, BorderLayout.SOUTH);
+		add(GUI.menuPanel, BorderLayout.SOUTH);
 		
 		setIconImage(new ImageIcon(getClass().getResource("images/icon.png")).getImage());
 		setTitle("Tetris");
@@ -60,27 +57,30 @@ public class GameFrame extends JFrame {
 		JPanel infoPanel = new JPanel(new BorderLayout());
 		
 		// Configure next piece panel size
-		UIBox.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
-		
+		GUI.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
 		
 		// Create a container panel to add the controls and
 		// settings panels to
 		JPanel controlsAndSettingsContainer = new JPanel(new BorderLayout());
 		JPanel controls = createControlsPanel();
+		
+		// Set sizes of both the controls panel and the settings panel
 		controls.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 140));
-		UIBox.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		GUI.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		
 		controlsAndSettingsContainer.add(controls, BorderLayout.NORTH);
-		controlsAndSettingsContainer.add(UIBox.settingsPanel, BorderLayout.SOUTH);
+		controlsAndSettingsContainer.add(GUI.settingsPanel, BorderLayout.SOUTH);
 		
 		// Add all components to the info panel
-		infoPanel.add(UIBox.nextPiecePanel, BorderLayout.NORTH);
-		infoPanel.add(UIBox.scorePanel, BorderLayout.CENTER);
+		infoPanel.add(GUI.nextPiecePanel, BorderLayout.NORTH);
+		infoPanel.add(GUI.scorePanel, BorderLayout.CENTER);
 		infoPanel.add(controlsAndSettingsContainer, BorderLayout.SOUTH);
 		
 		return infoPanel;
 		
 	}
 	
+	// Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
 		JPanel controls = new JPanel(new GridLayout(6,1));

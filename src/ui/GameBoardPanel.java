@@ -1,13 +1,11 @@
 package ui;
 
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import model.AudioManager;
 import model.GameBoardModel;
@@ -38,9 +36,14 @@ public class GameBoardPanel extends GridPainter {
 	private MenuHotkeyInput menuHotkeyInput = new MenuHotkeyInput();
 	
 	GameBoardPanel() {
+		
 		super(V_CELLS, H_CELLS);
+		
+		// Piece movement listener is added once start button is clicked
 		addKeyListener(menuHotkeyInput);
+		
 		setBorder(GameFrame.LINE_BORDER);
+		
 	}
 	
 	void enablePieceMovementInput() {
@@ -51,15 +54,10 @@ public class GameBoardPanel extends GridPainter {
 		removeKeyListener(pieceMovementInput);
 	}
 	
-	
 	// Listener for the piece movement input from the keyboard
 	private class PieceMovementInput extends KeyAdapter {
 		
 		public void keyPressed(KeyEvent e) {			
-			
-			// Movement keys will not fire their actions if either the game is
-			// paused or the space key has been pressed during this interval
-			if (GameBoardModel.isPaused || GameBoardModel.spacePressed) return;
 			
 			switch (e.getKeyCode()) {
 				
@@ -127,7 +125,8 @@ public class GameBoardPanel extends GridPainter {
 				
 				AudioManager.playPiecePlacementSound();
 				
-				GameBoardModel.spacePressed = true;
+				// Force the next tick to execute immediately on the timer
+				Controller.fallTimer.restart();
 				
 				break;
 				
@@ -146,22 +145,22 @@ public class GameBoardPanel extends GridPainter {
 			
 			case KeyEvent.VK_S:
 				
-				UIBox.menuPanel.start.doClick();
+				GUI.menuPanel.start.doClick();
 				break;
 			
 			case KeyEvent.VK_P:
 				
-				UIBox.menuPanel.pause.doClick();
+				GUI.menuPanel.pause.doClick();
 				break;
 				
 			case KeyEvent.VK_R:
 				
-				UIBox.menuPanel.resume.doClick();
+				GUI.menuPanel.resume.doClick();
 				break;
 				
 			case KeyEvent.VK_G:
 				
-				UIBox.menuPanel.giveUp.doClick();
+				GUI.menuPanel.giveUp.doClick();
 				break;
 				
 			}
@@ -223,7 +222,7 @@ public class GameBoardPanel extends GridPainter {
 	
 	void paintGhostPiece() {
 		
-		if (!UIBox.settingsPanel.ghostSquaresOn())
+		if (!GUI.settingsPanel.ghostSquaresOn())
 			return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
@@ -252,7 +251,7 @@ public class GameBoardPanel extends GridPainter {
 		GameFrame.THREAD_EXECUTOR.execute(spiralAnimation);
 	}
 	
-	// Builds the list of spiral squares. Squares are in order
+	// BGUIlds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
 	private static List<int[]> initSpiralSquares() {
 		
@@ -338,7 +337,7 @@ public class GameBoardPanel extends GridPainter {
 			}
 			
 			// Re-enable the start button once the spiral loop is completed
-			UIBox.menuPanel.enableStartButton();
+			GUI.menuPanel.enableStartButton();
 			
 			}
 			catch (InterruptedException e) {}
@@ -355,16 +354,16 @@ public class GameBoardPanel extends GridPainter {
 		
 		public FlashRowsTask(List<Integer> completeLines) {
 			this.rowsToFlash = completeLines;
-		}
+		}			
 		
 		public void run() {
 			
 			// Flash the rows three times before clearing it
-			for (int i = 1; i <= 7; i ++) {
+			for (int i = 1; i <= 9; i ++) {
 				
 				for (Integer row : rowsToFlash) {
 					
-					if (row % 2 == 0)
+					if (i % 2 == 0)
 						paintRow(row);
 					else
 						flashRow(row);
@@ -373,7 +372,7 @@ public class GameBoardPanel extends GridPainter {
 				
 				try { Thread.sleep(20); } 
 				catch (InterruptedException e) {}
-				
+
 			}
 
 		}

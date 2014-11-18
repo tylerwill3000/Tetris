@@ -5,12 +5,9 @@ import java.util.List;
 
 import ui.GameBoardPanel;
 
-// The piece class is abstracted in order to allow the
-// concrete sub-class implementations to return unique
-// square / coordinate info
+// Data-layer class that represents pieces.
 public class Piece {
 	
-	// Piece's color
 	private Color color;
 	
 	// Orientation map. Denotes which squares are lit up in
@@ -50,7 +47,7 @@ public class Piece {
 	
 	// Location getters. Since some pieces can be placed with the bottom
 	// row of their bounding matrix empty, it can cause the location to
-	// extend beyond the number of vertical cells, so perform a quick
+	// extend beyond the number of vertical cells, so perform a qGUIck
 	// check to prevent an out of bounds index from getting returned if
 	// this is the case
 	public int getRow() {
@@ -69,7 +66,8 @@ public class Piece {
 		location[1] += colMove;
 		litSquares = calcLitSquares();
 	}
-
+	
+	// Valid orientation values cycle through the range 0-3
 	public void rotate(int rotation) {
 	
 		orientation += rotation;
@@ -170,7 +168,7 @@ public class Piece {
 	// Checks to see if the piece can be rotated. Pass 1 for CW, -1 for CCW
 	public boolean canRotate(int orientationShift) {
 		
-		// Build a list of squares that will be active if the
+		// BGUIld a list of squares that will be active if the
 		// piece is rotated
 		rotate(orientationShift);
 		int[][] destinationSquares = calcLitSquares();
@@ -200,7 +198,7 @@ public class Piece {
 			
 			// Flags to track whether the test passed or not
 			boolean hasVisibleSquares = false;
-			boolean allUnoccupied = true;
+			boolean allUnoccupied = true; // Assume true until proven false
 			
 			// Run both checks against all current lit squares
 			for (int[] square : litSquares) {

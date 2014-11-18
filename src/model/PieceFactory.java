@@ -1,4 +1,3 @@
-
 package model;
 
 import java.awt.Color;
@@ -13,9 +12,9 @@ public final class PieceFactory {
 	// new one to replace it
 	public static Piece receiveNextPiece() {
 		conveyorBelt.offer(generate());
-		Piece toReturn = conveyorBelt.poll();
-		toReturn.setInitialSquares();
-		return toReturn;
+		Piece nextPiece = conveyorBelt.poll();
+		nextPiece.setInitialSquares();
+		return nextPiece;
 	}
 	
 	// Peeks at the next piece. Used to determine what to

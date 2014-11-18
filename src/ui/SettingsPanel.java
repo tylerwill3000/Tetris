@@ -16,23 +16,23 @@ public class SettingsPanel extends JPanel {
 	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
 	
-	ItemListener ghostSquaresListener = new ItemListener() {
+	private ItemListener ghostSquaresListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
 			if (ghostSquaresCbx.isSelected())
-				UIBox.gameBoardPanel.paintGhostPiece();
+				GUI.gameBoardPanel.paintGhostPiece();
 			else 
-				UIBox.gameBoardPanel.eraseGhostPiece();
+				GUI.gameBoardPanel.eraseGhostPiece();
 			
 			// In case ghost overlaps current piece
-			UIBox.gameBoardPanel.paintCurrentPiece();
+			GUI.gameBoardPanel.paintCurrentPiece();
 			
 		}
 		
 	};
 	
-	ItemListener musicListener = new ItemListener() {
+	private ItemListener musicListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
@@ -44,19 +44,20 @@ public class SettingsPanel extends JPanel {
 		}
 		
 	};
-		
+	
 	public boolean ghostSquaresOn() { return ghostSquaresCbx.isSelected(); }
 	public boolean musicOn() { return musicCbx.isSelected(); }
 	public boolean effectsOn() { return soundEffectsCbx.isSelected(); }
 	
+	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
+	// independently from the ghost squares checkbox
 	void enableMusicCbxListener() { musicCbx.addItemListener(musicListener); }
+	void disableMusicCbxListener() { musicCbx.removeItemListener(musicListener); }
 	
 	void enableCbxListeners() {
 		ghostSquaresCbx.addItemListener(ghostSquaresListener);
 		enableMusicCbxListener();
 	}
-	
-	void disableMusicCbxListener() { musicCbx.removeItemListener(musicListener); }
 	
 	void disableCbxListeners() {
 		ghostSquaresCbx.removeItemListener(ghostSquaresListener);

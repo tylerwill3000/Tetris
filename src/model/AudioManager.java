@@ -1,18 +1,17 @@
 package model;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.sound.sampled.*;
 
-import ui.UIBox;
-
+import ui.GUI;
 
 // Singleton class to interface to the game's audio
 public class AudioManager {
 	
 	// Provides a handle to the class directory of the AudioManger.class file.
 	// Used to obtain audio file resources
+	@SuppressWarnings("rawtypes")
 	private static final Class resources = new AudioManager().getClass();
 	
 	// Soundtrack for the game
@@ -28,7 +27,8 @@ public class AudioManager {
 		getAudioClip("audio/soundtrack/bean-machine-9-12.wav"),
 		getAudioClip("audio/soundtrack/chrono-trigger-final-battle.wav")
 	};
-
+	
+	// Effects
 	private static final Clip gameOver = getAudioClip("audio/effects/zelda-game-over.wav");
 	private static final Clip pause = getAudioClip("audio/effects/mario-64-pause.wav");
 	private static final Clip placePiece = getAudioClip("audio/effects/pipe.wav");
@@ -39,24 +39,15 @@ public class AudioManager {
 	
 	private AudioManager() {}
 	
-	// Used when you want to start the soundtrack from the beginning. Loops through all
-	// existing clips and closes any that are on
+	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
-		
-		if (UIBox.settingsPanel.musicOn()) {
-			
-			for (Clip c : soundtrack)
-				if (c.isRunning()) c.stop();
-			
-			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
-			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
-		}
-		
+		soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
+		soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
 	public static void resumeCurrentSoundtrack() {
-		if (UIBox.settingsPanel.musicOn())
+		if (GUI.settingsPanel.musicOn())
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
@@ -66,7 +57,7 @@ public class AudioManager {
 	}
 	
 	public static void playGameOverSound() {
-		if (UIBox.settingsPanel.musicOn()) {
+		if (GUI.settingsPanel.musicOn()) {
 			gameOver.start();
 			gameOver.setFramePosition(0);
 		}
@@ -91,11 +82,11 @@ public class AudioManager {
 	// frame position after playing
 	private static void playEffect(Clip effect) {
 		
-		if (UIBox.settingsPanel.effectsOn()) {
+		if (GUI.settingsPanel.effectsOn()) {
 			effect.start();
 			effect.setFramePosition(0);
-			
 		}
+		
 	}
 	
 	// Returns a clip audio output device input line from the specified file string
@@ -114,7 +105,8 @@ public class AudioManager {
 			c.open(AudioSystem.getAudioInputStream(resources.getResource(file)));
 			return c;
 			
-		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+		}
+		catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		}
 	

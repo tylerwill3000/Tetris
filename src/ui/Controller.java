@@ -2,10 +2,8 @@ package ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import model.AudioManager;
@@ -24,31 +22,29 @@ public class Controller {
 		public void actionPerformed(ActionEvent e) {
 			
 			// If the piece can be lowered, lower it
-			if (UIBox.gameBoardPanel.currentPiece.canMove(1,0)) 
-				UIBox.gameBoardPanel.lowerPiece();
+			if (GUI.gameBoardPanel.currentPiece.canMove(1, 0))
+				GUI.gameBoardPanel.lowerPiece();
 	 
 			else {
 				
-				// Release space bar lock
-				GameBoardModel.spacePressed = false;
-				
 				// Obtain a list of all complete lines (if any) that
 				// result from adding this piece
-				final List<Integer> completeLines = GameBoardModel.addPiece(UIBox.gameBoardPanel.currentPiece);
+				List<Integer> completeLines = GameBoardModel.addPiece(GUI.gameBoardPanel.currentPiece);
 				
 				if (!completeLines.isEmpty()) {
 					
 					// TODO I need to fix the flashing task
-					// Execute a new flashing rows task for these complete lines
-					// GameFrame.THREAD_EXECUTOR.execute(UIBox.gameBoardPanel.new FlashRowsTask(completeLines));
-				
-					// Actually remove the rows from the model
+					/* Execute a new flashing rows task for these complete lines
+					Thread flash = new Thread(GUI.gameBoardPanel.new FlashRowsTask(completeLines));
+					GameFrame.THREAD_EXECUTOR.execute(flash);*/
+					
+					// Remove the rows from the model
 					GameBoardModel.removeCompleteLines(completeLines);
 					
 					AudioManager.playClearLineSound(completeLines.size());
 					
 					// Show new score
-					UIBox.scorePanel.refreshScoreInfo();
+					GUI.scorePanel.refreshScoreInfo();
 					
 					// Repaint lines on the game grid
 					updateGameGrid(completeLines);
@@ -59,16 +55,17 @@ public class Controller {
 					
 				}
 				
-				// Move the conveyor belt along
+				// Move the conveyor belt along to set the new pieces for both piece panels
 				moveConveyorBelt();
 				
 				// If next piece can't emerge, it's game over
-				if (!UIBox.gameBoardPanel.currentPiece.canEmerge())
+				if (!GUI.gameBoardPanel.currentPiece.canEmerge())
 					processGameOver();
+				
 				else {
-					UIBox.gameBoardPanel.paintCurrentAndGhost();
-					UIBox.nextPiecePanel.clear();
-					UIBox.nextPiecePanel.paintCurrentPiece();
+					GUI.gameBoardPanel.paintCurrentAndGhost();
+					GUI.nextPiecePanel.clear();
+					GUI.nextPiecePanel.paintCurrentPiece();
 				}
 
 			}
@@ -77,13 +74,15 @@ public class Controller {
 		
 	});
 	
-	// Move the factory conveyor belt along 1 piece, setting
+	// Moves the factory conveyor belt along 1 piece, setting
 	// the game board panel's piece to the first piece in line and
-	// the next piece panel's to the one directly following it
-	private static void moveConveyorBelt() {
+	// the next piece panel's to the one directly following it.
+	// Package-private so it can be accessed by the start button listener
+	// to set the initial pieces on game load
+	static void moveConveyorBelt() {
 		
-		UIBox.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
-		UIBox.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+		GUI.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
+		GUI.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 		
 	}
 	
@@ -93,11 +92,11 @@ public class Controller {
 		
 		// Should only have to paint upwards from the bottom removed line
 		for (int line = removedLines.get(0); line >= 0; line--)
-			UIBox.gameBoardPanel.paintRow(line);
+			GUI.gameBoardPanel.paintRow(line);
 
 	}
 	
-	// For if removing these lines causes a level up
+	// For if removing lines causes a level up
 	private static void processLevelUp() {
 		
 		if (GameBoardModel.getLevel() == 11)
@@ -105,32 +104,31 @@ public class Controller {
 		
 		else {
 			
-			// Begin playing the new soundtrack
-			AudioManager.beginCurrentSoundtrack();
-			
 			fallTimer.setDelay(GameBoardModel.getTimerDelay());
-			UIBox.scorePanel.flashLevelLabel();
-			GameBoardModel.justLeveled = false;
+			GUI.scorePanel.flashLevelLabel();
+			
 		}
+		
+		GameBoardModel.justLeveled = false;
 		
 	}
 	
-	// For if removing these lines causes game complete
+	// For if removing lines causes game complete
 	private static void processGameComplete() {
 		
 		fallTimer.stop();
 		
-		UIBox.scorePanel.flashWinMessage();
-		UIBox.gameBoardPanel.disablePieceMovementInput();
+		GUI.scorePanel.flashWinMessage();
+		GUI.gameBoardPanel.disablePieceMovementInput();
 		
 		// Disable all buttons but the start button
-		UIBox.menuPanel.enableStartButton();
-		UIBox.menuPanel.disablePauseButton();
-		UIBox.menuPanel.disableResumeButton();
-		UIBox.menuPanel.disableGiveUpButton();
+		GUI.menuPanel.enableStartButton();
+		GUI.menuPanel.disablePauseButton();
+		GUI.menuPanel.disableResumeButton();
+		GUI.menuPanel.disableGiveUpButton();
 		
 		// Disable cbx listeners
-		UIBox.settingsPanel.disableCbxListeners();
+		GUI.settingsPanel.disableCbxListeners();
 		
 	}
 	
@@ -146,21 +144,21 @@ public class Controller {
 		AudioManager.playGameOverSound();		
 		
 		// Display spiral animation and flash game over message
-		UIBox.scorePanel.flashGameOverMessage();
-		UIBox.gameBoardPanel.startSpiralAnimation();
+		GUI.scorePanel.flashGameOverMessage();
+		GUI.gameBoardPanel.startSpiralAnimation();
 		
 		// Disable keyboard
-		UIBox.gameBoardPanel.disablePieceMovementInput();
+		GUI.gameBoardPanel.disablePieceMovementInput();
 		
 		// Disable the pause, resume, and give up buttons
 		// They will re-enable once the next game starts
-		UIBox.menuPanel.disablePauseButton();
-		UIBox.menuPanel.disableResumeButton();
-		UIBox.menuPanel.disableGiveUpButton();
+		GUI.menuPanel.disablePauseButton();
+		GUI.menuPanel.disableResumeButton();
+		GUI.menuPanel.disableGiveUpButton();
 		
 		// Disable the checkbox listeners
-		UIBox.settingsPanel.disableCbxListeners();
+		GUI.settingsPanel.disableCbxListeners();
 		
-	}	
+	}
 	
 }

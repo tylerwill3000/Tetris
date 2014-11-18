@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import model.AudioManager;
 import model.GameBoardModel;
-import model.PieceFactory;
 
 // Holds all the main menu buttons
 public class MenuPanel extends JPanel {
@@ -30,24 +29,23 @@ public class MenuPanel extends JPanel {
 			
 			// Reprint all squares on the game board. Since
 			// the model was reset, they will all be blank
-			UIBox.gameBoardPanel.fullReprint();
+			GUI.gameBoardPanel.fullReprint();
 			
 			// Clears all old score info from previous games
-			UIBox.scorePanel.refreshScoreInfo();
+			GUI.scorePanel.refreshScoreInfo();
 			
 			// Reset timer delay to default value
 			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
 			// Set initial pieces
-			UIBox.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
-			UIBox.nextPiecePanel.clear(); // In case the piece is still painted from a previous game
-			UIBox.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+			Controller.moveConveyorBelt();
 			
 			// Paint initial pieces
-			UIBox.gameBoardPanel.paintCurrentAndGhost();
-			UIBox.nextPiecePanel.paintCurrentPiece();
+			GUI.gameBoardPanel.paintCurrentAndGhost();
+			GUI.nextPiecePanel.clear(); // In case the piece is still painted from a previous game
+			GUI.nextPiecePanel.paintCurrentPiece();
 			
-			UIBox.gameBoardPanel.enablePieceMovementInput();;
+			GUI.gameBoardPanel.enablePieceMovementInput();
 			
 			// Enable pause, resume and give up buttons.
 			// There is no reason for these to be enabled before the game starts
@@ -58,8 +56,9 @@ public class MenuPanel extends JPanel {
 			// Start button is disabled once pressed. It will re-enable
 			// after game over
 			disableStartButton();
-		
-			UIBox.settingsPanel.enableCbxListeners();
+			
+			// Both checkbox listeners get enabled
+			GUI.settingsPanel.enableCbxListeners();
 			
 			Controller.fallTimer.start();
 			
@@ -76,12 +75,12 @@ public class MenuPanel extends JPanel {
 			Controller.fallTimer.stop();
 			
 			// Don't allow sound to be turned on / off when game is paused
-			UIBox.settingsPanel.disableMusicCbxListener();
+			GUI.settingsPanel.disableMusicCbxListener();
 			
 			AudioManager.stopCurrentSoundtrack();			
 			AudioManager.playPauseSound();
 			
-			UIBox.gameBoardPanel.disablePieceMovementInput();;
+			GUI.gameBoardPanel.disablePieceMovementInput();;
 			disableGiveUpButton();
 			
 		}
@@ -95,11 +94,11 @@ public class MenuPanel extends JPanel {
 			Controller.fallTimer.start();
 			
 			// Re-enable sound to be turned on / off
-			UIBox.settingsPanel.enableMusicCbxListener();
+			GUI.settingsPanel.enableMusicCbxListener();
 			
 			AudioManager.resumeCurrentSoundtrack();
 			
-			UIBox.gameBoardPanel.enablePieceMovementInput();;
+			GUI.gameBoardPanel.enablePieceMovementInput();;
 			enableGiveUpButton();
 			
 		}
@@ -139,6 +138,5 @@ public class MenuPanel extends JPanel {
 		enableStartButton();
 		
 	}
-	
 	
 }
