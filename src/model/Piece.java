@@ -27,7 +27,9 @@ public class Piece {
 	
 	// Location of piece on the game board.
 	// Corresponds to the location of the
-	// bottom left corner of the bounding grid
+	// bottom left corner of the bounding grid.
+	// Set as piece comes off conveyor belt or
+	// is released from the hold panel
 	private int[] location;
 	
 	// Used to index into the orientation map
@@ -40,13 +42,17 @@ public class Piece {
 	// first
 	private int[][] litSquares = null;
 	
+	// This flag is necessary since released hold pieces must be placed - they
+	// can not be re-held. This is to prevent manual shifting of the piece
+	// conveyor belt
+	private boolean isHoldPiece = false;
+	
 	public Piece(Color color, int[][][] orientationMap, int[][] nextPanelSqaures, int startRow) {
 		
 		this.color = color;
 		this.orientationMap = orientationMap;
 		this.nextPanelSquares = nextPanelSqaures;
 		this.startRow = startRow;
-		this.location = new int[]{startRow, GameBoardPanel.CENTER_OFFSET};
 
 	}
 	
@@ -85,7 +91,10 @@ public class Piece {
 		litSquares = calcLitSquares();
 		
 	}
-
+	
+	public boolean isHoldPiece() { return isHoldPiece; }
+	public void setAsHoldPiece() { isHoldPiece = true; }
+	
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies, based
 	// on its current location and orientation
@@ -200,6 +209,8 @@ public class Piece {
 	// squares were found), it will cause game over, since lit squares will remain
 	// assigned to null
 	public void setInitialSquares() {
+		
+		location = new int[]{startRow, GameBoardPanel.CENTER_OFFSET};
 		
 		// Decrement location each iteration to test the next row above
 		for (int row = startRow; row >= 0; location[0]--, row--) {

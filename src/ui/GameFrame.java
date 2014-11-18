@@ -29,25 +29,31 @@ public class GameFrame extends JFrame {
 	
 	// Dimension constants
 	private static final int GAME_BOARD_PANEL_WIDTH = 300;
-	private static final int INFO_PANEL_WIDTH = 150;
+	static final int INFO_PANEL_WIDTH = 150;
 	
 	GameFrame() {
 		
-		// Configure the game board panel before placing
-		GUI.gameBoardPanel.setFocusable(true);
-		GUI.gameBoardPanel.setPreferredSize(new Dimension(GameFrame.GAME_BOARD_PANEL_WIDTH, 750));
-		
-		add(GUI.gameBoardPanel, BorderLayout.WEST);
-		add(createInfoPanel(), BorderLayout.CENTER);
+		add(createHoldPanel(), BorderLayout.WEST);
+		add(GUI.gameBoardPanel, BorderLayout.CENTER);
+		add(createInfoPanel(), BorderLayout.EAST);
 		add(GUI.menuPanel, BorderLayout.SOUTH);
 		
 		setIconImage(new ImageIcon(getClass().getResource("images/icon.png")).getImage());
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH, 600);
+		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, 600);
 		setResizable(false); // I don't want to mess with trying to make this work right
 		setLocationRelativeTo(null);
 		setVisible(true);
+		
+	}
+	
+	private JPanel createHoldPanel() {
+		
+		JPanel holdContainer = new JPanel(new BorderLayout());
+		holdContainer.add(GUI.holdPanel, BorderLayout.NORTH);
+		holdContainer.add(createControlsPanel(), BorderLayout.CENTER);
+		return holdContainer;
 		
 	}
 	
@@ -55,27 +61,14 @@ public class GameFrame extends JFrame {
 	private JPanel createInfoPanel() {
 		
 		JPanel infoPanel = new JPanel(new BorderLayout());
-		
-		// Configure next piece panel size
-		GUI.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
-		
-		// Create a container panel to add the controls and settings panels to
-		JPanel controlsAndSettingsContainer = new JPanel(new BorderLayout());
-		
-		// Create and configure the controls panel
-		JPanel controls = createControlsPanel();
-		controls.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
-		
+	
 		// Set size for the settings panel
 		GUI.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
-		
-		controlsAndSettingsContainer.add(controls, BorderLayout.NORTH);
-		controlsAndSettingsContainer.add(GUI.settingsPanel, BorderLayout.SOUTH);
 		
 		// Add all components to the info panel
 		infoPanel.add(GUI.nextPiecePanel, BorderLayout.NORTH);
 		infoPanel.add(GUI.scorePanel, BorderLayout.CENTER);
-		infoPanel.add(controlsAndSettingsContainer, BorderLayout.SOUTH);
+		infoPanel.add(GUI.settingsPanel, BorderLayout.SOUTH);
 		
 		return infoPanel;
 		
@@ -84,27 +77,21 @@ public class GameFrame extends JFrame {
 	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
-		JPanel controls = new JPanel();
+		JPanel controls = new JPanel(new GridLayout(12,2));
 		controls.setBorder(new TitledBorder("Controls"));
 		
-		JPanel keyContainer = new JPanel(new GridLayout(6,1));
-		keyContainer.add(new JLabel("Up:"));
-		keyContainer.add(new JLabel("'F:"));
-		keyContainer.add(new JLabel("Down:"));
-		keyContainer.add(new JLabel("Left:"));
-		keyContainer.add(new JLabel("Right:"));
-		keyContainer.add(new JLabel("Space:    ")); // Sets proper gap between panels
-		
-		JPanel actionContainer = new JPanel(new GridLayout(6,1));
-		actionContainer.add(new JLabel("rotate CW"));
-		actionContainer.add(new JLabel("rotate CCW"));
-		actionContainer.add(new JLabel("shift down"));
-		actionContainer.add(new JLabel("shift left"));
-		actionContainer.add(new JLabel("shift right"));
-		actionContainer.add(new JLabel("instant drop"));
-		
-		controls.add(keyContainer, BorderLayout.WEST);
-		controls.add(actionContainer, BorderLayout.EAST);		
+		controls.add(new JLabel("  Up:")); controls.add(new JLabel("Rotate CW"));
+		controls.add(new JLabel("  'F':")); controls.add(new JLabel("Rotate CCW"));
+		controls.add(new JLabel("  Down:")); controls.add(new JLabel("Shift down"));
+		controls.add(new JLabel("  Left:")); controls.add(new JLabel("Shift left"));
+		controls.add(new JLabel("  Right:")); controls.add(new JLabel("Shift right"));
+		controls.add(new JLabel("  Space:")); controls.add(new JLabel("Instant drop"));
+		controls.add(new JLabel("  'D':")); controls.add(new JLabel("Set hold"));
+		controls.add(new JLabel("  'R':")); controls.add(new JLabel("Release hold"));
+		controls.add(new JLabel("  'S':")); controls.add(new JLabel("Start"));
+		controls.add(new JLabel("  'P':")); controls.add(new JLabel("Pause"));
+		controls.add(new JLabel("  'E':")); controls.add(new JLabel("Resume"));
+		controls.add(new JLabel("  'G':")); controls.add(new JLabel("Give up"));
 		
 		return controls;
 		

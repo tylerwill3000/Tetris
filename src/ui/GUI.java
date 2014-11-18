@@ -11,7 +11,8 @@ import ui.SettingsPanel;
 public class GUI {
 	
 	static GameBoardPanel gameBoardPanel = new GameBoardPanel();
-	static NextPiecePanel nextPiecePanel = new NextPiecePanel();
+	static NextPiecePanel nextPiecePanel = new NextPiecePanel("Next Piece");
+	static NextPiecePanel holdPanel = new NextPiecePanel("Hold");
 	static ScorePanel scorePanel = new ScorePanel();
 	static MenuPanel menuPanel = new MenuPanel();
 	

@@ -42,9 +42,13 @@ public class MenuPanel extends JPanel {
 			// Set initial pieces
 			Controller.moveConveyorBelt();
 			
+			// In case these still have pieces from previous games
+			GUI.nextPiecePanel.clear();
+			GUI.holdPanel.clear();
+			GUI.holdPanel.currentPiece = null;
+			
 			// Paint initial pieces
 			GUI.gameBoardPanel.paintCurrentAndGhost();
-			GUI.nextPiecePanel.clear(); // In case the piece is still painted from a previous game
 			GUI.nextPiecePanel.paintCurrentPiece();
 			
 			GUI.gameBoardPanel.enablePieceMovementInput();
@@ -132,7 +136,7 @@ public class MenuPanel extends JPanel {
 		Map<JButton, Character> mnemonicMap = new HashMap<JButton, Character>();
 		mnemonicMap.put(start, 's');
 		mnemonicMap.put(pause, 'p');
-		mnemonicMap.put(resume, 'r');
+		mnemonicMap.put(resume, 'e');
 		mnemonicMap.put(giveUp, 'g');
 		
 		for (JButton b : new JButton[]{start, pause, resume, giveUp}) {

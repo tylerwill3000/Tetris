@@ -45,7 +45,7 @@ public class AudioManager {
 	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
 		
-		if (GUI.settingsPanel.musicOn()) {
+		if (GUI.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null) {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
@@ -61,24 +61,25 @@ public class AudioManager {
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
 	public static void resumeCurrentSoundtrack() {
-		if (GUI.settingsPanel.musicOn())
+		if (GUI.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null)
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
 	// Used for both stopping and pausing
 	public static void stopCurrentSoundtrack() {
-		soundtrack[GameBoardModel.getLevel()-1].stop();
+		if (soundtrack[GameBoardModel.getLevel()-1] != null)
+			soundtrack[GameBoardModel.getLevel()-1].stop();
 	}
 	
 	public static void playGameOverSound() {
-		if (GUI.settingsPanel.musicOn()) {
+		if (GUI.settingsPanel.musicOn() && gameOver != null) {
 			gameOver.start();
 			gameOver.setFramePosition(0);
 		}
 	}
 	
 	public static void playVictoryFanfare() {
-		if (GUI.settingsPanel.musicOn()) {
+		if (GUI.settingsPanel.musicOn() && victoryFanfare != null) {
 			victoryFanfare.start();
 			victoryFanfare.setFramePosition(0);
 		}
@@ -101,42 +102,49 @@ public class AudioManager {
 	// For playing small effect sounds. Resets the clip back to the starting
 	// frame position after playing
 	private static void playEffect(Clip effect) {
-		
-		if (GUI.settingsPanel.effectsOn()) {
+
+		if (GUI.settingsPanel.effectsOn() && effect != null) {
 			effect.start();
 			effect.setFramePosition(0);
 		}
-		
+
 	}
 	
 	// Iterates over all clips and resets their frame positions back to the start.
 	// Used upon game complete
 	public static void resetSoundtrackFramePositions() {
-		for (Clip c : soundtrack) c.setFramePosition(0);
+		for (Clip c : soundtrack)
+			if (c != null) c.setFramePosition(0);
 	}
 	
 	// Returns a clip audio output device input line from the specified file string
 	private static Clip getAudioClip(String file) {
 		
-		// Attempt to initialize clip input object
+		// Attempt to initialize clip input object. If there are no supported lines,
+		// null is returned for the clip
 		Clip c;
 		
-		try {
-			
-			c = AudioSystem.getClip();
-			
-			// Add a new audio stream to the clip data line. Since I'm
-			// using a clip object, all data is loaded into memory at
-			// once as opposed to being read into a buffer and streamed
-			c.open(AudioSystem.getAudioInputStream(resources.getResource(file)));
-			return c;
+		if (AudioSystem.isLineSupported(Port.Info.SPEAKER)) {
+		
+			try {
+				
+				c = AudioSystem.getClip();
+				
+				// Add a new audio stream to the clip data line. Since I'm
+				// using a clip object, all data is loaded into memory at
+				// once as opposed to being read into a buffer and streamed
+				c.open(AudioSystem.getAudioInputStream(resources.getResource(file)));
+				return c;
+				
+			}
+			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+				e.printStackTrace();
+				return null;
+			}
 			
 		}
-		catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-			e.printStackTrace();
-		}
-	
-		return null;
+		else
+			return null;
 		
 	}
 	

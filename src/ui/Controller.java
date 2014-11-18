@@ -125,8 +125,8 @@ public class Controller {
 		AudioManager.playVictoryFanfare();
 		AudioManager.resetSoundtrackFramePositions();
 		
-		// Disable all buttons but the start button
-		GUI.menuPanel.enableStartButton();
+		// Disable all buttons. Start button is re-enabled after
+		// game complete animation finishes
 		GUI.menuPanel.disablePauseButton();
 		GUI.menuPanel.disableResumeButton();
 		GUI.menuPanel.disableGiveUpButton();

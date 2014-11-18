@@ -43,6 +43,7 @@ public class GameBoardPanel extends GridPainter {
 		// Piece movement listener is added once start button is clicked
 		addKeyListener(menuHotkeyInput);
 		
+		setFocusable(true);
 		setBorder(GameFrame.LINE_BORDER);
 		
 	}
@@ -114,6 +115,42 @@ public class GameBoardPanel extends GridPainter {
 				}
 				
 				break;
+			
+			// Hold set
+			case KeyEvent.VK_D:
+				
+				// Can't hold a new piece if you're already holding one or the
+				// piece has been tagged as a hold piece (these must be placed)
+				if (GUI.holdPanel.currentPiece != null || currentPiece.isHoldPiece())
+					return;
+				
+				currentPiece.setAsHoldPiece();
+				GUI.holdPanel.currentPiece = currentPiece;
+				GUI.holdPanel.paintCurrentPiece();
+				
+				eraseCurrentAndGhost();
+				GUI.nextPiecePanel.clear();
+				
+				Controller.moveConveyorBelt();
+				
+				paintCurrentAndGhost();
+				GUI.nextPiecePanel.paintCurrentPiece();
+			
+				break;
+			
+			// Hold release
+			case KeyEvent.VK_R:
+						
+				eraseCurrentAndGhost();
+				GUI.holdPanel.clear();
+				
+				currentPiece = GUI.holdPanel.currentPiece;
+				GUI.holdPanel.currentPiece = null;
+				currentPiece.setInitialSquares();				
+				
+				paintCurrentAndGhost();
+				
+				break;				
 				
 			case KeyEvent.VK_SPACE:
 				
@@ -154,7 +191,7 @@ public class GameBoardPanel extends GridPainter {
 				GUI.menuPanel.pause.doClick();
 				break;
 				
-			case KeyEvent.VK_R:
+			case KeyEvent.VK_E:
 				
 				GUI.menuPanel.resume.doClick();
 				break;
@@ -314,7 +351,7 @@ public class GameBoardPanel extends GridPainter {
 	// Thread task class for painting the game over fill
 	private class SpiralAnimation implements Runnable {
 		
-		private final static int SLEEP_INTERVAL = 9;
+		private final static int SLEEP_INTERVAL = 8;
 		
 		public void run() {
 			
@@ -353,7 +390,7 @@ public class GameBoardPanel extends GridPainter {
 	// clears all rows top to bottom
 	private class ClearAnimation implements Runnable {
 		
-		private final static int SLEEP_INTERVAL = 80;
+		private final static int SLEEP_INTERVAL = 82;
 		
 		public void run() {
 			
@@ -384,6 +421,9 @@ public class GameBoardPanel extends GridPainter {
 				Thread.sleep(SLEEP_INTERVAL);
 				
 			}
+			
+			// Re-enable start button
+			GUI.menuPanel.enableStartButton();
 			
 			}
 			catch (InterruptedException e) {}
