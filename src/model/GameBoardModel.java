@@ -253,6 +253,12 @@ public class GameBoardModel {
 					System.out.print("P ");
 				else if (c == Color.GREEN)
 					System.out.print("G ");
+				else if (c == Color.CYAN)
+					System.out.println("C ");
+				else if (c == Color.LIGHT_GRAY)
+					System.out.print("Y ");
+				else if (c == Color.MAGENTA)
+					System.out.print("M ");
 				else
 					System.out.print(". ");
 			

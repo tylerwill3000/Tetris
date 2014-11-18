@@ -257,7 +257,7 @@ public class GameBoardPanel extends GridPainter {
 		GameFrame.THREAD_EXECUTOR.execute(clearAnimation);
 	}
 	
-	// BGUIlds the list of spiral squares. Squares are in order
+	// Builds the list of spiral squares. Squares are in order
 	// from the top left corner spiraling inwards, CCW
 	private static List<int[]> initSpiralSquares() {
 		
@@ -313,7 +313,7 @@ public class GameBoardPanel extends GridPainter {
 	
 	// Thread task class for painting the game over fill
 	private class SpiralAnimation implements Runnable {
-	
+		
 		private final static int SLEEP_INTERVAL = 9;
 		
 		public void run() {

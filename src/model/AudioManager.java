@@ -44,6 +44,7 @@ public class AudioManager {
 	
 	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
+		
 		if (GUI.settingsPanel.musicOn()) {
 			
 			// In case a new game is started before the victory jingle is finished
@@ -53,7 +54,9 @@ public class AudioManager {
 			
 			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+			
 		}
+		
 	}
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
@@ -104,6 +107,12 @@ public class AudioManager {
 			effect.setFramePosition(0);
 		}
 		
+	}
+	
+	// Iterates over all clips and resets their frame positions back to the start.
+	// Used upon game complete
+	public static void resetSoundtrackFramePositions() {
+		for (Clip c : soundtrack) c.setFramePosition(0);
 	}
 	
 	// Returns a clip audio output device input line from the specified file string

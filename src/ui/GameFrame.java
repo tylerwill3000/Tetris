@@ -93,7 +93,7 @@ public class GameFrame extends JFrame {
 		keyContainer.add(new JLabel("Down:"));
 		keyContainer.add(new JLabel("Left:"));
 		keyContainer.add(new JLabel("Right:"));
-		keyContainer.add(new JLabel("Space:"));
+		keyContainer.add(new JLabel("Space:    ")); // Sets proper gap between panels
 		
 		JPanel actionContainer = new JPanel(new GridLayout(6,1));
 		actionContainer.add(new JLabel("rotate CW"));

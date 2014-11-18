@@ -123,6 +123,7 @@ public class Controller {
 		GUI.gameBoardPanel.startClearAnimation();
 		
 		AudioManager.playVictoryFanfare();
+		AudioManager.resetSoundtrackFramePositions();
 		
 		// Disable all buttons but the start button
 		GUI.menuPanel.enableStartButton();
@@ -144,7 +145,9 @@ public class Controller {
 		
 		// Change audio over to game over sound
 		AudioManager.stopCurrentSoundtrack();
-		AudioManager.playGameOverSound();		
+		AudioManager.playGameOverSound();
+		
+		AudioManager.resetSoundtrackFramePositions();
 		
 		// Display spiral animation and flash game over message
 		GUI.scorePanel.flashGameOverMessage();
