@@ -1,8 +1,10 @@
 package model;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +69,7 @@ public class GameBoardModel {
 	// Adds the active squares for a piece to the quilt. Used when a piece
 	// is permanently placed somewhere. Returns the completed lines map
 	// (see method below for more detail on this)
-	public static Map<Integer, Color[]> addPiece(Piece p) {
+	public static List<Integer> addPiece(Piece p) {
 		
 		// Log all colors for this piece in the quilt that are within
 		// grid bounds
@@ -84,9 +86,9 @@ public class GameBoardModel {
 	// since the flash rows task needs a snapshot of what the rows
 	// looked like before they were removed from the model in order to
 	// know what to paint when it flashes them
-	private static Map<Integer, Color[]> getCompleteLines(Piece justPlaced) {
+	private static List<Integer> getCompleteLines(Piece justPlaced) {
 		
-		Map<Integer, Color[]> completeLines = new LinkedHashMap<Integer, Color[]>();
+		List<Integer> completeLines = new ArrayList<Integer>();
 		
 		// Iterate from the bottom row of the piece's bounding
 		// matrix upwards to check for complete lines
@@ -98,7 +100,7 @@ public class GameBoardModel {
 		for (int row = startRow; row >= 0 && row > startRow - 4; row--) {
 			
 			if (isCompleteLine(row))
-				completeLines.put(row, quilt.get(row));
+				completeLines.add(row);
 			
 		}
 		
@@ -115,7 +117,7 @@ public class GameBoardModel {
 	}
 	
 	// Removes the specified completed lines from the quilt
-	public static void removeCompleteLines(Set<Integer> toRemove) {
+	public static void removeCompleteLines(List<Integer> toRemove) {
 		
 		// Since removing a line essentially increases the row index value
 		// of all lines above it by 1, removing multiple lines in sequence
@@ -148,19 +150,10 @@ public class GameBoardModel {
 		
 		score += completedLines * LINE_POINTS_MAP[completedLines];
 		
+		// Process level ups
 		while (linesCompleted >= level * LINES_PER_LEVEL) {
-			
-			AudioManager.stopCurrentSoundtrack();
 			level++;
-			
-			// There is no looping soundtrack that is played
-			// once the game is won. The winning jingle will
-			// be initiated from the main fall timer listener
-			if (level != 11)
-				AudioManager.beginCurrentSoundtrack();
-			
 			justLeveled = true;
-			
 		}
 		
 	}

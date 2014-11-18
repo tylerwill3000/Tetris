@@ -18,7 +18,7 @@ import model.PieceFactory;
 // existing piece configuration as specified by the GameBoardModel
 // as well as the active piece configuration as specified by
 // the current piece
-public class GameBoardPanel extends AbstractPiecePainter {
+public class GameBoardPanel extends GridPainter {
 	
 	// Board dimensions
 	public static final int V_CELLS = 20;
@@ -36,11 +36,6 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	// Keyboard listeners
 	private PieceMovementInput pieceMovementInput = new PieceMovementInput();
 	private MenuHotkeyInput menuHotkeyInput = new MenuHotkeyInput();
-	
-	// Controls the game flow. Doesn't matter what the initial delay is
-	//since it is set later. Package private so it can be accessed by other
-	// UI elements through the UIBox
-	Timer fallTimer = new Timer(0, new FallTimerListener());
 	
 	GameBoardPanel() {
 		super(V_CELLS, H_CELLS);
@@ -192,66 +187,22 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		paintCurrentPiece();
 	}
 	
-	// Sets the current piece's position in stone, removing
-	// any resulting complete lines and painting the new pieces
-	void placePiece() {
-		
-		// Log squares to the GameBoardModel for this piece and
-		// receive the map of completed lines
-		Map<Integer, Color[]> completeLines = GameBoardModel.addPiece(currentPiece);
-		
-		// Erase piece from next piece panel
-		UIBox.nextPiecePanel.eraseCurrentPiece();
-		
-		// Set new pieces for both panels
-		currentPiece = PieceFactory.receiveNextPiece();
-		UIBox.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
-		
-		// Paint new piece for the next piece panel
-		UIBox.nextPiecePanel.paintCurrentPiece();
-		
-		// If there are completed lines, start the flash task and then paint
-		// the current game board pieces after it's done. Otherwise, paint
-		// them right away
-		if (!completeLines.isEmpty()) {
-			GameBoardModel.removeCompleteLines(completeLines.keySet());
-			GameFrame.THREAD_EXECUTOR.execute(new FlashRowsTask(completeLines));
-		}
-		else
-			if (currentPiece.canEmerge()) paintCurrentAndGhost();
-	
-	}
-	
 	// Repaints the specified row according to the GameBoardModel
-	private void paintRow(int row) {
+	void paintRow(int row) {
 		
 		// Iterate over all cell values in the row
 		for (int cell = 0; cell < H_CELLS; cell++) {
 			
 			JPanel panel = JPanelGrid[row][cell];
 			
-			// If square is occupied, paint the color
-			if (GameBoardModel.isSquareOccupied(row, cell)) {
-		
-				panel.setBackground(GameBoardModel.getColor(row, cell));
-				panel.setBorder(GameFrame.BEVEL_BORDER);
-				
-			}
-			
-			// Nullify all unoccupied panels in the row
+			// If square is occupied, paint the color. Else,
+			// erase any current contents that may have been
+			// occupying that square
+			if (GameBoardModel.isSquareOccupied(row, cell))
+				paintSquare(panel, GameBoardModel.getColor(row, cell));
 			else 
-				nullifyPanel(panel);
+				eraseSquare(panel);
 			
-		}
-		
-	}
-	
-	// Repaints the specified row according to the row index and color array provided
-	private void paintRow(int row, Color[] colors) {
-		
-		for (int col = 0; col < H_CELLS; col++) {
-			JPanelGrid[row][col].setBackground(colors[col]);
-			JPanelGrid[row][col].setBorder(GameFrame.BEVEL_BORDER);
 		}
 		
 	}
@@ -263,6 +214,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			JPanelGrid[row][cell].setBorder(null);
 			JPanelGrid[row][cell].setBackground(Color.WHITE);
 		}
+		
 	}
 	
 	void paintCurrentPiece() {
@@ -271,7 +223,8 @@ public class GameBoardPanel extends AbstractPiecePainter {
 	
 	void paintGhostPiece() {
 		
-		if (!UIBox.settingsPanel.ghostSquaresOn()) return;
+		if (!UIBox.settingsPanel.ghostSquaresOn())
+			return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
 	
@@ -380,7 +333,7 @@ public class GameBoardPanel extends AbstractPiecePainter {
 			
 			// Run a second loop to erase all of them
 			for (int[] square : SPIRAL_SQUARES) {
-				nullifyPanel(JPanelGrid[square[0]][square[1]]);
+				eraseSquare(JPanelGrid[square[0]][square[1]]);
 				Thread.sleep(SLEEP_INTERVAL);
 			}
 			
@@ -393,56 +346,36 @@ public class GameBoardPanel extends AbstractPiecePainter {
 		}
 		
 	}
-	
+
 	// Thread task class for flashing a row a couple times.
 	// Used when lines are cleared
-	private class FlashRowsTask implements Runnable {
+	class FlashRowsTask implements Runnable {
 		
-		private Map<Integer, Color[]> rowsToFlash;
+		private List<Integer> rowsToFlash;
 		
-		public FlashRowsTask(Map<Integer, Color[]> completeLines) {
+		public FlashRowsTask(List<Integer> completeLines) {
 			this.rowsToFlash = completeLines;
 		}
 		
 		public void run() {
 			
 			// Flash the rows three times before clearing it
-			for (int i = 1; i <= 9; i ++) {
+			for (int i = 1; i <= 7; i ++) {
 				
-				for (Map.Entry<Integer, Color[]> entry : rowsToFlash.entrySet()) {
+				for (Integer row : rowsToFlash) {
 					
-					if (i % 2 == 0)
-						paintRow(entry.getKey(), entry.getValue());
+					if (row % 2 == 0)
+						paintRow(row);
 					else
-						flashRow(entry.getKey());
+						flashRow(row);
 					
 				}
 				
 				try { Thread.sleep(20); } 
 				catch (InterruptedException e) {}
 				
-			}			
-			
-			
-			// Repaint the new piece configuration created from
-			// clearing the rows by iterating from the bottom completed
-			// line (which should be the first key in the
-			// map) upwards, repainting each row along the way
-			int firstRow = rowsToFlash.entrySet().iterator().next().getKey();
-			for (int line = firstRow; line >= 0; line--)
-				paintRow(line);
-		
-			// Play explosion sound if ultra line
-			if (rowsToFlash.size() == 4)
-				AudioManager.playUltraLineSound();
-			else
-				AudioManager.playClearLineSound();
-			
-			// Safe to paint the ghost piece now since it won't overwrite
-			// the flashing rows. Paint current too since it wasn't painted
-			// yet
-			paintCurrentAndGhost();
-			
+			}
+
 		}
 		
 	}

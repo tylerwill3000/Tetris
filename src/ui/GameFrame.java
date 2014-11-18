@@ -1,6 +1,7 @@
 package ui;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,6 +44,7 @@ public class GameFrame extends JFrame {
 		add(createInfoPanel(), BorderLayout.CENTER);
 		add(UIBox.menuPanel, BorderLayout.SOUTH);
 		
+		setIconImage(new ImageIcon(getClass().getResource("images/icon.png")).getImage());
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH, 600);

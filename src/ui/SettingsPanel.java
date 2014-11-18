@@ -16,8 +16,6 @@ public class SettingsPanel extends JPanel {
 	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
 	
-	boolean cbxsEnabled = true;
-	
 	ItemListener ghostSquaresListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
@@ -51,16 +49,18 @@ public class SettingsPanel extends JPanel {
 	public boolean musicOn() { return musicCbx.isSelected(); }
 	public boolean effectsOn() { return soundEffectsCbx.isSelected(); }
 	
+	void enableMusicCbxListener() { musicCbx.addItemListener(musicListener); }
+	
 	void enableCbxListeners() {
 		ghostSquaresCbx.addItemListener(ghostSquaresListener);
-		musicCbx.addItemListener(musicListener);
-		cbxsEnabled = true;
+		enableMusicCbxListener();
 	}
+	
+	void disableMusicCbxListener() { musicCbx.removeItemListener(musicListener); }
 	
 	void disableCbxListeners() {
 		ghostSquaresCbx.removeItemListener(ghostSquaresListener);
-		musicCbx.removeItemListener(musicListener);
-		cbxsEnabled = false;
+		disableMusicCbxListener();
 	}
 	
 	SettingsPanel() {
@@ -72,8 +72,6 @@ public class SettingsPanel extends JPanel {
 			add(x);
 			x.setFocusable(false);
 		}
-		
-		enableCbxListeners();
 		
 	}
 	

@@ -1,10 +1,10 @@
 
 package ui;
 
+import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-@SuppressWarnings("serial")
-public class NextPiecePanel extends AbstractPiecePainter {
+public class NextPiecePanel extends GridPainter {
 	
 	NextPiecePanel() {
 		super(4,5);
@@ -15,13 +15,15 @@ public class NextPiecePanel extends AbstractPiecePainter {
 		paintSquares(currentPiece.getNextPanelSquares(), currentPiece.getColor());
 	}
 	
-	public void eraseCurrentPiece() {
+	// Clears all squares on the panel. Used before printing a new next piece
+	public void clear() {
 		
-		// This is called every time the start button is pressed, so
-		// on the first run through the game current piece will be null
-		if (currentPiece == null) return;
-		
-		eraseSquares(currentPiece.getNextPanelSquares());
+		for (JPanel[] row : JPanelGrid) {
+			
+			for (JPanel square : row) eraseSquare(square);
+			
+		}
+	
 	}
 	
 }

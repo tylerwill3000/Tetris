@@ -1,7 +1,5 @@
 package ui;
 
-import javax.swing.JCheckBox;
-
 // Package-private box that I stick all the UI components in so they can
 // "talk" to each other
 public class UIBox {

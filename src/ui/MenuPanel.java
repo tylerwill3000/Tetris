@@ -36,11 +36,11 @@ public class MenuPanel extends JPanel {
 			UIBox.scorePanel.refreshScoreInfo();
 			
 			// Reset timer delay to default value
-			UIBox.gameBoardPanel.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
+			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
 			// Set initial pieces
 			UIBox.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
-			UIBox.nextPiecePanel.eraseCurrentPiece(); // In case the piece is still painted from a previous game
+			UIBox.nextPiecePanel.clear(); // In case the piece is still painted from a previous game
 			UIBox.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 			
 			// Paint initial pieces
@@ -58,12 +58,10 @@ public class MenuPanel extends JPanel {
 			// Start button is disabled once pressed. It will re-enable
 			// after game over
 			disableStartButton();
+		
+			UIBox.settingsPanel.enableCbxListeners();
 			
-			// Enable checkbox listeners if they are disabled
-			if (!UIBox.settingsPanel.cbxsEnabled)
-				UIBox.settingsPanel.enableCbxListeners();
-			
-			UIBox.gameBoardPanel.fallTimer.start();
+			Controller.fallTimer.start();
 			
 			AudioManager.beginCurrentSoundtrack();
 			
@@ -75,7 +73,10 @@ public class MenuPanel extends JPanel {
 				
 		public void actionPerformed(ActionEvent e) {
 			
-			UIBox.gameBoardPanel.fallTimer.stop();
+			Controller.fallTimer.stop();
+			
+			// Don't allow sound to be turned on / off when game is paused
+			UIBox.settingsPanel.disableMusicCbxListener();
 			
 			AudioManager.stopCurrentSoundtrack();			
 			AudioManager.playPauseSound();
@@ -91,7 +92,10 @@ public class MenuPanel extends JPanel {
 				
 		public void actionPerformed(ActionEvent e) {
 			
-			UIBox.gameBoardPanel.fallTimer.start();
+			Controller.fallTimer.start();
+			
+			// Re-enable sound to be turned on / off
+			UIBox.settingsPanel.enableMusicCbxListener();
 			
 			AudioManager.resumeCurrentSoundtrack();
 			
@@ -105,7 +109,7 @@ public class MenuPanel extends JPanel {
 	private ActionListener giveUpButtonListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
-			FallTimerListener.processGameOver();
+			Controller.processGameOver();
 		}
 		
 	};
