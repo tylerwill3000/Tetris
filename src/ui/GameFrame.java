@@ -59,13 +59,14 @@ public class GameFrame extends JFrame {
 		// Configure next piece panel size
 		GUI.nextPiecePanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
 		
-		// Create a container panel to add the controls and
-		// settings panels to
+		// Create a container panel to add the controls and settings panels to
 		JPanel controlsAndSettingsContainer = new JPanel(new BorderLayout());
-		JPanel controls = createControlsPanel();
 		
-		// Set sizes of both the controls panel and the settings panel
-		controls.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 140));
+		// Create and configure the controls panel
+		JPanel controls = createControlsPanel();
+		controls.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 130));
+		
+		// Set size for the settings panel
 		GUI.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
 		
 		controlsAndSettingsContainer.add(controls, BorderLayout.NORTH);
@@ -80,17 +81,31 @@ public class GameFrame extends JFrame {
 		
 	}
 	
-	// Basically just a bunch of JLabels
+	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
-		JPanel controls = new JPanel(new GridLayout(6,1));
+		JPanel controls = new JPanel();
 		controls.setBorder(new TitledBorder("Controls"));
-		controls.add(new JLabel("Up: rotate CW"));
-		controls.add(new JLabel("'F': rotate CCW"));
-		controls.add(new JLabel("Down: shift down"));
-		controls.add(new JLabel("Left: shift left"));
-		controls.add(new JLabel("Right: shift right"));
-		controls.add(new JLabel("Space: instant drop"));
+		
+		JPanel keyContainer = new JPanel(new GridLayout(6,1));
+		keyContainer.add(new JLabel("Up:"));
+		keyContainer.add(new JLabel("'F:"));
+		keyContainer.add(new JLabel("Down:"));
+		keyContainer.add(new JLabel("Left:"));
+		keyContainer.add(new JLabel("Right:"));
+		keyContainer.add(new JLabel("Space:"));
+		
+		JPanel actionContainer = new JPanel(new GridLayout(6,1));
+		actionContainer.add(new JLabel("rotate CW"));
+		actionContainer.add(new JLabel("rotate CCW"));
+		actionContainer.add(new JLabel("shift down"));
+		actionContainer.add(new JLabel("shift left"));
+		actionContainer.add(new JLabel("shift right"));
+		actionContainer.add(new JLabel("instant drop"));
+		
+		controls.add(keyContainer, BorderLayout.WEST);
+		controls.add(actionContainer, BorderLayout.EAST);		
+		
 		return controls;
 		
 	}

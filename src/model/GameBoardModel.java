@@ -146,7 +146,6 @@ public class GameBoardModel {
 		
 		// Process level ups
 		while (linesCompleted >= level * LINES_PER_LEVEL) {
-			
 			AudioManager.stopCurrentSoundtrack();
 			level++;
 			

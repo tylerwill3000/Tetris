@@ -3,6 +3,8 @@ package ui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -127,10 +129,17 @@ public class MenuPanel extends JPanel {
 		
 		setLayout(new FlowLayout());
 		
+		Map<JButton, Character> mnemonicMap = new HashMap<JButton, Character>();
+		mnemonicMap.put(start, 's');
+		mnemonicMap.put(pause, 'p');
+		mnemonicMap.put(resume, 'r');
+		mnemonicMap.put(giveUp, 'g');
+		
 		for (JButton b : new JButton[]{start, pause, resume, giveUp}) {
 			
 			// Set all buttons un-focusable
 			b.setFocusable(false);
+			b.setMnemonic(mnemonicMap.get(b));
 			add(b);
 			
 		}
