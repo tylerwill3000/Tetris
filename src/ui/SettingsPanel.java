@@ -21,12 +21,12 @@ public class SettingsPanel extends JPanel {
 		public void itemStateChanged(ItemEvent e) {
 			
 			if (ghostSquaresCbx.isSelected())
-				GUI.gameBoardPanel.paintGhostPiece();
+				GameFrame.gameBoardPanel.paintGhostPiece();
 			else 
-				GUI.gameBoardPanel.eraseGhostPiece();
+				GameFrame.gameBoardPanel.eraseGhostPiece();
 			
 			// In case ghost overlaps current piece
-			GUI.gameBoardPanel.paintCurrentPiece();
+			GameFrame.gameBoardPanel.paintCurrentPiece();
 			
 		}
 		

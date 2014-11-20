@@ -19,10 +19,21 @@ import java.util.concurrent.Executors;
 
 public class GameFrame extends JFrame {
 	
+	/** All major GUI panel components. Declared static so they can 'talk
+	 *  to each other through the GameFrame class **/
+	static GameBoardPanel gameBoardPanel = new GameBoardPanel();
+	static NextPiecePanel nextPiecePanel = new NextPiecePanel("Next Piece");
+	static NextPiecePanel holdPanel = new NextPiecePanel("Hold");
+	static ScorePanel scorePanel = new ScorePanel();
+	static MenuPanel menuPanel = new MenuPanel();
+	
+	// This is public so it can be accessed by the AudioManager
+	public static SettingsPanel settingsPanel = new SettingsPanel();
+	
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
 	
-	// GGUI style constants
+	// GUI style constants
 	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
@@ -34,9 +45,9 @@ public class GameFrame extends JFrame {
 	GameFrame() {
 		
 		add(createHoldPanel(), BorderLayout.WEST);
-		add(GUI.gameBoardPanel, BorderLayout.CENTER);
+		add(gameBoardPanel, BorderLayout.CENTER);
 		add(createInfoPanel(), BorderLayout.EAST);
-		add(GUI.menuPanel, BorderLayout.SOUTH);
+		add(menuPanel, BorderLayout.SOUTH);
 		
 		setIconImage(new ImageIcon(getClass().getResource("images/icon.png")).getImage());
 		setTitle("Tetris");
@@ -51,7 +62,7 @@ public class GameFrame extends JFrame {
 	private JPanel createHoldPanel() {
 		
 		JPanel holdContainer = new JPanel(new BorderLayout());
-		holdContainer.add(GUI.holdPanel, BorderLayout.NORTH);
+		holdContainer.add(holdPanel, BorderLayout.NORTH);
 		holdContainer.add(createControlsPanel(), BorderLayout.CENTER);
 		return holdContainer;
 		
@@ -63,12 +74,12 @@ public class GameFrame extends JFrame {
 		JPanel infoPanel = new JPanel(new BorderLayout());
 	
 		// Set size for the settings panel
-		GUI.settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
 		
 		// Add all components to the info panel
-		infoPanel.add(GUI.nextPiecePanel, BorderLayout.NORTH);
-		infoPanel.add(GUI.scorePanel, BorderLayout.CENTER);
-		infoPanel.add(GUI.settingsPanel, BorderLayout.SOUTH);
+		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
+		infoPanel.add(scorePanel, BorderLayout.CENTER);
+		infoPanel.add(settingsPanel, BorderLayout.SOUTH);
 		
 		return infoPanel;
 		

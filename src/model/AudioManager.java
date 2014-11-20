@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.sound.sampled.*;
 
-import ui.GUI;
+import ui.GameFrame;
 
 // Singleton class to interface to the game's audio
 public class AudioManager {
@@ -45,7 +45,7 @@ public class AudioManager {
 	// Used when you want to start the soundtrack from the beginning
 	public static void beginCurrentSoundtrack() {
 		
-		if (GUI.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null) {
+		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null) {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
@@ -61,7 +61,7 @@ public class AudioManager {
 	
 	// Used when you want to resume playing the current soundtrack from where you left off
 	public static void resumeCurrentSoundtrack() {
-		if (GUI.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null)
+		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null)
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
@@ -72,14 +72,14 @@ public class AudioManager {
 	}
 	
 	public static void playGameOverSound() {
-		if (GUI.settingsPanel.musicOn() && gameOver != null) {
+		if (GameFrame.settingsPanel.musicOn() && gameOver != null) {
 			gameOver.start();
 			gameOver.setFramePosition(0);
 		}
 	}
 	
 	public static void playVictoryFanfare() {
-		if (GUI.settingsPanel.musicOn() && victoryFanfare != null) {
+		if (GameFrame.settingsPanel.musicOn() && victoryFanfare != null) {
 			victoryFanfare.start();
 			victoryFanfare.setFramePosition(0);
 		}
@@ -103,7 +103,7 @@ public class AudioManager {
 	// frame position after playing
 	private static void playEffect(Clip effect) {
 
-		if (GUI.settingsPanel.effectsOn() && effect != null) {
+		if (GameFrame.settingsPanel.effectsOn() && effect != null) {
 			effect.start();
 			effect.setFramePosition(0);
 		}
