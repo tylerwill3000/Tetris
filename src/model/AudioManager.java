@@ -124,7 +124,7 @@ public class AudioManager {
 		// null is returned for the clip
 		Clip c;
 		
-		if (AudioSystem.isLineSupported(Port.Info.SPEAKER)) {
+		if (AudioSystem.isLineSupported(Port.Info.SPEAKER) || AudioSystem.isLineSupported(Port.Info.HEADPHONE)) {
 		
 			try {
 				
@@ -137,14 +137,11 @@ public class AudioManager {
 				return c;
 				
 			}
-			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-				e.printStackTrace();
-				return null;
-			}
+			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {}
 			
 		}
-		else
-			return null;
+		
+		return null;
 		
 	}
 	

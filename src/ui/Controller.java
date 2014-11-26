@@ -21,7 +21,6 @@ public class Controller {
 
 		public void actionPerformed(ActionEvent e) {
 			
-			// If the piece can be lowered, lower it
 			if (GUI.gameBoardPanel.currentPiece.canMove(1, 0))
 				GUI.gameBoardPanel.lowerPiece();
 	 
@@ -33,10 +32,10 @@ public class Controller {
 				
 				if (!completeLines.isEmpty()) {
 					
-					/* TODO I need to fix the flashing task
+					// TODO I need to fix the flashing task
 					// Execute a new flashing rows task for these complete lines
-					Thread flash = new Thread(GUI.gameBoardPanel.new FlashRowsTask(completeLines));
-					GameFrame.THREAD_EXECUTOR.execute(flash);*/
+					// Thread flash = new Thread(GUI.gameBoardPanel.new FlashRowsTask(completeLines));
+					// GameFrame.THREAD_EXECUTOR.execute(flash);
 					
 					// Remove the rows from the model
 					GameBoardModel.removeCompleteLines(completeLines);

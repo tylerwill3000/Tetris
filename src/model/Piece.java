@@ -93,7 +93,7 @@ public class Piece {
 	}
 	
 	public boolean isHoldPiece() { return isHoldPiece; }
-	public void setAsHoldPiece() { isHoldPiece = true; }
+	public void tagAsHoldPiece() { isHoldPiece = true; }
 	
 	// Returns a list of coordinates denoting which
 	// squares the piece currently occupies, based

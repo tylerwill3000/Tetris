@@ -22,7 +22,7 @@ public class GameFrame extends JFrame {
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
 	
-	// GGUI style constants
+	// GUI style constants
 	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);

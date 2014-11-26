@@ -124,7 +124,7 @@ public class GameBoardPanel extends GridPainter {
 				if (GUI.holdPanel.currentPiece != null || currentPiece.isHoldPiece())
 					return;
 				
-				currentPiece.setAsHoldPiece();
+				currentPiece.tagAsHoldPiece();
 				GUI.holdPanel.currentPiece = currentPiece;
 				GUI.holdPanel.paintCurrentPiece();
 				
@@ -140,7 +140,9 @@ public class GameBoardPanel extends GridPainter {
 			
 			// Hold release
 			case KeyEvent.VK_R:
-						
+				
+				if (GUI.holdPanel.currentPiece == null) return;
+				
 				eraseCurrentAndGhost();
 				GUI.holdPanel.clear();
 				
