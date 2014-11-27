@@ -39,6 +39,8 @@ public class AudioManager {
 	private static final Clip ultraLine = getAudioClip("audio/effects/explosion.wav");	
 	private static final Clip swipeUp = getAudioClip("audio/effects/swish-up.wav");
 	private static final Clip swipeDown = getAudioClip("audio/effects/swish-down.wav");
+	private static final Clip hold = getAudioClip("audio/effects/clang.wav");
+	private static final Clip release = getAudioClip("audio/effects/water-drop.wav");
 	
 	private AudioManager() {}
 	
@@ -87,6 +89,8 @@ public class AudioManager {
 	
 	public static void playPauseSound() { playEffect(pause); }
 	public static void playPiecePlacementSound() { playEffect(placePiece); }
+	public static void playHoldSound() { playEffect(hold); }
+	public static void playReleaseSound() { playEffect(release); }
 	
 	// Clear line sound is dependent on number of lines cleared
 	public static void playClearLineSound(int lineCount) {

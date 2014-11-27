@@ -131,6 +131,8 @@ public class GameBoardPanel extends GridPainter {
 				eraseCurrentAndGhost();
 				GameFrame.nextPiecePanel.clear();
 				
+				AudioManager.playHoldSound();
+				
 				Controller.moveConveyorBelt();
 				
 				paintCurrentAndGhost();
@@ -146,9 +148,11 @@ public class GameBoardPanel extends GridPainter {
 				eraseCurrentAndGhost();
 				GameFrame.holdPanel.clear();
 				
+				AudioManager.playReleaseSound();
+				
 				currentPiece = GameFrame.holdPanel.currentPiece;
 				GameFrame.holdPanel.currentPiece = null;
-				currentPiece.setInitialSquares();				
+				currentPiece.setInitialSquares();		
 				
 				paintCurrentAndGhost();
 				

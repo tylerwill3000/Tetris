@@ -55,21 +55,19 @@ public final class PieceFactory {
 	
 	public static Color getRandomColor() {
 	
-		switch (randInRange(1,9)) {
-			
-			case 1: return Color.RED;
+		switch (randInRange(1,8)) {
+
+			case 1: return new Color(255, 30, 0); // Red
 			case 2: return Color.ORANGE;
 			case 3: return Color.YELLOW;
 			case 4: return Color.GREEN;
-			case 5: return Color.BLUE;
-			case 6: return Color.CYAN;	
-			case 7: return Color.PINK;
-			case 8: return Color.MAGENTA;
-			case 9: return Color.LIGHT_GRAY;
+			case 5: return new Color(0, 200, 200); // Blue-green
+			case 6: return new Color(0, 70, 255); // Blue
+			case 7: return new Color(170, 45, 255); // Purple
+			case 8: return Color.PINK;
+			default: return null;
 		
 		}
-		
-		return null;
 		
 	}
 	
