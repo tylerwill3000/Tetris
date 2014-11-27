@@ -20,15 +20,16 @@ public class Controller {
 	static Timer fallTimer = new Timer(0, new ActionListener() {
 
 		public void actionPerformed(ActionEvent e) {
-			
-			if (GUI.gameBoardPanel.currentPiece.canMove(1, 0))
-				GUI.gameBoardPanel.lowerPiece();
+
+			// If the piece can be lowered, lower it
+			if (GameFrame.gameBoardPanel.currentPiece.canMove(1, 0))
+				GameFrame.gameBoardPanel.lowerPiece();
 	 
 			else {
 				
 				// Obtain a list of all complete lines (if any) that
 				// result from permanently adding this piece to the board
-				List<Integer> completeLines = GameBoardModel.addPiece(GUI.gameBoardPanel.currentPiece);
+				List<Integer> completeLines = GameBoardModel.addPiece(GameFrame.gameBoardPanel.currentPiece);
 				
 				if (!completeLines.isEmpty()) {
 					
@@ -43,7 +44,7 @@ public class Controller {
 					AudioManager.playClearLineSound(completeLines.size());
 					
 					// Show new score
-					GUI.scorePanel.refreshScoreInfo();
+					GameFrame.scorePanel.refreshScoreInfo();
 					
 					// Repaint lines on the game grid
 					updateGameGrid(completeLines);
@@ -58,13 +59,13 @@ public class Controller {
 				moveConveyorBelt();
 				
 				// If next piece can't emerge, it's game over
-				if (!GUI.gameBoardPanel.currentPiece.canEmerge())
+				if (!GameFrame.gameBoardPanel.currentPiece.canEmerge())
 					processGameOver();
 				
 				else {
-					GUI.gameBoardPanel.paintCurrentAndGhost();
-					GUI.nextPiecePanel.clear();
-					GUI.nextPiecePanel.paintCurrentPiece();
+					GameFrame.gameBoardPanel.paintCurrentAndGhost();
+					GameFrame.nextPiecePanel.clear();
+					GameFrame.nextPiecePanel.paintCurrentPiece();
 				}
 
 			}
@@ -80,8 +81,8 @@ public class Controller {
 	// to set the initial pieces on game load
 	static void moveConveyorBelt() {
 		
-		GUI.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
-		GUI.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+		GameFrame.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
+		GameFrame.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 		
 	}
 	
@@ -91,7 +92,7 @@ public class Controller {
 		
 		// Should only have to paint upwards from the bottom removed line
 		for (int line = removedLines.get(0); line >= 0; line--)
-			GUI.gameBoardPanel.paintRow(line);
+			GameFrame.gameBoardPanel.paintRow(line);
 
 	}
 	
@@ -104,7 +105,7 @@ public class Controller {
 		else {
 			
 			fallTimer.setDelay(GameBoardModel.getTimerDelay());
-			GUI.scorePanel.flashLevelLabel();
+			GameFrame.scorePanel.flashLevelLabel();
 			
 		}
 		
@@ -117,21 +118,21 @@ public class Controller {
 		
 		fallTimer.stop();
 		
-		GUI.scorePanel.flashWinMessage();
-		GUI.gameBoardPanel.disablePieceMovementInput();
-		GUI.gameBoardPanel.startClearAnimation();
+		GameFrame.scorePanel.flashWinMessage();
+		GameFrame.gameBoardPanel.disablePieceMovementInput();
+		GameFrame.gameBoardPanel.startClearAnimation();
 		
 		AudioManager.playVictoryFanfare();
 		AudioManager.resetSoundtrackFramePositions();
 		
 		// Disable all buttons. Start button is re-enabled after
 		// game complete animation finishes
-		GUI.menuPanel.disablePauseButton();
-		GUI.menuPanel.disableResumeButton();
-		GUI.menuPanel.disableGiveUpButton();
+		GameFrame.menuPanel.disablePauseButton();
+		GameFrame.menuPanel.disableResumeButton();
+		GameFrame.menuPanel.disableGiveUpButton();
 		
 		// Disable cbx listeners
-		GUI.settingsPanel.disableCbxListeners();
+		GameFrame.settingsPanel.disableCbxListeners();
 		
 	}
 	
@@ -149,20 +150,20 @@ public class Controller {
 		AudioManager.resetSoundtrackFramePositions();
 		
 		// Display spiral animation and flash game over message
-		GUI.scorePanel.flashGameOverMessage();
-		GUI.gameBoardPanel.startSpiralAnimation();
+		GameFrame.scorePanel.flashGameOverMessage();
+		GameFrame.gameBoardPanel.startSpiralAnimation();
 		
 		// Disable keyboard
-		GUI.gameBoardPanel.disablePieceMovementInput();
+		GameFrame.gameBoardPanel.disablePieceMovementInput();
 		
 		// Disable the pause, resume, and give up buttons
 		// They will re-enable once the next game starts
-		GUI.menuPanel.disablePauseButton();
-		GUI.menuPanel.disableResumeButton();
-		GUI.menuPanel.disableGiveUpButton();
+		GameFrame.menuPanel.disablePauseButton();
+		GameFrame.menuPanel.disableResumeButton();
+		GameFrame.menuPanel.disableGiveUpButton();
 		
 		// Disable the checkbox listeners
-		GUI.settingsPanel.disableCbxListeners();
+		GameFrame.settingsPanel.disableCbxListeners();
 		
 	}
 	

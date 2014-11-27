@@ -31,10 +31,10 @@ public class MenuPanel extends JPanel {
 			
 			// Reprint all squares on the game board. Since
 			// the model was reset, they will all be blank
-			GUI.gameBoardPanel.fullReprint();
+			GameFrame.gameBoardPanel.fullReprint();
 			
 			// Clears all old score info from previous games
-			GUI.scorePanel.refreshScoreInfo();
+			GameFrame.scorePanel.refreshScoreInfo();
 			
 			// Reset timer delay to default value
 			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
@@ -43,15 +43,15 @@ public class MenuPanel extends JPanel {
 			Controller.moveConveyorBelt();
 			
 			// In case these still have pieces from previous games
-			GUI.nextPiecePanel.clear();
-			GUI.holdPanel.clear();
-			GUI.holdPanel.currentPiece = null;
+			GameFrame.nextPiecePanel.clear();
+			GameFrame.holdPanel.clear();
+			GameFrame.holdPanel.currentPiece = null;
 			
 			// Paint initial pieces
-			GUI.gameBoardPanel.paintCurrentAndGhost();
-			GUI.nextPiecePanel.paintCurrentPiece();
+			GameFrame.gameBoardPanel.paintCurrentAndGhost();
+			GameFrame.nextPiecePanel.paintCurrentPiece();
 			
-			GUI.gameBoardPanel.enablePieceMovementInput();
+			GameFrame.gameBoardPanel.enablePieceMovementInput();
 			
 			// Enable pause, resume and give up buttons.
 			// There is no reason for these to be enabled before the game starts
@@ -64,7 +64,7 @@ public class MenuPanel extends JPanel {
 			disableStartButton();
 			
 			// Both checkbox listeners get enabled
-			GUI.settingsPanel.enableCbxListeners();
+			GameFrame.settingsPanel.enableCbxListeners();
 			
 			Controller.fallTimer.start();
 			
@@ -81,12 +81,12 @@ public class MenuPanel extends JPanel {
 			Controller.fallTimer.stop();
 			
 			// Don't allow sound to be turned on / off when game is paused
-			GUI.settingsPanel.disableMusicCbxListener();
+			GameFrame.settingsPanel.disableMusicCbxListener();
 			
 			AudioManager.stopCurrentSoundtrack();			
 			AudioManager.playPauseSound();
 			
-			GUI.gameBoardPanel.disablePieceMovementInput();;
+			GameFrame.gameBoardPanel.disablePieceMovementInput();;
 			disableGiveUpButton();
 			
 		}
@@ -100,11 +100,11 @@ public class MenuPanel extends JPanel {
 			Controller.fallTimer.start();
 			
 			// Re-enable sound to be turned on / off
-			GUI.settingsPanel.enableMusicCbxListener();
+			GameFrame.settingsPanel.enableMusicCbxListener();
 			
 			AudioManager.resumeCurrentSoundtrack();
 			
-			GUI.gameBoardPanel.enablePieceMovementInput();;
+			GameFrame.gameBoardPanel.enablePieceMovementInput();;
 			enableGiveUpButton();
 			
 		}

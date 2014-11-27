@@ -121,33 +121,33 @@ public class GameBoardPanel extends GridPainter {
 				
 				// Can't hold a new piece if you're already holding one or the
 				// piece has been tagged as a hold piece (these must be placed)
-				if (GUI.holdPanel.currentPiece != null || currentPiece.isHoldPiece())
+				if (GameFrame.holdPanel.currentPiece != null || currentPiece.isHoldPiece())
 					return;
 				
 				currentPiece.tagAsHoldPiece();
-				GUI.holdPanel.currentPiece = currentPiece;
-				GUI.holdPanel.paintCurrentPiece();
+				GameFrame.holdPanel.currentPiece = currentPiece;
+				GameFrame.holdPanel.paintCurrentPiece();
 				
 				eraseCurrentAndGhost();
-				GUI.nextPiecePanel.clear();
+				GameFrame.nextPiecePanel.clear();
 				
 				Controller.moveConveyorBelt();
 				
 				paintCurrentAndGhost();
-				GUI.nextPiecePanel.paintCurrentPiece();
+				GameFrame.nextPiecePanel.paintCurrentPiece();
 			
 				break;
 			
 			// Hold release
 			case KeyEvent.VK_R:
 				
-				if (GUI.holdPanel.currentPiece == null) return;
+				if (GameFrame.holdPanel.currentPiece == null) return;
 				
 				eraseCurrentAndGhost();
-				GUI.holdPanel.clear();
+				GameFrame.holdPanel.clear();
 				
-				currentPiece = GUI.holdPanel.currentPiece;
-				GUI.holdPanel.currentPiece = null;
+				currentPiece = GameFrame.holdPanel.currentPiece;
+				GameFrame.holdPanel.currentPiece = null;
 				currentPiece.setInitialSquares();				
 				
 				paintCurrentAndGhost();
@@ -185,22 +185,22 @@ public class GameBoardPanel extends GridPainter {
 			
 			case KeyEvent.VK_S:
 				
-				GUI.menuPanel.start.doClick();
+				GameFrame.menuPanel.start.doClick();
 				break;
 			
 			case KeyEvent.VK_P:
 				
-				GUI.menuPanel.pause.doClick();
+				GameFrame.menuPanel.pause.doClick();
 				break;
 				
 			case KeyEvent.VK_E:
 				
-				GUI.menuPanel.resume.doClick();
+				GameFrame.menuPanel.resume.doClick();
 				break;
 				
 			case KeyEvent.VK_G:
 				
-				GUI.menuPanel.giveUp.doClick();
+				GameFrame.menuPanel.giveUp.doClick();
 				break;
 				
 			}
@@ -262,7 +262,7 @@ public class GameBoardPanel extends GridPainter {
 	
 	void paintGhostPiece() {
 		
-		if (!GUI.settingsPanel.ghostSquaresOn())
+		if (!GameFrame.settingsPanel.ghostSquaresOn())
 			return;
 		
 		paintSquares(currentPiece.getGhostSquares(), null);
@@ -378,7 +378,7 @@ public class GameBoardPanel extends GridPainter {
 			}
 			
 			// Re-enable the start button once the spiral loop is completed
-			GUI.menuPanel.enableStartButton();
+			GameFrame.menuPanel.enableStartButton();
 			
 			}
 			catch (InterruptedException e) {}
@@ -425,7 +425,7 @@ public class GameBoardPanel extends GridPainter {
 			}
 			
 			// Re-enable start button
-			GUI.menuPanel.enableStartButton();
+			GameFrame.menuPanel.enableStartButton();
 			
 			}
 			catch (InterruptedException e) {}
