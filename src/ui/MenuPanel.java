@@ -53,14 +53,10 @@ public class MenuPanel extends JPanel {
 			
 			GameFrame.gameBoardPanel.enablePieceMovementInput();
 			
-			// Enable pause, resume and give up buttons.
+			// Enable pause and give up buttons.
 			// There is no reason for these to be enabled before the game starts
 			enablePauseButton();
-			enableResumeButton();
 			enableGiveUpButton();
-			
-			// Start button is disabled once pressed. It will re-enable
-			// after game over
 			disableStartButton();
 			
 			// Both checkbox listeners get enabled
@@ -87,6 +83,10 @@ public class MenuPanel extends JPanel {
 			AudioManager.playPauseSound();
 			
 			GameFrame.gameBoardPanel.disablePieceMovementInput();;
+			
+			// Re-enable the resume button and disable pausing / give up
+			enableResumeButton();
+			disablePauseButton();
 			disableGiveUpButton();
 			
 		}
@@ -105,7 +105,11 @@ public class MenuPanel extends JPanel {
 			AudioManager.resumeCurrentSoundtrack();
 			
 			GameFrame.gameBoardPanel.enablePieceMovementInput();;
+			
+			// Re-enable pause and give up buttons and disable resume
+			enablePauseButton();
 			enableGiveUpButton();
+			disableResumeButton();
 			
 		}
 		
@@ -124,6 +128,7 @@ public class MenuPanel extends JPanel {
 	void enablePauseButton() { pause.addActionListener(pauseButtonListener); }
 	void enableResumeButton() { resume.addActionListener(resumeButtonListener); }
 	void enableGiveUpButton() { giveUp.addActionListener(giveUpButtonListener); }
+	
 	void disableStartButton() { start.removeActionListener(startButtonListener); }
 	void disablePauseButton() { pause.removeActionListener(pauseButtonListener); }
 	void disableResumeButton() { resume.removeActionListener(resumeButtonListener); }
