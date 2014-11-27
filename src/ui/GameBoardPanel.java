@@ -139,7 +139,7 @@ public class GameBoardPanel extends GridPainter {
 				break;
 			
 			// Hold release
-			case KeyEvent.VK_R:
+			case KeyEvent.VK_E:
 				
 				if (GameFrame.holdPanel.currentPiece == null) return;
 				
@@ -193,7 +193,7 @@ public class GameBoardPanel extends GridPainter {
 				GameFrame.menuPanel.pause.doClick();
 				break;
 				
-			case KeyEvent.VK_E:
+			case KeyEvent.VK_R:
 				
 				GameFrame.menuPanel.resume.doClick();
 				break;

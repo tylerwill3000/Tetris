@@ -19,6 +19,11 @@ import java.util.concurrent.Executors;
 
 public class GameFrame extends JFrame {
 	
+	// GUI style constants
+	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
+	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
+	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 19);
+	
 	/** All major GUI panel components. Declared static so they can 'talk
 	 *  to each other through the GameFrame class **/
 	static GameBoardPanel gameBoardPanel = new GameBoardPanel();
@@ -32,11 +37,6 @@ public class GameFrame extends JFrame {
 	
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
-	
-	// GUI style constants
-	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
-	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
 	
 	// Dimension constants
 	private static final int GAME_BOARD_PANEL_WIDTH = 300;
@@ -98,10 +98,10 @@ public class GameFrame extends JFrame {
 		controls.add(new JLabel("  Right:")); controls.add(new JLabel("Shift right"));
 		controls.add(new JLabel("  Space:")); controls.add(new JLabel("Instant drop"));
 		controls.add(new JLabel("  'D':")); controls.add(new JLabel("Set hold"));
-		controls.add(new JLabel("  'R':")); controls.add(new JLabel("Release hold"));
+		controls.add(new JLabel("  'E':")); controls.add(new JLabel("Release hold"));
 		controls.add(new JLabel("  'S':")); controls.add(new JLabel("Start"));
 		controls.add(new JLabel("  'P':")); controls.add(new JLabel("Pause"));
-		controls.add(new JLabel("  'E':")); controls.add(new JLabel("Resume"));
+		controls.add(new JLabel("  'R':")); controls.add(new JLabel("Resume"));
 		controls.add(new JLabel("  'G':")); controls.add(new JLabel("Give up"));
 		
 		return controls;

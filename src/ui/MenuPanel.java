@@ -136,7 +136,7 @@ public class MenuPanel extends JPanel {
 		Map<JButton, Character> mnemonicMap = new HashMap<JButton, Character>();
 		mnemonicMap.put(start, 's');
 		mnemonicMap.put(pause, 'p');
-		mnemonicMap.put(resume, 'e');
+		mnemonicMap.put(resume, 'r');
 		mnemonicMap.put(giveUp, 'g');
 		
 		for (JButton b : new JButton[]{start, pause, resume, giveUp}) {
