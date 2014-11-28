@@ -131,8 +131,9 @@ public class Controller {
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
-		// Disable cbx listeners
+		// Disable cbx listeners and re-enable difficulty list
 		GameFrame.settingsPanel.disableCbxListeners();
+		GameFrame.settingsPanel.enableDifficultyList();
 		
 	}
 	
@@ -162,8 +163,9 @@ public class Controller {
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
-		// Disable the checkbox listeners
+		// Disable the checkbox listeners and re-enable difficulty list
 		GameFrame.settingsPanel.disableCbxListeners();
+		GameFrame.settingsPanel.enableDifficultyList();
 		
 	}
 	

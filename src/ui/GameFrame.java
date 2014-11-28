@@ -33,6 +33,7 @@ public class GameFrame extends JFrame {
 	static MenuPanel menuPanel = new MenuPanel();
 	
 	// This is public so it can be accessed by the AudioManager
+	// and GameBoardModel
 	public static SettingsPanel settingsPanel = new SettingsPanel();
 	
 	// Handles all thread execution for the game
@@ -74,7 +75,7 @@ public class GameFrame extends JFrame {
 		JPanel infoPanel = new JPanel(new BorderLayout());
 	
 		// Set size for the settings panel
-		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 100));
+		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 150));
 		
 		// Add all components to the info panel
 		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
