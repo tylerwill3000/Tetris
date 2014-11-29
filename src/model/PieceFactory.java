@@ -424,15 +424,19 @@ class Ingredients {
 	};
 	
 	// Starting row of this piece on the board. Corresponds to
-	// bottom left corner of the piece's bounding grid
+	// bottom left corner of the piece's bounding grid. When analyzing
+	// the starting rows of each piece, it is important to keep in mind
+	// that each starting row is offset by +3 rows to account for the
+	// 3 invisible rows at the top of the board. In other words, row 3 is
+	// equivalent to row 0 of the visible squares
 	public final static int[] START_ROWS = {
-		1, // Box
-		2, // L-block L
-		2, // L-block R
-		1, // S-block L
-		1, // S-block R
-		1, // Straight line
-		1 // T-block
+		4, // Box
+		5, // L-block L
+		5, // L-block R
+		4, // S-block L
+		4, // S-block R
+		4, // Straight line
+		4 // T-block
 	};
 	
 	// List of grid coordinate squares the piece occupies when in

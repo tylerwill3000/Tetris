@@ -3,7 +3,6 @@ package ui;
 
 import java.awt.Dimension;
 
-import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 public class NextPiecePanel extends GridPainter {
@@ -21,10 +20,14 @@ public class NextPiecePanel extends GridPainter {
 	
 	// Clears all squares on the panel. Used before printing a new next piece
 	public void clear() {
-		
-		for (JPanel[] row : JPanelGrid) {
+
+		for (int row = 0; row < JPanelGrid.length; row++) {
 			
-			for (JPanel square : row) eraseSquare(square);
+			for (int col = 0; col < JPanelGrid[row].length; col++) {
+			
+				eraseSquare(row, col);
+				
+			}			
 			
 		}
 	

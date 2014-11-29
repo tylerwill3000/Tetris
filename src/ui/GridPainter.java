@@ -43,15 +43,32 @@ public class GridPainter extends JPanel {
 	}
 	
 	// Paints any given individual square the specified color.
-	// Pass the panel object that represents the square
-	protected void paintSquare(JPanel toPaint, Color color) {
+	protected void paintSquare(int row, int col, Color color) {
+		
+		// -3 to account for the 3 invisible rows at the top of
+		// the board if this is the game board
+		if (this instanceof GameBoardPanel) row -= 3;
+		
+		if (row < 0) return;
+		
+		JPanel toPaint = JPanelGrid[row][col];
+		
 		toPaint.setBackground(color);
 		toPaint.setBorder(GameFrame.BEVEL_BORDER);
 	}
 	
 	// Erases the color in any given square. Pass the panel
 	// object that represents the square.
-	protected void eraseSquare(JPanel p) {
+	protected void eraseSquare(int row, int col) {
+		
+		// -3 to account for the 3 invisible rows at the top of
+		// the board if this is the game board
+		if (this instanceof GameBoardPanel) row -= 3;
+		
+		if (row < 0) return;
+		
+		JPanel p = JPanelGrid[row][col];
+		
 		p.setBackground(null);
 		p.setBorder(null);
 	}
@@ -65,14 +82,7 @@ public class GridPainter extends JPanel {
 		if (squares == null) return;
 		
 		for (int[] square : squares) {
-			
-			// Prevent invisible squares off the top edge of the
-			// board from trying to be printed. This would only
-			// happen if the piece is immediately rotated right
-			// after it emerges
-			if (square[0] < 0) continue;
-			
-			paintSquare(JPanelGrid[square[0]][square[1]], color);
+			paintSquare(square[0], square[1], color);
 				
 		}
 		
@@ -83,13 +93,8 @@ public class GridPainter extends JPanel {
 		
 		if (squares == null) return;
 		
-		for (int[] square : squares) {
-			
-			if (square[0] < 0) continue;
-			
-			eraseSquare(JPanelGrid[square[0]][square[1]]);
-			
-		}
+		for (int[] square : squares)
+			eraseSquare(square[0], square[1]);
 		
 	}
 	

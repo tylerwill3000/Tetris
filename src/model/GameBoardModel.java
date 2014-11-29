@@ -95,7 +95,6 @@ public class GameBoardModel {
 		// so you'll never have to search further than that to find completed
 		// lines
 		for (int row = startRow; row >= 0 && row > startRow - 4; row--)
-			
 			if (isCompleteRow(row)) completeLines.add(row);
 		
 		return completeLines;
@@ -174,8 +173,10 @@ public class GameBoardModel {
 	}
 	
 	private static boolean isInBoundsSquare(int row, int col) {
-
-		return col >= 0 && row < GameBoardPanel.V_CELLS && col < GameBoardPanel.H_CELLS;
+		
+		// Add 3 to game board panel V_CELLS to account for 3 invisible rows at the
+		// top of the board
+		return col >= 0 && row < GameBoardPanel.V_CELLS+3 && col < GameBoardPanel.H_CELLS;
 		
 	}
 	
@@ -200,7 +201,8 @@ public class GameBoardModel {
 	
 		for (int[] square : candidateSquares) {
 			
-			if (square[0] >= 0) hasVisibleSquares = true;
+			// >= 3 to account for the 3 invisible squares at the top
+			if (square[0] >= 3) hasVisibleSquares = true;
 			
 			// As soon as a square is found that is already occupied, it can
 			// be concluded that these squares are not valid
@@ -253,7 +255,9 @@ public class GameBoardModel {
 
 		LinkedList<Color[]> quilt = new LinkedList<Color[]>();
 		
-		for (int i = 0; i < GameBoardPanel.V_CELLS; i++) 
+		// +3 to account for the 3 invisible rows at the top of
+		// the board
+		for (int i = 0; i <= GameBoardPanel.V_CELLS+3; i++) 
 			quilt.add(new Color[GameBoardPanel.H_CELLS]);
 			
 		return quilt;

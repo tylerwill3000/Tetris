@@ -61,9 +61,7 @@ public class Piece {
 	// extend beyond the number of vertical cells, so perform a quick
 	// check to prevent an out of bounds index from getting returned if
 	// this is the case
-	public int getRow() {
-		return location[0] >= GameBoardPanel.V_CELLS ? GameBoardPanel.V_CELLS - 1 : location[0];
-	}
+	public int getRow() { return location[0]; }
 	
 	public int getCol() { return location[1]; }
 	public Color getColor() { return color; }

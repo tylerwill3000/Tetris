@@ -1,7 +1,5 @@
 package ui;
 
-import javax.swing.JPanel;
-
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -236,15 +234,13 @@ public class GameBoardPanel extends GridPainter {
 		// Iterate over all cell values in the row
 		for (int cell = 0; cell < H_CELLS; cell++) {
 			
-			JPanel panel = JPanelGrid[row][cell];
-			
 			// If square is occupied, paint the color. Else,
 			// erase any current contents that may have been
 			// occupying that square
 			if (GameBoardModel.isSquareOccupied(row, cell))
-				paintSquare(panel, GameBoardModel.getColor(row, cell));
+				paintSquare(row, cell, GameBoardModel.getColor(row, cell));
 			else 
-				eraseSquare(panel);
+				eraseSquare(row, cell);
 			
 		}
 		
@@ -285,7 +281,8 @@ public class GameBoardPanel extends GridPainter {
 	// the grid model
 	void fullReprint() {
 		
-		for (int i = 0; i < V_CELLS; i++)
+		// Start at row 3 since 3 invisible rows at the top are not printed
+		for (int i = 3; i < V_CELLS; i++)
 			paintRow(i);
 		
 	}
@@ -309,9 +306,9 @@ public class GameBoardPanel extends GridPainter {
 		// Stores indices of next column / row that needs to
 		// be processed
 		int nextLeftCol = 0,
-			nextBottomRow = V_CELLS-1,
+			nextBottomRow = V_CELLS+2, // Account for 3 invisible rows at top of board
 			nextRightCol = H_CELLS-1,
-			nextTopRow = 0;
+			nextTopRow = 3;
 		
 		// Total squares is equal to the dimensions of the 
 		// visible panels. Loop until the size of squares
@@ -365,11 +362,9 @@ public class GameBoardPanel extends GridPainter {
 			
 			// Run 1 loop to paint in all unoccupied squares
 			for (int[] square : SPIRAL_SQUARES) {
-				
-				JPanel p = JPanelGrid[square[0]][square[1]];
 			
 				if (!GameBoardModel.isSquareOccupied(square[0], square[1]))
-					paintSquare(p, PieceFactory.getRandomColor());
+					paintSquare(square[0], square[1], PieceFactory.getRandomColor());
 				
 				Thread.sleep(SLEEP_INTERVAL);
 				
@@ -377,7 +372,7 @@ public class GameBoardPanel extends GridPainter {
 			
 			// Run a second loop to erase all of them
 			for (int[] square : SPIRAL_SQUARES) {
-				eraseSquare(JPanelGrid[square[0]][square[1]]);
+				eraseSquare(square[0], square[1]);
 				Thread.sleep(SLEEP_INTERVAL);
 			}
 			
@@ -407,10 +402,8 @@ public class GameBoardPanel extends GridPainter {
 				
 				for (int col = 0; col < H_CELLS; col++) {
 					
-					JPanel p = JPanelGrid[row][col];
-					
 					if (!GameBoardModel.isSquareOccupied(row, col))
-						paintSquare(p, PieceFactory.getRandomColor());
+						paintSquare(row, col, PieceFactory.getRandomColor());
 					
 				}
 				
@@ -422,7 +415,7 @@ public class GameBoardPanel extends GridPainter {
 			for (int row = 0; row < V_CELLS; row ++) {
 				
 				for (int col = 0; col < H_CELLS; col++)
-					eraseSquare(JPanelGrid[row][col]);					
+					eraseSquare(row, col);					
 				
 				Thread.sleep(SLEEP_INTERVAL);
 				
