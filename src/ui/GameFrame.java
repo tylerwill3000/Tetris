@@ -40,8 +40,10 @@ public class GameFrame extends JFrame {
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
 	
 	// Dimension constants
-	private static final int GAME_BOARD_PANEL_WIDTH = 300;
-	static final int INFO_PANEL_WIDTH = 150;
+	private static final int GAME_BOARD_PANEL_WIDTH =
+			GridPainter.SQUARE_SIDE_LENGTH * GameBoardPanel.H_CELLS;
+	
+	static final int INFO_PANEL_WIDTH = 5 * GridPainter.SQUARE_SIDE_LENGTH;
 	
 	GameFrame() {
 		
@@ -75,7 +77,7 @@ public class GameFrame extends JFrame {
 		JPanel infoPanel = new JPanel(new BorderLayout());
 	
 		// Set size for the settings panel
-		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 150));
+		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 160));
 		
 		// Add all components to the info panel
 		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);

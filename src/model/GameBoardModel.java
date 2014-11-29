@@ -15,10 +15,10 @@ public class GameBoardModel {
 	public static final int INITIAL_TIMER_DELAY = 600;
 	
 	// Amount of milliseconds the timer delay decreases each level
-	private static final int[] TIMER_DECREASE_RATES = {50,55,60};
+	private static final int[] TIMER_DECREASE_RATES = {50,57,64};
 	
 	// Integer value 0 - 2. Set upon game load
-	private static int difficulty = 1;
+	private static int difficulty;
 	
 	// Represents colors on the game grid. Use a linked list since
 	// rows will need to be added to the front when rows are removed
@@ -147,6 +147,7 @@ public class GameBoardModel {
 		
 		// Process level ups
 		while (linesCompleted >= level * LINES_PER_LEVEL[difficulty]) {
+			
 			AudioManager.stopCurrentSoundtrack();
 			level++;
 			
@@ -162,10 +163,6 @@ public class GameBoardModel {
 		
 	}
 	
-	// Checks in the negative row index range are valid since the
-	// piece can be rotated beyond the top border as it first
-	// emerges. To deal with this, the ternary protects against
-	// negative index checks
 	public static boolean isSquareOccupied(int row, int col) { 
 		
 		return (row < 0 ? false : getColor(row, col) != null);

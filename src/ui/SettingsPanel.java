@@ -67,8 +67,8 @@ public class SettingsPanel extends JPanel {
 		difficultyLst.setSelectedIndex(1);
 		difficultyLst.setBorder(GameFrame.LINE_BORDER);
 		
-		add(cbxPanel, BorderLayout.NORTH);
-		add(difficultyLst, BorderLayout.CENTER);
+		add(cbxPanel, BorderLayout.CENTER);
+		add(difficultyLst, BorderLayout.SOUTH);
 		
 	}
 	
@@ -79,7 +79,7 @@ public class SettingsPanel extends JPanel {
 	int getDifficulty() { return difficultyLst.getSelectedIndex(); }
 	
 	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
-	// independently from the ghost squares checkbox
+	// independently from the ghost squares checkbox in the MenuPanel class
 	void enableMusicCbxListener() { musicCbx.addItemListener(musicListener); }
 	void disableMusicCbxListener() { musicCbx.removeItemListener(musicListener); }
 	

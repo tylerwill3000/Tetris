@@ -18,7 +18,7 @@ public class GameBoardPanel extends GridPainter {
 	
 	// Board dimensions
 	public static final int V_CELLS = 20;
-	public static final int H_CELLS = 10;
+	public static final int H_CELLS = 14;
 	
 	// Amount to offset to get to the center of the board. Useful
 	// when calculating initial squares for pieces

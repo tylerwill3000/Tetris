@@ -29,6 +29,13 @@ public final class PieceFactory {
 		return conveyorBelt.peek();		
 	}
 	
+	// Returns a random number within the specified range
+	private static int randInRange(int min, int max) {
+		
+		return (int)(Math.random() * (max - min + 1)) + min;
+		
+	}
+	
 	// Generates a random Piece object
 	private static Piece generate() {
 		
@@ -43,13 +50,6 @@ public final class PieceFactory {
 			Ingredients.NEXT_PANEL_SQUARES[index],
 			Ingredients.START_ROWS[index]
 		);
-		
-	}
-	
-	// Returns a random number within the specified range
-	private static int randInRange(int min, int max) {
-		
-		return (int)(Math.random() * (max - min + 1)) + min;
 		
 	}
 	

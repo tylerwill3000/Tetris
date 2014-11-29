@@ -24,7 +24,9 @@ public class Controller {
 			// If the piece can be lowered, lower it
 			if (GameFrame.gameBoardPanel.currentPiece.canMove(1, 0))
 				GameFrame.gameBoardPanel.lowerPiece();
-	 
+			
+			// Piece cannot be lowered, so must add it to the log of
+			// current pieces on the board
 			else {
 				
 				// Obtain a list of all complete lines (if any) that
@@ -37,21 +39,16 @@ public class Controller {
 					// Execute a new flashing rows task for these complete lines
 					// Thread flash = new Thread(GUI.gameBoardPanel.new FlashRowsTask(completeLines));
 					// GameFrame.THREAD_EXECUTOR.execute(flash);
-					
-					// Remove the rows from the model
+
 					GameBoardModel.removeCompleteLines(completeLines);
-					
 					AudioManager.playClearLineSound(completeLines.size());
-					
-					// Show new score
 					GameFrame.scorePanel.refreshScoreInfo();
 					
-					// Repaint lines on the game grid
+					// Update game grid display to reflect new configuration
+					// after removing lines
 					updateGameGrid(completeLines);
-					
-					// Process level up functions if just leveled
-					if (GameBoardModel.justLeveled)
-						processLevelUp();
+
+					if (GameBoardModel.justLeveled) processLevelUp();
 					
 				}
 				
@@ -131,7 +128,8 @@ public class Controller {
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
-		// Disable cbx listeners and re-enable difficulty list
+		// After game is competed, player should be able to re-select
+		// difficulty if they decide to start a new game
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
 		
@@ -140,8 +138,7 @@ public class Controller {
 	// What happens when the next piece can't emerge. Package-private so
 	// it can be accessed by the game over listener
 	static void processGameOver() {
-		
-		// Stop the fall timer
+
 		fallTimer.stop();
 		
 		// Change audio over to game over sound
@@ -150,11 +147,9 @@ public class Controller {
 		
 		AudioManager.resetSoundtrackFramePositions();
 		
-		// Display spiral animation and flash game over message
 		GameFrame.scorePanel.flashGameOverMessage();
 		GameFrame.gameBoardPanel.startSpiralAnimation();
 		
-		// Disable keyboard
 		GameFrame.gameBoardPanel.disablePieceMovementInput();
 		
 		// Disable the pause, resume, and give up buttons
@@ -163,7 +158,6 @@ public class Controller {
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
-		// Disable the checkbox listeners and re-enable difficulty list
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
 		

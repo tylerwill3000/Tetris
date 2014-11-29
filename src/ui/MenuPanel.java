@@ -26,7 +26,8 @@ public class MenuPanel extends JPanel {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			// Clear all old data from the model
+			// Clear all old data from the model in case new
+			// game is launched after previous game ends
 			GameBoardModel.reset();
 			
 			// Reprint all squares on the game board. Since
@@ -39,7 +40,7 @@ public class MenuPanel extends JPanel {
 			// Reset timer delay to default value
 			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
-			// Set initial pieces
+			// Sets initial pieces
 			Controller.moveConveyorBelt();
 			
 			// In case these still have pieces from previous games
@@ -104,7 +105,8 @@ public class MenuPanel extends JPanel {
 			
 			Controller.fallTimer.start();
 			
-			// Re-enable sound to be turned on / off
+			// Re-enable sound to be turned on / off instantly on
+			// checkbox change
 			GameFrame.settingsPanel.enableMusicCbxListener();
 			
 			AudioManager.resumeCurrentSoundtrack();
