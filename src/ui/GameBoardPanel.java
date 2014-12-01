@@ -397,8 +397,9 @@ public class GameBoardPanel extends GridPainter {
 			
 			try {
 			
-			// Fill all rows bottom to top
-			for (int row = V_CELLS - 1; row >= 0; row --) {
+			// Fill all rows bottom to top. Make sure to account for
+			// invisible rows at the top of the board
+			for (int row = V_CELLS+2; row >= 3; row --) {
 				
 				for (int col = 0; col < H_CELLS; col++) {
 					
@@ -411,8 +412,9 @@ public class GameBoardPanel extends GridPainter {
 				
 			}
 			
-			// Clear all rows top to bottom
-			for (int row = 0; row < V_CELLS; row ++) {
+			// Clear all rows top to bottom. Again, account for invisible
+			// rows at top
+			for (int row = 3; row <= V_CELLS+2; row ++) {
 				
 				for (int col = 0; col < H_CELLS; col++)
 					eraseSquare(row, col);					

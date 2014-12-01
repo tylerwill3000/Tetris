@@ -11,8 +11,7 @@ public class AudioManager {
 	
 	// Provides a handle to the class directory of the AudioManger.class file.
 	// Used to obtain audio file resources
-	@SuppressWarnings("rawtypes")
-	private static final Class resources = new AudioManager().getClass();
+	private static final Class<?> resources = new AudioManager().getClass();
 	
 	// Soundtrack for the game
 	private static final Clip[] soundtrack = {

@@ -15,7 +15,7 @@ public class GameBoardModel {
 	public static final int INITIAL_TIMER_DELAY = 600;
 	
 	// Amount of milliseconds the timer delay decreases each level
-	private static final int[] TIMER_DECREASE_RATES = {50,57,64};
+	private static final int[] TIMER_DECREASE_RATES = {50,56,62};
 	
 	// Integer value 0 - 2. Set upon game load
 	private static int difficulty;
@@ -29,7 +29,7 @@ public class GameBoardModel {
 	private static final int[] LINES_PER_LEVEL = {15, 20, 25};
 	
 	// Point values per line based on lines cleared
-	private static final int[] LINE_POINTS_MAP = {0,10,15,20,30};
+	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
 	
 	// Scoring info
 	private static int linesCompleted = 0;
@@ -141,7 +141,7 @@ public class GameBoardModel {
 	private static void increaseScore(int completedLines) {
 		
 		// Increase score based on line points and difficulty bonus
-		int linePoints = completedLines * LINE_POINTS_MAP[completedLines];
+		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
 		int difficultyBonus = completedLines * 5 * difficulty;
 		score += (linePoints + difficultyBonus);
 		
