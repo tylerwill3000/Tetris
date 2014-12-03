@@ -19,6 +19,7 @@ public class MenuPanel extends JPanel {
 	JButton pause = new JButton("Pause");
 	JButton resume = new JButton("Resume");
 	JButton giveUp = new JButton("Give Up");
+	JButton viewScores = new JButton("View High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled
@@ -135,11 +136,13 @@ public class MenuPanel extends JPanel {
 	void enablePauseButton() { pause.addActionListener(pauseButtonListener); }
 	void enableResumeButton() { resume.addActionListener(resumeButtonListener); }
 	void enableGiveUpButton() { giveUp.addActionListener(giveUpButtonListener); }
+	void enableViewScoresButton() {}
 	
 	void disableStartButton() { start.removeActionListener(startButtonListener); }
 	void disablePauseButton() { pause.removeActionListener(pauseButtonListener); }
 	void disableResumeButton() { resume.removeActionListener(resumeButtonListener); }
 	void disableGiveUpButton() { giveUp.removeActionListener(giveUpButtonListener); }
+	void disableViewScoresButton() {}
 	
 	MenuPanel() {
 		
@@ -150,8 +153,9 @@ public class MenuPanel extends JPanel {
 		mnemonicMap.put(pause, 'p');
 		mnemonicMap.put(resume, 'r');
 		mnemonicMap.put(giveUp, 'g');
+		mnemonicMap.put(viewScores, 'v');
 		
-		for (JButton b : new JButton[]{start, pause, resume, giveUp}) {
+		for (JButton b : new JButton[]{start, pause, resume, giveUp, viewScores}) {
 			
 			// Set all buttons un-focusable
 			b.setFocusable(false);

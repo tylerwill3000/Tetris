@@ -18,6 +18,7 @@ public class SettingsPanel extends JPanel {
 	private JCheckBox ghostSquaresCbx = new JCheckBox("Ghost Squares", true);
 	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
+	private JCheckBox saveScoreCbx = new JCheckBox("Save Scores", true);
 	
 	private JComboBox<String> difficultyList = new JComboBox<String>(
 			new String[]{"Easy","Medium","Hard"}
@@ -54,10 +55,10 @@ public class SettingsPanel extends JPanel {
 	
 	SettingsPanel() {
 		
-		setLayout(new GridLayout(4,1));
+		setLayout(new GridLayout(5,1));
 		setBorder(new TitledBorder("Settings"));
 		
-		for (JCheckBox x : new JCheckBox[]{ghostSquaresCbx, musicCbx, soundEffectsCbx}) {
+		for (JCheckBox x : new JCheckBox[]{ghostSquaresCbx, musicCbx, soundEffectsCbx, saveScoreCbx}) {
 			add(x);
 			x.setFocusable(false);
 		}
@@ -73,6 +74,7 @@ public class SettingsPanel extends JPanel {
 	public boolean ghostSquaresOn() { return ghostSquaresCbx.isSelected(); }
 	public boolean musicOn() { return musicCbx.isSelected(); }
 	public boolean effectsOn() { return soundEffectsCbx.isSelected(); }
+	public boolean saveScoreOn() { return saveScoreCbx.isSelected(); }
 	
 	int getDifficulty() { return difficultyList.getSelectedIndex(); }
 	

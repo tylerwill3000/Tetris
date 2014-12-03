@@ -204,9 +204,14 @@ public class GameBoardPanel extends GridPainter {
 				
 				GameFrame.menuPanel.giveUp.doClick();
 				break;
-				
-			}
 			
+			case KeyEvent.VK_V:
+				
+				GameFrame.menuPanel.viewScores.doClick();
+				break;
+			
+			}
+				
 		}
 		
 	}
@@ -362,7 +367,7 @@ public class GameBoardPanel extends GridPainter {
 			
 			// Run 1 loop to paint in all unoccupied squares
 			for (int[] square : SPIRAL_SQUARES) {
-			
+				
 				if (!GameBoardModel.isSquareOccupied(square[0], square[1]))
 					paintSquare(square[0], square[1], PieceFactory.getRandomColor());
 				

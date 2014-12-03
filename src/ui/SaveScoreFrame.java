@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,11 +31,35 @@ public class SaveScoreFrame extends JFrame {
 	ActionListener saveScoreListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
+			
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
+			
 			saveStatus.setText("Writing...");
-			DBInterface.writeScore(name.getText(), GameBoardModel.getScore());
-			saveStatus.setForeground(Color.GREEN);
-			saveStatus.setText("Score Saved!");
+			saveStatus.setForeground(Color.BLACK);
+		
+			try {
+				
+				DBInterface.writeScore(
+						name.getText(),
+						GameBoardModel.getScore(),
+						GameBoardModel.getLevel(),
+						GameBoardModel.getLinesCompleted()
+				);
+				
+				saveStatus.setForeground(Color.GREEN);
+				saveStatus.setText("Score Saved!");
+				cancel.setText("OK");
+				
+			}
+			catch (ClassNotFoundException | SQLException e1) {
+				
+				saveStatus.setForeground(Color.RED);
+				saveStatus.setText("Error writing to database");
+				
+				e1.printStackTrace();
+				
+			}
+			
 		}
 		
 	};
@@ -101,11 +126,16 @@ public class SaveScoreFrame extends JFrame {
 	// Makes the frame visible with current score data
 	public void present() {
 		
+		if (!GameFrame.settingsPanel.saveScoreOn()) return;
+		
 		// In case it's still disabled from a previous save
-		if (!saveScore.isEnabled()) saveScore.setEnabled(true);
+		saveScore.setEnabled(true);
 		
 		// In case any DB messages are still present from a previous save
-		if (!saveStatus.getText().equals("")) saveStatus.setText("");
+		saveStatus.setText("");
+		
+		// In case it still says "OK" from a previous save
+		cancel.setText("Cancel");
 		
 		// Display player's score
 		attainedScore.setText("Your score: " + GameBoardModel.getScore());

@@ -88,7 +88,7 @@ public class GameFrame extends JFrame {
 	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
-		JPanel controls = new JPanel(new GridLayout(12,2));
+		JPanel controls = new JPanel(new GridLayout(13,2));
 		controls.setBorder(new TitledBorder("Controls"));
 		
 		controls.add(new JLabel("  Up:")); controls.add(new JLabel("Rotate CW"));
@@ -103,6 +103,7 @@ public class GameFrame extends JFrame {
 		controls.add(new JLabel("  'P':")); controls.add(new JLabel("Pause"));
 		controls.add(new JLabel("  'R':")); controls.add(new JLabel("Resume"));
 		controls.add(new JLabel("  'G':")); controls.add(new JLabel("Give up"));
+		controls.add(new JLabel("  'V':")); controls.add(new JLabel("View Scores"));
 		
 		return controls;
 		
