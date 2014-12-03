@@ -6,7 +6,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.JCheckBox;
-import javax.swing.JList;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
@@ -18,8 +19,8 @@ public class SettingsPanel extends JPanel {
 	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
 	
-	private JList<String> difficultyLst = new JList<String>(
-			new String[]{"Easy","Intermediate","Hard"}
+	private JComboBox<String> difficultyList = new JComboBox<String>(
+			new String[]{"Easy","Medium","Hard"}
 	);
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
@@ -53,22 +54,19 @@ public class SettingsPanel extends JPanel {
 	
 	SettingsPanel() {
 		
-		setLayout(new BorderLayout());
+		setLayout(new GridLayout(4,1));
 		setBorder(new TitledBorder("Settings"));
 		
-		// Panel to hold all settings checkboxes
-		JPanel cbxPanel = new JPanel(new GridLayout(3,1));
 		for (JCheckBox x : new JCheckBox[]{ghostSquaresCbx, musicCbx, soundEffectsCbx}) {
-			cbxPanel.add(x);
+			add(x);
 			x.setFocusable(false);
 		}
 		
-		// Default to "Intermediate" difficulty
-		difficultyLst.setSelectedIndex(1);
-		difficultyLst.setBorder(GameFrame.LINE_BORDER);
 		
-		add(cbxPanel, BorderLayout.CENTER);
-		add(difficultyLst, BorderLayout.SOUTH);
+		JPanel diffPanel = new JPanel(new BorderLayout());
+		diffPanel.add(new JLabel("Difficulty:  "), BorderLayout.WEST);
+		diffPanel.add(difficultyList, BorderLayout.CENTER);
+		add(diffPanel);
 		
 	}
 	
@@ -76,7 +74,7 @@ public class SettingsPanel extends JPanel {
 	public boolean musicOn() { return musicCbx.isSelected(); }
 	public boolean effectsOn() { return soundEffectsCbx.isSelected(); }
 	
-	int getDifficulty() { return difficultyLst.getSelectedIndex(); }
+	int getDifficulty() { return difficultyList.getSelectedIndex(); }
 	
 	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
 	// independently from the ghost squares checkbox in the MenuPanel class
@@ -93,8 +91,8 @@ public class SettingsPanel extends JPanel {
 		disableMusicCbxListener();
 	}
 	
-	void enableDifficultyList() { difficultyLst.setEnabled(true); }
+	void enableDifficultyList() { difficultyList.setEnabled(true); }
 	
-	void disableDifficultyList() { difficultyLst.setEnabled(false); }
+	void disableDifficultyList() { difficultyList.setEnabled(false); }
 		
 }

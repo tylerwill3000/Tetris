@@ -11,7 +11,6 @@ import javax.swing.border.TitledBorder;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.concurrent.ExecutorService;
@@ -75,9 +74,6 @@ public class GameFrame extends JFrame {
 	private JPanel createInfoPanel() {
 		
 		JPanel infoPanel = new JPanel(new BorderLayout());
-	
-		// Set size for the settings panel
-		settingsPanel.setPreferredSize(new Dimension(INFO_PANEL_WIDTH, 160));
 		
 		// Add all components to the info panel
 		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
