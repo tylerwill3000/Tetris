@@ -23,13 +23,14 @@ public class GameFrame extends JFrame {
 	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 19);
 	
-	/** All major GUI panel components. Declared static so they can 'talk
+	/** All major GUI components. Declared static so they can 'talk
 	 *  to each other through the GameFrame class **/
 	static GameBoardPanel gameBoardPanel = new GameBoardPanel();
 	static NextPiecePanel nextPiecePanel = new NextPiecePanel("Next Piece");
 	static NextPiecePanel holdPanel = new NextPiecePanel("Hold");
 	static ScorePanel scorePanel = new ScorePanel();
 	static MenuPanel menuPanel = new MenuPanel();
+	static SaveScoreFrame saveScoreFrame = new SaveScoreFrame();
 	
 	// This is public so it can be accessed by the AudioManager
 	// and GameBoardModel

@@ -379,6 +379,9 @@ public class GameBoardPanel extends GridPainter {
 			// Re-enable the start button once the spiral loop is completed
 			GameFrame.menuPanel.enableStartButton();
 			
+			// Ask player to save score
+			GameFrame.saveScoreFrame.present();
+			
 			}
 			catch (InterruptedException e) {}
 			
@@ -425,6 +428,9 @@ public class GameBoardPanel extends GridPainter {
 			
 			// Re-enable start button
 			GameFrame.menuPanel.enableStartButton();
+			
+			// Ask player to save score
+			GameFrame.saveScoreFrame.present();
 			
 			}
 			catch (InterruptedException e) {}

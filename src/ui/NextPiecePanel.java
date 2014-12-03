@@ -12,12 +12,13 @@ public class NextPiecePanel extends GridPainter {
 		setBorder(new TitledBorder(title));
 		setFocusable(false);
 		
-		// Size of all info panels should be constant
+		// Size of all next piece panels should be constant
 		setPreferredSize(new Dimension(
+				
 			GameFrame.INFO_PANEL_WIDTH,
 			
 			// For some reason I need +10 to get proper size, even
-			// those I want to height of the panel to be 4 squares...
+			// though I want to height of the panel to be 4 squares...
 			GridPainter.SQUARE_SIDE_LENGTH * 4 + 10));
 	}
 	
