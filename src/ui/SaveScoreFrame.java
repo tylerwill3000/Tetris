@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.DBInterface;
+import model.db.DBComm;
 import model.GameBoardModel;
 
 // Frame prompting the user whether they want to save their score
@@ -39,11 +39,12 @@ public class SaveScoreFrame extends JFrame {
 		
 			try {
 				
-				DBInterface.writeScore(
-						name.getText(),
-						GameBoardModel.getScore(),
-						GameBoardModel.getLevel(),
-						GameBoardModel.getLinesCompleted()
+				DBComm.writeScore(
+					name.getText(),
+					GameBoardModel.getScore(),
+					GameBoardModel.getLevel(),
+					GameBoardModel.getLinesCompleted(),
+					GameFrame.settingsPanel.getDifficulty()
 				);
 				
 				saveStatus.setForeground(Color.GREEN);
@@ -69,6 +70,7 @@ public class SaveScoreFrame extends JFrame {
 		setLayout(new GridLayout(4,1));
 		
 		attainedScore.setHorizontalAlignment(JLabel.CENTER);
+		attainedScore.setText("Your score: " + GameBoardModel.getScore());
 		add(attainedScore);
 		
 		// Input area with instructions and name text field
@@ -119,27 +121,7 @@ public class SaveScoreFrame extends JFrame {
 		setTitle("Save Score");
 		setSize(450,170);
 		setResizable(false);
-		setLocationRelativeTo(null);
-		
-	}
-	
-	// Makes the frame visible with current score data
-	public void present() {
-		
-		if (!GameFrame.settingsPanel.saveScoreOn()) return;
-		
-		// In case it's still disabled from a previous save
-		saveScore.setEnabled(true);
-		
-		// In case any DB messages are still present from a previous save
-		saveStatus.setText("");
-		
-		// In case it still says "OK" from a previous save
-		cancel.setText("Cancel");
-		
-		// Display player's score
-		attainedScore.setText("Your score: " + GameBoardModel.getScore());
-		
+		setLocationRelativeTo(null);		
 		setVisible(true);
 		
 	}

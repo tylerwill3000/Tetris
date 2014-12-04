@@ -131,18 +131,26 @@ public class MenuPanel extends JPanel {
 		
 	};
 	
+	private ActionListener viewScoresListener = new ActionListener() {
+		
+		public void actionPerformed(ActionEvent e) {
+			new HighScoreFrame();
+		}
+		
+	};
+	
 	// Handy methods for enabling / disabling buttons
 	void enableStartButton() { start.addActionListener(startButtonListener); }
 	void enablePauseButton() { pause.addActionListener(pauseButtonListener); }
 	void enableResumeButton() { resume.addActionListener(resumeButtonListener); }
 	void enableGiveUpButton() { giveUp.addActionListener(giveUpButtonListener); }
-	void enableViewScoresButton() {}
+	void enableViewScoresButton() { viewScores.addActionListener(viewScoresListener); }
 	
 	void disableStartButton() { start.removeActionListener(startButtonListener); }
 	void disablePauseButton() { pause.removeActionListener(pauseButtonListener); }
 	void disableResumeButton() { resume.removeActionListener(resumeButtonListener); }
 	void disableGiveUpButton() { giveUp.removeActionListener(giveUpButtonListener); }
-	void disableViewScoresButton() {}
+	void disableViewScoresButton() { viewScores.removeActionListener(viewScoresListener); }
 	
 	MenuPanel() {
 		
@@ -165,6 +173,7 @@ public class MenuPanel extends JPanel {
 		}
 		
 		enableStartButton();
+		enableViewScoresButton();
 		
 	}
 	

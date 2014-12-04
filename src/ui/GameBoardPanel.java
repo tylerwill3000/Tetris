@@ -385,7 +385,7 @@ public class GameBoardPanel extends GridPainter {
 			GameFrame.menuPanel.enableStartButton();
 			
 			// Ask player to save score
-			GameFrame.saveScoreFrame.present();
+			new SaveScoreFrame();
 			
 			}
 			catch (InterruptedException e) {}
@@ -435,7 +435,7 @@ public class GameBoardPanel extends GridPainter {
 			GameFrame.menuPanel.enableStartButton();
 			
 			// Ask player to save score
-			GameFrame.saveScoreFrame.present();
+			new SaveScoreFrame();
 			
 			}
 			catch (InterruptedException e) {}

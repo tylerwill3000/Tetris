@@ -30,7 +30,6 @@ public class GameFrame extends JFrame {
 	static NextPiecePanel holdPanel = new NextPiecePanel("Hold");
 	static ScorePanel scorePanel = new ScorePanel();
 	static MenuPanel menuPanel = new MenuPanel();
-	static SaveScoreFrame saveScoreFrame = new SaveScoreFrame();
 	
 	// This is public so it can be accessed by the AudioManager
 	// and GameBoardModel
