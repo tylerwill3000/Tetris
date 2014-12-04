@@ -31,8 +31,12 @@ public class HighScoreFrame extends JFrame {
 		"Difficulty"
 	};
 	
-	private JComboBox<String> jcbxNumRecords = new JComboBox<>(new String[]{
-			"10","25","50","100"
+	private final static Integer[] RECORD_COUNTS = {10,25,50,100};
+	
+	private JComboBox<Integer> jcbxNumRecords = new JComboBox<>(RECORD_COUNTS);
+	
+	private JComboBox<String> jcbxDiff = new JComboBox<>(new String[]{
+			"Easy","Medium","Hard","All"
 	});
 	
 	private JButton jbtReturn = new JButton("Return");
@@ -56,7 +60,8 @@ public class HighScoreFrame extends JFrame {
 		JPanel recordSelectorPanel = new JPanel();
 		recordSelectorPanel.add(new JLabel("Show "));
 		recordSelectorPanel.add(jcbxNumRecords);
-		recordSelectorPanel.add(new JLabel(" records"));
+		recordSelectorPanel.add(new JLabel(" records for difficulty "));
+		recordSelectorPanel.add(jcbxDiff);
 		recordSelectorPanel.add(dbErrors);
 		
 		// Container for button so it doesn't expand to full pane size
@@ -76,7 +81,14 @@ public class HighScoreFrame extends JFrame {
 			}
 		});
 		
+		// Both comboboxes simply re-populate the table upon selection change
 		jcbxNumRecords.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				populateTable();				
+			}
+		});
+		
+		jcbxDiff.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				populateTable();				
 			}
@@ -94,9 +106,10 @@ public class HighScoreFrame extends JFrame {
 		
 		try {
 			
-			int numRecords = Integer.parseInt((String)(jcbxNumRecords.getSelectedItem()));
+			int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
+			int difficulty = jcbxDiff.getSelectedIndex();
 			
-			Object[][] data = DBComm.getHighScoresData(numRecords);
+			Object[][] data = DBComm.getHighScoresData(numRecords, difficulty);
 			
 			table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
 			

@@ -15,14 +15,14 @@ import model.AudioManager;
 
 public class SettingsPanel extends JPanel {
 	
+	public final static String[] DIFFICULTIES = {"Easy","Medium","Hard"};
+	
 	private JCheckBox ghostSquaresCbx = new JCheckBox("Ghost Squares", true);
 	private JCheckBox musicCbx = new JCheckBox("Music", true);
 	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
 	private JCheckBox saveScoreCbx = new JCheckBox("Save Scores", true);
 	
-	private JComboBox<String> difficultyList = new JComboBox<String>(
-			new String[]{"Easy","Medium","Hard"}
-	);
+	private JComboBox<String> difficultyList = new JComboBox<String>(DIFFICULTIES);
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		
