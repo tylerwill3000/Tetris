@@ -1,4 +1,4 @@
-package model.db;
+package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import javax.swing.JTable;
 
-// Interface to the scores database
+// Interfaces to the scores database
 public class DBComm {
 	
 	private static Connection getConnection() throws ClassNotFoundException, SQLException {
@@ -45,6 +45,7 @@ public class DBComm {
 		
 	}
 	
+	// Pulls scores from the DB and formats them into a JTable GUI component
 	public static JTable getHighScoresTable(int numScores) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
@@ -56,17 +57,15 @@ public class DBComm {
 			
 			// Obtain column count and use it to initialize object array
 			int colCount = scores.getMetaData().getColumnCount();
-			Object[][] data = new Object[numScores+1][colCount];
+			Object[][] data = new Object[numScores][colCount];
 			
 			// Populate data
 			while (scores.next()) {
 				
-				data[scores.getRow()-1][0] = scores.getString(1); // Name
-				data[scores.getRow()-1][1] = scores.getString(2); // Score
-				data[scores.getRow()-1][2] = scores.getString(3); // Level
-				data[scores.getRow()-1][3] = scores.getString(4); // Lines
+				// colCount-1 since difficulty is handled separately
+				for (int col = 0; col < colCount-1; col++)
+					data[scores.getRow()-1][col] = scores.getString(col+1);
 				
-				// Difficulty
 				String diff = scores.getString(5);
 				
 				if (diff.equals("0"))

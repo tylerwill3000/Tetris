@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.db.DBComm;
+import model.DBComm;
 import model.GameBoardModel;
 
 // Frame prompting the user whether they want to save their score

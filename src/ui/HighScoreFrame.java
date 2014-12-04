@@ -13,11 +13,11 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import model.db.DBComm;
+import model.DBComm;
 
 public class HighScoreFrame extends JFrame {
 	
-	private int numScores = 50;
+	private int numScores = 10;
 	
 	private JButton jbtReturn = new JButton("Return");
 	
