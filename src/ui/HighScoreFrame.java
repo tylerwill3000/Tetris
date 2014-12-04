@@ -45,6 +45,7 @@ public class HighScoreFrame extends JFrame {
 		populateTable();
 		
 		table.setFillsViewportHeight(true);
+		table.setEnabled(false);;
 		
 		setLayout(new BorderLayout());
 		
@@ -104,7 +105,7 @@ public class HighScoreFrame extends JFrame {
 			centerer.setHorizontalAlignment(SwingConstants.CENTER);
 			
 			// Center all columns
-			for (int i = 0; i < table.getColumnCount(); i++) {
+			for (int i = 0; i < data[0].length; i++) {
 				table.getColumnModel().getColumn(i).setCellRenderer(centerer);
 			}
 

@@ -60,18 +60,25 @@ public class DBComm {
 			// Populate data
 			while (scores.next()) {
 				
-				// colCount-1 since difficulty is handled separately
-				for (int col = 0; col < colCount-1; col++)
-					data[scores.getRow()-1][col] = scores.getString(col+1);
+				int currentRow = scores.getRow()-1;
 				
+				// colCount-2 since difficulty / levels completed are handled separately
+				for (int col = 0; col < colCount-2; col++)
+					data[currentRow][col] = scores.getString(col+1);
+				
+				String level = scores.getString(4);				
 				String diff = scores.getString(5);
 				
+				// Level
+				data[currentRow][3] = level.equals("11") ? "Complete" : level;
+				
+				// Difficulty
 				if (diff.equals("0"))
-					data[scores.getRow()-1][4] = "Easy";
+					data[currentRow][4] = "Easy";
 				else if (diff.equals("1"))
-					data[scores.getRow()-1][4] = "Medium";
+					data[currentRow][4] = "Medium";
 				else
-					data[scores.getRow()-1][4] = "Hard";
+					data[currentRow][4] = "Hard";
 				
 			}
 			
