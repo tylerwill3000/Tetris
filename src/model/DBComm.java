@@ -6,8 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.JTable;
-
 // Interfaces to the scores database
 public class DBComm {
 	
@@ -45,8 +43,8 @@ public class DBComm {
 		
 	}
 	
-	// Pulls scores from the DB and formats them into a JTable GUI component
-	public static JTable getHighScoresTable(int numScores) throws ClassNotFoundException, SQLException {
+	// Pulls scores from the DB and returns the corresponding object matrix for the data
+	public static Object[][] getHighScoresData(int numScores) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
 		try {
@@ -77,7 +75,7 @@ public class DBComm {
 				
 			}
 			
-			return new JTable(data, new Object[]{"Name","Score","Lines","Level","Difficulty"});
+			return data;
 			
 		}
 		finally {

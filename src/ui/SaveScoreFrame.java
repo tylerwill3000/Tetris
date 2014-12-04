@@ -53,12 +53,8 @@ public class SaveScoreFrame extends JFrame {
 				
 			}
 			catch (ClassNotFoundException | SQLException e1) {
-				
 				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("Error writing to database");
-				
-				e1.printStackTrace();
-				
+				saveStatus.setText("There were errors writing to the database: " + e1.getMessage());				
 			}
 			
 		}
@@ -93,7 +89,7 @@ public class SaveScoreFrame extends JFrame {
 		
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
+				dispose();
 			}
 		});
 		

@@ -1,38 +1,83 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import model.DBComm;
 
 public class HighScoreFrame extends JFrame {
 	
-	private int numScores = 10;
+	private final static Object[] COLUMN_HEADERS = {
+		"Name",
+		"Score",
+		"Lines",
+		"Level",
+		"Difficulty"
+	};
+	
+	private JComboBox<String> jcbxNumRecords = new JComboBox<>(new String[]{
+			"10","25","50","100"
+	});
 	
 	private JButton jbtReturn = new JButton("Return");
+	private JTable table = new JTable();
+	
+	private JLabel dbErrors = new JLabel();
 	
 	HighScoreFrame() {
 		
+		populateTable();
+		
+		table.setFillsViewportHeight(true);
+		
 		setLayout(new BorderLayout());
 		
-		add(new JScrollPane(buildTable()), BorderLayout.CENTER);
-		JPanel btnContainer = new JPanel();
-		btnContainer.add(jbtReturn);
-		add(btnContainer, BorderLayout.SOUTH);
+		// Table added to center so it auto-expands with window size
+		add(new JScrollPane(table), BorderLayout.CENTER);
+		
+		// Holds record selector list and labels
+		JPanel recordSelectorPanel = new JPanel();
+		recordSelectorPanel.add(new JLabel("Show "));
+		recordSelectorPanel.add(jcbxNumRecords);
+		recordSelectorPanel.add(new JLabel(" records"));
+		recordSelectorPanel.add(dbErrors);
+		
+		// Container for button so it doesn't expand to full pane size
+		JPanel buttonContainer = new JPanel();
+		buttonContainer.add(jbtReturn);
+		
+		// Add all menu components to a master panel
+		JPanel menuPanel = new JPanel(new GridLayout(2,1));
+		menuPanel.add(recordSelectorPanel);
+		menuPanel.add(buttonContainer);
+		
+		add(menuPanel, BorderLayout.SOUTH);
 		
 		jbtReturn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setVisible(false);
+				dispose();
+			}
+		});
+		
+		jcbxNumRecords.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				populateTable();				
 			}
 		});
 		
@@ -43,30 +88,30 @@ public class HighScoreFrame extends JFrame {
 
 	}
 	
-	// Initializes and configures the table
-	private JTable buildTable() {
+	// Populates table with appropriate data depending on selected row count
+	private void populateTable() {
 		
 		try {
 			
-			JTable t = DBComm.getHighScoresTable(numScores);
+			int numRecords = Integer.parseInt((String)(jcbxNumRecords.getSelectedItem()));
+			
+			Object[][] data = DBComm.getHighScoresData(numRecords);
+			
+			table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
 			
 			// Center alignment renderer
 			DefaultTableCellRenderer centerer = new DefaultTableCellRenderer();
 			centerer.setHorizontalAlignment(SwingConstants.CENTER);
 			
 			// Center all columns
-			for (int i = 0; i < t.getColumnCount(); i++) {
-				t.getColumnModel().getColumn(i).setCellRenderer(centerer);
+			for (int i = 0; i < table.getColumnCount(); i++) {
+				table.getColumnModel().getColumn(i).setCellRenderer(centerer);
 			}
-			
-			return t;
-			
+
 		}
 		catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			dbErrors.setText("There were errors reaching the database: " + e.getMessage());
 		}
-		
-		return null;
 		
 	}
 	
