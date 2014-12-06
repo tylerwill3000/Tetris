@@ -23,6 +23,9 @@ import model.DBComm;
 
 public class HighScoreFrame extends JFrame {
 	
+	private static Integer cachedSelectedRecordCount = null;
+	private static Integer cachedSelectedDifficulty = null;
+	
 	private final static Object[] COLUMN_HEADERS = {
 		"Name",
 		"Score",
@@ -45,6 +48,10 @@ public class HighScoreFrame extends JFrame {
 	private JLabel dbErrors = new JLabel();
 	
 	HighScoreFrame() {
+		
+		// Set default selected options if they are cached
+		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
+		if (cachedSelectedDifficulty != null) jcbxDiff.setSelectedIndex(cachedSelectedDifficulty);
 		
 		populateTable();
 		
@@ -84,12 +91,14 @@ public class HighScoreFrame extends JFrame {
 		// Both comboboxes simply re-populate the table upon selection change
 		jcbxNumRecords.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				cachedSelectedRecordCount = jcbxNumRecords.getSelectedIndex();
 				populateTable();				
 			}
 		});
 		
 		jcbxDiff.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				cachedSelectedDifficulty = jcbxDiff.getSelectedIndex();
 				populateTable();				
 			}
 		});

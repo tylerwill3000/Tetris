@@ -20,22 +20,32 @@ import model.GameBoardModel;
 // Frame prompting the user whether they want to save their score
 public class SaveScoreFrame extends JFrame {
 	
-	JLabel attainedScore = new JLabel();
-	JLabel saveStatus = new JLabel();
+	private static String cachedName = null;
 	
-	JTextField name = new JTextField(8);
+	private JLabel attainedScore = new JLabel();
+	private JLabel saveStatus = new JLabel();
 	
-	JButton saveScore = new JButton("Save");
-	JButton cancel = new JButton("Cancel");
+	private JTextField name = new JTextField(8);
 	
-	ActionListener saveScoreListener = new ActionListener() {
+	private JButton saveScore = new JButton("Save");
+	private JButton cancel = new JButton("Cancel");
+	
+	private ActionListener saveScoreListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			
+			if (name.getText().equals("")) {
+				saveStatus.setForeground(Color.RED);
+				saveStatus.setText("Error: you must enter a name to save your score.");
+				return;
+			}
+			
+			cachedName = name.getText();
+			
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
 			
-			saveStatus.setText("Writing...");
 			saveStatus.setForeground(Color.BLACK);
+			saveStatus.setText("Writing...");
 		
 			try {
 				
@@ -54,7 +64,7 @@ public class SaveScoreFrame extends JFrame {
 			}
 			catch (ClassNotFoundException | SQLException e1) {
 				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("There were errors writing to the database: " + e1.getMessage());				
+				saveStatus.setText("There were errors writing to the database: " + e1.getMessage());
 			}
 			
 		}
@@ -62,6 +72,8 @@ public class SaveScoreFrame extends JFrame {
 	};
 	
 	SaveScoreFrame() {
+		
+		if (cachedName != null) name.setText(cachedName);
 		
 		setLayout(new GridLayout(4,1));
 		

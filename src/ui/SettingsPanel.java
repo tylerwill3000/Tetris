@@ -63,7 +63,6 @@ public class SettingsPanel extends JPanel {
 			x.setFocusable(false);
 		}
 		
-		
 		JPanel diffPanel = new JPanel(new BorderLayout());
 		diffPanel.add(new JLabel("Difficulty:  "), BorderLayout.WEST);
 		diffPanel.add(difficultyList, BorderLayout.CENTER);

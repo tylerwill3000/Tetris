@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
-import ui.GameFrame;
 import ui.SettingsPanel;
 
 // Interfaces to the scores database
@@ -14,34 +14,26 @@ public class DBComm {
 	
 	private static Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		return DriverManager.getConnection("jdbc:mysql://localhost/tetris","root","TyDaWi@timpfmys!");
+		return DriverManager.getConnection("jdbc:mysql://10.0.0.86:3306/tetris", "root", "TyDaWi@timpfmys!");
 	}
 	
 	// For writing a new score the the DB
 	public static void writeScore(String name, int score, int level, int lines, int difficulty) throws ClassNotFoundException, SQLException {
-		
-		// In case the player left the name input field blank (-_-)
-		if (name.equals("")) name = "Unspecified";
 		
 		Connection conn = null;
 		try {
 				
 			conn = getConnection();
 			
-			PreparedStatement insert = conn.prepareStatement(
-				"insert into score (playerName, playerScore, playerLevel, playerLines, playerDifficulty) values (?, ?, ?, ?, ?)");
-			
-			insert.setString(1, name);
-			insert.setString(2, String.valueOf(score));
-			insert.setString(3, String.valueOf(level));
-			insert.setString(4, String.valueOf(lines));
-			insert.setString(5, String.valueOf(difficulty));
-			
-			insert.executeUpdate();
+			conn.createStatement().executeUpdate(new StringBuilder()
+				.append("insert into score ")
+				.append("(playerName, playerScore, playerLevel, playerLines, playerDifficulty) values ")
+				.append(String.format("('%s', %d, %d, %d, %d)", name, score, level, lines, difficulty))
+				.toString());
 			
 		}
 		finally {
-			conn.close();
+			if (conn != null) conn.close();
 		}		
 		
 	}
@@ -76,10 +68,7 @@ public class DBComm {
 			
 			conn = getConnection();
 			
-			ResultSet scores =
-				conn
-				.createStatement()
-				.executeQuery(createSQLQuery(numScores, difficulty));
+			ResultSet scores = conn.createStatement().executeQuery(createSQLQuery(numScores, difficulty));
 			
 			// Obtain column count and use it to initialize object array
 			int colCount = scores.getMetaData().getColumnCount();
@@ -109,7 +98,7 @@ public class DBComm {
 			
 		}
 		finally {
-			conn.close();
+			if (conn != null) conn.close();
 		}
 		
 	}
