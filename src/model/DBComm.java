@@ -2,19 +2,20 @@ package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import ui.SettingsPanel;
 
 // Interfaces to the scores database
 public class DBComm {
 	
+	// Hostname or IP address
+	private final static String HOST = "localhost";
+	
 	private static Connection getConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		return DriverManager.getConnection("jdbc:mysql://10.0.0.86:3306/tetris", "root", "TyDaWi@timpfmys!");
+		return DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/tetris", "root", "TyDaWi@timpfmys!");
 	}
 	
 	// For writing a new score the the DB
