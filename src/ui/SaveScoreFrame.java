@@ -36,7 +36,7 @@ public class SaveScoreFrame extends JFrame {
 			
 			if (name.getText().equals("")) {
 				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("Error: you must enter a name to save your score.");
+				saveStatus.setText("Error: you must enter a name to save your score");
 				return;
 			}
 			

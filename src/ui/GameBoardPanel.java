@@ -205,9 +205,9 @@ public class GameBoardPanel extends GridPainter {
 				GameFrame.menuPanel.giveUp.doClick();
 				break;
 			
-			case KeyEvent.VK_V:
+			case KeyEvent.VK_H:
 				
-				GameFrame.menuPanel.viewScores.doClick();
+				GameFrame.menuPanel.highScores.doClick();
 				break;
 			
 			}

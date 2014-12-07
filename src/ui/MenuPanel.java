@@ -19,7 +19,7 @@ public class MenuPanel extends JPanel {
 	JButton pause = new JButton("Pause");
 	JButton resume = new JButton("Resume");
 	JButton giveUp = new JButton("Give Up");
-	JButton viewScores = new JButton("View High Scores");
+	JButton highScores = new JButton("High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled
@@ -131,7 +131,7 @@ public class MenuPanel extends JPanel {
 		
 	};
 	
-	private ActionListener viewScoresListener = new ActionListener() {
+	private ActionListener highScoresListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			new HighScoreFrame();
@@ -144,13 +144,13 @@ public class MenuPanel extends JPanel {
 	void enablePauseButton() { pause.addActionListener(pauseButtonListener); }
 	void enableResumeButton() { resume.addActionListener(resumeButtonListener); }
 	void enableGiveUpButton() { giveUp.addActionListener(giveUpButtonListener); }
-	void enableViewScoresButton() { viewScores.addActionListener(viewScoresListener); }
+	void enablehighScoresButton() { highScores.addActionListener(highScoresListener); }
 	
 	void disableStartButton() { start.removeActionListener(startButtonListener); }
 	void disablePauseButton() { pause.removeActionListener(pauseButtonListener); }
 	void disableResumeButton() { resume.removeActionListener(resumeButtonListener); }
 	void disableGiveUpButton() { giveUp.removeActionListener(giveUpButtonListener); }
-	void disableViewScoresButton() { viewScores.removeActionListener(viewScoresListener); }
+	void disablehighScoresButton() { highScores.removeActionListener(highScoresListener); }
 	
 	MenuPanel() {
 		
@@ -161,9 +161,9 @@ public class MenuPanel extends JPanel {
 		mnemonicMap.put(pause, 'p');
 		mnemonicMap.put(resume, 'r');
 		mnemonicMap.put(giveUp, 'g');
-		mnemonicMap.put(viewScores, 'v');
+		mnemonicMap.put(highScores, 'h');
 		
-		for (JButton b : new JButton[]{start, pause, resume, giveUp, viewScores}) {
+		for (JButton b : new JButton[]{start, pause, resume, giveUp, highScores}) {
 			
 			// Set all buttons un-focusable
 			b.setFocusable(false);
@@ -173,7 +173,7 @@ public class MenuPanel extends JPanel {
 		}
 		
 		enableStartButton();
-		enableViewScoresButton();
+		enablehighScoresButton();
 		
 	}
 	
