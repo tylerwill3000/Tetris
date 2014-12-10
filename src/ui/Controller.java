@@ -77,7 +77,7 @@ public class Controller {
 	// Package-private so it can be accessed by the start button listener
 	// to set the initial pieces on game load
 	static void moveConveyorBelt() {
-		
+
 		GameFrame.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
 		GameFrame.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
 		
