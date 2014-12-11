@@ -42,8 +42,6 @@ public class SaveScoreFrame extends JFrame {
 			
 			cachedName = name.getText();
 			
-			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
-			
 			saveStatus.setForeground(Color.BLACK);
 			saveStatus.setText("Writing...");
 		
@@ -59,6 +57,7 @@ public class SaveScoreFrame extends JFrame {
 				
 				saveStatus.setForeground(Color.GREEN);
 				saveStatus.setText("Score Saved!");
+				saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
 				cancel.setText("OK");
 				
 			}
