@@ -20,6 +20,8 @@ import model.GameBoardModel;
 // Frame prompting the user whether they want to save their score
 public class SaveScoreFrame extends JFrame {
 	
+	public final static int NAME_LENGTH = 20;
+	
 	private static String cachedName = null;
 	
 	private JLabel attainedScore = new JLabel();
@@ -87,6 +89,14 @@ public class SaveScoreFrame extends JFrame {
 	};
 	
 	SaveScoreFrame() {
+		
+		// Validates name length
+		name.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (name.getText().length() > NAME_LENGTH)
+					name.setText(name.getText().substring(0, NAME_LENGTH));
+			}
+		});
 		
 		if (cachedName != null) name.setText(cachedName);
 		

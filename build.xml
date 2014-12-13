@@ -25,7 +25,7 @@
 	</target>
 	
 	<target name="jar" description="Creates jar file" depends="compile, add-external-resources">
-		<jar basedir="${build.dir}" destfile="${jar.deploy.path}/tetris.jar" includes="**/*">
+		<jar basedir="${build.dir}" destfile="${jar.deploy.path}/tetris.jar" includes="**">
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" /> <!-- Includes DB driver classes from mysql jar -->
 			<manifest>
 				<attribute name="Main-class" value="ui.Main"/>
