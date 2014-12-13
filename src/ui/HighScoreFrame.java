@@ -104,6 +104,7 @@ public class HighScoreFrame extends JFrame {
 		});
 		
 		pack();
+		FrameUtils.setIcon(this, "trophy.png");
 		setTitle("High Scores");
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -121,7 +122,7 @@ public class HighScoreFrame extends JFrame {
 			data = DBComm.getHighScoresData(numRecords, difficulty);
 		}
 		catch (ClassNotFoundException | SQLException e1) {
-			dbErrors.setText("  " + e1.getMessage() + "  ");
+			dbErrors.setText("  Error reaching database: " + e1.getMessage() + "  ");
 			return;
 		}
 			

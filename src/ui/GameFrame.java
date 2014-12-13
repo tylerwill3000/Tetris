@@ -51,7 +51,7 @@ public class GameFrame extends JFrame {
 		add(createInfoPanel(), BorderLayout.EAST);
 		add(menuPanel, BorderLayout.SOUTH);
 		
-		setIconImage(new ImageIcon(getClass().getResource("images/icon.png")).getImage());
+		FrameUtils.setIcon(this, "game-icon.png");
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, 600);
@@ -106,6 +106,10 @@ public class GameFrame extends JFrame {
 		
 		return controls;
 		
+	}
+	
+	static void setFrameIcon(JFrame f) {
+		f.setIconImage(new ImageIcon(f.getClass().getResource("images/icon.png")).getImage());
 	}
 	
 }

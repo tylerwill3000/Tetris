@@ -65,7 +65,7 @@ public class SaveScoreFrame extends JFrame {
 			catch (ClassNotFoundException | SQLException e1) {
 				
 				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("  " + e1.getMessage() + "  ");
+				saveStatus.setText("  Error reaching database: " + e1.getMessage() + "  ");
 				
 				// Expand frame to be able to display full error text and then
 				// re-center it
@@ -144,6 +144,7 @@ public class SaveScoreFrame extends JFrame {
 			
 		});
 		
+		FrameUtils.setIcon(this, "save-icon.png");
 		setTitle("Save Score");
 		pack();
 		setResizable(false);
