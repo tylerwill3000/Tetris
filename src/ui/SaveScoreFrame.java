@@ -35,9 +35,15 @@ public class SaveScoreFrame extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			
 			if (name.getText().equals("")) {
+				
 				saveStatus.setForeground(Color.RED);
 				saveStatus.setText("Error: you must enter a name to save your score");
+				
+				pack();
+				setLocationRelativeTo(null);
+				
 				return;
+				
 			}
 			
 			cachedName = name.getText();
@@ -55,16 +61,29 @@ public class SaveScoreFrame extends JFrame {
 					GameFrame.settingsPanel.getDifficulty()
 				);
 				
-				saveStatus.setForeground(Color.GREEN);
-				saveStatus.setText("Score Saved!");
-				saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
-				cancel.setText("OK");
-				
 			}
 			catch (ClassNotFoundException | SQLException e1) {
+				
 				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("There were errors writing to the database: " + e1.getMessage());
+				saveStatus.setText("  " + e1.getMessage() + "  ");
+				
+				// Expand frame to be able to display full error text and then
+				// re-center it
+				pack();
+				setLocationRelativeTo(null);
+				
+				return;
+				
 			}
+			
+			saveStatus.setForeground(Color.GREEN);
+			saveStatus.setText("Score Saved!");
+			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
+			cancel.setText("OK");
+			
+			// Make sure frame is not over-expanded from display of a previous error
+			pack();
+			setLocationRelativeTo(null);
 			
 		}
 		
@@ -126,7 +145,7 @@ public class SaveScoreFrame extends JFrame {
 		});
 		
 		setTitle("Save Score");
-		setSize(450,170);
+		pack();
 		setResizable(false);
 		setLocationRelativeTo(null);		
 		setVisible(true);

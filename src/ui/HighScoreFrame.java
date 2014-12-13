@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,6 +54,9 @@ public class HighScoreFrame extends JFrame {
 		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
 		if (cachedSelectedDifficulty != null) jcbxDiff.setSelectedIndex(cachedSelectedDifficulty);
 		
+		dbErrors.setHorizontalAlignment(SwingConstants.CENTER);
+		dbErrors.setForeground(Color.RED);
+		
 		populateTable();
 		
 		table.setFillsViewportHeight(true);
@@ -69,15 +73,15 @@ public class HighScoreFrame extends JFrame {
 		recordSelectorPanel.add(jcbxNumRecords);
 		recordSelectorPanel.add(new JLabel(" records for difficulty "));
 		recordSelectorPanel.add(jcbxDiff);
-		recordSelectorPanel.add(dbErrors);
 		
 		// Container for button so it doesn't expand to full pane size
 		JPanel buttonContainer = new JPanel();
 		buttonContainer.add(jbtReturn);
 		
 		// Add all menu components to a master panel
-		JPanel menuPanel = new JPanel(new GridLayout(2,1));
+		JPanel menuPanel = new JPanel(new GridLayout(3,1));
 		menuPanel.add(recordSelectorPanel);
+		menuPanel.add(dbErrors);
 		menuPanel.add(buttonContainer);
 		
 		add(menuPanel, BorderLayout.SOUTH);
@@ -113,28 +117,35 @@ public class HighScoreFrame extends JFrame {
 	// Populates table with appropriate data depending on selected row count
 	private void populateTable() {
 		
+		int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
+		int difficulty = jcbxDiff.getSelectedIndex();
+		
+		Object[][] data = null;
 		try {
-			
-			int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
-			int difficulty = jcbxDiff.getSelectedIndex();
-			
-			Object[][] data = DBComm.getHighScoresData(numRecords, difficulty);
-			
-			table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
-			
-			// Center alignment renderer
-			DefaultTableCellRenderer centerer = new DefaultTableCellRenderer();
-			centerer.setHorizontalAlignment(SwingConstants.CENTER);
-			
-			// Center all columns
-			for (int i = 0; i < data[0].length; i++) {
-				table.getColumnModel().getColumn(i).setCellRenderer(centerer);
-			}
-
+			data = DBComm.getHighScoresData(numRecords, difficulty);
 		}
-		catch (ClassNotFoundException | SQLException e) {
-			dbErrors.setText("There were errors reaching the database: " + e.getMessage());
+		catch (ClassNotFoundException | SQLException e1) {
+			dbErrors.setText("  " + e1.getMessage() + "  ");
+			return;
 		}
+			
+		// If this statement is reached there were no errors reaching the
+		// database, so clear error text in case it is still displaying
+		// an old error and then re-center and pack the frame (since the
+		// error text can stretch the frame)
+		dbErrors.setText(null);
+		pack();
+		setLocationRelativeTo(null);
+		
+		table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
+		
+		// Center alignment renderer
+		DefaultTableCellRenderer centerer = new DefaultTableCellRenderer();
+		centerer.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		// Center all columns
+		for (int i = 0; i < data[0].length; i++)
+			table.getColumnModel().getColumn(i).setCellRenderer(centerer);
 		
 	}
 	

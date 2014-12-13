@@ -10,7 +10,7 @@ import ui.SettingsPanel;
 // Interfaces to the scores database
 public class DBComm {
 	
-	private final static String DB_HOST_NAME = "10.0.0.86";
+	private final static String DB_HOST_NAME = "localhost";
 	private final static String DB_USER = "root";
 	private final static String DB_PASS = "TyDaWi@timpfmys!";
 	
