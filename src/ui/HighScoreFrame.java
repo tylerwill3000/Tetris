@@ -122,7 +122,7 @@ public class HighScoreFrame extends JFrame {
 			data = DBComm.getHighScoresData(numRecords, difficulty);
 		}
 		catch (ClassNotFoundException | SQLException e1) {
-			dbErrors.setText("  Error reaching database: " + e1.getMessage() + "  ");
+			dbErrors.setText("  Database error: " + e1.getMessage() + "  ");
 			return;
 		}
 			
