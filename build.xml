@@ -10,12 +10,12 @@
 	<property name="build.dir" value="build"/>
 	<property name="lib.dir" value="lib"/>
 	
-	<target name="compile" description="Compiles class files into class directory">
+	<target name="compile" description="Compiles class files into build directory">
 		<mkdir dir="${build.dir}"/>
 		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
 	</target>
 	
-	<target name="add-external-resources" description="Adds audio, images and external libs to the build folder" depends="compile">
+	<target name="add-external-resources" description="Adds audio and images to the build folder" depends="compile">
 		<copy todir="${build.dir}/model">
 			<fileset dir="${src.dir}/.." includes="audio/**"/>
 		</copy>
@@ -24,7 +24,7 @@
 		</copy>
 	</target>
 	
-	<target name="make-jar" description="Creates jar file" depends="compile, add-external-resources">
+	<target name="jar" description="Creates jar file" depends="compile, add-external-resources">
 		<jar basedir="${build.dir}" destfile="${jar.deploy.path}/tetris.jar" includes="**/*">
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" /> <!-- Includes DB driver classes from mysql jar -->
 			<manifest>
@@ -33,7 +33,7 @@
 		</jar>
 	</target>
 	
-	<target name="clean" description="Deletes all build files after compile" depends="make-jar">
+	<target name="clean" description="Deletes all build files after compile" depends="jar">
 		<delete dir="${build.dir}"/>
 	</target>
 

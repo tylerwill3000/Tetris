@@ -103,11 +103,11 @@ public class HighScoreFrame extends JFrame {
 			}
 		});
 		
-		pack();
 		FrameUtils.setIcon(this, "trophy.png");
 		setTitle("High Scores");
-		setLocationRelativeTo(null);
 		setVisible(true);
+		pack();
+		setLocationRelativeTo(null);
 
 	}
 	

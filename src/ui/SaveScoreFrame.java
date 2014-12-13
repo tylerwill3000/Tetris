@@ -67,8 +67,6 @@ public class SaveScoreFrame extends JFrame {
 				saveStatus.setForeground(Color.RED);
 				saveStatus.setText("  Error reaching database: " + e1.getMessage() + "  ");
 				
-				// Expand frame to be able to display full error text and then
-				// re-center it
 				pack();
 				setLocationRelativeTo(null);
 				
@@ -81,7 +79,6 @@ public class SaveScoreFrame extends JFrame {
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
 			cancel.setText("OK");
 			
-			// Make sure frame is not over-expanded from display of a previous error
 			pack();
 			setLocationRelativeTo(null);
 			
@@ -146,10 +143,10 @@ public class SaveScoreFrame extends JFrame {
 		
 		FrameUtils.setIcon(this, "save-icon.png");
 		setTitle("Save Score");
-		pack();
-		setResizable(false);
-		setLocationRelativeTo(null);		
+		setResizable(false);	
 		setVisible(true);
+		pack();
+		setLocationRelativeTo(null);
 		
 	}
 	
