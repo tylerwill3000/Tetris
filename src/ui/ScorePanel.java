@@ -9,7 +9,6 @@ import javax.swing.border.TitledBorder;
 
 import model.GameBoardModel;
 
-// Dedicated to the "View" portion of the scoring data
 public class ScorePanel extends JPanel {
 	
 	private JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER);
@@ -56,7 +55,7 @@ public class ScorePanel extends JPanel {
 		private Color flashColor;
 		
 		// Create a task to flash a customized string
-		public FlashTextTask(String textToFlash, Color flashColor) {
+		private FlashTextTask(String textToFlash, Color flashColor) {
 			this.textToFlash = textToFlash;
 			this.flashColor = flashColor;
 		}
@@ -73,7 +72,7 @@ public class ScorePanel extends JPanel {
 				}
 				
 			}
-			catch (InterruptedException e) {}
+			catch (InterruptedException e) {} // Munch
 			
 		}
 		

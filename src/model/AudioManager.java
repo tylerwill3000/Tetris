@@ -50,8 +50,7 @@ public class AudioManager {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
-			if (victoryFanfare.isRunning())
-				victoryFanfare.stop();			
+			if (victoryFanfare.isRunning()) victoryFanfare.stop();			
 			
 			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
@@ -86,6 +85,17 @@ public class AudioManager {
 		}
 	}
 	
+	// For playing small effect sounds. Resets the clip back to the starting
+	// frame position after playing
+	private static void playEffect(Clip effect) {
+
+		if (GameFrame.settingsPanel.effectsOn() && effect != null) {
+			effect.start();
+			effect.setFramePosition(0);
+		}
+
+	}
+	
 	public static void playPauseSound() { playEffect(pause); }
 	public static void playPiecePlacementSound() { playEffect(placePiece); }
 	public static void playHoldSound() { playEffect(hold); }
@@ -101,17 +111,6 @@ public class AudioManager {
 	
 	public static void playCWRotationSound() { playEffect(swipeUp); }
 	public static void playCCWRotationSound() { playEffect(swipeDown); }
-	
-	// For playing small effect sounds. Resets the clip back to the starting
-	// frame position after playing
-	private static void playEffect(Clip effect) {
-
-		if (GameFrame.settingsPanel.effectsOn() && effect != null) {
-			effect.start();
-			effect.setFramePosition(0);
-		}
-
-	}
 	
 	// Iterates over all clips and resets their frame positions back to the start.
 	// Used upon game complete
@@ -140,7 +139,7 @@ public class AudioManager {
 				return c;
 				
 			}
-			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {}
+			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {} // Munch
 			
 		}
 		

@@ -29,15 +29,9 @@ public class NextPiecePanel extends GridPainter {
 	// Clears all squares on the panel. Used before printing a new next piece
 	public void clear() {
 
-		for (int row = 0; row < JPanelGrid.length; row++) {
-			
-			for (int col = 0; col < JPanelGrid[row].length; col++) {
-			
+		for (int row = 0; row < JPanelGrid.length; row++)
+			for (int col = 0; col < JPanelGrid[row].length; col++)
 				eraseSquare(row, col);
-				
-			}			
-			
-		}
 	
 	}
 	

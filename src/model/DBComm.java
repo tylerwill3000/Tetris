@@ -11,6 +11,9 @@ import ui.SettingsPanel;
 public class DBComm {
 	
 	private final static String DB_HOST_NAME = "localhost";
+	
+	// I probably shouldn't store these in my source code, but this works
+	// for now. It's just a school project, after all
 	private final static String DB_USER = "root";
 	private final static String DB_PASS = "TyDaWi@timpfmys!";
 	
@@ -40,27 +43,6 @@ public class DBComm {
 		
 	}
 	
-	// Constructs the appropriate SQL query based on the desired number of scores and difficulty
-	private static String createSQLQuery(int numScores, int difficulty) {
-		
-		StringBuilder query = new StringBuilder();
-		
-		// Initial query statement
-		query.append(
-			"select playerName, playerScore, playerLines, playerLevel, playerDifficulty from score "
-		);
-		
-		// Add in difficulty restrictions for all selections but '3' (All)
-		if (difficulty == 0 || difficulty == 1 || difficulty == 2)
-			query.append("where playerDifficulty = " + difficulty + " ");
-		
-		// Ordering and record count limiting
-		query.append("order by playerScore desc limit " + numScores);
-		
-		return query.toString();
-		
-	}
-	
 	// Pulls scores from the DB and returns the corresponding object matrix for the data
 	public static Object[][] getHighScoresData(int numScores, int difficulty) throws ClassNotFoundException, SQLException {
 		
@@ -70,7 +52,7 @@ public class DBComm {
 			
 			conn = getConnection();
 			
-			ResultSet scores = conn.createStatement().executeQuery(createSQLQuery(numScores, difficulty));
+			ResultSet scores = conn.createStatement().executeQuery(createScoresQuery(numScores, difficulty));
 			
 			// Obtain column count and use it to initialize object array
 			int colCount = scores.getMetaData().getColumnCount();
@@ -102,6 +84,24 @@ public class DBComm {
 		finally {
 			if (conn != null) conn.close();
 		}
+		
+	}
+	
+	// Constructs the appropriate SQL query based on the desired number of scores and difficulty
+	private static String createScoresQuery(int numScores, int difficulty) {
+		
+		StringBuilder query = new StringBuilder();
+		
+		// Initial query statement
+		query.append("select playerName, playerScore, playerLines, playerLevel, playerDifficulty from score ");
+		
+		// Add in difficulty restrictions for all selections but '3' (All)
+		if (difficulty != 3) query.append("where playerDifficulty = " + difficulty + " ");
+		
+		// Ordering and record count limiting
+		query.append("order by playerScore desc limit " + numScores);
+		
+		return query.toString();
 		
 	}
 	

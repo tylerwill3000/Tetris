@@ -28,11 +28,7 @@ public class HighScoreFrame extends JFrame {
 	private static Integer cachedSelectedDifficulty = null;
 	
 	private final static Object[] COLUMN_HEADERS = {
-		"Name",
-		"Score",
-		"Lines",
-		"Level",
-		"Difficulty"
+		"Name", "Score", "Lines", "Level", "Difficulty"
 	};
 	
 	private final static Integer[] RECORD_COUNTS = {10,25,50,100};

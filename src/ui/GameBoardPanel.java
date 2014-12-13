@@ -287,8 +287,7 @@ public class GameBoardPanel extends GridPainter {
 	void fullReprint() {
 		
 		// Start at row 3 since 3 invisible rows at the top are not printed
-		for (int i = 3; i < V_CELLS; i++)
-			paintRow(i);
+		for (int i = 3; i < V_CELLS; i++) paintRow(i);
 		
 	}
 	
@@ -388,7 +387,7 @@ public class GameBoardPanel extends GridPainter {
 			if (GameFrame.settingsPanel.saveScoreOn()) new SaveScoreFrame();
 			
 			}
-			catch (InterruptedException e) {}
+			catch (InterruptedException e) {} // Munch
 			
 		}
 		
@@ -445,7 +444,8 @@ public class GameBoardPanel extends GridPainter {
 	}
 	
 	// Thread task class for flashing a row a couple times.
-	// Used when lines are cleared
+	// Used when lines are cleared. NOTE: this isn't working
+	// right now! I'm not sure if I will ever fix it...
 	class FlashRowsTask implements Runnable {
 		
 		private List<Integer> rowsToFlash;
@@ -469,7 +469,7 @@ public class GameBoardPanel extends GridPainter {
 				}
 				
 				try { Thread.sleep(20); } 
-				catch (InterruptedException e) {}
+				catch (InterruptedException e) {} // Munch
 
 			}
 

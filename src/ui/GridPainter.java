@@ -84,10 +84,8 @@ public class GridPainter extends JPanel {
 		// piece but the piece is already at the ghost position
 		if (squares == null) return;
 		
-		for (int[] square : squares) {
+		for (int[] square : squares)
 			paintSquare(square[0], square[1], color);
-				
-		}
 		
 	}
 	
