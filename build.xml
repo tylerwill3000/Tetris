@@ -5,7 +5,7 @@
 <project name="Tetris" default="clean">
 	
 	<property environment="env"/> <!-- Sets the string to use to access environment variables -->
-	<property name="jar.deploy.path" value="${env.USERPROFILE}/desktop"/>
+	<property name="jar.deploy.path" value="${env.USERPROFILE}/Desktop"/>
 	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="build"/>
 	<property name="lib.dir" value="lib"/>
