@@ -54,27 +54,26 @@ public class DBComm {
 			
 			ResultSet scores = conn.createStatement().executeQuery(createScoresQuery(numScores, difficulty));
 			
-			// Obtain column count and use it to initialize object array
+			// Obtain column count and use it to initialize object array.
+			// Add 1 to make room for the "Rank" column
 			int colCount = scores.getMetaData().getColumnCount();
-			Object[][] data = new Object[numScores][colCount];
+			Object[][] data = new Object[numScores][colCount+1];
 			
 			// Populate data
-			while (scores.next()) {
+			for (int rank = 1; scores.next(); rank++) {
 				
 				int currentRow = scores.getRow()-1;
 				
-				// colCount-2 since difficulty / levels completed are handled separately
-				for (int col = 0; col < colCount-2; col++)
-					data[currentRow][col] = scores.getString(col+1);
+				data[currentRow][0] = rank;
+				data[currentRow][1] = scores.getString(1); // Name
+				data[currentRow][2] = scores.getString(2); // Score
+				data[currentRow][3] = scores.getString(3); // Lines
 				
 				int level = scores.getInt(4);				
 				int diff = scores.getInt(5);
 				
-				// Level
-				data[currentRow][3] = level == 11 ? "Complete" : level;
-				
-				// Difficulty
-				data[currentRow][4] = SettingsPanel.DIFFICULTIES[diff];
+				data[currentRow][4] = level == 11 ? "Complete" : level; // Level
+				data[currentRow][5] = SettingsPanel.DIFFICULTIES[diff]; // Difficulty
 				
 			}
 			
