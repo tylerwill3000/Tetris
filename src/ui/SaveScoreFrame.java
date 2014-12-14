@@ -52,10 +52,11 @@ public class SaveScoreFrame extends JFrame {
 			
 			saveStatus.setForeground(Color.BLACK);
 			saveStatus.setText("Writing...");
-		
+			
+			int rank = 0;
 			try {
 				
-				DBComm.writeScore(
+				rank = DBComm.writeScore(
 					name.getText(),
 					GameBoardModel.getScore(),
 					GameBoardModel.getLevel(),
@@ -77,7 +78,7 @@ public class SaveScoreFrame extends JFrame {
 			}
 			
 			saveStatus.setForeground(new Color(40,180,65));
-			saveStatus.setText("Score Saved!");
+			saveStatus.setText("Score Saved! Your rank: " + rank);
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
 			cancel.setText("OK");
 			

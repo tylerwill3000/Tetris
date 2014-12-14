@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import ui.SettingsPanel;
 
@@ -22,7 +23,8 @@ public class DBComm {
 		return DriverManager.getConnection("jdbc:mysql://" + DB_HOST_NAME + "/tetris", DB_USER, DB_PASS);
 	}
 	
-	public static void writeScore(String name, int score, int level, int lines, int difficulty) throws ClassNotFoundException, SQLException {
+	// Returns the rank for the new score
+	public static int writeScore(String name, int score, int level, int lines, int difficulty) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
 		
@@ -30,11 +32,24 @@ public class DBComm {
 				
 			conn = getConnection();
 			
-			conn.createStatement().executeUpdate(new StringBuilder()
+			Statement stmt = conn.createStatement();
+			
+			stmt.executeUpdate(new StringBuilder()
 				.append("insert into score ")
 				.append("(playerName, playerScore, playerLevel, playerLines, playerDifficulty) values ")
-				.append(String.format("('%s', %d, %d, %d, %d)", name, score, level, lines, difficulty))
-				.toString());
+				.append(String.format("('%s', %d, %d, %d, %d);", name, score, level, lines, difficulty))
+				.toString()
+			);
+			
+			ResultSet rank = stmt.executeQuery(new StringBuilder()
+				.append("select count(*) from score ")
+				.append("where playerScore >= " + score + " ")
+				.append("order by playerScore desc;")
+				.toString()
+			);
+			
+			rank.next();
+			return rank.getInt(1);
 			
 		}
 		finally {
@@ -98,7 +113,7 @@ public class DBComm {
 		if (difficulty != 3) query.append("where playerDifficulty = " + difficulty + " ");
 		
 		// Ordering and record count limiting
-		query.append("order by playerScore desc limit " + numScores);
+		query.append("order by playerScore desc limit " + numScores + ";");
 		
 		return query.toString();
 		
