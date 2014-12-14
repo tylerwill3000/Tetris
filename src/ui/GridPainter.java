@@ -14,7 +14,7 @@ import model.Piece;
 public class GridPainter extends JPanel {
 	
 	// Pixel side length of each panel square
-	static final int SQUARE_SIDE_LENGTH = 30;
+	static final int SQUARE_SIDE_LENGTH = 35;
 	
 	// Holds all the JPanel objects for the panel
 	protected JPanel[][] JPanelGrid;

@@ -39,8 +39,8 @@ public class GameFrame extends JFrame {
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
 	
 	// Dimension constants
-	private static final int GAME_BOARD_PANEL_WIDTH =
-			GridPainter.SQUARE_SIDE_LENGTH * GameBoardPanel.H_CELLS;
+	private static final int GAME_BOARD_PANEL_WIDTH = GridPainter.SQUARE_SIDE_LENGTH * GameBoardPanel.H_CELLS;
+	private static final int GAME_BOARD_PANEL_HEIGHT = GridPainter.SQUARE_SIDE_LENGTH * GameBoardPanel.V_CELLS;
 	
 	static final int INFO_PANEL_WIDTH = 5 * GridPainter.SQUARE_SIDE_LENGTH;
 	
@@ -54,7 +54,7 @@ public class GameFrame extends JFrame {
 		FrameUtils.setIcon(this, "game-icon.png");
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, 600);
+		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, GAME_BOARD_PANEL_HEIGHT);
 		setResizable(false); // I don't want to mess with trying to make this work right
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -106,10 +106,6 @@ public class GameFrame extends JFrame {
 		
 		return controls;
 		
-	}
-	
-	static void setFrameIcon(JFrame f) {
-		f.setIconImage(new ImageIcon(f.getClass().getResource("images/icon.png")).getImage());
 	}
 	
 }
