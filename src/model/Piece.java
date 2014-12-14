@@ -56,14 +56,9 @@ public class Piece {
 
 	}
 	
-	// Location getters. Since some pieces can be placed with the bottom
-	// row of their bounding matrix empty, it can cause the location to
-	// extend beyond the number of vertical cells, so perform a quick
-	// check to prevent an out of bounds index from getting returned if
-	// this is the case
 	public int getRow() { return location[0]; }
-	
 	public int getCol() { return location[1]; }
+	
 	public Color getColor() { return color; }
 	public int[][] getLitSquares() { return litSquares; }
 	public int[][] getNextPanelSquares() { return nextPanelSquares; }
@@ -146,7 +141,7 @@ public class Piece {
 		
 		else {
 	
-			int[][] ghostSquares = calcLitSquares();
+			int[][] ghostSquares = litSquares;
 			
 			// Reset the piece's location and lit squares
 			location[0] -= downwardShift;
@@ -188,7 +183,7 @@ public class Piece {
 		// and then calculating the lit squares from the new
 		// position
 		rotate(orientationShift);
-		int[][] destinationSquares = calcLitSquares();
+		int[][] destinationSquares = litSquares;
 		rotate(orientationShift * -1); // Return piece to original position
 		
 		// Make sure all new squares are legal
