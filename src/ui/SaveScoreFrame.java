@@ -76,7 +76,7 @@ public class SaveScoreFrame extends JFrame {
 				
 			}
 			
-			saveStatus.setForeground(Color.GREEN);
+			saveStatus.setForeground(new Color(40,180,65));
 			saveStatus.setText("Score Saved!");
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
 			cancel.setText("OK");
