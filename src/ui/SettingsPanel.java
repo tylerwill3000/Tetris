@@ -1,6 +1,6 @@
 package ui;
 
-import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -65,9 +65,9 @@ public class SettingsPanel extends JPanel {
 			x.setFocusable(false);
 		}
 		
-		JPanel diffPanel = new JPanel(new BorderLayout());
-		diffPanel.add(new JLabel("Difficulty:  "), BorderLayout.WEST);
-		diffPanel.add(difficultyList, BorderLayout.CENTER);
+		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		diffPanel.add(new JLabel("Difficulty:  "));
+		diffPanel.add(difficultyList);
 		add(diffPanel);
 		
 	}
