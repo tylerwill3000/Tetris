@@ -24,6 +24,8 @@ public class SaveScoreFrame extends JFrame {
 	
 	private static String cachedName = null;
 	
+	private JPanel buttonPanel;
+	
 	private JLabel attainedScore = new JLabel();
 	private JLabel saveStatus = new JLabel();
 	
@@ -31,6 +33,7 @@ public class SaveScoreFrame extends JFrame {
 	
 	private JButton saveScore = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
+	private JButton highScores = new JButton("View High Scores");
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		
@@ -80,7 +83,9 @@ public class SaveScoreFrame extends JFrame {
 			saveStatus.setForeground(new Color(40,180,65));
 			saveStatus.setText("Score Saved! Your rank: " + rank);
 			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
-			cancel.setText("OK");
+			cancel.setText("Return");
+
+			buttonPanel.add(highScores);
 			
 			pack();
 			setLocationRelativeTo(null);
@@ -117,7 +122,7 @@ public class SaveScoreFrame extends JFrame {
 		add(saveStatus);
 		
 		// Button panel for saving / canceling
-		JPanel buttonPanel = new JPanel();
+		buttonPanel = new JPanel();
 		buttonPanel.add(saveScore);
 		buttonPanel.add(cancel);
 		add(buttonPanel);
@@ -128,6 +133,18 @@ public class SaveScoreFrame extends JFrame {
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+			}
+		});
+		
+		highScores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				HighScoreFrame.cachedSelectedRecordCount = 3;
+				HighScoreFrame.cachedSelectedDifficulty = 3;
+				
+				dispose();
+				new HighScoreFrame();
+				
 			}
 		});
 		
@@ -151,6 +168,8 @@ public class SaveScoreFrame extends JFrame {
 			}
 			
 		});
+		
+		
 		
 		FrameUtils.setIcon(this, "save-icon.png");
 		setTitle("Save Score");

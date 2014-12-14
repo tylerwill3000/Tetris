@@ -19,7 +19,7 @@ public class MenuPanel extends JPanel {
 	JButton pause = new JButton("Pause");
 	JButton resume = new JButton("Resume");
 	JButton giveUp = new JButton("Give Up");
-	JButton highScores = new JButton("High Scores");
+	JButton highScores = new JButton("View High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled

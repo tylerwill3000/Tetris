@@ -43,8 +43,7 @@ public class DBComm {
 			
 			ResultSet rank = stmt.executeQuery(new StringBuilder()
 				.append("select count(*) from score ")
-				.append("where playerScore >= " + score + " ")
-				.append("order by playerScore desc;")
+				.append("where playerScore >= " + score + ";")
 				.toString()
 			);
 			

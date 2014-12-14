@@ -24,8 +24,8 @@ import model.DBComm;
 
 public class HighScoreFrame extends JFrame {
 	
-	private static Integer cachedSelectedRecordCount = null;
-	private static Integer cachedSelectedDifficulty = null;
+	static Integer cachedSelectedRecordCount = null;
+	static Integer cachedSelectedDifficulty = null;
 	
 	private final static Object[] COLUMN_HEADERS = {
 		"Rank", "Name", "Score", "Lines", "Level", "Difficulty"
