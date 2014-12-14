@@ -1,3 +1,10 @@
+
+"Swing Tetris"
+(c) Tyler Williams
+
+GitHub repo: http://www.github.com/tylerwill/Tetris
+
+
 Configuring scores database:
 
 Run score_db_setup.sql against the mysql instance on which you'd like to store the database. Next, open up src/model/DBComm.java and set the final variables to the appropriate values to ensure you are able to connect and log into the database.
