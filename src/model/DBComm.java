@@ -11,7 +11,7 @@ import ui.SettingsPanel;
 // Interfaces to the scores database
 public class DBComm {
 	
-	private final static String DB_HOST_NAME = "10.0.0.86";
+	private final static String DB_HOST_NAME = "localhost";
 	
 	// I probably shouldn't store these in my source code, but this works
 	// for now. It's just a school project, after all
