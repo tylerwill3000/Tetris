@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
@@ -57,18 +58,21 @@ public class SettingsPanel extends JPanel {
 	
 	SettingsPanel() {
 		
-		setLayout(new GridLayout(5,1));
+		setLayout(new BorderLayout());
 		setBorder(new TitledBorder("Settings"));
 		
+		JPanel checkboxes = new JPanel(new GridLayout(4,1));
 		for (JCheckBox x : new JCheckBox[]{ghostSquaresCbx, musicCbx, soundEffectsCbx, saveScoreCbx}) {
-			add(x);
+			checkboxes.add(x);
 			x.setFocusable(false);
 		}
 		
 		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diffPanel.add(new JLabel("Difficulty:  "));
 		diffPanel.add(difficultyList);
-		add(diffPanel);
+		
+		add(checkboxes, BorderLayout.NORTH);
+		add(diffPanel, BorderLayout.CENTER);
 		
 	}
 	
