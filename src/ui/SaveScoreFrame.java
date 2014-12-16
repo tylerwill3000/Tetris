@@ -1,6 +1,5 @@
 package ui;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +10,7 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -27,34 +27,22 @@ public class SaveScoreFrame extends JFrame {
 	private JPanel buttonPanel;
 	
 	private JLabel attainedScore = new JLabel();
-	private JLabel saveStatus = new JLabel();
 	
 	private JTextField name = new JTextField(8);
 	
 	private JButton saveScore = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
-	private JButton highScores = new JButton("View High Scores");
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			
 			if (name.getText().equals("")) {
-				
-				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("Error: you must enter a name to save your score");
-				
-				pack();
-				setLocationRelativeTo(null);
-				
+				JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
 				return;
-				
 			}
 			
 			cachedName = name.getText();
-			
-			saveStatus.setForeground(Color.BLACK);
-			saveStatus.setText("Writing...");
 			
 			int rank = 0;
 			try {
@@ -69,26 +57,12 @@ public class SaveScoreFrame extends JFrame {
 				
 			}
 			catch (ClassNotFoundException | SQLException e1) {
-				
-				saveStatus.setForeground(Color.RED);
-				saveStatus.setText("  Database error: " + e1.getMessage() + "  ");
-				
-				pack();
-				setLocationRelativeTo(null);
-				
+				JOptionPane.showMessageDialog(null, "Database error: " + e1.getMessage());
 				return;
-				
 			}
 			
-			saveStatus.setForeground(new Color(40,180,65));
-			saveStatus.setText("Score Saved! Your rank: " + rank);
-			saveScore.setEnabled(false); // Doesn't make sense to allow user to save score again
-			cancel.setText("Return");
-
-			buttonPanel.add(highScores);
-			
-			pack();
-			setLocationRelativeTo(null);
+			JOptionPane.showMessageDialog(null, "Score saved! Your rank: " + rank);
+			dispose();
 			
 		}
 		
@@ -106,7 +80,7 @@ public class SaveScoreFrame extends JFrame {
 		
 		if (cachedName != null) name.setText(cachedName);
 		
-		setLayout(new GridLayout(4,1));
+		setLayout(new GridLayout(3,1));
 		
 		attainedScore.setHorizontalAlignment(JLabel.CENTER);
 		attainedScore.setText("Your score: " + GameBoardModel.getScore());
@@ -117,9 +91,6 @@ public class SaveScoreFrame extends JFrame {
 		inputPanel.add(new JLabel("Enter the name to save your score under or press cancel: "));
 		inputPanel.add(name);
 		add(inputPanel);
-		
-		saveStatus.setHorizontalAlignment(JLabel.CENTER);
-		add(saveStatus);
 		
 		// Button panel for saving / canceling
 		buttonPanel = new JPanel();
@@ -133,18 +104,6 @@ public class SaveScoreFrame extends JFrame {
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-			}
-		});
-		
-		highScores.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				HighScoreFrame.cachedSelectedRecordCount = 3;
-				HighScoreFrame.cachedSelectedDifficulty = 3;
-				
-				dispose();
-				new HighScoreFrame();
-				
 			}
 		});
 		

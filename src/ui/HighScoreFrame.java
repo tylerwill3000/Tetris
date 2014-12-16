@@ -1,18 +1,16 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,18 +40,11 @@ public class HighScoreFrame extends JFrame {
 	private JButton jbtReturn = new JButton("Return");
 	private JTable table = new JTable();
 	
-	private JLabel dbErrors = new JLabel("");
-	
 	HighScoreFrame() {
 		
 		// Set default selected options if they are cached
 		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
 		if (cachedSelectedDifficulty != null) jcbxDiff.setSelectedIndex(cachedSelectedDifficulty);
-		
-		dbErrors.setHorizontalAlignment(SwingConstants.CENTER);
-		dbErrors.setForeground(Color.RED);
-		
-		populateTable();
 		
 		table.setFillsViewportHeight(true);
 		table.setEnabled(false);;
@@ -75,9 +66,8 @@ public class HighScoreFrame extends JFrame {
 		buttonContainer.add(jbtReturn);
 		
 		// Add all menu components to a master panel
-		JPanel menuPanel = new JPanel(new GridLayout(3,1));
+		JPanel menuPanel = new JPanel(new GridLayout(2,1));
 		menuPanel.add(recordSelectorPanel);
-		menuPanel.add(dbErrors);
 		menuPanel.add(buttonContainer);
 		
 		add(menuPanel, BorderLayout.SOUTH);
@@ -89,31 +79,33 @@ public class HighScoreFrame extends JFrame {
 		});
 		
 		// Both comboboxes simply re-populate the table upon selection change
-		jcbxNumRecords.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		jcbxNumRecords.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				cachedSelectedRecordCount = jcbxNumRecords.getSelectedIndex();
-				populateTable();				
+				populateTable(false);				
 			}
 		});
 		
-		jcbxDiff.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		jcbxDiff.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				cachedSelectedDifficulty = jcbxDiff.getSelectedIndex();
-				populateTable();				
+				populateTable(false);				
 			}
 		});
 		
 		FrameUtils.setIcon(this, "trophy.png");
 		setTitle("High Scores");
-		setVisible(true);
 		pack();
 		setLocationRelativeTo(null);
+		setVisible(true);
+		populateTable(true);
 
 	}
 	
-	// Populates table with appropriate data depending on selected row count
-	private void populateTable() {
-		
+	// Populates table with appropriate data depending on selected row count. Boolean
+	// controls whether to destroy the window upon failed DB connection
+	private void populateTable(boolean disposeOnFail) {
+
 		int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
 		int difficulty = jcbxDiff.getSelectedIndex();
 		
@@ -122,18 +114,9 @@ public class HighScoreFrame extends JFrame {
 			data = DBComm.getHighScoresData(numRecords, difficulty);
 		}
 		catch (ClassNotFoundException | SQLException e1) {
-			dbErrors.setText("  Database error: " + e1.getMessage() + "  ");
+			JOptionPane.showMessageDialog(null, "Database error: " + e1.getMessage());
+			if (disposeOnFail) dispose();
 			return;
-		}
-			
-		// If this statement is reached there were no errors reaching the
-		// database, so clear error text in case if it is still displaying
-		// an old error and then re-center and pack the frame (since the
-		// error text can stretch the frame)
-		if (!dbErrors.getText().equals("")) {
-			dbErrors.setText("");
-			pack();
-			setLocationRelativeTo(null);
 		}
 		
 		table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
@@ -147,5 +130,6 @@ public class HighScoreFrame extends JFrame {
 			table.getColumnModel().getColumn(i).setCellRenderer(centerer);
 		
 	}
+	
 	
 }
