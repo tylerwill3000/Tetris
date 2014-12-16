@@ -132,10 +132,10 @@ public class SaveScoreFrame extends JFrame {
 		
 		FrameUtils.setIcon(this, "save-icon.png");
 		setTitle("Save Score");
-		setResizable(false);	
+		setResizable(false);
+		setLocationRelativeTo(null);
 		setVisible(true);
 		pack();
-		setLocationRelativeTo(null);
 		
 	}
 	
