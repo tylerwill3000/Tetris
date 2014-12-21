@@ -64,6 +64,11 @@ public class SaveScoreFrame extends JFrame {
 			JOptionPane.showMessageDialog(null, "Score saved! Your rank: " + rank);
 			dispose();
 			
+			// After saving score, display high scores frame with maximum record selection
+			HighScoreFrame.cachedSelectedDifficulty = 3;
+			HighScoreFrame.cachedSelectedRecordCount = 3;
+			new HighScoreFrame();
+			
 		}
 		
 	};
