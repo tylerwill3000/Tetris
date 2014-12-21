@@ -56,9 +56,9 @@ public class HighScoreFrame extends JFrame {
 		
 		// Holds record selector list and labels
 		JPanel recordSelectorPanel = new JPanel();
-		recordSelectorPanel.add(new JLabel("Show "));
+		recordSelectorPanel.add(new JLabel("Show top "));
 		recordSelectorPanel.add(jcbxNumRecords);
-		recordSelectorPanel.add(new JLabel(" records for difficulty "));
+		recordSelectorPanel.add(new JLabel(" scores for difficulty "));
 		recordSelectorPanel.add(jcbxDiff);
 		
 		// Container for button so it doesn't expand to full pane size

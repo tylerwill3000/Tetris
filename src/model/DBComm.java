@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import ui.SettingsPanel;
 
@@ -71,27 +73,29 @@ public class DBComm {
 			// Obtain column count and use it to initialize object array.
 			// Add 1 to make room for the "Rank" column
 			int colCount = scores.getMetaData().getColumnCount();
-			Object[][] data = new Object[numScores][colCount+1];
+			List<Object[]> data = new ArrayList<>();
 			
 			// Populate data
 			for (int rank = 1; scores.next(); rank++) {
 				
-				int currentRow = scores.getRow()-1;
+				Object[] rowData = new Object[colCount+1];
 				
-				data[currentRow][0] = rank;
-				data[currentRow][1] = scores.getString(1); // Name
-				data[currentRow][2] = scores.getString(2); // Score
-				data[currentRow][3] = scores.getString(3); // Lines
+				rowData[0] = rank;
+				rowData[1] = scores.getString(1); // Name
+				rowData[2] = scores.getString(2); // Score
+				rowData[3] = scores.getString(3); // Lines
 				
 				int level = scores.getInt(4);				
 				int diff = scores.getInt(5);
 				
-				data[currentRow][4] = level == 11 ? "Complete" : level; // Level
-				data[currentRow][5] = SettingsPanel.DIFFICULTIES[diff]; // Difficulty
+				rowData[4] = level == 11 ? "Complete" : level; // Level
+				rowData[5] = SettingsPanel.DIFFICULTIES[diff]; // Difficulty
+				
+				data.add(rowData);
 				
 			}
 			
-			return data;
+			return data.toArray(new Object[data.size()][colCount+1]);
 			
 		}
 		finally {
