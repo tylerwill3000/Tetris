@@ -133,7 +133,7 @@ public class MenuPanel extends JPanel {
 	private ActionListener highScoresListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
-			new HighScoreFrame();
+			new HighScoreFrame(-1);
 		}
 		
 	};

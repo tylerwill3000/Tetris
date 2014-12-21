@@ -51,7 +51,7 @@ public class GameFrame extends JFrame {
 		add(menuPanel, BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "game-icon.png");
-		setTitle("Cyann's Super Special Tetris");
+		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, GAME_BOARD_PANEL_HEIGHT);
 		setResizable(false); // I don't want to mess with trying to make this work right

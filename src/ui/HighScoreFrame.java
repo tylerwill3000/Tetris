@@ -1,6 +1,8 @@
 package ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 
 import model.DBComm;
 
@@ -37,10 +39,15 @@ public class HighScoreFrame extends JFrame {
 			"Easy","Medium","Hard","All"
 	});
 	
+	// Used when accessing this frame from save score frame to make new score row stand out
+	private int highlightRow = -1;
+	
 	private JButton jbtReturn = new JButton("Return");
 	private JTable table = new JTable();
 	
-	HighScoreFrame() {
+	HighScoreFrame(int rowToHighlight) {
+		
+		this.highlightRow = rowToHighlight;
 		
 		// Set default selected options if they are cached
 		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
@@ -82,14 +89,14 @@ public class HighScoreFrame extends JFrame {
 		jcbxNumRecords.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cachedSelectedRecordCount = jcbxNumRecords.getSelectedIndex();
-				populateTable(false);				
+				populateTable(false, highlightRow);				
 			}
 		});
 		
 		jcbxDiff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cachedSelectedDifficulty = jcbxDiff.getSelectedIndex();
-				populateTable(false);				
+				populateTable(false, highlightRow);				
 			}
 		});
 		
@@ -98,13 +105,13 @@ public class HighScoreFrame extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-		populateTable(true);
+		populateTable(true, highlightRow);
 
 	}
 	
 	// Populates table with appropriate data depending on selected row count. Boolean
 	// controls whether to destroy the window upon failed DB connection
-	private void populateTable(boolean disposeOnFail) {
+	private void populateTable(boolean disposeOnFail, int rowToHighlight) {
 
 		int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
 		int difficulty = jcbxDiff.getSelectedIndex();
@@ -121,13 +128,37 @@ public class HighScoreFrame extends JFrame {
 		
 		table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
 		
-		// Center alignment renderer
-		DefaultTableCellRenderer centerer = new DefaultTableCellRenderer();
-		centerer.setHorizontalAlignment(SwingConstants.CENTER);
+		TableCellRenderer renderer = new HighScoreCellRenderer(rowToHighlight);
 		
-		// Center all columns
+		// Apply the renderer to all table columns
 		for (int i = 0; i < data[0].length; i++)
-			table.getColumnModel().getColumn(i).setCellRenderer(centerer);
+			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+		
+	}
+	
+	// Returns a rendered component that represents a cell value in the data table
+	private class HighScoreCellRenderer implements TableCellRenderer {
+		
+		private int rowToHighlight;
+		
+		private HighScoreCellRenderer(int rowToHighlight) {
+			this.rowToHighlight = rowToHighlight;
+		}
+		
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
+			
+			// A simple JLabel is used to render the cell data
+			JLabel cell = new JLabel(value.toString());
+			cell.setHorizontalAlignment(SwingConstants.CENTER);
+			cell.setOpaque(true); // Allows background to show through
+			cell.setEnabled(false);
+			cell.setBackground(row == rowToHighlight ? Color.YELLOW : table.getBackground());
+			
+			return cell;
+			
+		}
 		
 	}
 	
