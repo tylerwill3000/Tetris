@@ -3,7 +3,9 @@ package ui;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import model.AudioManager;
 import model.GameBoardModel;
@@ -57,13 +59,33 @@ public class GameBoardPanel extends GridPainter {
 	// Listener for the piece movement input from the keyboard
 	private class PieceMovementInput extends KeyAdapter {
 		
+		Set<Integer> pressed = new HashSet<>();
+		
 		public void keyPressed(KeyEvent e) {			
 			
-			switch (e.getKeyCode()) {
+			int code = e.getKeyCode();
+			
+			pressed.add(code);
+			
+			switch (code) {
 				
 			case KeyEvent.VK_LEFT:
 				
-				if (currentPiece.canMove(0,-1)) {
+				// Perform super-shift if 's' is pressed
+				if (pressed.contains(KeyEvent.VK_S)) {
+					
+					eraseCurrentAndGhost();
+					
+					while (currentPiece.canMove(0,-1))
+						currentPiece.move(0,-1);
+					
+					AudioManager.playSuperslideSound();
+					
+					paintCurrentAndGhost();
+					
+				}
+				
+				else if (currentPiece.canMove(0,-1)) {
 					eraseCurrentAndGhost();
 					currentPiece.move(0,-1);
 					paintCurrentAndGhost();
@@ -73,7 +95,21 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_RIGHT:
 				
-				if (currentPiece.canMove(0,1)) {
+				// Perform super-shift is 's' is pressed
+				if (pressed.contains(KeyEvent.VK_S)) {
+					
+					eraseCurrentAndGhost();
+					
+					while (currentPiece.canMove(0,1))
+						currentPiece.move(0,1);
+					
+					AudioManager.playSuperslideSound();
+					
+					paintCurrentAndGhost();
+					
+				}
+				
+				else if (currentPiece.canMove(0,1)) {
 					eraseCurrentAndGhost();
 					currentPiece.move(0,1);
 					paintCurrentAndGhost();
@@ -176,6 +212,10 @@ public class GameBoardPanel extends GridPainter {
 			
 		}
 		
+		public void keyReleased(KeyEvent e) {
+			pressed.remove(e.getKeyCode());
+		}
+		
 	}
 	
 	// Separate listener for menu hotkeys. This should never get disabled
@@ -187,7 +227,12 @@ public class GameBoardPanel extends GridPainter {
 			
 			case KeyEvent.VK_S:
 				
-				GameFrame.menuPanel.start.doClick();
+				// Only perform a do-click when timer is stopped. Otherwise,
+				// the button click animation gets annoying when pressing
+				// 's' to do a super-slide
+				if (!Controller.fallTimer.isRunning())
+					GameFrame.menuPanel.start.doClick();
+				
 				break;
 			
 			case KeyEvent.VK_P:

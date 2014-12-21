@@ -51,7 +51,7 @@ public class GameFrame extends JFrame {
 		add(menuPanel, BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "game-icon.png");
-		setTitle("Tetris");
+		setTitle("Cyann's Super Special Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, GAME_BOARD_PANEL_HEIGHT);
 		setResizable(false); // I don't want to mess with trying to make this work right
@@ -86,7 +86,7 @@ public class GameFrame extends JFrame {
 	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
-		JPanel controls = new JPanel(new GridLayout(13,2));
+		JPanel controls = new JPanel(new GridLayout(15,2));
 		controls.setBorder(new TitledBorder("Controls"));
 		
 		controls.add(new JLabel("  Up:"));		controls.add(new JLabel("Rotate CW"));
@@ -94,6 +94,8 @@ public class GameFrame extends JFrame {
 		controls.add(new JLabel("  Down:"));	controls.add(new JLabel("Shift down"));
 		controls.add(new JLabel("  Left:"));	controls.add(new JLabel("Shift left"));
 		controls.add(new JLabel("  Right:"));	controls.add(new JLabel("Shift right"));
+		controls.add(new JLabel(" 'S'+left:"));	controls.add(new JLabel("Superslide left"));
+		controls.add(new JLabel(" 'S'+right:"));controls.add(new JLabel("Superslide right  ")); // Provides a slight right margin
 		controls.add(new JLabel("  Space:"));	controls.add(new JLabel("Instant drop"));
 		controls.add(new JLabel("  'D':"));		controls.add(new JLabel("Set hold"));
 		controls.add(new JLabel("  'E':"));		controls.add(new JLabel("Release hold"));

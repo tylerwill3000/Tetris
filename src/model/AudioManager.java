@@ -38,6 +38,7 @@ public class AudioManager {
 	private static final Clip ultraLine = getAudioClip("audio/effects/explosion.wav");	
 	private static final Clip swipeUp = getAudioClip("audio/effects/swish-up.wav");
 	private static final Clip swipeDown = getAudioClip("audio/effects/swish-down.wav");
+	private static final Clip superslide = getAudioClip("audio/effects/superslide.wav");
 	private static final Clip hold = getAudioClip("audio/effects/clang.wav");
 	private static final Clip release = getAudioClip("audio/effects/water-drop.wav");
 	
@@ -111,6 +112,7 @@ public class AudioManager {
 	
 	public static void playCWRotationSound() { playEffect(swipeUp); }
 	public static void playCCWRotationSound() { playEffect(swipeDown); }
+	public static void playSuperslideSound() { playEffect(superslide); }
 	
 	// Iterates over all clips and resets their frame positions back to the start.
 	// Used upon game complete
