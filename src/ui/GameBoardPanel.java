@@ -71,7 +71,7 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_LEFT:
 				
-				// Perform super-shift if 's' is pressed
+				// Perform super-shift left if 's' is pressed
 				if (pressed.contains(KeyEvent.VK_S)) {
 					
 					eraseCurrentAndGhost();
@@ -95,7 +95,7 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_RIGHT:
 				
-				// Perform super-shift is 's' is pressed
+				// Perform super-shift right if 's' is pressed
 				if (pressed.contains(KeyEvent.VK_S)) {
 					
 					eraseCurrentAndGhost();

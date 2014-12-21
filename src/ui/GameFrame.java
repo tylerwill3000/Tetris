@@ -89,21 +89,21 @@ public class GameFrame extends JFrame {
 		JPanel controls = new JPanel(new GridLayout(15,2));
 		controls.setBorder(new TitledBorder("Controls"));
 		
-		controls.add(new JLabel("  Up:"));		controls.add(new JLabel("Rotate CW"));
-		controls.add(new JLabel("  'F':"));		controls.add(new JLabel("Rotate CCW"));
-		controls.add(new JLabel("  Down:"));	controls.add(new JLabel("Shift down"));
-		controls.add(new JLabel("  Left:"));	controls.add(new JLabel("Shift left"));
-		controls.add(new JLabel("  Right:"));	controls.add(new JLabel("Shift right"));
-		controls.add(new JLabel(" 'S'+left:"));	controls.add(new JLabel("Superslide left"));
-		controls.add(new JLabel(" 'S'+right:"));controls.add(new JLabel("Superslide right  ")); // Provides a slight right margin
-		controls.add(new JLabel("  Space:"));	controls.add(new JLabel("Instant drop"));
-		controls.add(new JLabel("  'D':"));		controls.add(new JLabel("Set hold"));
-		controls.add(new JLabel("  'E':"));		controls.add(new JLabel("Release hold"));
-		controls.add(new JLabel("  'S':"));		controls.add(new JLabel("Start"));
-		controls.add(new JLabel("  'P':"));		controls.add(new JLabel("Pause"));
-		controls.add(new JLabel("  'R':"));		controls.add(new JLabel("Resume"));
-		controls.add(new JLabel("  'G':"));		controls.add(new JLabel("Give up"));
-		controls.add(new JLabel("  'H':"));		controls.add(new JLabel("High Scores"));
+		controls.add(new JLabel("  Up:"));			controls.add(new JLabel("Rotate CW"));
+		controls.add(new JLabel("  'F':"));			controls.add(new JLabel("Rotate CCW"));
+		controls.add(new JLabel("  Down:"));		controls.add(new JLabel("Shift down"));
+		controls.add(new JLabel("  Left:"));		controls.add(new JLabel("Shift left"));
+		controls.add(new JLabel("  Right:"));		controls.add(new JLabel("Shift right"));
+		controls.add(new JLabel(" 'S' + left:"));	controls.add(new JLabel("Superslide left"));
+		controls.add(new JLabel(" 'S' + right:"));	controls.add(new JLabel("Superslide right ")); // Provides a slight right margin
+		controls.add(new JLabel("  Space:"));		controls.add(new JLabel("Instant drop"));
+		controls.add(new JLabel("  'D':"));			controls.add(new JLabel("Set hold"));
+		controls.add(new JLabel("  'E':"));			controls.add(new JLabel("Release hold"));
+		controls.add(new JLabel("  'S':"));			controls.add(new JLabel("Start"));
+		controls.add(new JLabel("  'P':"));			controls.add(new JLabel("Pause"));
+		controls.add(new JLabel("  'R':"));			controls.add(new JLabel("Resume"));
+		controls.add(new JLabel("  'G':"));			controls.add(new JLabel("Give up"));
+		controls.add(new JLabel("  'H':"));			controls.add(new JLabel("High Scores"));
 		
 		return controls;
 		
