@@ -86,24 +86,48 @@ public class GameFrame extends JFrame {
 	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {
 		
-		JPanel controls = new JPanel(new GridLayout(15,2));
-		controls.setBorder(new TitledBorder("Controls"));
+		JPanel keyCombos = new JPanel(new GridLayout(15,1));
+		for (String keyCombo : new String[]{
+				" Up ",
+				" 'F' ",
+				" Down ",
+				" Left ",
+				" Right ",
+				" 'S' + left: ",
+				" 'S' + right: ",
+				" Space: ",
+				" 'D': ",
+				" 'E': ",
+				" 'S': ",
+				" 'P': ",
+				" 'R': ",
+				" 'G': ",
+				" 'H': "				
+		}) keyCombos.add(new JLabel(keyCombo));
 		
-		controls.add(new JLabel("  Up:"));			controls.add(new JLabel("Rotate CW"));
-		controls.add(new JLabel("  'F':"));			controls.add(new JLabel("Rotate CCW"));
-		controls.add(new JLabel("  Down:"));		controls.add(new JLabel("Shift down"));
-		controls.add(new JLabel("  Left:"));		controls.add(new JLabel("Shift left"));
-		controls.add(new JLabel("  Right:"));		controls.add(new JLabel("Shift right"));
-		controls.add(new JLabel(" 'S' + left:"));	controls.add(new JLabel("Superslide left"));
-		controls.add(new JLabel(" 'S' + right:"));	controls.add(new JLabel("Superslide right ")); // Provides a slight right margin
-		controls.add(new JLabel("  Space:"));		controls.add(new JLabel("Instant drop"));
-		controls.add(new JLabel("  'D':"));			controls.add(new JLabel("Set hold"));
-		controls.add(new JLabel("  'E':"));			controls.add(new JLabel("Release hold"));
-		controls.add(new JLabel("  'S':"));			controls.add(new JLabel("Start"));
-		controls.add(new JLabel("  'P':"));			controls.add(new JLabel("Pause"));
-		controls.add(new JLabel("  'R':"));			controls.add(new JLabel("Resume"));
-		controls.add(new JLabel("  'G':"));			controls.add(new JLabel("Give up"));
-		controls.add(new JLabel("  'H':"));			controls.add(new JLabel("High Scores"));
+		JPanel actions = new JPanel(new GridLayout(15,1));
+		for (String action : new String[]{
+				" Rotate CW ",
+				" Rotate CCW ",
+				" Shift down ",
+				" Shift left ",
+				" Shift right ",
+				" Superslide left ",
+				" Superslide right ",
+				" Instant drop ",
+				" Set hold ",
+				" Release hold ",
+				" Start ",
+				" Pause ",
+				" Resume ",
+				" Give Up ",
+				" High Scores "
+		}) actions.add(new JLabel(action));
+		
+		JPanel controls = new JPanel(new BorderLayout());
+		controls.setBorder(new TitledBorder("Controls"));
+		controls.add(keyCombos, BorderLayout.WEST);
+		controls.add(actions, BorderLayout.EAST);
 		
 		return controls;
 		
