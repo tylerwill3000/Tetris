@@ -5,8 +5,18 @@ import java.awt.Dimension;
 
 import javax.swing.border.TitledBorder;
 
+import model.Piece;
+
 public class NextPiecePanel extends GridPainter {
 	
+	// Contruct a next piece panel with the specified title and initial starting piece
+	NextPiecePanel(String title, Piece currentPiece) {
+		this(title);
+		this.currentPiece = currentPiece;
+		paintCurrentPiece();
+	}
+	
+	// Construct a next piece panel with just the title. Initial piece is set later
 	NextPiecePanel(String title) {
 		super(4,5);
 		setBorder(new TitledBorder(title));

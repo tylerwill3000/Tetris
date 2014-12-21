@@ -3,9 +3,12 @@ package ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -20,18 +23,20 @@ public class SettingsPanel extends JPanel {
 	// GUI classes and the DBComm class
 	public final static String[] DIFFICULTIES = {"Easy","Medium","Hard"};
 	
-	private JCheckBox ghostSquaresCbx = new JCheckBox("Ghost Squares", true);
-	private JCheckBox musicCbx = new JCheckBox("Music", true);
-	private JCheckBox soundEffectsCbx = new JCheckBox("Sound Effects", true);
-	private JCheckBox saveScoreCbx = new JCheckBox("Save Scores", true);
+	private JCheckBox jcbxGhostSquares = new JCheckBox("Ghost Squares", true);
+	private JCheckBox jcbxMusic = new JCheckBox("Music", true);
+	private JCheckBox jcbxSoundEffects = new JCheckBox("Sound Effects", true);
+	private JCheckBox jcbxSaveScores = new JCheckBox("Save Scores", true);
 	
-	private JComboBox<String> difficultyList = new JComboBox<String>(DIFFICULTIES);
+	private JComboBox<String> jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
+	
+	private JButton jbtChooseSpecials = new JButton("Special blocks...");
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
-			if (ghostSquaresCbx.isSelected())
+			if (jcbxGhostSquares.isSelected())
 				GameFrame.gameBoardPanel.paintGhostPiece();
 			else 
 				GameFrame.gameBoardPanel.eraseGhostPiece();
@@ -47,7 +52,7 @@ public class SettingsPanel extends JPanel {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
-			if (musicCbx.isSelected())
+			if (jcbxMusic.isSelected())
 				AudioManager.resumeCurrentSoundtrack();
 			else
 				AudioManager.stopCurrentSoundtrack();
@@ -62,44 +67,54 @@ public class SettingsPanel extends JPanel {
 		setBorder(new TitledBorder("Settings"));
 		
 		JPanel checkboxes = new JPanel(new GridLayout(4,1));
-		for (JCheckBox x : new JCheckBox[]{ghostSquaresCbx, musicCbx, soundEffectsCbx, saveScoreCbx}) {
+		for (JCheckBox x : new JCheckBox[]{jcbxGhostSquares, jcbxMusic, jcbxSoundEffects, jcbxSaveScores}) {
 			checkboxes.add(x);
 			x.setFocusable(false);
 		}
 		
 		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diffPanel.add(new JLabel("Difficulty:  "));
-		diffPanel.add(difficultyList);
+		diffPanel.add(jlstDifficulty);
+		
+		JPanel buttonContainer = new JPanel();
+		buttonContainer.add(jbtChooseSpecials);
+		
+		jbtChooseSpecials.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) { new SpecialPiecesFrame(); }
+		});
+		
+		jbtChooseSpecials.setFocusable(false);
 		
 		add(checkboxes, BorderLayout.NORTH);
 		add(diffPanel, BorderLayout.CENTER);
+		add(buttonContainer, BorderLayout.SOUTH);
 		
 	}
 	
-	public boolean ghostSquaresOn() { return ghostSquaresCbx.isSelected(); }
-	public boolean musicOn() { return musicCbx.isSelected(); }
-	public boolean effectsOn() { return soundEffectsCbx.isSelected(); }
-	public boolean saveScoreOn() { return saveScoreCbx.isSelected(); }
+	public boolean ghostSquaresOn() { return jcbxGhostSquares.isSelected(); }
+	public boolean musicOn() { return jcbxMusic.isSelected(); }
+	public boolean effectsOn() { return jcbxSoundEffects.isSelected(); }
+	public boolean saveScoreOn() { return jcbxSaveScores.isSelected(); }
 	
-	int getDifficulty() { return difficultyList.getSelectedIndex(); }
+	int getDifficulty() { return jlstDifficulty.getSelectedIndex(); }
 	
 	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
 	// independently from the ghost squares checkbox in the MenuPanel class
-	void enableMusicCbxListener() { musicCbx.addItemListener(musicListener); }
-	void disableMusicCbxListener() { musicCbx.removeItemListener(musicListener); }
+	void enableMusicCbxListener() { jcbxMusic.addItemListener(musicListener); }
+	void disableMusicCbxListener() { jcbxMusic.removeItemListener(musicListener); }
 	
 	void enableCbxListeners() {
-		ghostSquaresCbx.addItemListener(ghostSquaresListener);
+		jcbxGhostSquares.addItemListener(ghostSquaresListener);
 		enableMusicCbxListener();
 	}
 	
 	void disableCbxListeners() {
-		ghostSquaresCbx.removeItemListener(ghostSquaresListener);
+		jcbxGhostSquares.removeItemListener(ghostSquaresListener);
 		disableMusicCbxListener();
 	}
 	
-	void enableDifficultyList() { difficultyList.setEnabled(true); }
+	void enableDifficultyList() { jlstDifficulty.setEnabled(true); }
 	
-	void disableDifficultyList() { difficultyList.setEnabled(false); }
+	void disableDifficultyList() { jlstDifficulty.setEnabled(false); }
 		
 }

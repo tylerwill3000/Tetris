@@ -1,16 +1,31 @@
 package model;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 // Used to churn out new pieces at random off a virtual 'conveyor belt'
 public final class PieceFactory {
 	
+	public final static int BOX_ID = 0;
+	public final static int L_BLOCK_L_ID = 1;
+	public final static int L_BLOCK_R_ID = 2;
+	public final static int S_BLOCK_L_ID = 3;
+	public final static int S_BLOCK_R_ID = 4;
+	public final static int STRAIGHT_LINE_ID = 5;
+	public final static int T_BLOCK_ID = 6;
+	public final static int CORNER_BLOCK_ID = 7;
+	public final static int TWIN_PILLARS_BLOCK_ID = 8;
+	
+	// Allows me to iterate over these values in the special blocks frame
+	public final static int[] SPECIAL_BLOCK_IDS = {
+		CORNER_BLOCK_ID,
+		TWIN_PILLARS_BLOCK_ID
+	};
+	
 	// Each piece is assigned an integer ID value from 0 to 6
-	private static List<Integer> gamePieceIDs = initGamePieceIDs();
+	private static Set<Integer> gamePieceIDs = initGamePieceIDs();
 	
 	private static LinkedList<Piece> conveyorBelt = initConveyorBelt();
 	
@@ -45,17 +60,42 @@ public final class PieceFactory {
 	// Generates a random Piece object
 	private static Piece generate() {
 		
-		Collections.shuffle(gamePieceIDs);
-		int id = gamePieceIDs.get(0);
+		int chosenIndex = randInRange(1, gamePieceIDs.size());
+		int iterIndex = 1;
+		int pieceID = 0;
+		
+		for (Integer id : gamePieceIDs) {
+			if (iterIndex == chosenIndex) {
+				pieceID = id;
+				break;
+			}
+			iterIndex++;
+		}
+		
 		
 		return new Piece(
 			getRandomColor(),
-			Ingredients.ORIENTATION_MAPS[id],
-			Ingredients.NEXT_PANEL_SQUARES[id],
-			Ingredients.START_ROWS[id]
+			Ingredients.ORIENTATION_MAPS[pieceID],
+			Ingredients.NEXT_PANEL_SQUARES[pieceID],
+			Ingredients.START_ROWS[pieceID]
 		);
 		
 	}
+	
+	// Returns the specified piece according to the piece ID
+	public static Piece order(int pieceID) {
+		
+		return new Piece(
+			getRandomColor(),
+			Ingredients.ORIENTATION_MAPS[pieceID],
+			Ingredients.NEXT_PANEL_SQUARES[pieceID],
+			Ingredients.START_ROWS[pieceID]
+		);
+		
+	}
+	
+	public static boolean addPieceID(int id) { return gamePieceIDs.add(id); }
+	public static boolean removePieceID(int id) { return gamePieceIDs.remove(id); }
 	
 	public static Color getRandomColor() {
 	
@@ -75,6 +115,8 @@ public final class PieceFactory {
 		
 	}
 	
+	public static void resetConveyorBelt() { conveyorBelt = initConveyorBelt(); }
+	
 	// Builds the initial piece conveyor belt with 2 pieces
 	private static LinkedList<Piece> initConveyorBelt() {
 		
@@ -86,12 +128,12 @@ public final class PieceFactory {
 		
 	}
 	
-	private static List<Integer> initGamePieceIDs() {
+	private static Set<Integer> initGamePieceIDs() {
 		
-		List<Integer> IDs = new ArrayList<>();
+		Set<Integer> IDs = new HashSet<>();
 	
 		// 7 original starting pieces
-		for (int id = 0; id <= 8; id++) IDs.add(id);
+		for (int id = 0; id <= 6; id++) IDs.add(id);
 		
 		return IDs;
 		

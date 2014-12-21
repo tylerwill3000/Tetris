@@ -133,6 +133,11 @@ public class Controller {
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
 		
+		// This is important in case any special pieces are still left over
+		// on the belt. If they are and the player deselects them before
+		// the next game, the pieces will still show up
+		PieceFactory.resetConveyorBelt();
+		
 	}
 	
 	// What happens when the next piece can't emerge. Package-private so
@@ -160,6 +165,8 @@ public class Controller {
 		
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
+		
+		PieceFactory.resetConveyorBelt();
 		
 	}
 	
