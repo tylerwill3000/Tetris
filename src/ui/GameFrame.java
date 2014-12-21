@@ -88,11 +88,11 @@ public class GameFrame extends JFrame {
 		
 		JPanel keyCombos = new JPanel(new GridLayout(15,1));
 		for (String keyCombo : new String[]{
-				" Up ",
-				" 'F' ",
-				" Down ",
-				" Left ",
-				" Right ",
+				" Up: ",
+				" 'F': ",
+				" Down: ",
+				" Left: ",
+				" Right: ",
 				" 'S' + left: ",
 				" 'S' + right: ",
 				" Space: ",

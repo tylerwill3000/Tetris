@@ -1,10 +1,16 @@
 package model;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 // Used to churn out new pieces at random off a virtual 'conveyor belt'
 public final class PieceFactory {
+	
+	// Each piece is assigned an integer ID value from 0 to 6
+	private static List<Integer> gamePieceIDs = initGamePieceIDs();
 	
 	private static LinkedList<Piece> conveyorBelt = initConveyorBelt();
 	
@@ -39,16 +45,14 @@ public final class PieceFactory {
 	// Generates a random Piece object
 	private static Piece generate() {
 		
-		// Generate a random number that will
-		// determine which index to use to get
-		// the piece "ingredients"
-		int index = randInRange(0,6);
+		Collections.shuffle(gamePieceIDs);
+		int id = gamePieceIDs.get(0);
 		
 		return new Piece(
 			getRandomColor(),
-			Ingredients.ORIENTATION_MAPS[index],
-			Ingredients.NEXT_PANEL_SQUARES[index],
-			Ingredients.START_ROWS[index]
+			Ingredients.ORIENTATION_MAPS[id],
+			Ingredients.NEXT_PANEL_SQUARES[id],
+			Ingredients.START_ROWS[id]
 		);
 		
 	}
@@ -79,6 +83,17 @@ public final class PieceFactory {
 		for (int i = 1; i <= 2; i++) belt.offer(generate());
 		
 		return belt;
+		
+	}
+	
+	private static List<Integer> initGamePieceIDs() {
+		
+		List<Integer> IDs = new ArrayList<>();
+	
+		// 7 original starting pieces
+		for (int id = 0; id <= 8; id++) IDs.add(id);
+		
+		return IDs;
 		
 	}
 	
@@ -404,6 +419,97 @@ class Ingredients {
 		
 	};
 	
+	/** Corner-block
+	 * X.
+	 * XX
+	 */
+	private final static int[][][] CORNER_BLOCK_ORIENTATIONS = {
+		
+		// Southwest orientation:
+		// X.
+		// XX
+		{
+			{0,0},
+			{0,1},
+			{-1,0}
+		},
+		
+		// Northwest orientation:
+		// XX
+		// X.
+		{
+			{0,0},
+			{-1,0},
+			{-1,1}
+		},
+		
+		// Northeast orientation:
+		// XX
+		// .X
+		{
+			{-1,0},
+			{-1,1},
+			{0,1}
+		},
+		
+		// Southeast orientation:
+		// .X
+		// XX
+		{
+			{0,0},
+			{0,1},
+			{-1,1}
+		}				
+		
+	};
+	
+	/** Twin-pillars block:
+	 * ...
+	 * X.X
+	 * X.X
+	 */
+	private final static int[][][] TWIN_PILLARS_BLOCK_ORIENTATIONS = {
+		
+		// Standard orientation:
+		// ...
+		// X.X
+		// X.X
+		{
+			{0,0},
+			{-1,0},
+			{-1,2},
+			{0,2}
+		},
+		
+		// Horizontal orientation:
+		// XX.
+		// ...
+		// XX.
+		{
+			{-2,0},
+			{-2,1},
+			{0,0},
+			{0,1}
+		},
+		
+		// Other two orientations are the same, so cycle through them again
+		{
+			{0,0},
+			{-1,0},
+			{-1,2},
+			{0,2}
+		},
+		
+		{
+			{-2,0},
+			{-2,1},
+			{0,0},
+			{0,1}
+		},				
+		
+	};
+	
+	
 	/** From here on out, it is critically important that the data
 	 *  in each collection is added in the same exact order. For
 	 *  example, since the data for the "Box" piece is the first element
@@ -420,7 +526,9 @@ class Ingredients {
 		S_BLOCK_L_ORIENTATIONS,
 		S_BLOCK_R_ORIENTATIONS,
 		STRAIGHT_LINE_ORIENTATIONS,
-		T_BLOCK_ORIENTATIONS
+		T_BLOCK_ORIENTATIONS,
+		CORNER_BLOCK_ORIENTATIONS,
+		TWIN_PILLARS_BLOCK_ORIENTATIONS
 	};
 	
 	// Starting row of this piece on the board. Corresponds to
@@ -436,7 +544,9 @@ class Ingredients {
 		4, // S-block L
 		4, // S-block R
 		4, // Straight line
-		4 // T-block
+		4, // T-block
+		4, // Corner block
+		4, // Twin-pillars block
 	};
 	
 	// List of grid coordinate squares the piece occupies when in
@@ -448,7 +558,9 @@ class Ingredients {
 		{  {1,1},{1,2},{2,2},{2,3}  }, // S-block L
 		{  {1,2},{1,3},{2,1},{2,2}  }, // S-block R
 		{  {0,2},{1,2},{2,2},{3,2}  }, // Straight line
-		{  {1,1},{1,2},{1,3},{2,2}  } // T-block
+		{  {1,1},{1,2},{1,3},{2,2}  }, // T-block
+		{  {1,1},{2,1},{2,2} }, // Corner block
+		{  {1,1},{2,1},{1,3},{2,3}  }
 	};
 	
 };
