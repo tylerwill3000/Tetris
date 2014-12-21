@@ -15,6 +15,7 @@ import ui.SettingsPanel;
 // Interfaces to the scores database
 public class DBComm {
 	
+	// Associates the scoreID primary key from the score DB with that score's overall rank
 	private static Map<Integer, Integer> scoreIDToRank = null;
 	
 	private final static String DB_HOST_NAME = "localhost";
@@ -65,7 +66,6 @@ public class DBComm {
 		
 	}
 	
-	// Updates the mapping of score IDs to overall rank. Used after a new score is added
 	private static void updateScoreIDMap(Connection conn) throws SQLException {
 		
 		ResultSet allScores = conn.createStatement().executeQuery("select scoreID from score order by playerScore desc;");

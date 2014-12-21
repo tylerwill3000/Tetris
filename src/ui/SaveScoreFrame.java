@@ -71,7 +71,7 @@ public class SaveScoreFrame extends JFrame {
 			// I currently do not have the ability to target certain pages of high scores.
 			// Therefore, only show a new high score frame if the rank is visible on the
 			// first page; else, the score would not show up on the frame
-			if (rank <= 100) new HighScoreFrame(rank-1);
+			if (rank <= 100) new HighScoreFrame(rank);
 			
 		}
 		

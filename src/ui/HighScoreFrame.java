@@ -40,14 +40,14 @@ public class HighScoreFrame extends JFrame {
 	});
 	
 	// Used when accessing this frame from save score frame to make new score row stand out
-	private int highlightRow = -1;
+	private int highlightRank = -1;
 	
 	private JButton jbtReturn = new JButton("Return");
 	private JTable table = new JTable();
 	
-	HighScoreFrame(int rowToHighlight) {
+	HighScoreFrame(int rankToHighlight) {
 		
-		this.highlightRow = rowToHighlight;
+		this.highlightRank = rankToHighlight;
 		
 		// Set default selected options if they are cached
 		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
@@ -89,14 +89,14 @@ public class HighScoreFrame extends JFrame {
 		jcbxNumRecords.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cachedSelectedRecordCount = jcbxNumRecords.getSelectedIndex();
-				populateTable(false, highlightRow);				
+				populateTable(false, highlightRank);				
 			}
 		});
 		
 		jcbxDiff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cachedSelectedDifficulty = jcbxDiff.getSelectedIndex();
-				populateTable(false, highlightRow);				
+				populateTable(false, highlightRank);				
 			}
 		});
 		
@@ -105,7 +105,7 @@ public class HighScoreFrame extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-		populateTable(true, highlightRow);
+		populateTable(true, highlightRank);
 
 	}
 	
@@ -139,10 +139,14 @@ public class HighScoreFrame extends JFrame {
 	// Returns a rendered component that represents a cell value in the data table
 	private class HighScoreCellRenderer implements TableCellRenderer {
 		
-		private int rowToHighlight;
+		private int rankToHighlight;
 		
-		private HighScoreCellRenderer(int rowToHighlight) {
-			this.rowToHighlight = rowToHighlight;
+		// This is not set until the rank row is detected, since the rank and the
+		// row it appears on are not always the same
+		private int rowToHighlight = -1;
+		
+		private HighScoreCellRenderer(int rankToHighlight) {
+			this.rankToHighlight = rankToHighlight;
 		}
 		
 		public Component getTableCellRendererComponent(JTable table,
@@ -154,6 +158,12 @@ public class HighScoreFrame extends JFrame {
 			cell.setHorizontalAlignment(SwingConstants.CENTER);
 			cell.setOpaque(true); // Allows background to show through
 			cell.setEnabled(false);
+			
+			// If the cell contains the rank to highlight, the row to highlight has been
+			// found, so the value can now be set
+			if (value.toString().equals(String.valueOf(rankToHighlight)))
+				rowToHighlight = row;
+			
 			cell.setBackground(row == rowToHighlight ? Color.YELLOW : table.getBackground());
 			
 			return cell;
