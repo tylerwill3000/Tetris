@@ -6,12 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ui.SettingsPanel;
 
 // Interfaces to the scores database
 public class DBComm {
+	
+	private static Map<Integer, Integer> scoreIDToRank = null;
 	
 	private final static String DB_HOST_NAME = "localhost";
 	
@@ -49,6 +53,8 @@ public class DBComm {
 				.toString()
 			);
 			
+			updateScoreIDMap(conn);
+			
 			rank.next();
 			return rank.getInt(1);
 			
@@ -57,6 +63,18 @@ public class DBComm {
 			if (conn != null) conn.close();
 		}		
 		
+	}
+	
+	// Updates the mapping of score IDs to overall rank. Used after a new score is added
+	private static void updateScoreIDMap(Connection conn) throws SQLException {
+		
+		ResultSet allScores = conn.createStatement().executeQuery("select scoreID from score order by playerScore desc;");
+		
+		scoreIDToRank = new HashMap<>();
+		
+		for (int rank = 1; allScores.next(); rank++)
+			scoreIDToRank.put(allScores.getInt(1), rank);
+			
 	}
 	
 	// Pulls scores from the DB and returns the corresponding object matrix for the data
@@ -68,25 +86,25 @@ public class DBComm {
 			
 			conn = getConnection();
 			
+			if (scoreIDToRank == null) updateScoreIDMap(conn);
+			
 			ResultSet scores = conn.createStatement().executeQuery(createScoresQuery(numScores, difficulty));
 			
-			// Obtain column count and use it to initialize object array.
-			// Add 1 to make room for the "Rank" column
 			int colCount = scores.getMetaData().getColumnCount();
 			List<Object[]> data = new ArrayList<>();
 			
 			// Populate data
-			for (int rank = 1; scores.next(); rank++) {
+			while (scores.next()) {
 				
-				Object[] rowData = new Object[colCount+1];
+				Object[] rowData = new Object[colCount];
 				
-				rowData[0] = rank;
-				rowData[1] = scores.getString(1); // Name
-				rowData[2] = scores.getString(2); // Score
-				rowData[3] = scores.getString(3); // Lines
+				rowData[0] = scoreIDToRank.get(scores.getInt(1)); // Pull rank from map
+				rowData[1] = scores.getString(2); // Name
+				rowData[2] = scores.getInt(3); // Score
+				rowData[3] = scores.getInt(4); // Lines
 				
-				int level = scores.getInt(4);				
-				int diff = scores.getInt(5);
+				int level = scores.getInt(5);				
+				int diff = scores.getInt(6);
 				
 				rowData[4] = level == 11 ? "Complete" : level; // Level
 				rowData[5] = SettingsPanel.DIFFICULTIES[diff]; // Difficulty
@@ -95,7 +113,7 @@ public class DBComm {
 				
 			}
 			
-			return data.toArray(new Object[data.size()][colCount+1]);
+			return data.toArray(new Object[data.size()][colCount]);
 			
 		}
 		finally {
@@ -110,7 +128,7 @@ public class DBComm {
 		StringBuilder query = new StringBuilder();
 		
 		// Initial query statement
-		query.append("select playerName, playerScore, playerLines, playerLevel, playerDifficulty from score ");
+		query.append("select * from score ");
 		
 		// Add in difficulty restrictions for all selections but '3' (All)
 		if (difficulty != 3) query.append("where playerDifficulty = " + difficulty + " ");
