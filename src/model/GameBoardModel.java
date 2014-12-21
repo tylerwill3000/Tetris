@@ -15,7 +15,7 @@ public class GameBoardModel {
 	public static final int INITIAL_TIMER_DELAY = 600;
 	
 	// Amount of milliseconds the timer delay decreases each level
-	private static final int[] TIMER_DECREASE_RATES = {50,56,62};
+	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
 	
 	// Integer value 0 - 2. Set upon game load
 	private static int difficulty;
