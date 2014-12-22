@@ -26,6 +26,9 @@ public final class PieceFactory {
 	
 	private static Set<Integer> activePieceIDs = initGamePieceIDs();
 	
+	// Once game is started, active piece IDs are converted to an array to make sampling easier
+	private static Integer[] arrayedActivePieceIDs;
+	
 	private static LinkedList<Piece> conveyorBelt; // This is initialized once the start button is clicked
 	
 	// Pops the first piece off the conveyor belt and adds a
@@ -35,7 +38,7 @@ public final class PieceFactory {
 		conveyorBelt.offer(generate());
 		Piece nextPiece = conveyorBelt.poll();
 		
-		// These are dynamic, since piece might have to be
+		// These are dynamic, since pie+ce might have to be
 		// shifted upwards a couple squares
 		nextPiece.setInitialSquares();
 		
@@ -58,21 +61,18 @@ public final class PieceFactory {
 		return (int)(Math.random() * (max - min + 1)) + min;
 	}
 	
+	// Takes the active piece IDs in the set and converts them
+	// to an array for this game session. I use an array since
+	// it's easier to sample from to get random pieces
+	public static void solidifyActivePieces() {
+		arrayedActivePieceIDs = activePieceIDs.toArray(new Integer[activePieceIDs.size()]);
+	}
+	
 	// Generates a random Piece object
 	private static Piece generate() {
 		
-		int chosenIndex = randInRange(1, activePieceIDs.size());
-		int iterIndex = 1;
-		int pieceID = 0;
-		
-		for (Integer id : activePieceIDs) {
-			if (iterIndex == chosenIndex) {
-				pieceID = id;
-				break;
-			}
-			iterIndex++;
-		}
-		
+		// Sample from the active piece ID array
+		int pieceID = arrayedActivePieceIDs[randInRange(0, arrayedActivePieceIDs.length-1)];
 		
 		return new Piece(
 			getRandomColor(),

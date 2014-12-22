@@ -41,6 +41,8 @@ public class MenuPanel extends JPanel {
 			
 			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
+			PieceFactory.solidifyActivePieces();
+			
 			// This is extremely important in case the player changes which special
 			// pieces are active between games. For example, there could still be
 			// certain special pieces on the conveyor belt from the last game that
