@@ -20,15 +20,18 @@ public class SpecialPiecesFrame extends JFrame {
 	Map<Integer, PieceSelectorButton> pieceIDToButtonMap = new HashMap<>();
 	static Map<Integer, Boolean> pieceIDToSelectedMap = initSelectionMap(); // Cached settings for which piece IDs are selected
 	
-	private NextPiecePanel cornerBlockDisplay = new NextPiecePanel("Corner Piece", PieceFactory.order(PieceFactory.CORNER_BLOCK_ID));
-	private NextPiecePanel twinPillarsBlockDisplay = new NextPiecePanel("Twin-pillars Piece", PieceFactory.order(PieceFactory.TWIN_PILLARS_BLOCK_ID));
+	private NextPiecePanel cornerBlockDisplay =
+			new NextPiecePanel("Corner Piece", PieceFactory.order(PieceFactory.CORNER_BLOCK_ID, Color.YELLOW));
+	
+	private NextPiecePanel twinPillarsBlockDisplay =
+			new NextPiecePanel("Twin-pillars Piece", PieceFactory.order(PieceFactory.TWIN_PILLARS_BLOCK_ID, Color.GREEN));
 	
 	private JButton jbtSave = new JButton("Save and Return");
 	
 	SpecialPiecesFrame() {
 		
-		// All all selector buttons according to their cached selected settings in the
-		// pieceIDToSelectedMap
+		// All all selector buttons and set their text and background according to which are
+		// cached as current active pieces
 		pieceIDToButtonMap.put(
 				PieceFactory.CORNER_BLOCK_ID,
 				new PieceSelectorButton(pieceIDToSelectedMap.get(PieceFactory.CORNER_BLOCK_ID)));

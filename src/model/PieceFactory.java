@@ -83,10 +83,10 @@ public final class PieceFactory {
 	}
 	
 	// Returns the specified piece according to the piece ID
-	public static Piece order(int pieceID) {
+	public static Piece order(int pieceID, Color color) {
 		
 		return new Piece(
-			getRandomColor(),
+			color,
 			Ingredients.ORIENTATION_MAPS[pieceID],
 			Ingredients.NEXT_PANEL_SQUARES[pieceID],
 			Ingredients.START_ROWS[pieceID]
