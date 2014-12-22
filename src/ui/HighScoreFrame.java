@@ -137,7 +137,7 @@ public class HighScoreFrame extends JFrame {
 	}
 	
 	// Returns a rendered component that represents a cell value in the data table
-	private class HighScoreCellRenderer implements TableCellRenderer {
+	private static class HighScoreCellRenderer implements TableCellRenderer {
 		
 		private int rankToHighlight;
 		

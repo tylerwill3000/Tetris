@@ -100,7 +100,9 @@ public class SpecialPiecesFrame extends JFrame {
 		
 		private PieceSelectorButton(boolean selected) {
 			
-			setSelected(selected);
+			this.setBackground(selected);
+			this.setText(selected);
+			
 			setFocusable(false);
 			
 			addActionListener(new ActionListener() {
@@ -108,28 +110,23 @@ public class SpecialPiecesFrame extends JFrame {
 			});
 			
 			setPreferredSize(new Dimension(getWidth(), 30));
-			this.setText();
 			
 		}
 		
-		public void toggle() {
-			setSelected(!isSelected());
-			this.setText();;
+		private void toggle() {
+			boolean currentlySelected = getBackground() == Color.YELLOW;
+			this.setBackground(!currentlySelected);
+			this.setText(!currentlySelected);
 		}
 		
-		public void setSelected(boolean selected) {
-			setBackground(selected ? Color.YELLOW : Color.LIGHT_GRAY);
+		public void setBackground(boolean selected) {
+			super.setBackground(selected ? Color.YELLOW : Color.LIGHT_GRAY);
 		}
 		
-		public boolean isSelected() {
-			return getBackground() == Color.YELLOW;
-		}
+		public void setText(boolean selected) {
+			super.setText(selected ? "Active" : "Inactive");
+		}		
 		
-		public void setText() {
-			super.setText(isSelected() ? "Active" : "Inactive");
-		}
-		
-	}
-	
+	}	
 	
 }
