@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import model.AudioManager;
 import model.GameBoardModel;
+import model.PieceFactory;
 
 // Holds all the main menu buttons
 public class MenuPanel extends JPanel {
@@ -39,6 +40,14 @@ public class MenuPanel extends JPanel {
 			GameFrame.scorePanel.refreshScoreInfo();
 			
 			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
+			
+			// This is extremely important in case the player changes which special
+			// pieces are active between games. For example, there could still be
+			// certain special pieces on the conveyor belt from the last game that
+			// do not correspond to the special pieces set for this game. Resetting
+			// the conveyor belt on each game start ensures no inappropriate pieces
+			// make their way onto the belt
+			PieceFactory.resetConveyorBelt();
 			
 			// Sets initial pieces
 			Controller.moveConveyorBelt();

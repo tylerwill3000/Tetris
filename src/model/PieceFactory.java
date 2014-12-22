@@ -27,7 +27,7 @@ public final class PieceFactory {
 	// Each piece is assigned an integer ID value from 0 to 6
 	private static Set<Integer> gamePieceIDs = initGamePieceIDs();
 	
-	private static LinkedList<Piece> conveyorBelt = initConveyorBelt();
+	private static LinkedList<Piece> conveyorBelt;
 	
 	// Pops the first piece off the conveyor belt and adds a
 	// new one to replace it
@@ -115,6 +115,7 @@ public final class PieceFactory {
 		
 	}
 	
+	// Clears all current pieces off the conveyor belt and replaces them with 2 new ones
 	public static void resetConveyorBelt() { conveyorBelt = initConveyorBelt(); }
 	
 	// Builds the initial piece conveyor belt with 2 pieces
@@ -128,6 +129,7 @@ public final class PieceFactory {
 		
 	}
 	
+	// By default, all standard pieces are active (i.e. those with IDs 0-6)
 	private static Set<Integer> initGamePieceIDs() {
 		
 		Set<Integer> IDs = new HashSet<>();
