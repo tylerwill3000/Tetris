@@ -30,7 +30,7 @@ public class SettingsPanel extends JPanel {
 	
 	private JComboBox<String> jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
-	private JButton jbtChooseSpecials = new JButton("Special blocks...");
+	private JButton jbtChooseSpecials = new JButton("Special Pieces...");
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		

@@ -20,8 +20,8 @@ public class SpecialPiecesFrame extends JFrame {
 	Map<Integer, PieceSelectorButton> pieceIDToButtonMap = new HashMap<>();
 	static Map<Integer, Boolean> pieceIDToSelectedMap = initSelectionMap(); // Cached settings for which piece IDs are selected
 	
-	private NextPiecePanel cornerBlockDisplay = new NextPiecePanel("Corner Block", PieceFactory.order(PieceFactory.CORNER_BLOCK_ID));
-	private NextPiecePanel twinPillarsBlockDisplay = new NextPiecePanel("Twin-pillars Block", PieceFactory.order(PieceFactory.TWIN_PILLARS_BLOCK_ID));
+	private NextPiecePanel cornerBlockDisplay = new NextPiecePanel("Corner Piece", PieceFactory.order(PieceFactory.CORNER_BLOCK_ID));
+	private NextPiecePanel twinPillarsBlockDisplay = new NextPiecePanel("Twin-pillars Piece", PieceFactory.order(PieceFactory.TWIN_PILLARS_BLOCK_ID));
 	
 	private JButton jbtSave = new JButton("Save and Return");
 	
@@ -57,6 +57,7 @@ public class SpecialPiecesFrame extends JFrame {
 		add(piecePanels, BorderLayout.CENTER);
 		add(saveContainer, BorderLayout.SOUTH);
 		
+		FrameUtils.setIcon(this, "star.png");
 		setTitle("Special Pieces");
 		setResizable(false);
 		pack();
@@ -100,6 +101,7 @@ public class SpecialPiecesFrame extends JFrame {
 		
 	}
 	
+	// Provides minor extended functionality to a JButton to handle toggle events
 	private static class PieceSelectorButton extends JButton {
 		
 		private PieceSelectorButton(boolean selected) {
@@ -112,11 +114,13 @@ public class SpecialPiecesFrame extends JFrame {
 			});
 			
 			setPreferredSize(new Dimension(getWidth(), 30));
+			this.setText();
 			
 		}
 		
 		public void toggle() {
 			setSelected(!isSelected());
+			this.setText();;
 		}
 		
 		public void setSelected(boolean selected) {
@@ -125,6 +129,10 @@ public class SpecialPiecesFrame extends JFrame {
 		
 		public boolean isSelected() {
 			return getBackground() == Color.YELLOW;
+		}
+		
+		public void setText() {
+			super.setText(isSelected() ? "Active" : "Inactive");
 		}
 		
 	}
