@@ -96,7 +96,7 @@ public class SettingsPanel extends JPanel {
 	public boolean effectsOn() { return jcbxSoundEffects.isSelected(); }
 	public boolean saveScoreOn() { return jcbxSaveScores.isSelected(); }
 	
-	int getDifficulty() { return jlstDifficulty.getSelectedIndex(); }
+	public int getDifficulty() { return jlstDifficulty.getSelectedIndex(); }
 	
 	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
 	// independently from the ghost squares checkbox in the MenuPanel class

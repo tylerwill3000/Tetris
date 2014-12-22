@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ui.GameBoardPanel;
+import ui.GameFrame;
 
 // The GameBoardModel class describes the current configuration
 // of placed pieces on the grid. It can be describe as representative
@@ -16,9 +17,6 @@ public class GameBoardModel {
 	
 	// Amount of milliseconds the timer delay decreases each level
 	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
-	
-	// Integer value 0 - 2. Set upon game load
-	private static int difficulty;
 	
 	// Represents colors on the game grid. Use a linked list since
 	// rows will need to be added to the front when rows are removed
@@ -53,11 +51,9 @@ public class GameBoardModel {
 		
 	}
 	
-	public static void setDifficulty(int diff) { difficulty = diff; }
-	
 	// Returns calculated timer delay based on current level and difficulty
 	public static int getTimerDelay() {
-		return INITIAL_TIMER_DELAY - (TIMER_DECREASE_RATES[difficulty] * (level - 1));
+		return INITIAL_TIMER_DELAY - (TIMER_DECREASE_RATES[GameFrame.settingsPanel.getDifficulty()] * (level - 1));
 	}
 	
 	// Scoring getters
@@ -142,11 +138,11 @@ public class GameBoardModel {
 		
 		// Increase score based on line points and difficulty bonus
 		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
-		int difficultyBonus = completedLines * 5 * difficulty;
+		int difficultyBonus = completedLines * 5 * GameFrame.settingsPanel.getDifficulty();
 		score += (linePoints + difficultyBonus);
 		
 		// Process level ups
-		while (linesCompleted >= level * LINES_PER_LEVEL[difficulty]) {
+		while (linesCompleted >= level * LINES_PER_LEVEL[GameFrame.settingsPanel.getDifficulty()]) {
 			
 			AudioManager.stopCurrentSoundtrack();
 			level++;

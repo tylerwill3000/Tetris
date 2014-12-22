@@ -57,7 +57,6 @@ public class MenuPanel extends JPanel {
 			GameFrame.holdPanel.clear();
 			GameFrame.holdPanel.currentPiece = null;
 			
-			GameBoardModel.setDifficulty(GameFrame.settingsPanel.getDifficulty());
 			GameFrame.settingsPanel.disableDifficultyList();
 			GameFrame.settingsPanel.disableSpecialPiecesButton();
 			
