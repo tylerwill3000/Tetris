@@ -17,6 +17,7 @@ import model.PieceFactory;
 
 public class SpecialPiecesFrame extends JFrame {
 	
+	// Allows me to keep track of which PieceSelectorButton objects map to which piece IDs
 	Map<Integer, PieceSelectorButton> pieceIDToButtonMap = new HashMap<>();
 	
 	private NextPiecePanel cornerBlockDisplay =
@@ -32,12 +33,12 @@ public class SpecialPiecesFrame extends JFrame {
 		// All all selector buttons and set their text and background according to which are
 		// cached as current active pieces
 		pieceIDToButtonMap.put(
-				PieceFactory.CORNER_BLOCK_ID,
-				new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.CORNER_BLOCK_ID)));
+			PieceFactory.CORNER_BLOCK_ID,
+			new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.CORNER_BLOCK_ID)));
 		
 		pieceIDToButtonMap.put(
-				PieceFactory.TWIN_PILLARS_BLOCK_ID,
-				new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.TWIN_PILLARS_BLOCK_ID)));
+			PieceFactory.TWIN_PILLARS_BLOCK_ID,
+			new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.TWIN_PILLARS_BLOCK_ID)));
 		
 		JPanel cornerBlockPanel = new JPanel(new BorderLayout());
 		cornerBlockPanel.add(cornerBlockDisplay, BorderLayout.CENTER);
@@ -93,16 +94,6 @@ public class SpecialPiecesFrame extends JFrame {
 		}
 		
 	};
-	
-	private static Map<Integer, Boolean> initSelectionMap() {
-		
-		Map<Integer, Boolean> map = new HashMap<>();
-		map.put(PieceFactory.CORNER_BLOCK_ID, false);
-		map.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, false);
-		
-		return map;
-		
-	}
 	
 	// Provides minor extended functionality to a JButton to handle toggle events
 	private static class PieceSelectorButton extends JButton {

@@ -114,7 +114,9 @@ public class SettingsPanel extends JPanel {
 	}
 	
 	void enableDifficultyList() { jlstDifficulty.setEnabled(true); }
+	void enableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(true); }
 	
 	void disableDifficultyList() { jlstDifficulty.setEnabled(false); }
+	void disableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(false); }
 		
 }

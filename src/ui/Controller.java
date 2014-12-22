@@ -122,16 +122,13 @@ public class Controller {
 		AudioManager.playVictoryFanfare();
 		AudioManager.resetSoundtrackFramePositions();
 		
-		// Disable all buttons. Start button is re-enabled after
-		// game complete animation finishes
 		GameFrame.menuPanel.disablePauseButton();
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
-		// After game is competed, player should be able to re-select
-		// difficulty if they decide to start a new game
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
+		GameFrame.settingsPanel.enableSpecialPiecesButton();
 		
 	}
 	
@@ -141,7 +138,6 @@ public class Controller {
 
 		fallTimer.stop();
 		
-		// Change audio over to game over sound
 		AudioManager.stopCurrentSoundtrack();
 		AudioManager.playGameOverSound();
 		
@@ -152,14 +148,13 @@ public class Controller {
 		
 		GameFrame.gameBoardPanel.disablePieceMovementInput();
 		
-		// Disable the pause, resume, and give up buttons
-		// They will re-enable once the next game starts
 		GameFrame.menuPanel.disablePauseButton();
 		GameFrame.menuPanel.disableResumeButton();
 		GameFrame.menuPanel.disableGiveUpButton();
 		
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
+		GameFrame.settingsPanel.enableSpecialPiecesButton();
 		
 	}
 	

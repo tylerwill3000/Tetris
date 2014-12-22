@@ -57,10 +57,9 @@ public class MenuPanel extends JPanel {
 			GameFrame.holdPanel.clear();
 			GameFrame.holdPanel.currentPiece = null;
 			
-			// Set difficulty for this game and then disable the difficulty
-			// select list on the settings panel
 			GameBoardModel.setDifficulty(GameFrame.settingsPanel.getDifficulty());
 			GameFrame.settingsPanel.disableDifficultyList();
+			GameFrame.settingsPanel.disableSpecialPiecesButton();
 			
 			// Paint initial pieces
 			GameFrame.gameBoardPanel.paintCurrentAndGhost();
