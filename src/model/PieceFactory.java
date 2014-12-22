@@ -24,10 +24,9 @@ public final class PieceFactory {
 		TWIN_PILLARS_BLOCK_ID
 	};
 	
-	// Each piece is assigned an integer ID value from 0 to 6
-	private static Set<Integer> gamePieceIDs = initGamePieceIDs();
+	private static Set<Integer> activePieceIDs = initGamePieceIDs();
 	
-	private static LinkedList<Piece> conveyorBelt;
+	private static LinkedList<Piece> conveyorBelt; // This is initialized once the start button is clicked
 	
 	// Pops the first piece off the conveyor belt and adds a
 	// new one to replace it
@@ -50,21 +49,23 @@ public final class PieceFactory {
 		return conveyorBelt.peek();		
 	}
 	
+	public static boolean isPieceActive(int pieceID) {
+		return activePieceIDs.contains(pieceID);
+	}
+	
 	// Returns a random number within the specified range
 	private static int randInRange(int min, int max) {
-		
 		return (int)(Math.random() * (max - min + 1)) + min;
-		
 	}
 	
 	// Generates a random Piece object
 	private static Piece generate() {
 		
-		int chosenIndex = randInRange(1, gamePieceIDs.size());
+		int chosenIndex = randInRange(1, activePieceIDs.size());
 		int iterIndex = 1;
 		int pieceID = 0;
 		
-		for (Integer id : gamePieceIDs) {
+		for (Integer id : activePieceIDs) {
 			if (iterIndex == chosenIndex) {
 				pieceID = id;
 				break;
@@ -94,8 +95,8 @@ public final class PieceFactory {
 		
 	}
 	
-	public static boolean addPieceID(int id) { return gamePieceIDs.add(id); }
-	public static boolean removePieceID(int id) { return gamePieceIDs.remove(id); }
+	public static boolean addPieceID(int id) { return activePieceIDs.add(id); }
+	public static boolean removePieceID(int id) { return activePieceIDs.remove(id); }
 	
 	public static Color getRandomColor() {
 	

@@ -18,7 +18,6 @@ import model.PieceFactory;
 public class SpecialPiecesFrame extends JFrame {
 	
 	Map<Integer, PieceSelectorButton> pieceIDToButtonMap = new HashMap<>();
-	static Map<Integer, Boolean> pieceIDToSelectedMap = initSelectionMap(); // Cached settings for which piece IDs are selected
 	
 	private NextPiecePanel cornerBlockDisplay =
 			new NextPiecePanel("Corner Piece", PieceFactory.order(PieceFactory.CORNER_BLOCK_ID, Color.YELLOW));
@@ -34,11 +33,11 @@ public class SpecialPiecesFrame extends JFrame {
 		// cached as current active pieces
 		pieceIDToButtonMap.put(
 				PieceFactory.CORNER_BLOCK_ID,
-				new PieceSelectorButton(pieceIDToSelectedMap.get(PieceFactory.CORNER_BLOCK_ID)));
+				new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.CORNER_BLOCK_ID)));
 		
 		pieceIDToButtonMap.put(
 				PieceFactory.TWIN_PILLARS_BLOCK_ID,
-				new PieceSelectorButton(pieceIDToSelectedMap.get(PieceFactory.TWIN_PILLARS_BLOCK_ID)));
+				new PieceSelectorButton(PieceFactory.isPieceActive(PieceFactory.TWIN_PILLARS_BLOCK_ID)));
 		
 		JPanel cornerBlockPanel = new JPanel(new BorderLayout());
 		cornerBlockPanel.add(cornerBlockDisplay, BorderLayout.CENTER);
@@ -69,6 +68,10 @@ public class SpecialPiecesFrame extends JFrame {
 		
 	}
 	
+	// The purpose of the save listener is to take all active pieces (depending
+	// one which pieces the player selected) and add them to the valid piece ID
+	// pool in the PieceFactory, as well as remove those from the pool that are
+	// not selected
 	private ActionListener SaveListener = new ActionListener() {
 
 		public void actionPerformed(ActionEvent e) {
@@ -77,9 +80,6 @@ public class SpecialPiecesFrame extends JFrame {
 				
 				// Obtain the button representing this piece ID
 				PieceSelectorButton b = pieceIDToButtonMap.get(id);
-				
-				// Update cached settings for this piece ID
-				pieceIDToSelectedMap.put(id, b.isSelected());
 				
 				if (b.isSelected())
 					PieceFactory.addPieceID(id);
