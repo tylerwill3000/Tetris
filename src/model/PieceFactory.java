@@ -17,11 +17,13 @@ public final class PieceFactory {
 	public final static int T_BLOCK_ID = 6;
 	public final static int CORNER_BLOCK_ID = 7;
 	public final static int TWIN_PILLARS_BLOCK_ID = 8;
+	public final static int ROCKET_BLOCK_ID = 9;
 	
 	// Allows me to iterate over these values in the special blocks frame
 	public final static int[] SPECIAL_BLOCK_IDS = {
 		CORNER_BLOCK_ID,
-		TWIN_PILLARS_BLOCK_ID
+		TWIN_PILLARS_BLOCK_ID,
+		ROCKET_BLOCK_ID
 	};
 	
 	private static Set<Integer> activePieceIDs = initGamePieceIDs();
@@ -554,6 +556,58 @@ class Ingredients {
 		
 	};
 	
+	/** Rocket block:
+	 * .X.
+	 * .X.
+	 * X.X
+	 */
+	private final static int[][][] ROCKET_BLOCK_ORIENTATIONS = {
+		
+		// Standard orientation:
+		// .X.
+		// .X.
+		// X.X
+		{
+			{0,0},
+			{-1,1},
+			{-2,1},
+			{0,2}
+		},
+		
+		// East orientation:
+		// X..
+		// .XX
+		// X..
+		{
+			{-2,0},
+			{0,0},
+			{-1,1},
+			{-1,2}
+		},
+		
+		// South orientation:
+		// X.X
+		// .X.
+		// .X.
+		{
+			{-2,0},
+			{-2,2},
+			{-1,1},
+			{0,1}
+		},
+				
+		// West orientation:
+		// ..X
+		// XX.
+		// ..X
+		{
+			{-1,0},
+			{-1,1},
+			{0,2},
+			{-2,2}
+		},
+				
+	};
 	
 	/** From here on out, it is critically important that the data
 	 *  in each collection is added in the same exact order. For
@@ -573,7 +627,8 @@ class Ingredients {
 		STRAIGHT_LINE_ORIENTATIONS,
 		T_BLOCK_ORIENTATIONS,
 		CORNER_BLOCK_ORIENTATIONS,
-		TWIN_PILLARS_BLOCK_ORIENTATIONS
+		TWIN_PILLARS_BLOCK_ORIENTATIONS,
+		ROCKET_BLOCK_ORIENTATIONS
 	};
 	
 	// Starting row of this piece on the board. Corresponds to
@@ -592,6 +647,7 @@ class Ingredients {
 		4, // T-block
 		4, // Corner block
 		4, // Twin-pillars block
+		5, // Rocket block
 	};
 	
 	// List of grid coordinate squares the piece occupies when in
@@ -605,7 +661,8 @@ class Ingredients {
 		{  {0,2},{1,2},{2,2},{3,2}  }, // Straight line
 		{  {1,1},{1,2},{1,3},{2,2}  }, // T-block
 		{  {1,1},{2,1},{2,2} }, // Corner block
-		{  {1,1},{2,1},{1,3},{2,3}  }
+		{  {1,1},{2,1},{1,3},{2,3}  }, // Twin-pillars block
+		{  {3,1},{3,3},{2,2},{1,2}  }  // Rocket block
 	};
 	
 };
