@@ -82,7 +82,7 @@ public class SpecialPiecesFrame extends JFrame {
 				// Obtain the button representing this piece ID
 				PieceSelectorButton b = pieceIDToButtonMap.get(id);
 				
-				if (b.isSelected())
+				if (b.isActive())
 					PieceFactory.addPieceID(id);
 				else
 					PieceFactory.removePieceID(id);
@@ -98,10 +98,9 @@ public class SpecialPiecesFrame extends JFrame {
 	// Provides minor extended functionality to a JButton to handle toggle events
 	private static class PieceSelectorButton extends JButton {
 		
-		private PieceSelectorButton(boolean selected) {
+		private PieceSelectorButton(boolean active) {
 			
-			this.setBackground(selected);
-			this.setText(selected);
+			setActiveState(active);
 			
 			setFocusable(false);
 			
@@ -113,19 +112,14 @@ public class SpecialPiecesFrame extends JFrame {
 			
 		}
 		
-		private void toggle() {
-			boolean currentlySelected = getBackground() == Color.YELLOW;
-			this.setBackground(!currentlySelected);
-			this.setText(!currentlySelected);
-		}
+		private void toggle() { setActiveState(!isActive()); }
 		
-		public void setBackground(boolean selected) {
-			super.setBackground(selected ? Color.YELLOW : Color.LIGHT_GRAY);
-		}
+		public boolean isActive() { return getBackground() == Color.YELLOW; }
 		
-		public void setText(boolean selected) {
-			super.setText(selected ? "Active" : "Inactive");
-		}		
+		public void setActiveState(boolean active) {
+			super.setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
+			super.setText(active ? "Active" : "Inactive");
+		}
 		
 	}	
 	
