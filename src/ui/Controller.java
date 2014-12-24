@@ -101,7 +101,7 @@ public class Controller {
 		
 		else {
 			
-			fallTimer.setDelay(GameBoardModel.getTimerDelay());
+			fallTimer.setDelay(GameBoardModel.getCurrentTimerDelay());
 			GameFrame.scorePanel.flashLevelLabel();
 			
 		}
