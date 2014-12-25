@@ -26,7 +26,7 @@ public class SpecialPiecesFrame extends JFrame {
 	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
 	
-	private JButton jbtSave = new JButton("Save and Return");
+	private GameFrame.TetrisButton jbtSave = new GameFrame.TetrisButton("Save & Return");
 	
 	SpecialPiecesFrame() { 
 		

@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -42,7 +41,7 @@ public class HighScoreFrame extends JFrame {
 	// Used when accessing this frame from save score frame to make new score row stand out
 	private int highlightRank = -1;
 	
-	private JButton jbtReturn = new JButton("Return");
+	private GameFrame.TetrisButton jbtReturn = new GameFrame.TetrisButton("Return");
 	private JTable table = new JTable();
 	
 	HighScoreFrame(int rankToHighlight) {

@@ -57,7 +57,8 @@ public class GridPainter extends JPanel {
 		JPanel toPaint = JPanelGrid[row][col];
 		
 		toPaint.setBackground(color);
-		toPaint.setBorder(GameFrame.BEVEL_BORDER);
+		toPaint.setBorder(GameFrame.ETCHED_BORDER);
+		
 	}
 	
 	// Erases the color in any given square. Pass the panel

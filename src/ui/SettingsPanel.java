@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -30,7 +29,8 @@ public class SettingsPanel extends JPanel {
 	
 	private JComboBox<String> jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
-	private JButton jbtChooseSpecials = new JButton("Special Pieces...");
+	private GameFrame.TetrisButton jbtChooseSpecials = new GameFrame.TetrisButton("Special Pieces...");
+	private GameFrame.TetrisButton jbtChooseBlockStyles = new GameFrame.TetrisButton("Block Styles...");
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		
@@ -76,8 +76,9 @@ public class SettingsPanel extends JPanel {
 		diffPanel.add(new JLabel("Difficulty:  "));
 		diffPanel.add(jlstDifficulty);
 		
-		JPanel buttonContainer = new JPanel();
+		JPanel buttonContainer = new JPanel(new GridLayout(2,1));
 		buttonContainer.add(jbtChooseSpecials);
+		buttonContainer.add(jbtChooseBlockStyles);
 		
 		jbtChooseSpecials.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new SpecialPiecesFrame(); }

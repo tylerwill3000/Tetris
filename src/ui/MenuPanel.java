@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import model.AudioManager;
@@ -16,11 +15,11 @@ import model.PieceFactory;
 // Holds all the main menu buttons
 public class MenuPanel extends JPanel {
 	
-	JButton start = new JButton("Start");
-	JButton pause = new JButton("Pause");
-	JButton resume = new JButton("Resume");
-	JButton giveUp = new JButton("Give Up");
-	JButton highScores = new JButton("View High Scores");
+	GameFrame.TetrisButton start = new GameFrame.TetrisButton("Start");
+	GameFrame.TetrisButton pause = new GameFrame.TetrisButton("Pause");
+	GameFrame.TetrisButton resume = new GameFrame.TetrisButton("Resume");
+	GameFrame.TetrisButton giveUp = new GameFrame.TetrisButton("Give Up");
+	GameFrame.TetrisButton highScores = new GameFrame.TetrisButton("High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled
@@ -164,14 +163,14 @@ public class MenuPanel extends JPanel {
 		
 		setLayout(new FlowLayout());
 		
-		Map<JButton, Character> mnemonicMap = new HashMap<JButton, Character>();
+		Map<GameFrame.TetrisButton, Character> mnemonicMap = new HashMap<GameFrame.TetrisButton, Character>();
 		mnemonicMap.put(start, 's');
 		mnemonicMap.put(pause, 'p');
 		mnemonicMap.put(resume, 'r');
 		mnemonicMap.put(giveUp, 'g');
 		mnemonicMap.put(highScores, 'h');
 		
-		for (JButton b : new JButton[]{start, pause, resume, giveUp, highScores}) {
+		for (GameFrame.TetrisButton b : new GameFrame.TetrisButton[]{start, pause, resume, giveUp, highScores}) {
 			
 			// Set all buttons un-focusable
 			b.setFocusable(false);

@@ -7,7 +7,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,8 +29,8 @@ public class SaveScoreFrame extends JFrame {
 	
 	private JTextField name = new JTextField(8);
 	
-	private JButton saveScore = new JButton("Save");
-	private JButton cancel = new JButton("Cancel");
+	private GameFrame.TetrisButton saveScore = new GameFrame.TetrisButton("Save");
+	private GameFrame.TetrisButton cancel = new GameFrame.TetrisButton("Cancel");
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		
