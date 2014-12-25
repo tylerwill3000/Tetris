@@ -161,6 +161,7 @@ public class GameFrame extends JFrame {
 			setText(buttonText);
 			setPreferredSize(new Dimension(100,30));
 			setBorder(ETCHED_BORDER);
+			setFocusable(false);
 			addMouseListener(handCursorListener);
 		}
 		

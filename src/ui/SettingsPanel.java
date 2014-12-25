@@ -84,7 +84,9 @@ public class SettingsPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) { new SpecialPiecesFrame(); }
 		});
 		
-		jbtChooseSpecials.setFocusable(false);
+		jbtChooseBlockStyles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) { new BlockStylesFrame(); }
+		});
 		
 		add(checkboxes, BorderLayout.NORTH);
 		add(diffPanel, BorderLayout.CENTER);

@@ -171,12 +171,9 @@ public class MenuPanel extends JPanel {
 		mnemonicMap.put(highScores, 'h');
 		
 		for (GameFrame.TetrisButton b : new GameFrame.TetrisButton[]{start, pause, resume, giveUp, highScores}) {
-			
-			// Set all buttons un-focusable
-			b.setFocusable(false);
 			b.setMnemonic(mnemonicMap.get(b));
 			add(b);
-			
+
 		}
 		
 		enableStartButton();

@@ -26,7 +26,7 @@ public class SpecialPiecesFrame extends JFrame {
 	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
 	
-	private GameFrame.TetrisButton jbtSave = new GameFrame.TetrisButton("Save & Return");
+	private GameFrame.TetrisButton jbtReturn = new GameFrame.TetrisButton("Return");
 	
 	SpecialPiecesFrame() { 
 		
@@ -54,9 +54,11 @@ public class SpecialPiecesFrame extends JFrame {
 		}
 		
 		JPanel saveContainer = new JPanel();
-		saveContainer.add(jbtSave);
-		jbtSave.setFocusable(false);
-		jbtSave.addActionListener(SaveListener);
+		saveContainer.add(jbtReturn);
+		
+		jbtReturn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) { dispose(); }
+		});
 		
 		add(piecePanels, BorderLayout.CENTER);
 		add(saveContainer, BorderLayout.SOUTH);
@@ -69,29 +71,6 @@ public class SpecialPiecesFrame extends JFrame {
 		setVisible(true);
 		
 	}
-	
-	// The purpose of the save listener is to take all active pieces (depending
-	// one which pieces the player selected) and add them to the valid piece ID
-	// pool in the PieceFactory, as well as remove those from the pool that are
-	// not selected
-	private ActionListener SaveListener = new ActionListener() {
-
-		public void actionPerformed(ActionEvent e) {
-			
-			for (PieceSelectorButton b : pieceSelectorButtons) {
-				
-				if (b.isActive())
-					PieceFactory.addPieceID(b.pieceID);
-				else
-					PieceFactory.removePieceID(b.pieceID);
-				
-			}
-			
-			dispose();
-			
-		}
-		
-	};
 	
 	private static Map<Integer,String> initPieceIDToNameMap() {
 		Map<Integer,String> map = new HashMap<>();
@@ -112,7 +91,6 @@ public class SpecialPiecesFrame extends JFrame {
 			this.pieceID = pieceID;
 			
 			setActiveState(PieceFactory.isPieceActive(pieceID));
-			
 			setFocusable(false);
 			
 			addMouseMotionListener(new MouseAdapter() {
@@ -129,7 +107,17 @@ public class SpecialPiecesFrame extends JFrame {
 			
 		}
 		
-		private void toggle() { setActiveState(!isActive()); }
+		private void toggle() {
+			
+			boolean newActiveState = !isActive();
+			setActiveState(newActiveState);
+			
+			if (newActiveState)
+				PieceFactory.addPieceID(pieceID);
+			else
+				PieceFactory.removePieceID(pieceID);
+				
+		}
 		
 		public boolean isActive() { return getBackground() == Color.YELLOW; }
 		

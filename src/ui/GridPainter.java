@@ -57,7 +57,7 @@ public class GridPainter extends JPanel {
 		JPanel toPaint = JPanelGrid[row][col];
 		
 		toPaint.setBackground(color);
-		toPaint.setBorder(GameFrame.ETCHED_BORDER);
+		toPaint.setBorder(BlockStylesFrame.getCurrentPieceBorder());
 		
 	}
 	
