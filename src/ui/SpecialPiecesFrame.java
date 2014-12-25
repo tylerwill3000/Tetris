@@ -14,10 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
+import model.GameBoardModel;
 import model.PieceFactory;
 
 public class SpecialPiecesFrame extends JFrame {
@@ -44,11 +48,16 @@ public class SpecialPiecesFrame extends JFrame {
 			PieceSelectorButton selector = new PieceSelectorButton(pieceID);
 			pieceSelectorButtons.add(selector);
 			
+			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusesPoints(pieceID) + " points per line");
+			pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
+			pointBonus.setBorder(GameFrame.LINE_BORDER);
+			
 			// Add both components to a master container and then add that to the piecePanels
 			// container
 			JPanel piecePanel = new JPanel(new BorderLayout());
-			piecePanel.add(display, BorderLayout.CENTER);
-			piecePanel.add(selector, BorderLayout.SOUTH);
+			piecePanel.add(display, BorderLayout.NORTH);
+			piecePanel.add(selector, BorderLayout.CENTER);
+			piecePanel.add(pointBonus, BorderLayout.SOUTH);
 			piecePanels.add(piecePanel);
 			
 		}
@@ -74,9 +83,9 @@ public class SpecialPiecesFrame extends JFrame {
 	
 	private static Map<Integer,String> initPieceIDToNameMap() {
 		Map<Integer,String> map = new HashMap<>();
-		map.put(PieceFactory.CORNER_BLOCK_ID, "Corner Piece");
-		map.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, "Twin-pillars Piece");
-		map.put(PieceFactory.ROCKET_BLOCK_ID, "Rocket Piece");
+		map.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, "\"Twin-pillars\"");
+		map.put(PieceFactory.ROCKET_BLOCK_ID, "\"Rocket\"");
+		map.put(PieceFactory.DIAMOND_BLOCK_ID, "\"Diamond\"");
 		return map;
 	}
 	
@@ -103,7 +112,7 @@ public class SpecialPiecesFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) { toggle(); }
 			});
 			
-			setPreferredSize(new Dimension(getWidth(), 30));
+			setPreferredSize(new Dimension(getWidth(), 28));
 			
 		}
 		
@@ -123,7 +132,7 @@ public class SpecialPiecesFrame extends JFrame {
 		
 		public void setActiveState(boolean active) {
 			super.setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
-			super.setText(active ? "Active" : "Inactive");
+			super.setText(active ? "De-activate" : "Activate");
 		}
 		
 	}	

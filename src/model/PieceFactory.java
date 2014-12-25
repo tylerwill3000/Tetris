@@ -15,15 +15,15 @@ public final class PieceFactory {
 	public final static int S_BLOCK_R_ID = 4;
 	public final static int STRAIGHT_LINE_ID = 5;
 	public final static int T_BLOCK_ID = 6;
-	public final static int CORNER_BLOCK_ID = 7;
-	public final static int TWIN_PILLARS_BLOCK_ID = 8;
-	public final static int ROCKET_BLOCK_ID = 9;
+	public final static int TWIN_PILLARS_BLOCK_ID = 7;
+	public final static int ROCKET_BLOCK_ID = 8;
+	public final static int DIAMOND_BLOCK_ID = 9;
 	
 	// Allows me to iterate over these values in the special blocks frame
 	public final static int[] SPECIAL_BLOCK_IDS = {
-		CORNER_BLOCK_ID,
 		TWIN_PILLARS_BLOCK_ID,
-		ROCKET_BLOCK_ID
+		ROCKET_BLOCK_ID,
+		DIAMOND_BLOCK_ID
 	};
 	
 	private static Set<Integer> activePieceIDs = initGamePieceIDs();
@@ -466,50 +466,6 @@ class Ingredients {
 		
 	};
 	
-	/** Corner-block
-	 * X.
-	 * XX
-	 */
-	private final static int[][][] CORNER_BLOCK_ORIENTATIONS = {
-		
-		// Southwest orientation:
-		// X.
-		// XX
-		{
-			{0,0},
-			{0,1},
-			{-1,0}
-		},
-		
-		// Northwest orientation:
-		// XX
-		// X.
-		{
-			{0,0},
-			{-1,0},
-			{-1,1}
-		},
-		
-		// Northeast orientation:
-		// XX
-		// .X
-		{
-			{-1,0},
-			{-1,1},
-			{0,1}
-		},
-		
-		// Southeast orientation:
-		// .X
-		// XX
-		{
-			{0,0},
-			{0,1},
-			{-1,1}
-		}				
-		
-	};
-	
 	/** Twin-pillars block:
 	 * ...
 	 * X.X
@@ -609,6 +565,24 @@ class Ingredients {
 				
 	};
 	
+	/* Diamond block:
+	 * .X.
+	 * X.X
+	 * .X.
+	 */
+	private final static int[][][] DIAMOND_BLOCK_ORIENTATIONS = {
+		
+		// All same configurations:
+		// .X.
+		// X.X
+		// .X.
+		{{0,1},{-1,0},{-1,2},{-2,1}},
+		{{0,1},{-1,0},{-1,2},{-2,1}},
+		{{0,1},{-1,0},{-1,2},{-2,1}},
+		{{0,1},{-1,0},{-1,2},{-2,1}}
+				
+	};
+	
 	/** From here on out, it is critically important that the data
 	 *  in each collection is added in the same exact order. For
 	 *  example, since the data for the "Box" piece is the first element
@@ -626,9 +600,9 @@ class Ingredients {
 		S_BLOCK_R_ORIENTATIONS,
 		STRAIGHT_LINE_ORIENTATIONS,
 		T_BLOCK_ORIENTATIONS,
-		CORNER_BLOCK_ORIENTATIONS,
 		TWIN_PILLARS_BLOCK_ORIENTATIONS,
-		ROCKET_BLOCK_ORIENTATIONS
+		ROCKET_BLOCK_ORIENTATIONS,
+		DIAMOND_BLOCK_ORIENTATIONS
 	};
 	
 	// Starting row of this piece on the board. Corresponds to
@@ -648,6 +622,7 @@ class Ingredients {
 		4, // Corner block
 		4, // Twin-pillars block
 		5, // Rocket block
+		4  // Diamond block
 	};
 	
 	// List of grid coordinate squares the piece occupies when in
@@ -660,9 +635,9 @@ class Ingredients {
 		{  {1,2},{1,3},{2,1},{2,2}  }, // S-block R
 		{  {0,2},{1,2},{2,2},{3,2}  }, // Straight line
 		{  {1,1},{1,2},{1,3},{2,2}  }, // T-block
-		{  {1,1},{2,1},{2,2} }, // Corner block
 		{  {1,1},{2,1},{1,3},{2,3}  }, // Twin-pillars block
-		{  {3,1},{3,3},{2,2},{1,2}  }  // Rocket block
+		{  {3,1},{3,3},{2,2},{1,2}  }, // Rocket block
+		{  {1,2},{2,1},{2,3},{3,2}  }  // Diamond block
 	};
 	
 };
