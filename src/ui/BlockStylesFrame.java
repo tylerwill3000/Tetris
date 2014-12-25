@@ -39,6 +39,7 @@ public class BlockStylesFrame extends JFrame {
 		JPanel styleSelectorPanel = new JPanel();
 		styleSelectorPanel.add(new JLabel("Style: "));
 		styleSelectorPanel.add(styleSelector);
+		styleSelector.setSelectedIndex(chosenPieceBorder);
 		
 		JPanel buttonContainer = new JPanel();
 		buttonContainer.add(save);
