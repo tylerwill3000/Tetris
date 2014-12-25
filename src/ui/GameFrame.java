@@ -147,8 +147,10 @@ public class GameFrame extends JFrame {
 		private MouseListener handCursorListener = new MouseAdapter() {
 			
 			public void mouseEntered(MouseEvent e) {
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
-				setBackground(Color.YELLOW);
+				if (isEnabled()) {
+					setCursor(new Cursor(Cursor.HAND_CURSOR));
+					setBackground(Color.YELLOW);
+				}
 			}
 			
 			public void mouseExited(MouseEvent e) {

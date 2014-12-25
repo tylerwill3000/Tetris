@@ -60,6 +60,7 @@ public class MenuPanel extends JPanel {
 			
 			GameFrame.settingsPanel.disableDifficultyList();
 			GameFrame.settingsPanel.disableSpecialPiecesButton();
+			GameFrame.settingsPanel.disableBlockStylesButton();
 			
 			// Paint initial pieces
 			GameFrame.gameBoardPanel.paintCurrentAndGhost();

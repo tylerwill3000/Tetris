@@ -129,6 +129,7 @@ public class Controller {
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
 		GameFrame.settingsPanel.enableSpecialPiecesButton();
+		GameFrame.settingsPanel.enableBlockStylesButton();
 		
 	}
 	
@@ -155,6 +156,7 @@ public class Controller {
 		GameFrame.settingsPanel.disableCbxListeners();
 		GameFrame.settingsPanel.enableDifficultyList();
 		GameFrame.settingsPanel.enableSpecialPiecesButton();
+		GameFrame.settingsPanel.enableBlockStylesButton();
 		
 	}
 	

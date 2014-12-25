@@ -62,6 +62,7 @@ public class BlockStylesFrame extends JFrame {
 		add(previewPanel, BorderLayout.CENTER);
 		add(menu, BorderLayout.SOUTH);
 		
+		FrameUtils.setIcon(this, "palette.png");
 		setTitle("Styles");
 		setResizable(false);
 		pack();
