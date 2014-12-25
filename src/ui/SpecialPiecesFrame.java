@@ -2,10 +2,13 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +114,12 @@ public class SpecialPiecesFrame extends JFrame {
 			setActiveState(PieceFactory.isPieceActive(pieceID));
 			
 			setFocusable(false);
+			
+			addMouseMotionListener(new MouseAdapter() {
+				public void mouseMoved(MouseEvent e) {
+					setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+			});
 			
 			addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) { toggle(); }
