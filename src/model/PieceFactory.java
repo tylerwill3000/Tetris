@@ -28,7 +28,7 @@ public final class PieceFactory {
 		DIAMOND_BLOCK_ID
 	};
 	
-	public final static Map<Integer,Color> PIECE_COLOR_MAP = initPieceColorMap();
+	private final static Map<Integer,Color> PIECE_COLOR_MAP = initPieceColorMap();
 	private static Map<Integer,Color> initPieceColorMap() {
 		Map<Integer,Color> colors = new HashMap<>();
 		colors.put(BOX_ID, new Color(0, 70, 255)); // Blue

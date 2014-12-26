@@ -26,9 +26,9 @@ public class GameBoardModel {
 	private static final Map<Integer,Integer> SPECIAL_PIECE_BONUSES = initSpecialPieceBonusesMap();
 	private static Map<Integer,Integer> initSpecialPieceBonusesMap() {
 		Map<Integer,Integer> bonuses = new HashMap<>();
-		bonuses.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, 3);
-		bonuses.put(PieceFactory.ROCKET_BLOCK_ID, 5);
-		bonuses.put(PieceFactory.DIAMOND_BLOCK_ID, 8);
+		bonuses.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, 4);
+		bonuses.put(PieceFactory.ROCKET_BLOCK_ID, 6);
+		bonuses.put(PieceFactory.DIAMOND_BLOCK_ID, 10);
 		return bonuses;
 	}
 	
