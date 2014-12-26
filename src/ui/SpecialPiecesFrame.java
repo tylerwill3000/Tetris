@@ -40,7 +40,7 @@ public class SpecialPiecesFrame extends JFrame {
 			// Panel to display this piece
 			NextPiecePanel display = new NextPiecePanel(
 				pieceIDToName.get(pieceID),
-				PieceFactory.order(pieceID, PieceFactory.getRandomColor())
+				PieceFactory.order(pieceID)
 			);
 			
 			// Selector button for this piece

@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +19,7 @@ public class BlockStylesFrame extends JFrame {
 	private GameFrame.TetrisButton save = new GameFrame.TetrisButton("Return");
 	private NextPiecePanel preview = new NextPiecePanel(
 			"Preview",
-			PieceFactory.order(PieceFactory.T_BLOCK_ID, Color.GREEN)
+			PieceFactory.order(PieceFactory.T_BLOCK_ID)
 		);
 	
 	private static final Border[] PIECE_BORDERS = {

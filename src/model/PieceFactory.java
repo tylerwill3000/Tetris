@@ -1,8 +1,10 @@
 package model;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 // Used to churn out new pieces at random off a virtual 'conveyor belt'
@@ -25,6 +27,22 @@ public final class PieceFactory {
 		ROCKET_BLOCK_ID,
 		DIAMOND_BLOCK_ID
 	};
+	
+	public final static Map<Integer,Color> PIECE_COLOR_MAP = initPieceColorMap();
+	private static Map<Integer,Color> initPieceColorMap() {
+		Map<Integer,Color> colors = new HashMap<>();
+		colors.put(BOX_ID, new Color(0, 70, 255)); // Blue
+		colors.put(L_BLOCK_L_ID, Color.YELLOW);
+		colors.put(L_BLOCK_R_ID, Color.ORANGE);
+		colors.put(S_BLOCK_L_ID, Color.GREEN);
+		colors.put(S_BLOCK_R_ID, new Color(170, 45, 255)); // Purple
+		colors.put(STRAIGHT_LINE_ID, new Color(0, 200, 200)); // Blue-green
+		colors.put(T_BLOCK_ID, new Color(255, 30, 0)); // Red
+		colors.put(TWIN_PILLARS_BLOCK_ID, new Color(80, 140, 45)); // Dark-green
+		colors.put(ROCKET_BLOCK_ID, Color.PINK);
+		colors.put(DIAMOND_BLOCK_ID, Color.LIGHT_GRAY);
+		return colors;
+	}
 	
 	private static Set<Integer> activePieceIDs = initGamePieceIDs();
 	
@@ -77,7 +95,7 @@ public final class PieceFactory {
 		int pieceID = arrayedActivePieceIDs[randInRange(0, arrayedActivePieceIDs.length-1)];
 		
 		return new Piece(
-			getRandomColor(),
+			PIECE_COLOR_MAP.get(pieceID),
 			Ingredients.ORIENTATION_MAPS[pieceID],
 			Ingredients.NEXT_PANEL_SQUARES[pieceID],
 			Ingredients.START_ROWS[pieceID]
@@ -86,10 +104,10 @@ public final class PieceFactory {
 	}
 	
 	// Returns the specified piece according to the piece ID
-	public static Piece order(int pieceID, Color color) {
+	public static Piece order(int pieceID) {
 		
 		return new Piece(
-			color,
+			PIECE_COLOR_MAP.get(pieceID),
 			Ingredients.ORIENTATION_MAPS[pieceID],
 			Ingredients.NEXT_PANEL_SQUARES[pieceID],
 			Ingredients.START_ROWS[pieceID]
