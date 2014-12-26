@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -52,12 +51,13 @@ public class SpecialPiecesFrame extends JFrame {
 			pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 			pointBonus.setBorder(GameFrame.LINE_BORDER);
 			
-			// Add both components to a master container and then add that to the piecePanels
-			// container
+			JPanel menu = new JPanel(new BorderLayout());
+			menu.add(selector, BorderLayout.NORTH);
+			menu.add(pointBonus, BorderLayout.SOUTH);
+			
 			JPanel piecePanel = new JPanel(new BorderLayout());
-			piecePanel.add(display, BorderLayout.NORTH);
-			piecePanel.add(selector, BorderLayout.CENTER);
-			piecePanel.add(pointBonus, BorderLayout.SOUTH);
+			piecePanel.add(display, BorderLayout.CENTER);
+			piecePanel.add(menu, BorderLayout.SOUTH);
 			piecePanels.add(piecePanel);
 			
 		}
@@ -132,7 +132,7 @@ public class SpecialPiecesFrame extends JFrame {
 		
 		public void setActiveState(boolean active) {
 			super.setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
-			super.setText(active ? "De-activate" : "Activate");
+			super.setText(active ? "Active" : "Inactive");
 		}
 		
 	}	
