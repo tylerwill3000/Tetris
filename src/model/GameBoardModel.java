@@ -18,7 +18,7 @@ public class GameBoardModel {
 	public static final int INITIAL_TIMER_DELAY = 600;
 	
 	// Bonus points granted upon winning the game. Determined by difficulty
-	private static final int[] WIN_BONUSES = {500,1000,2000};
+	private static final int[] WIN_BONUSES = {500,750,1000};
 	
 	// Amount of milliseconds the timer delay decreases each level
 	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
