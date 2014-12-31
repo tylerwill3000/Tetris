@@ -232,28 +232,25 @@ public class GameBoardModel {
 		linesCompleted = 0;
 		level = 1;
 		
-		/** Method to set a static piece configuration for developing my icon!
-		 *  Icon plan is this:
+		/** Method to set a static piece configuration for developing my icon
 		 *  
-		 *  GGGG
-		 *  BBBY
-		 *  RBYY
 		 *  RRRY
-
-		for (int[] s : new int[][]{ {2,0},{3,0},{3,1},{3,2} })
-			setColor(Color.RED, s[0], s[1]);
+		 *  RGYY
+		 *  GGBY
+		 *  GBBB
 		
-		for (int[] s : new int[][]{ {1,0},{1,1},{1,2},{2,1} })
-			setColor(Color.BLUE, s[0], s[1]);
+		for (int[] s : new int[][]{ {3,0},{3,1},{3,2},{4,0} })
+			setColor(new Color(255,30,0), s[0], s[1]);
 		
-		for (int[] s : new int[][]{ {0,0},{0,1},{0,2},{0,3} })
+		for (int[] s : new int[][]{ {5,2},{6,1},{6,2},{6,3} })
+			setColor(new Color(0,70,255), s[0], s[1]);
+		
+		for (int[] s : new int[][]{ {4,1},{5,0},{5,1},{6,0} })
 			setColor(Color.GREEN, s[0], s[1]);
 		
-		for (int[] s : new int[][]{ {1,3},{2,2},{2,3},{3,3} })
-			setColor(Color.YELLOW, s[0], s[1]);
-		
-		*/		
-		
+		for (int[] s : new int[][]{ {3,3},{4,2},{4,3},{5,3} })
+			setColor(Color.YELLOW, s[0], s[1]);	
+		*/
 	}
 	
 	// Builds the blank starting quilt
