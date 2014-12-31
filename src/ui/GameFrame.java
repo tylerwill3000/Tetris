@@ -149,7 +149,7 @@ public class GameFrame extends JFrame {
 			public void mouseEntered(MouseEvent e) {
 				if (isEnabled()) {
 					setCursor(new Cursor(Cursor.HAND_CURSOR));
-					setBackground(Color.YELLOW);
+					setBackground(Color.LIGHT_GRAY);
 				}
 			}
 			
