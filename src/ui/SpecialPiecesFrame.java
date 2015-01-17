@@ -10,9 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,33 +19,29 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import model.GameBoardModel;
+import model.Piece;
 import model.PieceFactory;
 
 public class SpecialPiecesFrame extends JFrame {
 	
-	private static final Map<Integer,String> pieceIDToName = initPieceIDToNameMap();
-	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
-	
 	private GameFrame.TetrisButton jbtReturn = new GameFrame.TetrisButton("Return");
 	
 	SpecialPiecesFrame() { 
 		
 		JPanel piecePanels = new JPanel(new GridLayout(1,3));
 		
-		for (int pieceID : PieceFactory.SPECIAL_BLOCK_IDS) {
+		for (PieceFactory.PieceType pieceType : PieceFactory.PieceType.getSpecialPieces()) {
 			
 			// Panel to display this piece
-			NextPiecePanel display = new NextPiecePanel(
-				pieceIDToName.get(pieceID),
-				PieceFactory.order(pieceID)
-			);
+			String pieceName = pieceType.name().charAt(0) + pieceType.name().substring(1).toLowerCase().replace('_', ' ');
+			NextPiecePanel display = new NextPiecePanel("\"" + pieceName + "\"", new Piece(pieceType));
 			
 			// Selector button for this piece
-			PieceSelectorButton selector = new PieceSelectorButton(pieceID);
+			PieceSelectorButton selector = new PieceSelectorButton(pieceType);
 			pieceSelectorButtons.add(selector);
 			
-			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusesPoints(pieceID) + " points per line");
+			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusPoints(pieceType) + " points per line");
 			pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 			pointBonus.setBorder(GameFrame.LINE_BORDER);
 			
@@ -81,25 +75,17 @@ public class SpecialPiecesFrame extends JFrame {
 		
 	}
 	
-	private static Map<Integer,String> initPieceIDToNameMap() {
-		Map<Integer,String> map = new HashMap<>();
-		map.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, "\"Twin-pillars\"");
-		map.put(PieceFactory.ROCKET_BLOCK_ID, "\"Rocket\"");
-		map.put(PieceFactory.DIAMOND_BLOCK_ID, "\"Diamond\"");
-		return map;
-	}
-	
 	// Provides minor extended functionality to a JButton to handle toggle events
 	private static class PieceSelectorButton extends JButton {
 		
-		private int pieceID;
+		private PieceFactory.PieceType pieceType;
 		
-		// To construct, must pass the piece ID of the piece this button represents
-		private PieceSelectorButton(int pieceID) {
+		// To construct, must pass the piece type of the piece this button represents
+		private PieceSelectorButton(PieceFactory.PieceType pieceType) {
 			
-			this.pieceID = pieceID;
+			this.pieceType = pieceType;
 			
-			setActiveState(PieceFactory.isPieceActive(pieceID));
+			setActiveState(PieceFactory.isPieceActive(pieceType));
 			setFocusable(false);
 			
 			addMouseMotionListener(new MouseAdapter() {
@@ -122,9 +108,9 @@ public class SpecialPiecesFrame extends JFrame {
 			setActiveState(newActiveState);
 			
 			if (newActiveState)
-				PieceFactory.addPieceID(pieceID);
+				PieceFactory.addActivePiece(pieceType);
 			else
-				PieceFactory.removePieceID(pieceID);
+				PieceFactory.removeActivePiece(pieceType);
 				
 		}
 		

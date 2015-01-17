@@ -11,19 +11,9 @@ import ui.GameBoardPanel;
 // to reassign it's current position to reflect the move
 public class Piece {
 	
-	private Color color;
-	
-	// Orientation map. Provides offsets to determine
-	// which squares are lit up in the piece's bounding
-	// grid for each orientation
-	private int[][][] orientationMap;
-	
-	// Denotes which squares are lit up when the piece is
-	// displayed on the "Next Piece" panel
-	private int[][] nextPanelSquares;
-	
-	// Starting row index position of the piece
-	private int startRow;
+	// The category of this piece. Each piece type has static data
+	// associated with it. This enum instance encapsulates that data
+	PieceFactory.PieceType pieceType;
 	
 	// Location of piece on the game board.
 	// Corresponds to the location of the
@@ -47,21 +37,16 @@ public class Piece {
 	// conveyor belt
 	private boolean isHoldPiece = false;
 	
-	public Piece(Color color, int[][][] orientationMap, int[][] nextPanelSqaures, int startRow) {
-		
-		this.color = color;
-		this.orientationMap = orientationMap;
-		this.nextPanelSquares = nextPanelSqaures;
-		this.startRow = startRow;
-
+	public Piece(PieceFactory.PieceType pieceType) {
+		this.pieceType = pieceType;
 	}
 	
 	public int getRow() { return location[0]; }
 	public int getCol() { return location[1]; }
 	
-	public Color getColor() { return color; }
+	public Color getColor() { return pieceType.getColor(); }
 	public int[][] getLitSquares() { return litSquares; }
-	public int[][] getNextPanelSquares() { return nextPanelSquares; }
+	public int[][] getNextPanelSquares() { return pieceType.getNextPanelSquares(); }
 	
 	// Movement methods. Each time a movement is made, the piece's
 	// lit squares must be recalculated
@@ -97,7 +82,7 @@ public class Piece {
 		
 		// Iterate over each offset value in the orientation map
 		// for the current orientation
-		for (int[] offset : orientationMap[orientation]) {
+		for (int[] offset : pieceType.getOrientation(orientation)) {
 			
 			// Obtain the square that should be lit by adding
 			// the offset to the current location
@@ -203,10 +188,10 @@ public class Piece {
 	// assigned to null
 	public void setInitialSquares() {
 		
-		location = new int[]{startRow, GameBoardPanel.CENTER_OFFSET};
+		location = new int[]{pieceType.getStartRow(), GameBoardPanel.CENTER_OFFSET};
 		
 		// Decrement location each iteration to test the next row above
-		for (int row = startRow; row >= 0; location[0]--, row--) {
+		for (int row = pieceType.getStartRow(); row >= 0; location[0]--, row--) {
 			
 			// Set candidate squares
 			int[][] candidateInitialSquares = calcLitSquares();

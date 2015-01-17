@@ -23,13 +23,11 @@ public class GameBoardModel {
 	// Amount of milliseconds the timer delay decreases each level
 	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
 	
-	private static final Map<Integer,Integer> SPECIAL_PIECE_BONUSES = initSpecialPieceBonusesMap();
-	private static Map<Integer,Integer> initSpecialPieceBonusesMap() {
-		Map<Integer,Integer> bonuses = new HashMap<>();
-		bonuses.put(PieceFactory.TWIN_PILLARS_BLOCK_ID, 4);
-		bonuses.put(PieceFactory.ROCKET_BLOCK_ID, 6);
-		bonuses.put(PieceFactory.DIAMOND_BLOCK_ID, 10);
-		return bonuses;
+	private static final Map<PieceFactory.PieceType, Integer> SPECIAL_PIECE_BONUSES = new HashMap<>();
+	static {
+		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.TWIN_PILLARS, 4);
+		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.ROCKET, 6);
+		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.DIAMOND, 10);
 	}
 	
 	// Represents colors on the game grid
@@ -72,8 +70,8 @@ public class GameBoardModel {
 	public static int getScore() { return score; }
 	public static int getLevel() { return level; }
 	
-	public static int getSpecialPieceBonusesPoints(int pieceID) {
-		return SPECIAL_PIECE_BONUSES.get(pieceID);
+	public static int getSpecialPieceBonusPoints(PieceFactory.PieceType pieceType) {
+		return SPECIAL_PIECE_BONUSES.get(pieceType);
 	}
 	
 	private GameBoardModel() {}
@@ -150,9 +148,10 @@ public class GameBoardModel {
 		score += (linePoints + difficultyBonus);
 		
 		// Add bonuses for all special pieces
-		for (Integer pieceID : PieceFactory.SPECIAL_BLOCK_IDS)
-			if (PieceFactory.isPieceActive(pieceID))
-				score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceID));
+		for (PieceFactory.PieceType pieceType : PieceFactory.PieceType.getSpecialPieces()) {
+			if (PieceFactory.isPieceActive(pieceType))
+				score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceType));
+		}
 		
 		// Process level ups
 		while (linesCompleted >= level * LINES_PER_LEVEL[GameFrame.settingsPanel.getDifficulty()]) {

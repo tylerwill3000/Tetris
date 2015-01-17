@@ -11,16 +11,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import model.Piece;
 import model.PieceFactory;
 
 public class BlockStylesFrame extends JFrame {
 	
 	private JComboBox<String> styleSelector = new JComboBox<>(new String[]{"Beveled","Etched"});
 	private GameFrame.TetrisButton save = new GameFrame.TetrisButton("Return");
-	private NextPiecePanel preview = new NextPiecePanel(
-			"Preview",
-			PieceFactory.order(PieceFactory.T_BLOCK_ID)
-		);
+	private NextPiecePanel preview = new NextPiecePanel("Preview", new Piece(PieceFactory.PieceType.T_BLOCK));
 	
 	private static final Border[] PIECE_BORDERS = {
 		GameFrame.BEVEL_BORDER,
