@@ -140,6 +140,8 @@ public class GameFrame extends JFrame {
 		
 	}
 	
+	
+	
 	// Standard button style for all frames
 	static class TetrisButton extends JButton {
 		

@@ -15,19 +15,23 @@ import ui.SettingsPanel;
 // Interfaces to the scores database
 public class DBComm {
 	
+	static { // Statically load DB driver upon class load
+		try { Class.forName("com.mysql.jdbc.Driver"); }
+		catch (ClassNotFoundException e) {} // Won't happen
+	}
+	
 	// Associates the scoreID primary key from the score DB with that score's overall rank
 	private static Map<Integer, Integer> scoreIDToRank = null;
 	
-	private final static String DB_HOST_NAME = "localhost";
-	
-	// I probably shouldn't store these in my source code, but this works
-	// for now. It's just a school project, after all
-	private final static String DB_USER = "root";
-	private final static String DB_PASS = "TyDaWi@timpfmys!";
-	
-	private static Connection getConnection() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-		return DriverManager.getConnection("jdbc:mysql://" + DB_HOST_NAME + "/tetris", DB_USER, DB_PASS);
+	private static Connection getConnection() throws SQLException {
+		
+		String dbHost = Properties.GAME_PROPERTIES.getProperty("db.host");
+		String dbName = Properties.GAME_PROPERTIES.getProperty("db.name");
+		String dbUser = Properties.GAME_PROPERTIES.getProperty("db.user");
+		String dbPass = Properties.GAME_PROPERTIES.getProperty("db.pass");
+		
+		return DriverManager.getConnection(String.format("jdbc:mysql://%s/%s", dbHost, dbName), dbUser, dbPass);
+		
 	}
 	
 	// Returns the rank for the new score

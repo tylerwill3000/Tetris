@@ -31,6 +31,7 @@ public class SettingsPanel extends JPanel {
 	
 	private GameFrame.TetrisButton jbtChooseSpecials = new GameFrame.TetrisButton("Special Pieces...");
 	private GameFrame.TetrisButton jbtChooseBlockStyles = new GameFrame.TetrisButton("Block Styles...");
+	private GameFrame.TetrisButton jbtDBConfig = new GameFrame.TetrisButton("Database Connectivity...");
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		
@@ -76,9 +77,10 @@ public class SettingsPanel extends JPanel {
 		diffPanel.add(new JLabel("Difficulty:  "));
 		diffPanel.add(jlstDifficulty);
 		
-		JPanel buttonContainer = new JPanel(new GridLayout(2,1));
+		JPanel buttonContainer = new JPanel(new GridLayout(3,1));
 		buttonContainer.add(jbtChooseSpecials);
 		buttonContainer.add(jbtChooseBlockStyles);
+		buttonContainer.add(jbtDBConfig);
 		
 		jbtChooseSpecials.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new SpecialPiecesFrame(); }
@@ -86,6 +88,10 @@ public class SettingsPanel extends JPanel {
 		
 		jbtChooseBlockStyles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new BlockStylesFrame(); }
+		});
+		
+		jbtDBConfig.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) { new DBSettingsFrame(); }
 		});
 		
 		add(checkboxes, BorderLayout.NORTH);
