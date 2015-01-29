@@ -18,10 +18,10 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 	
 	private final static int TEXT_FIELD_WIDTH = 15;
 	
-	private JLabel jlbHost = new JLabel("  Database host:   ");
-	private JLabel jlbName = new JLabel("  Database name:  ");
-	private JLabel jlbUser = new JLabel("  Database user:  ");
-	private JLabel jlbPass = new JLabel("  Database password:  ");
+	private JLabel jlbHost = new JLabel("   Database host: ");
+	private JLabel jlbName = new JLabel("   Database name:");
+	private JLabel jlbUser = new JLabel("   Database user:");
+	private JLabel jlbPass = new JLabel("   Database password:");
 	
 	private JTextField jtxHost = new JTextField(Properties.getDBHostProperty(), TEXT_FIELD_WIDTH);
 	private JTextField jtxName = new JTextField(Properties.getDBNameProperty(), TEXT_FIELD_WIDTH);
@@ -74,7 +74,7 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 		add(FrameUtils.nestInPanel(saveAndClose), BorderLayout.SOUTH);
 		
 		setTitle("Database Connectivity");
-		setSize(320,200);
+		setSize(320,180);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setVisible(true);

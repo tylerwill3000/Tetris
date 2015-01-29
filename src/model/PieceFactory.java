@@ -391,13 +391,6 @@ public final class PieceFactory {
 	
 	private static Set<PieceType> activePieces = new HashSet<>(PieceType.getInitialPieces());
 	
-	// Load all active special pieces from properties file
-	static {
-		for (PieceType special : Properties.getSavedSpecialPieces()) {
-			activePieces.add(special);
-		}
-	}
-	
 	// Once game is started, active piece IDs are converted to an array to make sampling easier
 	private static PieceType[] arrayedActivePieceIDs;
 	
@@ -437,6 +430,12 @@ public final class PieceFactory {
 	// to an array for this game session. I use an array since
 	// it's easier to sample from to get random pieces
 	public static void solidifyActivePieces() {
+		
+		// Load all active special pieces from properties file
+		for (PieceType special : Properties.getSavedSpecialPieces()) {
+			activePieces.add(special);
+		}
+		
 		arrayedActivePieceIDs = activePieces.toArray(new PieceType[activePieces.size()]);
 	}
 	

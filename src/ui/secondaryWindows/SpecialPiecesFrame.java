@@ -40,6 +40,7 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 			
 			// Selector button for this piece
 			PieceSelectorButton selector = new PieceSelectorButton(pieceType);
+			selector.setActiveState(Properties.getActivePieceProperty(pieceType));
 			pieceSelectorButtons.add(selector);
 			
 			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusPoints(pieceType) + " points per line");
@@ -97,18 +98,9 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 		}
 		
 		private void toggle() {
-			
 			boolean newActiveState = !isActive();
 			setActiveState(newActiveState);
 			Properties.setActivePieceProperty(pieceType, newActiveState);
-			
-			if (newActiveState) {
-				PieceFactory.addActivePiece(pieceType);
-			}
-			else {
-				PieceFactory.removeActivePiece(pieceType);
-			}
-				
 		}
 		
 		public boolean isActive() { return getBackground() == Color.YELLOW; }
