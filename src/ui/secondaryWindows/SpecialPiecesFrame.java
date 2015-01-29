@@ -1,4 +1,4 @@
-package ui;
+package ui.secondaryWindows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,29 +13,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import ui.GameFrame;
+import ui.NextPiecePanel;
+import ui.util.FrameUtils;
 import model.GameBoardModel;
 import model.Piece;
 import model.PieceFactory;
+import model.Properties;
 
-public class SpecialPiecesFrame extends JFrame {
+public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
-	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	
-	SpecialPiecesFrame() { 
+	public SpecialPiecesFrame() { 
 		
 		JPanel piecePanels = new JPanel(new GridLayout(1,3));
 		
 		for (PieceFactory.PieceType pieceType : PieceFactory.PieceType.getSpecialPieces()) {
 			
 			// Panel to display this piece
-			String pieceName = pieceType.name().charAt(0) + pieceType.name().substring(1).toLowerCase().replace('_', ' ');
-			NextPiecePanel display = new NextPiecePanel("\"" + pieceName + "\"", new Piece(pieceType));
+			NextPiecePanel display = new NextPiecePanel("\"" + pieceType + "\"", new Piece(pieceType));
 			
 			// Selector button for this piece
 			PieceSelectorButton selector = new PieceSelectorButton(pieceType);
@@ -57,7 +58,7 @@ public class SpecialPiecesFrame extends JFrame {
 		}
 		
 		add(piecePanels, BorderLayout.CENTER);
-		add(FrameUtils.nestInPanel(jbtClose), BorderLayout.SOUTH);
+		add(FrameUtils.nestInPanel(saveAndClose), BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "star.png");
 		setTitle("Special Pieces");
@@ -99,11 +100,14 @@ public class SpecialPiecesFrame extends JFrame {
 			
 			boolean newActiveState = !isActive();
 			setActiveState(newActiveState);
+			Properties.setActivePieceProperty(pieceType, newActiveState);
 			
-			if (newActiveState)
+			if (newActiveState) {
 				PieceFactory.addActivePiece(pieceType);
-			else
+			}
+			else {
 				PieceFactory.removeActivePiece(pieceType);
+			}
 				
 		}
 		

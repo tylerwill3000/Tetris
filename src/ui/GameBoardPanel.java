@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ui.secondaryWindows.SaveScoreFrame;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;

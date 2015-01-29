@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import ui.components.TetrisButton;
+import ui.secondaryWindows.HighScoreFrame;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;

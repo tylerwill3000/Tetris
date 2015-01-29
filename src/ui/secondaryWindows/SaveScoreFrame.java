@@ -1,4 +1,4 @@
-package ui;
+package ui.secondaryWindows;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,15 +13,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import ui.GameFrame;
+import ui.components.CloseFrameButton;
+import ui.components.TetrisButton;
+import ui.util.FrameUtils;
 import model.DBComm;
 import model.GameBoardModel;
+import model.Properties;
 
 // Frame prompting the user whether they want to save their score
 public class SaveScoreFrame extends JFrame {
 	
 	public final static int NAME_LENGTH = 20;
-	
-	private static String cachedName = null;
 	
 	private JPanel buttonPanel;
 	
@@ -36,18 +39,21 @@ public class SaveScoreFrame extends JFrame {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			if (name.getText().equals("")) {
+			String saveName = name.getText();
+			
+			if (saveName.equals("")) {
 				JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
 				return;
 			}
 			
-			cachedName = name.getText();
+			Properties.setPlayerSaveName(saveName);
+			Properties.saveCurrentProperties(true); // Persist player save name
 			
 			int rank = 0;
 			try {
 				
 				rank = DBComm.writeScore(
-					name.getText(),
+					saveName,
 					GameBoardModel.getScore(),
 					GameBoardModel.getLevel(),
 					GameBoardModel.getLinesCompleted(),
@@ -76,7 +82,7 @@ public class SaveScoreFrame extends JFrame {
 		
 	};
 	
-	SaveScoreFrame() {
+	public SaveScoreFrame() {
 		
 		// Validates name length
 		name.addKeyListener(new KeyAdapter() {
@@ -86,7 +92,7 @@ public class SaveScoreFrame extends JFrame {
 			}
 		});
 		
-		if (cachedName != null) name.setText(cachedName);
+		name.setText(Properties.GAME_PROPERTIES.getProperty("player.save.name"));
 		
 		setLayout(new GridLayout(3,1));
 		

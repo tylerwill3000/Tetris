@@ -14,6 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import ui.components.TetrisButton;
+import ui.secondaryWindows.BlockStylesFrame;
+import ui.secondaryWindows.DBSettingsFrame;
+import ui.secondaryWindows.SpecialPiecesFrame;
 import model.AudioManager;
 
 public class SettingsPanel extends JPanel {

@@ -5,6 +5,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
+import ui.secondaryWindows.BlockStylesFrame;
 import model.Piece;
 
 // Objects of this class are grid-based panels that are 

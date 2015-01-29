@@ -8,6 +8,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import ui.util.FrameUtils;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -18,10 +20,10 @@ import java.util.concurrent.Executors;
 public class GameFrame extends JFrame {
 	
 	// GUI style constants
-	static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
-	static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	static final Border ETCHED_BORDER = BorderFactory.createEtchedBorder();
-	static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 19);
+	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
+	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
+	public static final Border ETCHED_BORDER = BorderFactory.createEtchedBorder();
+	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 19);
 	
 	/** All major GUI components. Declared static so they can 'talk
 	 *  to each other through the GameFrame class **/

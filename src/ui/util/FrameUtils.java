@@ -1,4 +1,4 @@
-package ui;
+package ui.util;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 public final class FrameUtils {
 	
 	public static void setIcon(JFrame f, String image) {
-		f.setIconImage(new ImageIcon(f.getClass().getResource("images/" + image)).getImage());
+		f.setIconImage(new ImageIcon(f.getClass().getResource(image)).getImage());
 	}
 	
 	public static JPanel nestInPanel(JComponent toNest) {

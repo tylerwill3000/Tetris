@@ -358,6 +358,11 @@ public final class PieceFactory {
 			this.color = color;
 		}
 		
+		@Override
+		public String toString() {
+			return name().charAt(0) + name().substring(1).toLowerCase().replace('_', ' ');
+		}
+		
 		public int[][] getOrientation(int orientation) { return orientations[orientation]; }
 		public int[][] getNextPanelSquares() { return nextPanelSquares; }
 		public int getStartRow() { return startRow; }
@@ -385,6 +390,13 @@ public final class PieceFactory {
 	}
 	
 	private static Set<PieceType> activePieces = new HashSet<>(PieceType.getInitialPieces());
+	
+	// Load all active special pieces from properties file
+	static {
+		for (PieceType special : Properties.getSavedSpecialPieces()) {
+			activePieces.add(special);
+		}
+	}
 	
 	// Once game is started, active piece IDs are converted to an array to make sampling easier
 	private static PieceType[] arrayedActivePieceIDs;

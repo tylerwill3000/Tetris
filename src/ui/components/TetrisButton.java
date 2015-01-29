@@ -1,4 +1,4 @@
-package ui;
+package ui.components;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
+
+import ui.GameFrame;
 
 // Standard button style for all frames
 public class TetrisButton extends JButton {
@@ -28,7 +30,7 @@ public class TetrisButton extends JButton {
 		
 	};
 	
-	TetrisButton(String buttonText) {
+	public TetrisButton(String buttonText) {
 		setText(buttonText);
 		setPreferredSize(new Dimension(100,30));
 		setBorder(GameFrame.ETCHED_BORDER);

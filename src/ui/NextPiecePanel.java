@@ -10,7 +10,7 @@ import model.Piece;
 public class NextPiecePanel extends GridPainter {
 	
 	// Contruct a next piece panel with the specified title and initial starting piece
-	NextPiecePanel(String title, Piece currentPiece) {
+	public NextPiecePanel(String title, Piece currentPiece) {
 		this(title);
 		this.currentPiece = currentPiece;
 		paintCurrentPiece();
@@ -44,6 +44,6 @@ public class NextPiecePanel extends GridPainter {
 				eraseSquare(row, col);
 	
 	}
-	
+
 }
 

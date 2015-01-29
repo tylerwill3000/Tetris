@@ -1,4 +1,4 @@
-package ui;
+package ui.secondaryWindows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,6 +19,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import ui.components.CloseFrameButton;
+import ui.util.FrameUtils;
 import model.DBComm;
 
 public class HighScoreFrame extends JFrame {
@@ -44,7 +46,7 @@ public class HighScoreFrame extends JFrame {
 	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	private JTable table = new JTable();
 	
-	HighScoreFrame(int rankToHighlight) {
+	public HighScoreFrame(int rankToHighlight) {
 		
 		this.highlightRank = rankToHighlight;
 		
