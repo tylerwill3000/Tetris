@@ -70,8 +70,8 @@ public class SaveScoreFrame extends JFrame {
 			dispose();
 			
 			// After saving score, display high scores frame with maximum record selection
-			HighScoreFrame.cachedSelectedDifficulty = 3;
-			HighScoreFrame.cachedSelectedRecordCount = 3;
+			Properties.setHighScoreRecordCount(3);
+			Properties.setHighScoresDifficulty(3);
 			
 			// I currently do not have the ability to target certain pages of high scores.
 			// Therefore, only show a new high score frame if the rank is visible on the

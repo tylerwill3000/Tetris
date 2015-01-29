@@ -22,11 +22,9 @@ import javax.swing.table.TableCellRenderer;
 import ui.components.CloseFrameButton;
 import ui.util.FrameUtils;
 import model.DBComm;
+import model.Properties;
 
 public class HighScoreFrame extends JFrame {
-	
-	static Integer cachedSelectedRecordCount = null;
-	static Integer cachedSelectedDifficulty = null;
 	
 	private final static Object[] COLUMN_HEADERS = {
 		"Rank", "Name", "Score", "Lines", "Level", "Difficulty"
@@ -51,8 +49,8 @@ public class HighScoreFrame extends JFrame {
 		this.highlightRank = rankToHighlight;
 		
 		// Set default selected options if they are cached
-		if (cachedSelectedRecordCount != null) jcbxNumRecords.setSelectedIndex(cachedSelectedRecordCount);
-		if (cachedSelectedDifficulty != null) jcbxDiff.setSelectedIndex(cachedSelectedDifficulty);
+		jcbxNumRecords.setSelectedIndex(Properties.getHighScoreRecordCount());
+		jcbxDiff.setSelectedIndex(Properties.getHighScoreDifficulty());
 		
 		table.setFillsViewportHeight(true);
 		table.setEnabled(false);;
@@ -79,14 +77,14 @@ public class HighScoreFrame extends JFrame {
 		// Both comboboxes simply re-populate the table upon selection change
 		jcbxNumRecords.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cachedSelectedRecordCount = jcbxNumRecords.getSelectedIndex();
+				Properties.setHighScoreRecordCount(jcbxNumRecords.getSelectedIndex());
 				populateTable(false, highlightRank);				
 			}
 		});
 		
 		jcbxDiff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cachedSelectedDifficulty = jcbxDiff.getSelectedIndex();
+				Properties.setHighScoresDifficulty(jcbxDiff.getSelectedIndex());
 				populateTable(false, highlightRank);				
 			}
 		});

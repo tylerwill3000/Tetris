@@ -76,6 +76,22 @@ public class Properties {
 		GAME_PROPERTIES.setProperty(propertyKey, String.valueOf(active));
 	}
 	
+	public static int getHighScoreRecordCount() {
+		return Integer.parseInt(GAME_PROPERTIES.getProperty("highscores.record.count"));
+	}
+	
+	public static void setHighScoreRecordCount(int count) {
+		GAME_PROPERTIES.setProperty("highscores.record.count", String.valueOf(count));
+	}
+	
+	public static int getHighScoreDifficulty() {
+		return Integer.parseInt(GAME_PROPERTIES.getProperty("highscores.difficulty"));
+	}
+	
+	public static void setHighScoresDifficulty(int diff) {
+		GAME_PROPERTIES.setProperty("highscores.difficulty", String.valueOf(diff));
+	}
+	
 	/**
 	 * Returns the property key for a piece type
 	 * @param type The type of piece
@@ -111,6 +127,9 @@ public class Properties {
 		for (PieceType piece : PieceFactory.PieceType.getSpecialPieces()) {
 			setActivePieceProperty(piece, false);
 		}
+		
+		setHighScoreRecordCount(0);
+		setHighScoresDifficulty(0);
 		
 		saveCurrentProperties(true);
 	}
