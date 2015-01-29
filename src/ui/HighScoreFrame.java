@@ -41,7 +41,7 @@ public class HighScoreFrame extends JFrame {
 	// Used when accessing this frame from save score frame to make new score row stand out
 	private int highlightRank = -1;
 	
-	private GameFrame.TetrisButton jbtReturn = new GameFrame.TetrisButton("Return");
+	private TetrisButton jbtReturn = new TetrisButton("Return");
 	private JTable table = new JTable();
 	
 	HighScoreFrame(int rankToHighlight) {

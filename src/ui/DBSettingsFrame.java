@@ -30,8 +30,8 @@ public class DBSettingsFrame extends JFrame {
 	private JTextField jtxUser = new JTextField(TEXT_FIELD_WIDTH);
 	private JPasswordField jpwPass = new JPasswordField(TEXT_FIELD_WIDTH);
 	
-	private GameFrame.TetrisButton jbtSave = new GameFrame.TetrisButton("Save");
-	private GameFrame.TetrisButton jbtClose = new GameFrame.TetrisButton("Close");
+	private TetrisButton jbtSave = new TetrisButton("Save");
+	private TetrisButton jbtClose = new TetrisButton("Close");
 	
 	DBSettingsFrame() {
 		

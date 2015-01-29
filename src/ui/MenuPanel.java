@@ -15,11 +15,11 @@ import model.PieceFactory;
 // Holds all the main menu buttons
 public class MenuPanel extends JPanel {
 	
-	GameFrame.TetrisButton start = new GameFrame.TetrisButton("Start");
-	GameFrame.TetrisButton pause = new GameFrame.TetrisButton("Pause");
-	GameFrame.TetrisButton resume = new GameFrame.TetrisButton("Resume");
-	GameFrame.TetrisButton giveUp = new GameFrame.TetrisButton("Give Up");
-	GameFrame.TetrisButton highScores = new GameFrame.TetrisButton("High Scores");
+	TetrisButton start = new TetrisButton("Start");
+	TetrisButton pause = new TetrisButton("Pause");
+	TetrisButton resume = new TetrisButton("Resume");
+	TetrisButton giveUp = new TetrisButton("Give Up");
+	TetrisButton highScores = new TetrisButton("High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled
@@ -164,14 +164,14 @@ public class MenuPanel extends JPanel {
 		
 		setLayout(new FlowLayout());
 		
-		Map<GameFrame.TetrisButton, Character> mnemonicMap = new HashMap<GameFrame.TetrisButton, Character>();
+		Map<TetrisButton, Character> mnemonicMap = new HashMap<TetrisButton, Character>();
 		mnemonicMap.put(start, 's');
 		mnemonicMap.put(pause, 'p');
 		mnemonicMap.put(resume, 'r');
 		mnemonicMap.put(giveUp, 'g');
 		mnemonicMap.put(highScores, 'h');
 		
-		for (GameFrame.TetrisButton b : new GameFrame.TetrisButton[]{start, pause, resume, giveUp, highScores}) {
+		for (TetrisButton b : new TetrisButton[]{start, pause, resume, giveUp, highScores}) {
 			b.setMnemonic(mnemonicMap.get(b));
 			add(b);
 

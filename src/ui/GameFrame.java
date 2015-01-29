@@ -1,7 +1,6 @@
 package ui;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -11,13 +10,8 @@ import javax.swing.border.TitledBorder;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -137,37 +131,6 @@ public class GameFrame extends JFrame {
 		controls.add(actions, BorderLayout.EAST);
 		
 		return controls;
-		
-	}
-	
-	
-	
-	// Standard button style for all frames
-	static class TetrisButton extends JButton {
-		
-		// Causes the mouse to change to a hand icon when mousing over the button
-		private MouseListener handCursorListener = new MouseAdapter() {
-			
-			public void mouseEntered(MouseEvent e) {
-				if (isEnabled()) {
-					setCursor(new Cursor(Cursor.HAND_CURSOR));
-					setBackground(Color.LIGHT_GRAY);
-				}
-			}
-			
-			public void mouseExited(MouseEvent e) {
-				setBackground(null);
-			}
-			
-		};
-		
-		TetrisButton(String buttonText) {
-			setText(buttonText);
-			setPreferredSize(new Dimension(100,30));
-			setBorder(ETCHED_BORDER);
-			setFocusable(false);
-			addMouseListener(handCursorListener);
-		}
 		
 	}
 	

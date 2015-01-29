@@ -17,7 +17,7 @@ import model.PieceFactory;
 public class BlockStylesFrame extends JFrame {
 	
 	private JComboBox<String> styleSelector = new JComboBox<>(new String[]{"Beveled","Etched"});
-	private GameFrame.TetrisButton save = new GameFrame.TetrisButton("Return");
+	private TetrisButton save = new TetrisButton("Return");
 	private NextPiecePanel preview = new NextPiecePanel("Preview", new Piece(PieceFactory.PieceType.T_BLOCK));
 	
 	private static final Border[] PIECE_BORDERS = {

@@ -25,7 +25,7 @@ import model.PieceFactory;
 public class SpecialPiecesFrame extends JFrame {
 	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
-	private GameFrame.TetrisButton jbtReturn = new GameFrame.TetrisButton("Return");
+	private TetrisButton jbtReturn = new TetrisButton("Return");
 	
 	SpecialPiecesFrame() { 
 		

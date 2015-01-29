@@ -29,8 +29,8 @@ public class SaveScoreFrame extends JFrame {
 	
 	private JTextField name = new JTextField(8);
 	
-	private GameFrame.TetrisButton saveScore = new GameFrame.TetrisButton("Save");
-	private GameFrame.TetrisButton cancel = new GameFrame.TetrisButton("Cancel");
+	private TetrisButton saveScore = new TetrisButton("Save");
+	private TetrisButton cancel = new TetrisButton("Cancel");
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		

@@ -29,9 +29,9 @@ public class SettingsPanel extends JPanel {
 	
 	private JComboBox<String> jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
-	private GameFrame.TetrisButton jbtChooseSpecials = new GameFrame.TetrisButton("Special Pieces...");
-	private GameFrame.TetrisButton jbtChooseBlockStyles = new GameFrame.TetrisButton("Block Styles...");
-	private GameFrame.TetrisButton jbtDBConfig = new GameFrame.TetrisButton("Database Connectivity...");
+	private TetrisButton jbtChooseSpecials = new TetrisButton("Special Pieces...");
+	private TetrisButton jbtChooseBlockStyles = new TetrisButton("Block Styles...");
+	private TetrisButton jbtDBConfig = new TetrisButton("Database Connectivity...");
 	
 	private ItemListener ghostSquaresListener = new ItemListener() {
 		
