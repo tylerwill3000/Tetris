@@ -31,7 +31,7 @@ public class DBSettingsFrame extends JFrame {
 	private JPasswordField jpwPass = new JPasswordField(TEXT_FIELD_WIDTH);
 	
 	private TetrisButton jbtSave = new TetrisButton("Save");
-	private TetrisButton jbtClose = new TetrisButton("Close");
+	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	
 	DBSettingsFrame() {
 		
@@ -83,10 +83,6 @@ public class DBSettingsFrame extends JFrame {
 				dispose();
 				
 			}
-		});
-		
-		jbtClose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) { dispose(); }
 		});
 		
 		setTitle("Database Connectivity");

@@ -41,7 +41,7 @@ public class HighScoreFrame extends JFrame {
 	// Used when accessing this frame from save score frame to make new score row stand out
 	private int highlightRank = -1;
 	
-	private TetrisButton jbtReturn = new TetrisButton("Return");
+	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	private JTable table = new JTable();
 	
 	HighScoreFrame(int rankToHighlight) {
@@ -67,22 +67,12 @@ public class HighScoreFrame extends JFrame {
 		recordSelectorPanel.add(new JLabel(" scores for difficulty "));
 		recordSelectorPanel.add(jcbxDiff);
 		
-		// Container for button so it doesn't expand to full pane size
-		JPanel buttonContainer = new JPanel();
-		buttonContainer.add(jbtReturn);
-		
 		// Add all menu components to a master panel
 		JPanel menuPanel = new JPanel(new GridLayout(2,1));
 		menuPanel.add(recordSelectorPanel);
-		menuPanel.add(buttonContainer);
+		menuPanel.add(FrameUtils.nestInPanel(jbtClose));
 		
 		add(menuPanel, BorderLayout.SOUTH);
-		
-		jbtReturn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
 		
 		// Both comboboxes simply re-populate the table upon selection change
 		jcbxNumRecords.addActionListener(new ActionListener() {

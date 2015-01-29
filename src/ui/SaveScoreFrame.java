@@ -30,7 +30,7 @@ public class SaveScoreFrame extends JFrame {
 	private JTextField name = new JTextField(8);
 	
 	private TetrisButton saveScore = new TetrisButton("Save");
-	private TetrisButton cancel = new TetrisButton("Cancel");
+	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		
@@ -103,41 +103,26 @@ public class SaveScoreFrame extends JFrame {
 		// Button panel for saving / canceling
 		buttonPanel = new JPanel();
 		buttonPanel.add(saveScore);
-		buttonPanel.add(cancel);
+		buttonPanel.add(jbtClose);
 		add(buttonPanel);
 		
 		saveScore.setMnemonic('s');
-		cancel.setMnemonic('c');
-		
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
+		jbtClose.setMnemonic('c');
 		
 		saveScore.addActionListener(saveScoreListener);
 		
 		addKeyListener(new KeyAdapter() {
-			
 			public void keyPressed(KeyEvent e) {
-				
 				switch (e.getKeyCode()) {
-				
 					case KeyEvent.VK_S:
 						saveScore.doClick();
 						break;
-						
 					case KeyEvent.VK_C:
-						cancel.doClick();
+						jbtClose.doClick();
 						break;
-						
 				}
-				
 			}
-			
 		});
-		
-		
 		
 		FrameUtils.setIcon(this, "save-icon.png");
 		setTitle("Save Score");

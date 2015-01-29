@@ -17,7 +17,7 @@ import model.PieceFactory;
 public class BlockStylesFrame extends JFrame {
 	
 	private JComboBox<String> styleSelector = new JComboBox<>(new String[]{"Beveled","Etched"});
-	private TetrisButton save = new TetrisButton("Return");
+	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	private NextPiecePanel preview = new NextPiecePanel("Preview", new Piece(PieceFactory.PieceType.T_BLOCK));
 	
 	private static final Border[] PIECE_BORDERS = {
@@ -38,22 +38,15 @@ public class BlockStylesFrame extends JFrame {
 		styleSelectorPanel.add(styleSelector);
 		styleSelector.setSelectedIndex(chosenPieceBorder);
 		
-		JPanel buttonContainer = new JPanel();
-		buttonContainer.add(save);
-		
 		JPanel menu = new JPanel(new GridLayout(2,1));
 		menu.add(styleSelectorPanel);
-		menu.add(buttonContainer);
+		menu.add(FrameUtils.nestInPanel(jbtClose));
 		
 		styleSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				chosenPieceBorder = styleSelector.getSelectedIndex();
 				preview.paintCurrentPiece();
 			}
-		});
-		
-		save.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) { dispose(); }
 		});
 		
 		setLayout(new BorderLayout());

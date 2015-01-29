@@ -25,7 +25,7 @@ import model.PieceFactory;
 public class SpecialPiecesFrame extends JFrame {
 	
 	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
-	private TetrisButton jbtReturn = new TetrisButton("Return");
+	private CloseFrameButton jbtClose = new CloseFrameButton(this);
 	
 	SpecialPiecesFrame() { 
 		
@@ -56,15 +56,8 @@ public class SpecialPiecesFrame extends JFrame {
 			
 		}
 		
-		JPanel saveContainer = new JPanel();
-		saveContainer.add(jbtReturn);
-		
-		jbtReturn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) { dispose(); }
-		});
-		
 		add(piecePanels, BorderLayout.CENTER);
-		add(saveContainer, BorderLayout.SOUTH);
+		add(FrameUtils.nestInPanel(jbtClose), BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "star.png");
 		setTitle("Special Pieces");
