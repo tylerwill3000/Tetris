@@ -25,10 +25,10 @@ public class DBComm {
 	
 	private static Connection getConnection() throws SQLException {
 		
-		String dbHost = Properties.GAME_PROPERTIES.getProperty("db.host");
-		String dbName = Properties.GAME_PROPERTIES.getProperty("db.name");
-		String dbUser = Properties.GAME_PROPERTIES.getProperty("db.user");
-		String dbPass = Properties.GAME_PROPERTIES.getProperty("db.pass");
+		String dbHost = Properties.getDBHostProperty();
+		String dbName = Properties.getDBNameProperty();
+		String dbUser = Properties.getDBUserProperty();
+		String dbPass = Properties.getDBPassProperty();
 		
 		return DriverManager.getConnection(String.format("jdbc:mysql://%s/%s", dbHost, dbName), dbUser, dbPass);
 		
