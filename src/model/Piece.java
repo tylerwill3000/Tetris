@@ -3,38 +3,48 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.PieceFactory.PieceType;
 import ui.GameBoardPanel;
 
-// Data-layer class that represents pieces. The primary functions
-// of this class are to provide methods for determining whether the
-// current piece can be moved in a certain direction, and if so,
-// to reassign it's current position to reflect the move
+/**
+ *  Data-layer class that represents pieces. The primary functions
+ * of this class are to provide methods for determining whether the
+ * current piece can be moved in a certain direction, and if so,
+ * to reassign it's current position to reflect the move
+ * @author Tyler
+ */
 public class Piece {
 	
-	// The category of this piece. Each piece type has static data
-	// associated with it. This enum instance encapsulates that data
-	PieceFactory.PieceType pieceType;
+	/**
+	 *  The category of this piece. Each piece type has static data
+	 * associated with it. This enum instance encapsulates that data.
+	 */
+	PieceType pieceType;
 	
-	// Location of piece on the game board.
-	// Corresponds to the location of the
-	// bottom left corner of the bounding grid.
-	// Set as piece comes off conveyor belt or
-	// is released from the hold panel
+	/**
+	 * Location of piece on the game board. Corresponds to the location of the
+	 * bottom left corner of the bounding grid. Set as piece comes off conveyor belt or
+	 * is released from the hold panel.
+	 */
 	private int[] location;
 	
 	// Used to index into the orientation map
 	private int orientation = 0;
 	
-	// Holds the currently lit squares of the piece.
-	// Recalculated every time the piece moves or rotates.
-	// Not set until the piece comes off the factory conveyor
-	// belt, in case the piece needs to be shifted updwards
-	// first
+	/**
+	 *  Holds the currently lit squares of the piece.
+	 * Recalculated every time the piece moves or rotates.
+	 * Not set until the piece comes off the factory conveyor
+	 * belt, in case the piece needs to be shifted updwards
+	 * first.
+	 */
 	private int[][] litSquares = null;
 	
-	// This flag is necessary since released hold pieces must be placed - they
-	// can not be re-held. This is to prevent manual shifting of the piece
-	// conveyor belt
+	/**
+	 *  This flag is necessary since released hold pieces must be placed - they
+	 * can not be re-held. This is to prevent manual shifting of the piece
+	 * conveyor belt
+	 */
 	private boolean isHoldPiece = false;
 	
 	public Piece(PieceFactory.PieceType pieceType) {

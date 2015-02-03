@@ -12,7 +12,11 @@ import java.util.Map;
 
 import ui.SettingsPanel;
 
-// Interfaces to the scores database
+/**
+ * Provides an interface to the score database
+ * @author Tyler
+ *
+ */
 public class DBComm {
 	
 	static { // Statically load DB driver upon class load
@@ -34,7 +38,18 @@ public class DBComm {
 		
 	}
 	
-	// Returns the rank for the new score
+	/**
+	 * Writes a new score record to the database.
+	 * 
+	 * @param name Player name
+	 * @param score Player score
+	 * @param level Level attained
+	 * @param lines Total lines cleared
+	 * @param difficulty Game difficulty
+	 * @return The overall rank for this new score
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static int writeScore(String name, int score, int level, int lines, int difficulty) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
@@ -81,7 +96,15 @@ public class DBComm {
 			
 	}
 	
-	// Pulls scores from the DB and returns the corresponding object matrix for the data
+	/**
+	 *  Pulls scores from the DB and returns the corresponding object matrix for the data.
+	 *  
+	 * @param numScores Number of records to pull for specified difficulty
+	 * @param difficulty Difficulty to query for
+	 * @return An object matrix of the query results
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static Object[][] getHighScoresData(int numScores, int difficulty) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
@@ -126,7 +149,12 @@ public class DBComm {
 		
 	}
 	
-	// Constructs the appropriate SQL query based on the desired number of scores and difficulty
+	/**
+	 *  Constructs the appropriate SQL query based on the desired number of scores and difficulty
+	 * @param numScores Number of scores to query for
+	 * @param difficulty Difficulty to query for
+	 * @return A SQL query that will retrieve the appropriate scores
+	 */
 	private static String createScoresQuery(int numScores, int difficulty) {
 		
 		StringBuilder query = new StringBuilder();

@@ -11,8 +11,11 @@ import java.util.Map;
 import ui.GameBoardPanel;
 import ui.GameFrame;
 
-// The GameBoardModel class describes the current configuration
-// of placed pieces on the grid as well as tracks scoring info
+/**
+ *  Describes the current configuration of pieces placed on the
+ *  grid as well as keeps track of scoring info
+ * @author Tyler
+ */
 public class GameBoardModel {
 	
 	public static final int INITIAL_TIMER_DELAY = 600;
@@ -76,9 +79,13 @@ public class GameBoardModel {
 	
 	private GameBoardModel() {}
 	
-	// Adds the active squares for a piece to the quilt. Used when a piece
-	// is permanently placed somewhere. Returns a list of row indices for
-	// completed lines (can be empty)
+	/**
+	 *  Adds the active squares for a piece to the quilt.
+	 *  
+	 * @param p The piece that is to be placed onto the grid
+	 * @return A list of line indices to be cleared as a result of placing this piece.
+	 * This list can be empty.
+	 */
 	public static List<Integer> addPiece(Piece p) {
 		
 		// Log all colors for this piece
@@ -89,6 +96,12 @@ public class GameBoardModel {
 	
 	}
 	
+	/**
+	 * Returns a list of complete lines on the grid
+	 * 
+	 * @param justPlaced The piece most recently placed on the grid
+	 * @return A list of line indices denoting complete lines on the grid
+	 */
 	private static List<Integer> getCompleteLines(Piece justPlaced) {
 		
 		List<Integer> completeLines = new ArrayList<>();
@@ -116,7 +129,10 @@ public class GameBoardModel {
 		
 	}
 	
-	// Removes the specified completed lines from the quilt
+	/**
+	 * Removes the specified completed lines from the quilt
+	 * @param toRemove A list of line indices to remove from the grid
+	 */
 	public static void removeCompleteLines(List<Integer> toRemove) {
 		
 		// Since removing a line essentially increases the row index value
@@ -139,8 +155,6 @@ public class GameBoardModel {
 		
 	}
 	
-	// Increases the player's score based on how many lines
-	// were cleared
 	private static void increaseScore(int completedLines) {
 		
 		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
@@ -185,8 +199,13 @@ public class GameBoardModel {
 		
 	}
 	
-	// Checks whether the specified square is both in bounds and
-	// not already occupied
+	/**
+	 *  Checks whether the specified square is both in bounds and
+	 *  not already occupied.
+	 * @param row Row coordinate for the square to be checked
+	 * @param col Column coordinate for the square to be checked
+	 * @return Whether the square is both in bounds and not occupied
+	 */
 	public static boolean isLegalSquare(int row, int col) {
 	
 		// Crucial to check in bounds before checking if the square
@@ -196,8 +215,12 @@ public class GameBoardModel {
 		
 	}
 	
-	// Checks whether or not the specified list of squares are valid initial
-	// squares for a piece
+	/**
+	 * Checks whether or not the specified list of squares are valid initial
+	 * squares for a piece
+	 * @param candidateSquares A list of squares that may or may not be valid initial squares
+	 * @return Whether the specified squares are valid initial squares
+	 */
 	public static boolean areValidInitialSquares(int[][] candidateSquares) {
 		
 		// Flag for whether at least 1 square is a visible square (since some
@@ -223,7 +246,9 @@ public class GameBoardModel {
 		
 	}
 	
-	// Removes all data from the quilt and resets scoring info
+	/**
+	 *  Removes all data from the grid and resets scoring info
+	 */
 	public static void reset() {
 		
 		quilt = buildStartingquilt();
@@ -252,7 +277,6 @@ public class GameBoardModel {
 		*/
 	}
 	
-	// Builds the blank starting quilt
 	private static LinkedList<Color[]> buildStartingquilt() {
 
 		LinkedList<Color[]> quilt = new LinkedList<Color[]>();
@@ -266,7 +290,6 @@ public class GameBoardModel {
 		
 	}
 	
-	// For debugging
 	public void print() {
 		
 		for (Color[] colorRow : quilt) {

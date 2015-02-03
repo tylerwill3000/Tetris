@@ -129,9 +129,11 @@ public class SettingsPanel extends JPanel {
 	void enableDifficultyList() { jlstDifficulty.setEnabled(true); }
 	void enableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(true); }
 	void enableBlockStylesButton() { jbtChooseBlockStyles.setEnabled(true); }
+	void enableDatabaseConnectivityButton() { jbtDBConfig.setEnabled(true); }
 	
 	void disableDifficultyList() { jlstDifficulty.setEnabled(false); }
 	void disableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(false); }
 	void disableBlockStylesButton() { jbtChooseBlockStyles.setEnabled(false); }
+	void disableDatabaseConnectivityButton() { jbtDBConfig.setEnabled(false); }
 		
 }

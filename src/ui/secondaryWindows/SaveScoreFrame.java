@@ -27,13 +27,10 @@ public class SaveScoreFrame extends JFrame {
 	public final static int NAME_LENGTH = 20;
 	
 	private JPanel buttonPanel;
-	
 	private JLabel attainedScore = new JLabel();
-	
 	private JTextField name = new JTextField(8);
-	
 	private TetrisButton saveScore = new TetrisButton("Save");
-	private CloseFrameButton jbtClose = new CloseFrameButton(this);
+	private CloseFrameButton jbtClose = new CloseFrameButton(this, "Cancel");
 	
 	private ActionListener saveScoreListener = new ActionListener() {
 		

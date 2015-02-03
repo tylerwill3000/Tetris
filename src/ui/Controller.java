@@ -77,10 +77,8 @@ public class Controller {
 	// Package-private so it can be accessed by the start button listener
 	// to set the initial pieces on game load
 	static void moveConveyorBelt() {
-
 		GameFrame.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
 		GameFrame.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
-		
 	}
 	
 	// Repaints the rows according to the new piece configuration after
@@ -130,6 +128,7 @@ public class Controller {
 		GameFrame.settingsPanel.enableDifficultyList();
 		GameFrame.settingsPanel.enableSpecialPiecesButton();
 		GameFrame.settingsPanel.enableBlockStylesButton();
+		GameFrame.settingsPanel.enableDatabaseConnectivityButton();
 		
 	}
 	
@@ -157,6 +156,7 @@ public class Controller {
 		GameFrame.settingsPanel.enableDifficultyList();
 		GameFrame.settingsPanel.enableSpecialPiecesButton();
 		GameFrame.settingsPanel.enableBlockStylesButton();
+		GameFrame.settingsPanel.enableDatabaseConnectivityButton();
 		
 	}
 	

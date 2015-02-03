@@ -23,6 +23,7 @@ import ui.util.FrameUtils;
 import model.GameBoardModel;
 import model.Piece;
 import model.PieceFactory;
+import model.PieceFactory.PieceType;
 import model.Properties;
 
 public class SpecialPiecesFrame extends SupplementarySettingsFrame {
@@ -33,7 +34,7 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 		
 		JPanel piecePanels = new JPanel(new GridLayout(1,3));
 		
-		for (PieceFactory.PieceType pieceType : PieceFactory.PieceType.getSpecialPieces()) {
+		for (PieceType pieceType : PieceType.getSpecialPieces()) {
 			
 			// Panel to display this piece
 			NextPiecePanel display = new NextPiecePanel("\"" + pieceType + "\"", new Piece(pieceType));
@@ -73,10 +74,10 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 	// Provides minor extended functionality to a JButton to handle toggle events
 	private static class PieceSelectorButton extends JButton {
 		
-		private PieceFactory.PieceType pieceType;
+		private PieceType pieceType;
 		
 		// To construct, must pass the piece type of the piece this button represents
-		private PieceSelectorButton(PieceFactory.PieceType pieceType) {
+		private PieceSelectorButton(PieceType pieceType) {
 			
 			this.pieceType = pieceType;
 			

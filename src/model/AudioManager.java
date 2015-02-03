@@ -6,7 +6,11 @@ import javax.sound.sampled.*;
 
 import ui.GameFrame;
 
-// Singleton class to interface to the game's audio
+/**
+ * Provides an interface to the game's audio
+ * @author Tyler
+ *
+ */
 public class AudioManager {
 	
 	// Provides a handle to the class directory of the AudioManger.class file.
@@ -44,7 +48,10 @@ public class AudioManager {
 	
 	private AudioManager() {}
 	
-	// Used when you want to start the soundtrack from the beginning
+	/**
+	 * Starts the current level's soundtrack from the beginning. This will have no effect
+	 * if music is turned off.
+	 */
 	public static void beginCurrentSoundtrack() {
 		
 		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null) {
@@ -60,13 +67,18 @@ public class AudioManager {
 		
 	}
 	
-	// Used when you want to resume playing the current soundtrack from where you left off
+	/**
+	 * Resumes the current level's soundtrack from where it left off. This will have no effect
+	 * if music is turned off.
+	 */
 	public static void resumeCurrentSoundtrack() {
 		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null)
 			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
-	// Used for both stopping and pausing
+	/**
+	 * Stops the current level's soundtrack.
+	 */
 	public static void stopCurrentSoundtrack() {
 		if (soundtrack[GameBoardModel.getLevel()-1] != null)
 			soundtrack[GameBoardModel.getLevel()-1].stop();
@@ -86,8 +98,11 @@ public class AudioManager {
 		}
 	}
 	
-	// For playing small effect sounds. Resets the clip back to the starting
-	// frame position after playing
+	/**
+	 *  Use this for playing small effect sounds. This resets the clip back to the starting
+	 *  frame position after playing.
+	 * @param effect The effect to play
+	 */
 	private static void playEffect(Clip effect) {
 
 		if (GameFrame.settingsPanel.effectsOn() && effect != null) {
@@ -102,7 +117,10 @@ public class AudioManager {
 	public static void playHoldSound() { playEffect(hold); }
 	public static void playReleaseSound() { playEffect(release); }
 	
-	// Clear line sound is dependent on number of lines cleared
+	/**
+	 * Plays the audio used when lines are cleared
+	 * @param lineCount Number of lines cleared. If equal to 4, a special sound is played
+	 */
 	public static void playClearLineSound(int lineCount) {
 		if (lineCount == 4)
 			playEffect(ultraLine);
@@ -114,14 +132,20 @@ public class AudioManager {
 	public static void playCCWRotationSound() { playEffect(swipeDown); }
 	public static void playSuperslideSound() { playEffect(superslide); }
 	
-	// Iterates over all clips and resets their frame positions back to the start.
-	// Used upon game complete
+	/**
+	 *  Iterates over all clips and resets their frame positions back to the start.
+	 *  This is called to prepare soundtracks for the next game.
+	 */
 	public static void resetSoundtrackFramePositions() {
 		for (Clip c : soundtrack)
 			if (c != null) c.setFramePosition(0);
 	}
 	
-	// Returns a clip audio output device input line from the specified file string
+	/**
+	 *  Returns a clip audio output device input line from the specified file string
+	 * @param file Pathname to the audio file to receive a Clip dataline for
+	 * @return A clip object with the audio file as its source input stream
+	 */
 	private static Clip getAudioClip(String file) {
 		
 		// Attempt to initialize clip input object. If there are no supported lines,
