@@ -5,9 +5,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
-// Used to churn out new pieces at random off a virtual 'conveyor belt'
+/**
+ *  Used to churn out new pieces at random off a virtual 'conveyor belt'
+ * @author Tyler
+ */
 public final class PieceFactory {
 	
 	public enum PieceType {
@@ -346,16 +350,16 @@ public final class PieceFactory {
 		
 		;
 		
-		private int[][][] orientations;
-		private int[][] nextPanelSquares;
-		private int startRow;
-		private Color color;
+		private int[][][] _orientations;
+		private int[][] _nextPanelSquares;
+		private int _startRow;
+		private Color _color;
 		
 		private PieceType(int[][][] orientations, int[][] nextPanelSquares, int startRow, Color color) {
-			this.orientations = orientations;
-			this.nextPanelSquares = nextPanelSquares;
-			this.startRow = startRow;
-			this.color = color;
+			this._orientations = orientations;
+			this._nextPanelSquares = nextPanelSquares;
+			this._startRow = startRow;
+			this._color = color;
 		}
 		
 		@Override
@@ -363,10 +367,10 @@ public final class PieceFactory {
 			return name().charAt(0) + name().substring(1).toLowerCase().replace('_', ' ');
 		}
 		
-		public int[][] getOrientation(int orientation) { return orientations[orientation]; }
-		public int[][] getNextPanelSquares() { return nextPanelSquares; }
-		public int getStartRow() { return startRow; }
-		public Color getColor() { return color; }
+		public int[][] getOrientation(int orientation) { return _orientations[orientation]; }
+		public int[][] getNextPanelSquares() { return _nextPanelSquares; }
+		public int getStartRow() { return _startRow; }
+		public Color getColor() { return _color; }
 		
 		private static List<PieceType> getInitialPieces() {
 			return Arrays.asList(
@@ -389,19 +393,20 @@ public final class PieceFactory {
 		
 	}
 	
-	private static Set<PieceType> activePieces = new HashSet<>(PieceType.getInitialPieces());
+	private static Set<PieceType> _activePieces = new HashSet<>(PieceType.getInitialPieces());
 	
 	// Once game is started, active piece IDs are converted to an array to make sampling easier
-	private static PieceType[] arrayedActivePieceIDs;
+	private static PieceType[] _arrayedActivePieces;
 	
-	private static LinkedList<Piece> conveyorBelt; // This is initialized once the start button is clicked
+	private static Queue<Piece> _conveyorBelt; // This is initialized once the start button is clicked
 	
-	// Pops the first piece off the conveyor belt and adds a
-	// new one to replace it
+	/**
+	 *  Pops the first piece off the conveyor belt and adds a new one to replace it
+	 */
 	public static Piece receiveNextPiece() {
 		
-		conveyorBelt.offer(generate());
-		Piece nextPiece = conveyorBelt.poll();
+		_conveyorBelt.offer(generate());
+		Piece nextPiece = _conveyorBelt.poll();
 		
 		// These are dynamic, since piece might have to be
 		// shifted upwards a couple squares
@@ -411,14 +416,15 @@ public final class PieceFactory {
 		
 	}
 	
-	// Peeks at the next piece. Used to determine what to
-	// display in the 'next piece' panel
+	/**
+	 *  Peeks at the next piece. Used to determine what to display in the 'next piece' panel
+	 */
 	public static Piece peekAtNextPiece() {
-		return conveyorBelt.peek();		
+		return _conveyorBelt.peek();		
 	}
 	
 	public static boolean isPieceActive(PieceType pieceType) {
-		return activePieces.contains(pieceType);
+		return _activePieces.contains(pieceType);
 	}
 	
 	// Returns a random number within the specified range
@@ -426,31 +432,35 @@ public final class PieceFactory {
 		return (int)(Math.random() * (max - min + 1)) + min;
 	}
 	
-	// Takes the active pieces in the set and converts them
-	// to an array for this game session. I use an array since
-	// it's easier to sample from to get random pieces
+	/**
+	 * Takes the active pieces in the set and converts them
+	 * to an array for this game session. I use an array since
+	 * it's easier to sample from to get random pieces
+	 */
 	public static void solidifyActivePieces() {
 		
 		// Load all active special pieces from properties file
 		for (PieceType special : Properties.getSavedSpecialPieces()) {
-			activePieces.add(special);
+			_activePieces.add(special);
 		}
 		
-		arrayedActivePieceIDs = activePieces.toArray(new PieceType[activePieces.size()]);
+		_arrayedActivePieces = _activePieces.toArray(new PieceType[_activePieces.size()]);
 	}
 	
-	// Generates a random Piece object
+	/**
+	 *  Generates a random Piece object
+	 */
 	private static Piece generate() {
 		
 		// Sample from the active piece ID array
-		PieceType pieceType = arrayedActivePieceIDs[randInRange(0, arrayedActivePieceIDs.length-1)];
+		PieceType pieceType = _arrayedActivePieces[randInRange(0, _arrayedActivePieces.length-1)];
 		
 		return new Piece(pieceType);
 		
 	}
 	
-	public static boolean addActivePiece(PieceType pieceType) { return activePieces.add(pieceType); }
-	public static boolean removeActivePiece(PieceType pieceType) { return activePieces.remove(pieceType); }
+	public static boolean addActivePiece(PieceType pieceType) { return _activePieces.add(pieceType); }
+	public static boolean removeActivePiece(PieceType pieceType) { return _activePieces.remove(pieceType); }
 	
 	public static Color getRandomColor() {
 	
@@ -470,10 +480,14 @@ public final class PieceFactory {
 		
 	}
 	
-	// Clears all current pieces off the conveyor belt and replaces them with 2 new ones
-	public static void resetConveyorBelt() { conveyorBelt = initConveyorBelt(); }
+	/**
+	 *  Clears all current pieces off the conveyor belt and replaces them with 2 new ones
+	 */
+	public static void resetConveyorBelt() { _conveyorBelt = initConveyorBelt(); }
 	
-	// Builds the initial piece conveyor belt with 2 pieces
+	/**
+	 *  Builds the initial piece conveyor belt with 2 pieces
+	 */
 	private static LinkedList<Piece> initConveyorBelt() {
 		
 		LinkedList<Piece> belt = new LinkedList<Piece>();

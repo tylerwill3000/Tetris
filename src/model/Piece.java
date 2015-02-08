@@ -19,17 +19,17 @@ public class Piece {
 	 *  The category of this piece. Each piece type has static data
 	 * associated with it. This enum instance encapsulates that data.
 	 */
-	PieceType pieceType;
+	PieceType _pieceType;
 	
 	/**
 	 * Location of piece on the game board. Corresponds to the location of the
 	 * bottom left corner of the bounding grid. Set as piece comes off conveyor belt or
 	 * is released from the hold panel.
 	 */
-	private int[] location;
+	private int[] _location;
 	
 	// Used to index into the orientation map
-	private int orientation = 0;
+	private int _orientation = 0;
 	
 	/**
 	 *  Holds the currently lit squares of the piece.
@@ -38,66 +38,64 @@ public class Piece {
 	 * belt, in case the piece needs to be shifted updwards
 	 * first.
 	 */
-	private int[][] litSquares = null;
+	private int[][] _litSquares = null;
 	
 	/**
 	 *  This flag is necessary since released hold pieces must be placed - they
 	 * can not be re-held. This is to prevent manual shifting of the piece
 	 * conveyor belt
 	 */
-	private boolean isHoldPiece = false;
+	private boolean _isHoldPiece = false;
 	
-	public Piece(PieceFactory.PieceType pieceType) {
-		this.pieceType = pieceType;
+	public Piece(PieceType pieceType) {
+		this._pieceType = pieceType;
 	}
 	
-	public int getRow() { return location[0]; }
-	public int getCol() { return location[1]; }
+	public int getRow() { return _location[0]; }
+	public int getCol() { return _location[1]; }
 	
-	public Color getColor() { return pieceType.getColor(); }
-	public int[][] getLitSquares() { return litSquares; }
-	public int[][] getNextPanelSquares() { return pieceType.getNextPanelSquares(); }
+	public Color getColor() { return _pieceType.getColor(); }
+	public int[][] getLitSquares() { return _litSquares; }
+	public int[][] getNextPanelSquares() { return _pieceType.getNextPanelSquares(); }
 	
-	// Movement methods. Each time a movement is made, the piece's
-	// lit squares must be recalculated
+	// Movement methods. Each time a movement is made, the piece's lit squares must be recalculated
 	public void move(int rowMove, int colMove) {
-		location[0] += rowMove;
-		location[1] += colMove;
-		litSquares = calcLitSquares();
+		_location[0] += rowMove;
+		_location[1] += colMove;
+		_litSquares = calcLitSquares();
 	}
 	
 	// Valid orientation values cycle through the range 0-3
 	public void rotate(int rotation) {
 	
-		orientation += rotation;
+		_orientation += rotation;
 		
-		if (orientation == 4)
-			orientation = 0;
-		else if (orientation == -1)
-			orientation = 3;
+		if (_orientation == 4)
+			_orientation = 0;
+		else if (_orientation == -1)
+			_orientation = 3;
 		
-		litSquares = calcLitSquares();
+		_litSquares = calcLitSquares();
 		
 	}
 	
-	public boolean isHoldPiece() { return isHoldPiece; }
-	public void tagAsHoldPiece() { isHoldPiece = true; }
+	public boolean isHoldPiece() { return _isHoldPiece; }
+	public void tagAsHoldPiece() { _isHoldPiece = true; }
 	
-	// Returns a list of coordinates denoting which
-	// squares the piece currently occupies, based
-	// on its current location and orientation
+	/**
+	 * @return A list of coordinates denoting which squares the piece currently occupies,
+	 * based on its current location and orientation
+	 */
 	public int[][] calcLitSquares() {
 		
 		List<int[]> litSquares = new ArrayList<int[]>();
 		
-		// Iterate over each offset value in the orientation map
-		// for the current orientation
-		for (int[] offset : pieceType.getOrientation(orientation)) {
+		// Iterate over each offset value in the orientation map for the current orientation
+		for (int[] offset : _pieceType.getOrientation(_orientation)) {
 			
-			// Obtain the square that should be lit by adding
-			// the offset to the current location
-			int newRow = location[0] + offset[0];
-			int newCol = location[1] + offset[1];
+			// Obtain the square that should be lit by adding the offset to the current location
+			int newRow = _location[0] + offset[0];
+			int newCol = _location[1] + offset[1];
 			
 			// Even if the square is illegal, still add it. This is
 			// necessary in order for the canRotate method to work
@@ -113,9 +111,11 @@ public class Piece {
 		
 	}
 
-	// Returns the list of squares to highlight to show the piece's destination
-	// position were it to be placed immediately. Null is returned if the piece
-	// can't move downwards
+	/**
+	 * @return A the list of squares to highlight to show the piece's destination
+	 * position were it to be placed immediately. Null is returned if the piece
+	 * can't move downwards
+	 */
 	public int[][] getGhostSquares() {
 		
 		int downwardShift = 0;
@@ -124,7 +124,7 @@ public class Piece {
 		// be logically shifted downwards. This prevents me from having to
 		// recalculate the lit squares when the piece is returned to its
 		// original location
-		int[][] currentLitSquares = litSquares;
+		int[][] currentLitSquares = _litSquares;
 	
 		while (canMove(1,0)) {
 			move(1,0);
@@ -136,11 +136,11 @@ public class Piece {
 		
 		else {
 	
-			int[][] ghostSquares = litSquares;
+			int[][] ghostSquares = _litSquares;
 			
 			// Reset the piece's location and lit squares
-			location[0] -= downwardShift;
-			litSquares = currentLitSquares;
+			_location[0] -= downwardShift;
+			_litSquares = currentLitSquares;
 
 			return ghostSquares;
 			
@@ -148,15 +148,13 @@ public class Piece {
 		
 	}
 	
-	// Lit squares will be set to null if there are
-	// no valid squares for the piece to occupy when
-	// it first emerges
-	public boolean canEmerge() { return litSquares != null; }
+	// Lit squares will be set to null if there are no valid squares for the piece to occupy when it first emerges
+	public boolean canEmerge() { return _litSquares != null; }
 	
 	public boolean canMove(int rowMove, int colMove) {
 
 		// Make sure all new squares are legal
-		for (int[] litSquare : litSquares) {
+		for (int[] litSquare : _litSquares) {
 
 			int potentialRow = litSquare[0] + rowMove;
 			int potentialCol = litSquare[1] + colMove;
@@ -170,7 +168,11 @@ public class Piece {
 		
 	}
 	
-	// Checks to see if the piece can be rotated. Pass 1 for CW, -1 for CCW
+	/**
+	 *  Checks to see if the piece can be rotated.
+	 * @param orientationShift Pass 1 for CW, -1 for CCW
+	 * @return True if the piece can be rotated in the specified direction, false otherwise
+	 */
 	public boolean canRotate(int orientationShift) {
 		
 		// Build a list of squares that will be active if the
@@ -178,7 +180,7 @@ public class Piece {
 		// and then calculating the lit squares from the new
 		// position
 		rotate(orientationShift);
-		int[][] destinationSquares = litSquares;
+		int[][] destinationSquares = _litSquares;
 		rotate(orientationShift * -1); // Return piece to original position
 		
 		// Make sure all new squares are legal
@@ -190,24 +192,26 @@ public class Piece {
 		
 	}
 	
-	// This is used right before the piece is popped off the factory conveyor belt to
-	// determine which squares it initially occupies. In some cases, the piece will
-	// be shifted up a few rows if there is not enough room for it to occupy
-	// its normal initial squares. If the loop is exhausted (i.e. no valid initial
-	// squares were found), it will cause game over, since lit squares will remain
-	// assigned to null
+	/**
+	 *  This is used right before the piece is popped off the factory conveyor belt to
+	 * determine which squares it initially occupies. In some cases, the piece will
+	 * be shifted up a few rows if there is not enough room for it to occupy
+	 * its normal initial squares. If the loop is exhausted (i.e. no valid initial
+	 * squares were found), it will cause game over, since lit squares will remain
+	 * assigned to null
+	 */
 	public void setInitialSquares() {
 		
-		location = new int[]{pieceType.getStartRow(), GameBoardPanel.CENTER_OFFSET};
+		_location = new int[]{_pieceType.getStartRow(), GameBoardPanel.CENTER_OFFSET};
 		
 		// Decrement location each iteration to test the next row above
-		for (int row = pieceType.getStartRow(); row >= 0; location[0]--, row--) {
+		for (int row = _pieceType.getStartRow(); row >= 0; _location[0]--, row--) {
 			
 			// Set candidate squares
 			int[][] candidateInitialSquares = calcLitSquares();
 			
 			if (GameBoardModel.areValidInitialSquares(candidateInitialSquares)) {
-				litSquares = candidateInitialSquares;
+				_litSquares = candidateInitialSquares;
 				return;
 			}
 			

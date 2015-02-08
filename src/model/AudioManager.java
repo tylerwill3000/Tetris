@@ -15,10 +15,10 @@ public class AudioManager {
 	
 	// Provides a handle to the class directory of the AudioManger.class file.
 	// Used to obtain audio file resources
-	private static final Class<?> resources = new AudioManager().getClass();
+	private static final Class<?> RESOURCES = new AudioManager().getClass();
 	
 	// Soundtrack for the game
-	private static final Clip[] soundtrack = {
+	private static final Clip[] SOUNDTRACK = {
 		getAudioClip("audio/soundtrack/tetris-theme.wav"),
 		getAudioClip("audio/soundtrack/bean-machine-1-4.wav"),
 		getAudioClip("audio/soundtrack/tetris-music-3.wav"),
@@ -32,19 +32,19 @@ public class AudioManager {
 	};
 	
 	// Non-looping soundtrack clips
-	private static final Clip gameOver = getAudioClip("audio/soundtrack/zelda-game-over.wav");
-	private static final Clip victoryFanfare = getAudioClip("audio/soundtrack/ff1-victory-fanfare.wav");
+	private static final Clip GAME_OVER = getAudioClip("audio/soundtrack/zelda-game-over.wav");
+	private static final Clip VICTORY_FANFARE = getAudioClip("audio/soundtrack/ff1-victory-fanfare.wav");
 	
 	// Effects
-	private static final Clip pause = getAudioClip("audio/effects/mario-64-pause.wav");
-	private static final Clip placePiece = getAudioClip("audio/effects/pipe.wav");
-	private static final Clip clearLine = getAudioClip("audio/effects/laser.wav");
-	private static final Clip ultraLine = getAudioClip("audio/effects/explosion.wav");	
-	private static final Clip swipeUp = getAudioClip("audio/effects/swish-up.wav");
-	private static final Clip swipeDown = getAudioClip("audio/effects/swish-down.wav");
-	private static final Clip superslide = getAudioClip("audio/effects/superslide.wav");
-	private static final Clip hold = getAudioClip("audio/effects/clang.wav");
-	private static final Clip release = getAudioClip("audio/effects/water-drop.wav");
+	private static final Clip PAUSE = getAudioClip("audio/effects/mario-64-pause.wav");
+	private static final Clip PLACE_PIECE = getAudioClip("audio/effects/pipe.wav");
+	private static final Clip CLEAR_LINE = getAudioClip("audio/effects/laser.wav");
+	private static final Clip ULTRA_LINE = getAudioClip("audio/effects/explosion.wav");	
+	private static final Clip SWIPE_UP = getAudioClip("audio/effects/swish-up.wav");
+	private static final Clip SWIPE_DOWN = getAudioClip("audio/effects/swish-down.wav");
+	private static final Clip SUPERSLIDE = getAudioClip("audio/effects/superslide.wav");
+	private static final Clip HOLD = getAudioClip("audio/effects/clang.wav");
+	private static final Clip RELEASE = getAudioClip("audio/effects/water-drop.wav");
 	
 	private AudioManager() {}
 	
@@ -54,14 +54,14 @@ public class AudioManager {
 	 */
 	public static void beginCurrentSoundtrack() {
 		
-		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null) {
+		if (GameFrame.settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null) {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
-			if (victoryFanfare.isRunning()) victoryFanfare.stop();			
+			if (VICTORY_FANFARE.isRunning()) VICTORY_FANFARE.stop();			
 			
-			soundtrack[GameBoardModel.getLevel()-1].setFramePosition(0);
-			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+			SOUNDTRACK[GameBoardModel.getLevel()-1].setFramePosition(0);
+			SOUNDTRACK[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 			
 		}
 		
@@ -72,29 +72,29 @@ public class AudioManager {
 	 * if music is turned off.
 	 */
 	public static void resumeCurrentSoundtrack() {
-		if (GameFrame.settingsPanel.musicOn() && soundtrack[GameBoardModel.getLevel()-1] != null)
-			soundtrack[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+		if (GameFrame.settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
+			SOUNDTRACK[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
 	/**
 	 * Stops the current level's soundtrack.
 	 */
 	public static void stopCurrentSoundtrack() {
-		if (soundtrack[GameBoardModel.getLevel()-1] != null)
-			soundtrack[GameBoardModel.getLevel()-1].stop();
+		if (SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
+			SOUNDTRACK[GameBoardModel.getLevel()-1].stop();
 	}
 	
 	public static void playGameOverSound() {
-		if (GameFrame.settingsPanel.musicOn() && gameOver != null) {
-			gameOver.start();
-			gameOver.setFramePosition(0);
+		if (GameFrame.settingsPanel.musicOn() && GAME_OVER != null) {
+			GAME_OVER.start();
+			GAME_OVER.setFramePosition(0);
 		}
 	}
 	
 	public static void playVictoryFanfare() {
-		if (GameFrame.settingsPanel.musicOn() && victoryFanfare != null) {
-			victoryFanfare.start();
-			victoryFanfare.setFramePosition(0);
+		if (GameFrame.settingsPanel.musicOn() && VICTORY_FANFARE != null) {
+			VICTORY_FANFARE.start();
+			VICTORY_FANFARE.setFramePosition(0);
 		}
 	}
 	
@@ -112,10 +112,10 @@ public class AudioManager {
 
 	}
 	
-	public static void playPauseSound() { playEffect(pause); }
-	public static void playPiecePlacementSound() { playEffect(placePiece); }
-	public static void playHoldSound() { playEffect(hold); }
-	public static void playReleaseSound() { playEffect(release); }
+	public static void playPauseSound() { playEffect(PAUSE); }
+	public static void playPiecePlacementSound() { playEffect(PLACE_PIECE); }
+	public static void playHoldSound() { playEffect(HOLD); }
+	public static void playReleaseSound() { playEffect(RELEASE); }
 	
 	/**
 	 * Plays the audio used when lines are cleared
@@ -123,21 +123,21 @@ public class AudioManager {
 	 */
 	public static void playClearLineSound(int lineCount) {
 		if (lineCount == 4)
-			playEffect(ultraLine);
+			playEffect(ULTRA_LINE);
 		else
-			playEffect(clearLine);
+			playEffect(CLEAR_LINE);
 	}
 	
-	public static void playCWRotationSound() { playEffect(swipeUp); }
-	public static void playCCWRotationSound() { playEffect(swipeDown); }
-	public static void playSuperslideSound() { playEffect(superslide); }
+	public static void playCWRotationSound() { playEffect(SWIPE_UP); }
+	public static void playCCWRotationSound() { playEffect(SWIPE_DOWN); }
+	public static void playSuperslideSound() { playEffect(SUPERSLIDE); }
 	
 	/**
 	 *  Iterates over all clips and resets their frame positions back to the start.
 	 *  This is called to prepare soundtracks for the next game.
 	 */
 	public static void resetSoundtrackFramePositions() {
-		for (Clip c : soundtrack)
+		for (Clip c : SOUNDTRACK)
 			if (c != null) c.setFramePosition(0);
 	}
 	
@@ -161,7 +161,7 @@ public class AudioManager {
 				// Add a new audio stream to the clip data line. Since I'm
 				// using a clip object, all data is loaded into memory at
 				// once as opposed to being read into a buffer and streamed
-				c.open(AudioSystem.getAudioInputStream(resources.getResource(file)));
+				c.open(AudioSystem.getAudioInputStream(RESOURCES.getResource(file)));
 				return c;
 				
 			}

@@ -35,7 +35,7 @@ public class GameBoardModel {
 	}
 	
 	// Represents colors on the game grid
-	private static LinkedList<Color[]> quilt;
+	private static LinkedList<Color[]> _quilt;
 	
 	// Index of the selected option in the difficulty list is used
 	// to index into this array to get lines per level
@@ -44,34 +44,34 @@ public class GameBoardModel {
 	// Point values per line based on lines cleared
 	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
 	
-	private static int linesCompleted = 0;
-	private static int score = 0;
-	private static int level = 0;
+	private static int _linesCompleted = 0;
+	private static int _score = 0;
+	private static int _level = 0;
 	
 	// Flag for whether or not the player just increased level.
 	// Used by the GUI components to know when to process level up functions
-	public static boolean justLeveled = false;
+	public static boolean _justLeveled = false;
 	
-	public static Color getColor(int row, int col) { return quilt.get(row)[col]; }
+	public static Color getColor(int row, int col) { return _quilt.get(row)[col]; }
 	
 	public static void setColor(Color c, int row, int col) {
 		
 		// Will cause out of bounds errors in cases where piece extends above top of board
 		if (row < 0) return;
 		
-		quilt.get(row)[col] = c;
+		_quilt.get(row)[col] = c;
 		
 	}
 	
 	// Returns calculated timer delay based on current level and difficulty
 	public static int getCurrentTimerDelay() {
-		int milliDecrease = TIMER_DECREASE_RATES[GameFrame.settingsPanel.getDifficulty()] * (level - 1);
+		int milliDecrease = TIMER_DECREASE_RATES[GameFrame.settingsPanel.getDifficulty()] * (_level - 1);
 		return INITIAL_TIMER_DELAY - milliDecrease;
 	}
 	
-	public static int getLinesCompleted() { return linesCompleted; }
-	public static int getScore() { return score; }
-	public static int getLevel() { return level; }
+	public static int getLinesCompleted() { return _linesCompleted; }
+	public static int getScore() { return _score; }
+	public static int getLevel() { return _level; }
 	
 	public static int getSpecialPieceBonusPoints(PieceType pieceType) {
 		return SPECIAL_PIECE_BONUSES.get(pieceType);
@@ -109,7 +109,7 @@ public class GameBoardModel {
 	
 	private static boolean isCompleteRow(int rowIndex) {
 		
-		for (Color c : quilt.get(rowIndex)) 
+		for (Color c : _quilt.get(rowIndex)) 
 			if (c == null) return false;
 			
 		return true;
@@ -127,13 +127,13 @@ public class GameBoardModel {
 		// requires an 'offset' to target the correct line. This offset
 		// is increased each time a line is removed
 		Iterator<Integer> iter = toRemove.iterator();
-		for (int offset = 0; iter.hasNext(); offset++, linesCompleted++) {
+		for (int offset = 0; iter.hasNext(); offset++, _linesCompleted++) {
 			
-			quilt.remove(iter.next().intValue() + offset);
+			_quilt.remove(iter.next().intValue() + offset);
 	
 			// Add a new blank line to the top of the quilt to
 			// replace the line that was just removed
-			quilt.offerFirst(new Color[GameBoardPanel.H_CELLS]);
+			_quilt.offerFirst(new Color[GameBoardPanel.H_CELLS]);
 			
 		}
 		
@@ -145,27 +145,27 @@ public class GameBoardModel {
 		
 		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
 		int difficultyBonus = completedLines * 5 * GameFrame.settingsPanel.getDifficulty();
-		score += (linePoints + difficultyBonus);
+		_score += (linePoints + difficultyBonus);
 		
 		// Add bonuses for all special pieces
 		for (PieceType pieceType : PieceType.getSpecialPieces()) {
 			if (PieceFactory.isPieceActive(pieceType))
-				score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceType));
+				_score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceType));
 		}
 		
 		// Process level ups
-		while (linesCompleted >= level * LINES_PER_LEVEL[GameFrame.settingsPanel.getDifficulty()]) {
+		while (_linesCompleted >= _level * LINES_PER_LEVEL[GameFrame.settingsPanel.getDifficulty()]) {
 			
 			AudioManager.stopCurrentSoundtrack();
-			level++;
+			_level++;
 			
-			if (level == 11) // Game complete
-				score += WIN_BONUSES[GameFrame.settingsPanel.getDifficulty()];
+			if (_level == 11) // Game complete
+				_score += WIN_BONUSES[GameFrame.settingsPanel.getDifficulty()];
 			else
 				AudioManager.beginCurrentSoundtrack(); // Soundtrack for next level
 			
 			// Used to signal the UI components to initiate level up functions
-			justLeveled = true;
+			_justLeveled = true;
 			
 		}
 		
@@ -235,10 +235,10 @@ public class GameBoardModel {
 	 */
 	public static void reset() {
 		
-		quilt = buildStartingquilt();
-		score = 0;
-		linesCompleted = 0;
-		level = 1;
+		_quilt = buildStartingquilt();
+		_score = 0;
+		_linesCompleted = 0;
+		_level = 1;
 		
 		/** Method to set a static piece configuration for developing my icon
 		 *  
@@ -276,7 +276,7 @@ public class GameBoardModel {
 	
 	public void print() {
 		
-		for (Color[] colorRow : quilt) {
+		for (Color[] colorRow : _quilt) {
 	
 			for (Color c : colorRow) {
 				

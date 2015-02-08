@@ -25,7 +25,7 @@ public class DB {
 	}
 	
 	// Associates the scoreID primary key from the score DB with that score's overall rank
-	private static Map<Integer, Integer> scoreIDToRank = null;
+	private static Map<Integer, Integer> _scoreIDToRank = null;
 	
 	private static Connection getConnection() throws SQLException {
 		
@@ -89,10 +89,10 @@ public class DB {
 		
 		ResultSet allScores = conn.createStatement().executeQuery("select scoreID from score order by playerScore desc;");
 		
-		scoreIDToRank = new HashMap<>();
+		_scoreIDToRank = new HashMap<>();
 		
 		for (int rank = 1; allScores.next(); rank++)
-			scoreIDToRank.put(allScores.getInt(1), rank);
+			_scoreIDToRank.put(allScores.getInt(1), rank);
 			
 	}
 	
@@ -113,7 +113,7 @@ public class DB {
 			
 			conn = getConnection();
 			
-			if (scoreIDToRank == null) updateScoreIDMap(conn);
+			if (_scoreIDToRank == null) updateScoreIDMap(conn);
 			
 			ResultSet scores = conn.createStatement().executeQuery(createScoresQuery(numScores, difficulty));
 			
@@ -124,7 +124,7 @@ public class DB {
 			while (scores.next()) {
 				
 				data.add(new Object[]{
-					scoreIDToRank.get(scores.getInt(1)), // Score ID, pulled from map
+					_scoreIDToRank.get(scores.getInt(1)), // Score ID, pulled from map
 					scores.getString(2), // Player name
 					scores.getInt(3), // Score
 					scores.getInt(4), // Level

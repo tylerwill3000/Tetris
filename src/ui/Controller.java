@@ -48,7 +48,7 @@ public class Controller {
 					// after removing lines
 					updateGameGrid(completeLines);
 
-					if (GameBoardModel.justLeveled) processLevelUp();
+					if (GameBoardModel._justLeveled) processLevelUp();
 					
 				}
 				
@@ -104,7 +104,7 @@ public class Controller {
 			
 		}
 		
-		GameBoardModel.justLeveled = false;
+		GameBoardModel._justLeveled = false;
 		
 	}
 	
