@@ -9,6 +9,10 @@ import javax.swing.border.TitledBorder;
 
 import model.GameBoardModel;
 
+/**
+ * Displays score info [points, level, lines cleared]
+ * @author Tyler
+ */
 public class ScorePanel extends JPanel {
 	
 	private JLabel _jlbScoreLabel = new JLabel("Score: 0", JLabel.CENTER);

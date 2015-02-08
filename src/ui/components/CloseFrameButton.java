@@ -5,7 +5,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
-// When clicked, closes the frame passed in the constructor
+/**
+ * When clicked, closes the frame passed in the constructor
+ * @author Tyler
+ */
 public class CloseFrameButton extends TetrisButton {
 	
 	private JFrame _frameContainer;

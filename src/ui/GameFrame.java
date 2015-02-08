@@ -17,6 +17,10 @@ import java.awt.GridLayout;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Master frame that holds all other components
+ * @author Tyler
+ */
 public class GameFrame extends JFrame {
 	
 	// GUI style constants

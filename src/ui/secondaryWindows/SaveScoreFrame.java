@@ -26,17 +26,17 @@ public class SaveScoreFrame extends JFrame {
 	
 	public final static int NAME_LENGTH = 20;
 	
-	private JPanel buttonPanel;
-	private JLabel attainedScore = new JLabel();
-	private JTextField name = new JTextField(8);
-	private TetrisButton saveScore = new TetrisButton("Save");
-	private CloseFrameButton jbtClose = new CloseFrameButton(this, "Cancel");
+	private JPanel _buttonPanel;
+	private JLabel _jlbAttainedScore = new JLabel();
+	private JTextField _jtxName = new JTextField(8);
+	private TetrisButton _btnSaveScore = new TetrisButton("Save");
+	private CloseFrameButton _btnClose = new CloseFrameButton(this, "Cancel");
 	
-	private ActionListener saveScoreListener = new ActionListener() {
+	private ActionListener _saveScoreListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			String saveName = name.getText();
+			String saveName = _jtxName.getText();
 			
 			if (saveName.equals("")) {
 				JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
@@ -82,46 +82,46 @@ public class SaveScoreFrame extends JFrame {
 	public SaveScoreFrame() {
 		
 		// Validates name length
-		name.addKeyListener(new KeyAdapter() {
+		_jtxName.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (name.getText().length() > NAME_LENGTH)
-					name.setText(name.getText().substring(0, NAME_LENGTH));
+				if (_jtxName.getText().length() > NAME_LENGTH)
+					_jtxName.setText(_jtxName.getText().substring(0, NAME_LENGTH));
 			}
 		});
 		
-		name.setText(Properties.GAME_PROPERTIES.getProperty("player.save.name"));
+		_jtxName.setText(Properties.GAME_PROPERTIES.getProperty("player.save.name"));
 		
 		setLayout(new GridLayout(3,1));
 		
-		attainedScore.setHorizontalAlignment(JLabel.CENTER);
-		attainedScore.setText("Your score: " + GameBoardModel.getScore());
-		add(attainedScore);
+		_jlbAttainedScore.setHorizontalAlignment(JLabel.CENTER);
+		_jlbAttainedScore.setText("Your score: " + GameBoardModel.getScore());
+		add(_jlbAttainedScore);
 		
 		// Input area with instructions and name text field
 		JPanel inputPanel = new JPanel();
 		inputPanel.add(new JLabel("Enter the name to save your score under or press cancel: "));
-		inputPanel.add(name);
+		inputPanel.add(_jtxName);
 		add(inputPanel);
 		
 		// Button panel for saving / canceling
-		buttonPanel = new JPanel();
-		buttonPanel.add(saveScore);
-		buttonPanel.add(jbtClose);
-		add(buttonPanel);
+		_buttonPanel = new JPanel();
+		_buttonPanel.add(_btnSaveScore);
+		_buttonPanel.add(_btnClose);
+		add(_buttonPanel);
 		
-		saveScore.setMnemonic('s');
-		jbtClose.setMnemonic('c');
+		_btnSaveScore.setMnemonic('s');
+		_btnClose.setMnemonic('c');
 		
-		saveScore.addActionListener(saveScoreListener);
+		_btnSaveScore.addActionListener(_saveScoreListener);
 		
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 					case KeyEvent.VK_S:
-						saveScore.doClick();
+						_btnSaveScore.doClick();
 						break;
 					case KeyEvent.VK_C:
-						jbtClose.doClick();
+						_btnClose.doClick();
 						break;
 				}
 			}

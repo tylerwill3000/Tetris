@@ -21,12 +21,12 @@ import model.Properties;
  */
 public class SupplementarySettingsFrame extends JFrame {
 	
-	protected TetrisButton saveAndClose = new TetrisButton("Save & Close");
+	protected TetrisButton _btnSaveAndClose = new TetrisButton("Save & Close");
 	
 	SupplementarySettingsFrame() {
 		
 		// When frames of these type are closed, properties are saved to disk
-		saveAndClose.addActionListener(new ActionListener() {
+		_btnSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Properties.saveCurrentProperties(true);
 				dispose();

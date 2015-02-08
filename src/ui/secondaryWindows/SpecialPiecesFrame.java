@@ -28,7 +28,7 @@ import model.Properties;
 
 public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 	
-	private List<PieceSelectorButton> pieceSelectorButtons = new ArrayList<>();;
+	private List<PieceSelectorButton> _pieceSelectorButtons = new ArrayList<>();;
 	
 	public SpecialPiecesFrame() { 
 		
@@ -42,7 +42,7 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 			// Selector button for this piece
 			PieceSelectorButton selector = new PieceSelectorButton(pieceType);
 			selector.setActiveState(Properties.getActivePieceProperty(pieceType));
-			pieceSelectorButtons.add(selector);
+			_pieceSelectorButtons.add(selector);
 			
 			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusPoints(pieceType) + " points per line");
 			pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
@@ -60,7 +60,7 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 		}
 		
 		add(piecePanels, BorderLayout.CENTER);
-		add(FrameUtils.nestInPanel(saveAndClose), BorderLayout.SOUTH);
+		add(FrameUtils.nestInPanel(_btnSaveAndClose), BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "star.png");
 		setTitle("Special Pieces");
@@ -71,7 +71,10 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 		
 	}
 	
-	// Provides minor extended functionality to a JButton to handle toggle events
+	/**
+	 *  Provides minor extended functionality to a JButton to handle toggle events
+	 * @author Tyler
+	 */
 	private static class PieceSelectorButton extends JButton {
 		
 		private PieceType pieceType;

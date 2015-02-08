@@ -21,6 +21,10 @@ import ui.secondaryWindows.DBSettingsFrame;
 import ui.secondaryWindows.SpecialPiecesFrame;
 import model.AudioManager;
 
+/**
+ * Holds all game settings components
+ * @author Tyler
+ */
 public class SettingsPanel extends JPanel {
 	
 	// Public so it can be used to map int values to difficulty strings by other

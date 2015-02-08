@@ -14,13 +14,13 @@ import ui.GameFrame;
 import ui.NextPiecePanel;
 import ui.util.FrameUtils;
 import model.Piece;
-import model.PieceFactory;
+import model.PieceFactory.PieceType;
 import model.Properties;
 
 public class BlockStylesFrame extends SupplementarySettingsFrame {
 	
-	private JComboBox<String> styleSelector = new JComboBox<>(new String[]{"Beveled","Etched"});
-	private NextPiecePanel preview = new NextPiecePanel("Preview", new Piece(PieceFactory.PieceType.T_BLOCK));
+	private JComboBox<String> _jcbxStyleSelector = new JComboBox<>(new String[]{"Beveled","Etched"});
+	private NextPiecePanel _previewPanel = new NextPiecePanel("Preview", new Piece(PieceType.T_BLOCK));
 	
 	private static final Border[] PIECE_BORDERS = {
 		GameFrame.BEVEL_BORDER,
@@ -30,22 +30,22 @@ public class BlockStylesFrame extends SupplementarySettingsFrame {
 	public BlockStylesFrame() {
 		
 		JPanel previewPanel = new JPanel(new BorderLayout());
-		previewPanel.add(preview);
+		previewPanel.add(_previewPanel);
 		
 		JPanel styleSelectorPanel = new JPanel();
 		styleSelectorPanel.add(new JLabel("Style: "));
-		styleSelectorPanel.add(styleSelector);
-		styleSelector.setSelectedIndex(Integer.parseInt(Properties.GAME_PROPERTIES.getProperty("piece.border.style")));
+		styleSelectorPanel.add(_jcbxStyleSelector);
+		_jcbxStyleSelector.setSelectedIndex(Properties.getPieceBorderProperty());
 		
 		JPanel menu = new JPanel(new GridLayout(2,1));
 		menu.add(styleSelectorPanel);
-		menu.add(FrameUtils.nestInPanel(saveAndClose));
+		menu.add(FrameUtils.nestInPanel(_btnSaveAndClose));
 		
 		// Write new border property to properties file on selection change
-		styleSelector.addActionListener(new ActionListener() {
+		_jcbxStyleSelector.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Properties.setPieceBorderProperty(styleSelector.getSelectedIndex());
-				preview.paintCurrentPiece();
+				Properties.setPieceBorderProperty(_jcbxStyleSelector.getSelectedIndex());
+				_previewPanel.paintCurrentPiece();
 			}
 		});
 		

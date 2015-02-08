@@ -11,8 +11,13 @@ import javax.swing.JButton;
 
 import ui.GameFrame;
 
-// Standard button style for all frames
+/**
+ *  Standard button style for all frames
+ * @author Tyler
+ */
 public class TetrisButton extends JButton {
+	
+	private final static Dimension BUTTON_DIMENSIONS = new Dimension(100,30);
 	
 	// Causes the mouse to change to a hand icon when mousing over the button
 	private MouseListener handCursorListener = new MouseAdapter() {
@@ -32,7 +37,7 @@ public class TetrisButton extends JButton {
 	
 	public TetrisButton(String buttonText) {
 		setText(buttonText);
-		setPreferredSize(new Dimension(100,30));
+		setPreferredSize(BUTTON_DIMENSIONS);
 		setBorder(GameFrame.ETCHED_BORDER);
 		setFocusable(false);
 		addMouseListener(handCursorListener);

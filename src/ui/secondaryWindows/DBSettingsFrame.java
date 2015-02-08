@@ -18,50 +18,50 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 	
 	private final static int TEXT_FIELD_WIDTH = 15;
 	
-	private JLabel jlbHost = new JLabel("   Database host: ");
-	private JLabel jlbName = new JLabel("   Database name:");
-	private JLabel jlbUser = new JLabel("   Database user:");
-	private JLabel jlbPass = new JLabel("   Database password:");
+	private JLabel _jlbHost = new JLabel("   Database host: ");
+	private JLabel _jlbName = new JLabel("   Database name:");
+	private JLabel _jlbUser = new JLabel("   Database user:");
+	private JLabel _jlbPass = new JLabel("   Database password:");
 	
-	private JTextField jtxHost = new JTextField(Properties.getDBHostProperty(), TEXT_FIELD_WIDTH);
-	private JTextField jtxName = new JTextField(Properties.getDBNameProperty(), TEXT_FIELD_WIDTH);
-	private JTextField jtxUser = new JTextField(Properties.getDBUserProperty(), TEXT_FIELD_WIDTH);
-	private JPasswordField jpwPass = new JPasswordField(Properties.getDBPassProperty(), TEXT_FIELD_WIDTH);
+	private JTextField _jtxHost = new JTextField(Properties.getDBHostProperty(), TEXT_FIELD_WIDTH);
+	private JTextField _jtxName = new JTextField(Properties.getDBNameProperty(), TEXT_FIELD_WIDTH);
+	private JTextField _jtxUser = new JTextField(Properties.getDBUserProperty(), TEXT_FIELD_WIDTH);
+	private JPasswordField _jpqPass = new JPasswordField(Properties.getDBPassProperty(), TEXT_FIELD_WIDTH);
 	
 	public DBSettingsFrame() {
 		
 		JPanel fieldLabels = new JPanel(new GridLayout(4,1));
-		for (JLabel l : Arrays.asList(jlbHost, jlbName, jlbUser, jlbPass)) {
+		for (JLabel l : Arrays.asList(_jlbHost, _jlbName, _jlbUser, _jlbPass)) {
 			fieldLabels.add(l);
 		}
 		
 		JPanel textFields = new JPanel(new GridLayout(4,1));
-		for (JTextField txt : Arrays.asList(jtxHost, jtxName, jtxUser, jpwPass)) {
+		for (JTextField txt : Arrays.asList(_jtxHost, _jtxName, _jtxUser, _jpqPass)) {
 			textFields.add(txt);
 		}
 		
-		jtxHost.addKeyListener(new KeyAdapter() {
+		_jtxHost.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				Properties.setDBHostProperty(jtxHost.getText());
+				Properties.setDBHostProperty(_jtxHost.getText());
 			}
 		});
 		
-		jtxName.addKeyListener(new KeyAdapter() {
+		_jtxName.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				Properties.setDBNameProperty(jtxName.getText());
+				Properties.setDBNameProperty(_jtxName.getText());
 			}
 		});
 		
-		jtxUser.addKeyListener(new KeyAdapter() {
+		_jtxUser.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				Properties.setDBUserProperty(jtxUser.getText());
+				Properties.setDBUserProperty(_jtxUser.getText());
 			}
 		});
 		
-		jpwPass.addKeyListener(new KeyAdapter() {
+		_jpqPass.addKeyListener(new KeyAdapter() {
 			@SuppressWarnings("deprecation")
 			public void keyReleased(KeyEvent e) {
-				Properties.setDBPassProperty(jpwPass.getText());
+				Properties.setDBPassProperty(_jpqPass.getText());
 			}
 		});
 		
@@ -71,7 +71,7 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 		
 		setLayout(new BorderLayout());
 		add(fieldContainer, BorderLayout.CENTER);
-		add(FrameUtils.nestInPanel(saveAndClose), BorderLayout.SOUTH);
+		add(FrameUtils.nestInPanel(_btnSaveAndClose), BorderLayout.SOUTH);
 		
 		setTitle("Database Connectivity");
 		setSize(320,180);

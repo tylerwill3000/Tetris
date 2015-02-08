@@ -26,66 +26,62 @@ import model.Properties;
 
 public class HighScoreFrame extends JFrame {
 	
-	private final static Object[] COLUMN_HEADERS = {
-		"Rank", "Name", "Score", "Lines", "Level", "Difficulty"
-	};
+	private final static Object[] COLUMN_HEADERS = {"Rank", "Name", "Score", "Lines", "Level", "Difficulty"};
 	
 	private final static Integer[] RECORD_COUNTS = {10,25,50,100};
 	
-	private JComboBox<Integer> jcbxNumRecords = new JComboBox<>(RECORD_COUNTS);
+	private JComboBox<Integer> _jcbxRecords = new JComboBox<>(RECORD_COUNTS);
 	
-	private JComboBox<String> jcbxDiff = new JComboBox<>(new String[]{
-			"Easy","Medium","Hard","All"
-	});
+	private JComboBox<String> _jcbxDiff = new JComboBox<>(new String[]{"Easy","Medium","Hard","All"});
 	
 	// Used when accessing this frame from save score frame to make new score row stand out
-	private int highlightRank = -1;
+	private int _highlightRank = -1;
 	
-	private CloseFrameButton jbtClose = new CloseFrameButton(this);
-	private JTable table = new JTable();
+	private CloseFrameButton _jbtClose = new CloseFrameButton(this);
+	private JTable _table = new JTable();
 	
 	public HighScoreFrame(int rankToHighlight) {
 		
-		this.highlightRank = rankToHighlight;
+		this._highlightRank = rankToHighlight;
 		
 		// Set default selected options if they are cached
-		jcbxNumRecords.setSelectedIndex(Properties.getHighScoreRecordCount());
-		jcbxDiff.setSelectedIndex(Properties.getHighScoreDifficulty());
+		_jcbxRecords.setSelectedIndex(Properties.getHighScoreRecordCount());
+		_jcbxDiff.setSelectedIndex(Properties.getHighScoreDifficulty());
 		
-		table.setFillsViewportHeight(true);
-		table.setEnabled(false);;
+		_table.setFillsViewportHeight(true);
+		_table.setEnabled(false);;
 		
 		setLayout(new BorderLayout());
 		
 		// Table added to center so it auto-expands with window size
-		add(new JScrollPane(table), BorderLayout.CENTER);
+		add(new JScrollPane(_table), BorderLayout.CENTER);
 		
 		// Holds record selector list and labels
 		JPanel recordSelectorPanel = new JPanel();
 		recordSelectorPanel.add(new JLabel("Show top "));
-		recordSelectorPanel.add(jcbxNumRecords);
+		recordSelectorPanel.add(_jcbxRecords);
 		recordSelectorPanel.add(new JLabel(" scores for difficulty "));
-		recordSelectorPanel.add(jcbxDiff);
+		recordSelectorPanel.add(_jcbxDiff);
 		
 		// Add all menu components to a master panel
 		JPanel menuPanel = new JPanel(new GridLayout(2,1));
 		menuPanel.add(recordSelectorPanel);
-		menuPanel.add(FrameUtils.nestInPanel(jbtClose));
+		menuPanel.add(FrameUtils.nestInPanel(_jbtClose));
 		
 		add(menuPanel, BorderLayout.SOUTH);
 		
 		// Both comboboxes simply re-populate the table upon selection change
-		jcbxNumRecords.addActionListener(new ActionListener() {
+		_jcbxRecords.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Properties.setHighScoreRecordCount(jcbxNumRecords.getSelectedIndex());
-				populateTable(false, highlightRank);				
+				Properties.setHighScoreRecordCount(_jcbxRecords.getSelectedIndex());
+				populateTable(false, _highlightRank);				
 			}
 		});
 		
-		jcbxDiff.addActionListener(new ActionListener() {
+		_jcbxDiff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Properties.setHighScoresDifficulty(jcbxDiff.getSelectedIndex());
-				populateTable(false, highlightRank);				
+				Properties.setHighScoresDifficulty(_jcbxDiff.getSelectedIndex());
+				populateTable(false, _highlightRank);				
 			}
 		});
 		
@@ -94,7 +90,7 @@ public class HighScoreFrame extends JFrame {
 		pack();
 		setLocationRelativeTo(null);
 		setVisible(true);
-		populateTable(true, highlightRank);
+		populateTable(true, _highlightRank);
 
 	}
 	
@@ -102,8 +98,8 @@ public class HighScoreFrame extends JFrame {
 	// controls whether to destroy the window upon failed DB connection
 	private void populateTable(boolean disposeOnFail, int rowToHighlight) {
 
-		int numRecords = RECORD_COUNTS[jcbxNumRecords.getSelectedIndex()];
-		int difficulty = jcbxDiff.getSelectedIndex();
+		int numRecords = RECORD_COUNTS[_jcbxRecords.getSelectedIndex()];
+		int difficulty = _jcbxDiff.getSelectedIndex();
 		
 		Object[][] data = null;
 		try {
@@ -115,13 +111,13 @@ public class HighScoreFrame extends JFrame {
 			return;
 		}
 		
-		table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
+		_table.setModel(new DefaultTableModel(data, COLUMN_HEADERS));
 		
 		TableCellRenderer renderer = new HighScoreCellRenderer(rowToHighlight);
 		
 		// Apply the renderer to all table columns
 		for (int i = 0; i < data[0].length; i++)
-			table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+			_table.getColumnModel().getColumn(i).setCellRenderer(renderer);
 		
 	}
 	
