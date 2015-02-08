@@ -8,36 +8,44 @@ import javax.swing.JPanel;
 import ui.secondaryWindows.BlockStylesFrame;
 import model.Piece;
 
-// Objects of this class are grid-based panels that are 
-// "paintable" - that is, they are able to have certain
-// cells filled in a certain color. Each instance has
-// a currently active piece associated with it
+/**
+ * Objects of this class are grid-based panels that are "paintable" - that is, they are able
+ * to have certain cells filled in a certain color. Each instance has a currently active piece
+ * associated with it 
+ * @author Tyler
+ */
 public class GridPainter extends JPanel {
 	
-	// Pixel side length of each panel square
+	/**
+	 *  Pixel side length of each panel square
+	 */
 	static final int SQUARE_SIDE_LENGTH = 35;
 	
-	// Holds all the JPanel objects for the panel
-	protected JPanel[][] JPanelGrid;
+	/**
+	 *  Holds all the JPanel objects for the panel
+	 */
+	protected JPanel[][] _JPanelGrid;
 	
-	// Package-private so other GUI elements can manipulate it
-	Piece currentPiece;
+	/**
+	 *  Package-private so other GUI elements can manipulate it
+	 */
+	Piece _currentPiece;
 	
 	protected GridPainter(int rows, int cols) {
 		
 		// Set the grid layout and the matrix that
 		// represents it
 		setLayout(new GridLayout(rows, cols));
-		JPanelGrid = new JPanel[rows][cols];
+		_JPanelGrid = new JPanel[rows][cols];
 		
 		// Add all the initial panels to both the piece painter
 		// panel and the JPanel matrix
-		for (int i = 0; i < JPanelGrid.length; i++) {
+		for (int i = 0; i < _JPanelGrid.length; i++) {
 			
-			for (int j = 0; j < JPanelGrid[i].length; j++) {
+			for (int j = 0; j < _JPanelGrid[i].length; j++) {
 				
 				JPanel p = new JPanel();
-				JPanelGrid[i][j] = p;
+				_JPanelGrid[i][j] = p;
 				add(p);				
 				
 			}
@@ -46,7 +54,12 @@ public class GridPainter extends JPanel {
 		
 	}
 	
-	// Paints any given individual square the specified color.
+	/**
+	 *  Paints any given individual square the specified color.
+	 * @param row Row of the square to paint
+	 * @param col Column of the square to paint
+	 * @param color Color to paint the square
+	 */
 	protected void paintSquare(int row, int col, Color color) {
 		
 		// -3 to account for the 3 invisible rows at the top of
@@ -55,15 +68,18 @@ public class GridPainter extends JPanel {
 		
 		if (row < 0) return;
 		
-		JPanel toPaint = JPanelGrid[row][col];
+		JPanel toPaint = _JPanelGrid[row][col];
 		
 		toPaint.setBackground(color);
 		toPaint.setBorder(BlockStylesFrame.getCurrentPieceBorder());
 		
 	}
 	
-	// Erases the color in any given square. Pass the panel
-	// object that represents the square.
+	/**
+	 *  Erases the color in any given square.
+	 * @param row Row of the square to erase
+	 * @param col Column of the square to erase
+	 */
 	protected void eraseSquare(int row, int col) {
 		
 		// -3 to account for the 3 invisible rows at the top of
@@ -72,14 +88,16 @@ public class GridPainter extends JPanel {
 		
 		if (row < 0) return;
 		
-		JPanel p = JPanelGrid[row][col];
+		JPanel p = _JPanelGrid[row][col];
 		
 		p.setBackground(null);
 		p.setBorder(null);
 	}
 	
-	// Paints the squares specified by the list given in the
-	// specified color
+	/**
+	 * Paints the squares specified by the list given in the
+	 * specified color
+	 */
 	protected void paintSquares(int[][] squares, Color color) {
 		
 		// Can happen if you're trying to paint the ghost
@@ -91,7 +109,9 @@ public class GridPainter extends JPanel {
 		
 	}
 	
-	// Erases the squares specified by the list given
+	/**
+	 *  Erases the squares specified by the list given
+	 */
 	protected void eraseSquares(int[][] squares) {
 		
 		if (squares == null) return;

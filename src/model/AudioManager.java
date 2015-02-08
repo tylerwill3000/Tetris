@@ -54,7 +54,7 @@ public class AudioManager {
 	 */
 	public static void beginCurrentSoundtrack() {
 		
-		if (GameFrame.settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null) {
+		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null) {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
@@ -72,7 +72,7 @@ public class AudioManager {
 	 * if music is turned off.
 	 */
 	public static void resumeCurrentSoundtrack() {
-		if (GameFrame.settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
+		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
 			SOUNDTRACK[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
@@ -85,14 +85,14 @@ public class AudioManager {
 	}
 	
 	public static void playGameOverSound() {
-		if (GameFrame.settingsPanel.musicOn() && GAME_OVER != null) {
+		if (GameFrame._settingsPanel.musicOn() && GAME_OVER != null) {
 			GAME_OVER.start();
 			GAME_OVER.setFramePosition(0);
 		}
 	}
 	
 	public static void playVictoryFanfare() {
-		if (GameFrame.settingsPanel.musicOn() && VICTORY_FANFARE != null) {
+		if (GameFrame._settingsPanel.musicOn() && VICTORY_FANFARE != null) {
 			VICTORY_FANFARE.start();
 			VICTORY_FANFARE.setFramePosition(0);
 		}
@@ -105,7 +105,7 @@ public class AudioManager {
 	 */
 	private static void playEffect(Clip effect) {
 
-		if (GameFrame.settingsPanel.effectsOn() && effect != null) {
+		if (GameFrame._settingsPanel.effectsOn() && effect != null) {
 			effect.start();
 			effect.setFramePosition(0);
 		}

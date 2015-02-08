@@ -10,20 +10,25 @@ import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
 
-// This class is dedicated to controlling the game flow
+/**
+ *  Class is dedicated to controlling the game flow
+ * @author Tyler
+ */
 public class Controller {
 	
-	// The fall timer that controls the speed at which pieces
-	// move down the screen. Speed is set in the listener for
-	// the start button, so there is no need to provide a 
-	// default value here
-	static Timer fallTimer = new Timer(0, new ActionListener() {
+	/**
+	 * Fall timer that controls the speed at which pieces
+	 * move down the screen. Speed is set in the listener for
+	 * the start button, so there is no need to provide a 
+	 * default value here
+	 */
+	static Timer _fallTimer = new Timer(0, new ActionListener() {
 
 		public void actionPerformed(ActionEvent e) {
 
 			// If the piece can be lowered, lower it
-			if (GameFrame.gameBoardPanel.currentPiece.canMove(1, 0))
-				GameFrame.gameBoardPanel.lowerPiece();
+			if (GameFrame._gameBoardPanel._currentPiece.canMove(1, 0))
+				GameFrame._gameBoardPanel.lowerPiece();
 			
 			// Piece cannot be lowered, so must add it to the log of
 			// current pieces on the board
@@ -31,7 +36,7 @@ public class Controller {
 				
 				// Obtain a list of all complete lines (if any) that
 				// result from permanently adding this piece to the board
-				List<Integer> completeLines = GameBoardModel.addPiece(GameFrame.gameBoardPanel.currentPiece);
+				List<Integer> completeLines = GameBoardModel.addPiece(GameFrame._gameBoardPanel._currentPiece);
 				
 				if (!completeLines.isEmpty()) {
 					
@@ -42,7 +47,7 @@ public class Controller {
 
 					GameBoardModel.removeCompleteLines(completeLines);
 					AudioManager.playClearLineSound(completeLines.size());
-					GameFrame.scorePanel.refreshScoreInfo();
+					GameFrame._scorePanel.refreshScoreInfo();
 					
 					// Update game grid display to reflect new configuration
 					// after removing lines
@@ -56,13 +61,13 @@ public class Controller {
 				moveConveyorBelt();
 				
 				// If next piece can't emerge, it's game over
-				if (!GameFrame.gameBoardPanel.currentPiece.canEmerge())
+				if (!GameFrame._gameBoardPanel._currentPiece.canEmerge())
 					processGameOver();
 				
 				else {
-					GameFrame.gameBoardPanel.paintCurrentAndGhost();
-					GameFrame.nextPiecePanel.clear();
-					GameFrame.nextPiecePanel.paintCurrentPiece();
+					GameFrame._gameBoardPanel.paintCurrentAndGhost();
+					GameFrame._nextPiecePanel.clear();
+					GameFrame._nextPiecePanel.paintCurrentPiece();
 				}
 
 			}
@@ -71,23 +76,28 @@ public class Controller {
 		
 	});
 	
-	// Moves the factory conveyor belt along 1 piece, setting
-	// the game board panel's piece to the first piece in line and
-	// the next piece panel's to the one directly following it.
-	// Package-private so it can be accessed by the start button listener
-	// to set the initial pieces on game load
+	/**
+	 * Moves the factory conveyor belt along 1 piece, setting
+	 * the game board panel's piece to the first piece in line and
+	 * the next piece panel's to the one directly following it.
+	 * Package-private so it can be accessed by the start button listener
+	 * to set the initial pieces on game load
+	 */
 	static void moveConveyorBelt() {
-		GameFrame.gameBoardPanel.currentPiece = PieceFactory.receiveNextPiece();
-		GameFrame.nextPiecePanel.currentPiece = PieceFactory.peekAtNextPiece();
+		GameFrame._gameBoardPanel._currentPiece = PieceFactory.receiveNextPiece();
+		GameFrame._nextPiecePanel._currentPiece = PieceFactory.peekAtNextPiece();
 	}
 	
-	// Repaints the rows according to the new piece configuration after
-	// removing lines
+	/**
+	 *  Repaints the game grid rows according to the new piece configuration after
+	 *  removing lines
+	 * @param removedLines Number of lines removed
+	 */
 	private static void updateGameGrid(List<Integer> removedLines) {
 		
 		// Should only have to paint upwards from the bottom removed line
 		for (int line = removedLines.get(0); line >= 0; line--)
-			GameFrame.gameBoardPanel.paintRow(line);
+			GameFrame._gameBoardPanel.paintRow(line);
 
 	}
 	
@@ -96,12 +106,9 @@ public class Controller {
 		
 		if (GameBoardModel.getLevel() == 11)
 			processGameComplete();
-		
 		else {
-			
-			fallTimer.setDelay(GameBoardModel.getCurrentTimerDelay());
-			GameFrame.scorePanel.flashLevelLabel();
-			
+			_fallTimer.setDelay(GameBoardModel.getCurrentTimerDelay());
+			GameFrame._scorePanel.flashLevelLabel();
 		}
 		
 		GameBoardModel._justLeveled = false;
@@ -111,52 +118,54 @@ public class Controller {
 	// For if removing lines causes game complete
 	private static void processGameComplete() {
 		
-		fallTimer.stop();
+		_fallTimer.stop();
 		
-		GameFrame.scorePanel.flashWinMessage();
-		GameFrame.gameBoardPanel.disablePieceMovementInput();
-		GameFrame.gameBoardPanel.startClearAnimation();
+		GameFrame._scorePanel.flashWinMessage();
+		GameFrame._gameBoardPanel.disablePieceMovementInput();
+		GameFrame._gameBoardPanel.startClearAnimation();
 		
 		AudioManager.playVictoryFanfare();
 		AudioManager.resetSoundtrackFramePositions();
 		
-		GameFrame.menuPanel.disablePauseButton();
-		GameFrame.menuPanel.disableResumeButton();
-		GameFrame.menuPanel.disableGiveUpButton();
+		GameFrame._menuPanel.disablePauseButton();
+		GameFrame._menuPanel.disableResumeButton();
+		GameFrame._menuPanel.disableGiveUpButton();
 		
-		GameFrame.settingsPanel.disableCbxListeners();
-		GameFrame.settingsPanel.enableDifficultyList();
-		GameFrame.settingsPanel.enableSpecialPiecesButton();
-		GameFrame.settingsPanel.enableBlockStylesButton();
-		GameFrame.settingsPanel.enableDatabaseConnectivityButton();
+		GameFrame._settingsPanel.disableCbxListeners();
+		GameFrame._settingsPanel.enableDifficultyList();
+		GameFrame._settingsPanel.enableSpecialPiecesButton();
+		GameFrame._settingsPanel.enableBlockStylesButton();
+		GameFrame._settingsPanel.enableDatabaseConnectivityButton();
 		
 	}
 	
-	// What happens when the next piece can't emerge. Package-private so
-	// it can be accessed by the game over listener
+	/**
+	 * What happens when the next piece can't emerge. Package-private so
+	 * it can be accessed by the game over listener
+	 */
 	static void processGameOver() {
 
-		fallTimer.stop();
+		_fallTimer.stop();
 		
 		AudioManager.stopCurrentSoundtrack();
 		AudioManager.playGameOverSound();
 		
 		AudioManager.resetSoundtrackFramePositions();
 		
-		GameFrame.scorePanel.flashGameOverMessage();
-		GameFrame.gameBoardPanel.startSpiralAnimation();
+		GameFrame._scorePanel.flashGameOverMessage();
+		GameFrame._gameBoardPanel.startSpiralAnimation();
 		
-		GameFrame.gameBoardPanel.disablePieceMovementInput();
+		GameFrame._gameBoardPanel.disablePieceMovementInput();
 		
-		GameFrame.menuPanel.disablePauseButton();
-		GameFrame.menuPanel.disableResumeButton();
-		GameFrame.menuPanel.disableGiveUpButton();
+		GameFrame._menuPanel.disablePauseButton();
+		GameFrame._menuPanel.disableResumeButton();
+		GameFrame._menuPanel.disableGiveUpButton();
 		
-		GameFrame.settingsPanel.disableCbxListeners();
-		GameFrame.settingsPanel.enableDifficultyList();
-		GameFrame.settingsPanel.enableSpecialPiecesButton();
-		GameFrame.settingsPanel.enableBlockStylesButton();
-		GameFrame.settingsPanel.enableDatabaseConnectivityButton();
+		GameFrame._settingsPanel.disableCbxListeners();
+		GameFrame._settingsPanel.enableDifficultyList();
+		GameFrame._settingsPanel.enableSpecialPiecesButton();
+		GameFrame._settingsPanel.enableBlockStylesButton();
+		GameFrame._settingsPanel.enableDatabaseConnectivityButton();
 		
 	}
 	

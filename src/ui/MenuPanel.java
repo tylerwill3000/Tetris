@@ -3,6 +3,7 @@ package ui;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,18 +15,21 @@ import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
 
-// Holds all the main menu buttons
+/**
+ *  Holds all the main menu buttons
+ * @author Tyler
+ */
 public class MenuPanel extends JPanel {
 	
-	TetrisButton start = new TetrisButton("Start");
-	TetrisButton pause = new TetrisButton("Pause");
-	TetrisButton resume = new TetrisButton("Resume");
-	TetrisButton giveUp = new TetrisButton("Give Up");
-	TetrisButton highScores = new TetrisButton("High Scores");
+	TetrisButton _btnStart = new TetrisButton("Start");
+	TetrisButton _btnPause = new TetrisButton("Pause");
+	TetrisButton _btnResume = new TetrisButton("Resume");
+	TetrisButton _btnGiveUp = new TetrisButton("Give Up");
+	TetrisButton _btnHighScores = new TetrisButton("High Scores");
 	
 	// Button listeners are declared as their own concrete classes since I need to
 	// control when they are enabled / disabled
-	private ActionListener startButtonListener = new ActionListener() {
+	private ActionListener _startButtonListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			
@@ -35,12 +39,12 @@ public class MenuPanel extends JPanel {
 			
 			// Reprint all squares on the game board. Since
 			// the model was reset, they will all be blank
-			GameFrame.gameBoardPanel.fullReprint();
+			GameFrame._gameBoardPanel.fullReprint();
 			
 			// Clears all old score info from previous games
-			GameFrame.scorePanel.refreshScoreInfo();
+			GameFrame._scorePanel.refreshScoreInfo();
 			
-			Controller.fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
+			Controller._fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
 			PieceFactory.solidifyActivePieces();
 			
@@ -56,20 +60,20 @@ public class MenuPanel extends JPanel {
 			Controller.moveConveyorBelt();
 			
 			// In case these still have pieces from previous games
-			GameFrame.nextPiecePanel.clear();
-			GameFrame.holdPanel.clear();
-			GameFrame.holdPanel.currentPiece = null;
+			GameFrame._nextPiecePanel.clear();
+			GameFrame._holdPanel.clear();
+			GameFrame._holdPanel._currentPiece = null;
 			
-			GameFrame.settingsPanel.disableDifficultyList();
-			GameFrame.settingsPanel.disableSpecialPiecesButton();
-			GameFrame.settingsPanel.disableBlockStylesButton();
-			GameFrame.settingsPanel.disableDatabaseConnectivityButton();
+			GameFrame._settingsPanel.disableDifficultyList();
+			GameFrame._settingsPanel.disableSpecialPiecesButton();
+			GameFrame._settingsPanel.disableBlockStylesButton();
+			GameFrame._settingsPanel.disableDatabaseConnectivityButton();
 			
 			// Paint initial pieces
-			GameFrame.gameBoardPanel.paintCurrentAndGhost();
-			GameFrame.nextPiecePanel.paintCurrentPiece();
+			GameFrame._gameBoardPanel.paintCurrentAndGhost();
+			GameFrame._nextPiecePanel.paintCurrentPiece();
 			
-			GameFrame.gameBoardPanel.enablePieceMovementInput();
+			GameFrame._gameBoardPanel.enablePieceMovementInput();
 			
 			// Enable pause and give up buttons.
 			// There is no reason for these to be enabled before the game starts
@@ -78,9 +82,9 @@ public class MenuPanel extends JPanel {
 			disableStartButton();
 			
 			// Both checkbox listeners get enabled
-			GameFrame.settingsPanel.enableCbxListeners();
+			GameFrame._settingsPanel.enableCbxListeners();
 			
-			Controller.fallTimer.start();
+			Controller._fallTimer.start();
 			
 			AudioManager.beginCurrentSoundtrack();
 			
@@ -88,19 +92,19 @@ public class MenuPanel extends JPanel {
 	
 	};
 	
-	private ActionListener pauseButtonListener = new ActionListener() {
+	private ActionListener _pauseButtonListener = new ActionListener() {
 				
 		public void actionPerformed(ActionEvent e) {
 			
-			Controller.fallTimer.stop();
+			Controller._fallTimer.stop();
 			
 			// Don't allow sound to be turned on / off when game is paused
-			GameFrame.settingsPanel.disableMusicCbxListener();
+			GameFrame._settingsPanel.disableMusicCbxListener();
 			
 			AudioManager.stopCurrentSoundtrack();			
 			AudioManager.playPauseSound();
 			
-			GameFrame.gameBoardPanel.disablePieceMovementInput();;
+			GameFrame._gameBoardPanel.disablePieceMovementInput();;
 			
 			// Re-enable the resume button and disable pausing / give up
 			enableResumeButton();
@@ -111,19 +115,19 @@ public class MenuPanel extends JPanel {
 	
 	};
 	
-	private ActionListener resumeButtonListener = new ActionListener() {
+	private ActionListener _resumeButtonListener = new ActionListener() {
 				
 		public void actionPerformed(ActionEvent e) {
 			
-			Controller.fallTimer.start();
+			Controller._fallTimer.start();
 			
 			// Re-enable sound to be turned on / off instantly on
 			// checkbox change
-			GameFrame.settingsPanel.enableMusicCbxListener();
+			GameFrame._settingsPanel.enableMusicCbxListener();
 			
 			AudioManager.resumeCurrentSoundtrack();
 			
-			GameFrame.gameBoardPanel.enablePieceMovementInput();;
+			GameFrame._gameBoardPanel.enablePieceMovementInput();;
 			
 			// Re-enable pause and give up buttons and disable resume
 			enablePauseButton();
@@ -134,7 +138,7 @@ public class MenuPanel extends JPanel {
 		
 	};
 	
-	private ActionListener giveUpButtonListener = new ActionListener() {
+	private ActionListener _giveUpButtonListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			Controller.processGameOver();
@@ -142,7 +146,7 @@ public class MenuPanel extends JPanel {
 		
 	};
 	
-	private ActionListener highScoresListener = new ActionListener() {
+	private ActionListener _highScoresListener = new ActionListener() {
 		
 		public void actionPerformed(ActionEvent e) {
 			new HighScoreFrame(-1);
@@ -151,33 +155,32 @@ public class MenuPanel extends JPanel {
 	};
 	
 	// Handy methods for enabling / disabling buttons
-	void enableStartButton() { start.addActionListener(startButtonListener); }
-	void enablePauseButton() { pause.addActionListener(pauseButtonListener); }
-	void enableResumeButton() { resume.addActionListener(resumeButtonListener); }
-	void enableGiveUpButton() { giveUp.addActionListener(giveUpButtonListener); }
-	void enableHighScoresButton() { highScores.addActionListener(highScoresListener); }
+	void enableStartButton() { _btnStart.addActionListener(_startButtonListener); }
+	void enablePauseButton() { _btnPause.addActionListener(_pauseButtonListener); }
+	void enableResumeButton() { _btnResume.addActionListener(_resumeButtonListener); }
+	void enableGiveUpButton() { _btnGiveUp.addActionListener(_giveUpButtonListener); }
+	void enableHighScoresButton() { _btnHighScores.addActionListener(_highScoresListener); }
 	
-	void disableStartButton() { start.removeActionListener(startButtonListener); }
-	void disablePauseButton() { pause.removeActionListener(pauseButtonListener); }
-	void disableResumeButton() { resume.removeActionListener(resumeButtonListener); }
-	void disableGiveUpButton() { giveUp.removeActionListener(giveUpButtonListener); }
-	void disableHighScoresButton() { highScores.removeActionListener(highScoresListener); }
+	void disableStartButton() { _btnStart.removeActionListener(_startButtonListener); }
+	void disablePauseButton() { _btnPause.removeActionListener(_pauseButtonListener); }
+	void disableResumeButton() { _btnResume.removeActionListener(_resumeButtonListener); }
+	void disableGiveUpButton() { _btnGiveUp.removeActionListener(_giveUpButtonListener); }
+	void disableHighScoresButton() { _btnHighScores.removeActionListener(_highScoresListener); }
 	
 	MenuPanel() {
 		
 		setLayout(new FlowLayout());
 		
 		Map<TetrisButton, Character> mnemonicMap = new HashMap<TetrisButton, Character>();
-		mnemonicMap.put(start, 's');
-		mnemonicMap.put(pause, 'p');
-		mnemonicMap.put(resume, 'r');
-		mnemonicMap.put(giveUp, 'g');
-		mnemonicMap.put(highScores, 'h');
+		mnemonicMap.put(_btnStart, 's');
+		mnemonicMap.put(_btnPause, 'p');
+		mnemonicMap.put(_btnResume, 'r');
+		mnemonicMap.put(_btnGiveUp, 'g');
+		mnemonicMap.put(_btnHighScores, 'h');
 		
-		for (TetrisButton b : new TetrisButton[]{start, pause, resume, giveUp, highScores}) {
+		for (TetrisButton b : Arrays.asList(_btnStart, _btnPause, _btnResume, _btnGiveUp, _btnHighScores)) {
 			b.setMnemonic(mnemonicMap.get(b));
 			add(b);
-
 		}
 		
 		enableStartButton();

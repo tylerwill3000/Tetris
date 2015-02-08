@@ -54,7 +54,7 @@ public class SaveScoreFrame extends JFrame {
 					GameBoardModel.getScore(),
 					GameBoardModel.getLevel(),
 					GameBoardModel.getLinesCompleted(),
-					GameFrame.settingsPanel.getDifficulty()
+					GameFrame._settingsPanel.getDifficulty()
 				);
 				
 			}

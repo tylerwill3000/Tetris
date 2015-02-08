@@ -65,7 +65,7 @@ public class GameBoardModel {
 	
 	// Returns calculated timer delay based on current level and difficulty
 	public static int getCurrentTimerDelay() {
-		int milliDecrease = TIMER_DECREASE_RATES[GameFrame.settingsPanel.getDifficulty()] * (_level - 1);
+		int milliDecrease = TIMER_DECREASE_RATES[GameFrame._settingsPanel.getDifficulty()] * (_level - 1);
 		return INITIAL_TIMER_DELAY - milliDecrease;
 	}
 	
@@ -144,7 +144,7 @@ public class GameBoardModel {
 	private static void increaseScore(int completedLines) {
 		
 		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
-		int difficultyBonus = completedLines * 5 * GameFrame.settingsPanel.getDifficulty();
+		int difficultyBonus = completedLines * 5 * GameFrame._settingsPanel.getDifficulty();
 		_score += (linePoints + difficultyBonus);
 		
 		// Add bonuses for all special pieces
@@ -154,13 +154,13 @@ public class GameBoardModel {
 		}
 		
 		// Process level ups
-		while (_linesCompleted >= _level * LINES_PER_LEVEL[GameFrame.settingsPanel.getDifficulty()]) {
+		while (_linesCompleted >= _level * LINES_PER_LEVEL[GameFrame._settingsPanel.getDifficulty()]) {
 			
 			AudioManager.stopCurrentSoundtrack();
 			_level++;
 			
 			if (_level == 11) // Game complete
-				_score += WIN_BONUSES[GameFrame.settingsPanel.getDifficulty()];
+				_score += WIN_BONUSES[GameFrame._settingsPanel.getDifficulty()];
 			else
 				AudioManager.beginCurrentSoundtrack(); // Soundtrack for next level
 			

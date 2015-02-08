@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -26,38 +27,38 @@ public class SettingsPanel extends JPanel {
 	// GUI classes and the DBComm class
 	public final static String[] DIFFICULTIES = {"Easy","Medium","Hard"};
 	
-	private JCheckBox jcbxGhostSquares = new JCheckBox("Ghost Squares", true);
-	private JCheckBox jcbxMusic = new JCheckBox("Music", true);
-	private JCheckBox jcbxSoundEffects = new JCheckBox("Sound Effects", true);
-	private JCheckBox jcbxSaveScores = new JCheckBox("Save Scores", true);
+	private JCheckBox _jcbxGhostSquares = new JCheckBox("Ghost Squares", true);
+	private JCheckBox _jcbxMusic = new JCheckBox("Music", true);
+	private JCheckBox _jcbxSoundEffects = new JCheckBox("Sound Effects", true);
+	private JCheckBox _jcbxSaveScores = new JCheckBox("Save Scores", true);
 	
-	private JComboBox<String> jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
+	private JComboBox<String> _jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
-	private TetrisButton jbtChooseSpecials = new TetrisButton("Special Pieces...");
-	private TetrisButton jbtChooseBlockStyles = new TetrisButton("Block Styles...");
-	private TetrisButton jbtDBConfig = new TetrisButton("Database Connectivity...");
+	private TetrisButton _jbtChooseSpecials = new TetrisButton("Special Pieces...");
+	private TetrisButton _jbtChooseBlockStyles = new TetrisButton("Block Styles...");
+	private TetrisButton _jbtDBConfig = new TetrisButton("Database Connectivity...");
 	
-	private ItemListener ghostSquaresListener = new ItemListener() {
+	private ItemListener _ghostSquaresListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
-			if (jcbxGhostSquares.isSelected())
-				GameFrame.gameBoardPanel.paintGhostPiece();
+			if (_jcbxGhostSquares.isSelected())
+				GameFrame._gameBoardPanel.paintGhostPiece();
 			else 
-				GameFrame.gameBoardPanel.eraseGhostPiece();
+				GameFrame._gameBoardPanel.eraseGhostPiece();
 			
 			// In case ghost overlaps current piece
-			GameFrame.gameBoardPanel.paintCurrentPiece();
+			GameFrame._gameBoardPanel.paintCurrentPiece();
 			
 		}
 		
 	};
 	
-	private ItemListener musicListener = new ItemListener() {
+	private ItemListener _musicListener = new ItemListener() {
 		
 		public void itemStateChanged(ItemEvent e) {
 			
-			if (jcbxMusic.isSelected())
+			if (_jcbxMusic.isSelected())
 				AudioManager.resumeCurrentSoundtrack();
 			else
 				AudioManager.stopCurrentSoundtrack();
@@ -72,29 +73,29 @@ public class SettingsPanel extends JPanel {
 		setBorder(new TitledBorder("Settings"));
 		
 		JPanel checkboxes = new JPanel(new GridLayout(4,1));
-		for (JCheckBox x : new JCheckBox[]{jcbxGhostSquares, jcbxMusic, jcbxSoundEffects, jcbxSaveScores}) {
+		for (JCheckBox x : Arrays.asList(_jcbxGhostSquares, _jcbxMusic, _jcbxSoundEffects, _jcbxSaveScores)) {
 			checkboxes.add(x);
 			x.setFocusable(false);
 		}
 		
 		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diffPanel.add(new JLabel("Difficulty:  "));
-		diffPanel.add(jlstDifficulty);
+		diffPanel.add(_jlstDifficulty);
 		
 		JPanel buttonContainer = new JPanel(new GridLayout(3,1));
-		buttonContainer.add(jbtChooseSpecials);
-		buttonContainer.add(jbtChooseBlockStyles);
-		buttonContainer.add(jbtDBConfig);
+		buttonContainer.add(_jbtChooseSpecials);
+		buttonContainer.add(_jbtChooseBlockStyles);
+		buttonContainer.add(_jbtDBConfig);
 		
-		jbtChooseSpecials.addActionListener(new ActionListener() {
+		_jbtChooseSpecials.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new SpecialPiecesFrame(); }
 		});
 		
-		jbtChooseBlockStyles.addActionListener(new ActionListener() {
+		_jbtChooseBlockStyles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new BlockStylesFrame(); }
 		});
 		
-		jbtDBConfig.addActionListener(new ActionListener() {
+		_jbtDBConfig.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { new DBSettingsFrame(); }
 		});
 		
@@ -104,36 +105,36 @@ public class SettingsPanel extends JPanel {
 		
 	}
 	
-	public boolean ghostSquaresOn() { return jcbxGhostSquares.isSelected(); }
-	public boolean musicOn() { return jcbxMusic.isSelected(); }
-	public boolean effectsOn() { return jcbxSoundEffects.isSelected(); }
-	public boolean saveScoreOn() { return jcbxSaveScores.isSelected(); }
+	public boolean ghostSquaresOn() { return _jcbxGhostSquares.isSelected(); }
+	public boolean musicOn() { return _jcbxMusic.isSelected(); }
+	public boolean effectsOn() { return _jcbxSoundEffects.isSelected(); }
+	public boolean saveScoreOn() { return _jcbxSaveScores.isSelected(); }
 	
-	public int getDifficulty() { return jlstDifficulty.getSelectedIndex(); }
+	public int getDifficulty() { return _jlstDifficulty.getSelectedIndex(); }
 	
 	// Music checkbox gets its own unique enabling methods since it is enabled / disabled
 	// independently from the ghost squares checkbox in the MenuPanel class
-	void enableMusicCbxListener() { jcbxMusic.addItemListener(musicListener); }
-	void disableMusicCbxListener() { jcbxMusic.removeItemListener(musicListener); }
+	void enableMusicCbxListener() { _jcbxMusic.addItemListener(_musicListener); }
+	void disableMusicCbxListener() { _jcbxMusic.removeItemListener(_musicListener); }
 	
 	void enableCbxListeners() {
-		jcbxGhostSquares.addItemListener(ghostSquaresListener);
+		_jcbxGhostSquares.addItemListener(_ghostSquaresListener);
 		enableMusicCbxListener();
 	}
 	
 	void disableCbxListeners() {
-		jcbxGhostSquares.removeItemListener(ghostSquaresListener);
+		_jcbxGhostSquares.removeItemListener(_ghostSquaresListener);
 		disableMusicCbxListener();
 	}
 	
-	void enableDifficultyList() { jlstDifficulty.setEnabled(true); }
-	void enableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(true); }
-	void enableBlockStylesButton() { jbtChooseBlockStyles.setEnabled(true); }
-	void enableDatabaseConnectivityButton() { jbtDBConfig.setEnabled(true); }
+	void enableDifficultyList() { _jlstDifficulty.setEnabled(true); }
+	void enableSpecialPiecesButton() { _jbtChooseSpecials.setEnabled(true); }
+	void enableBlockStylesButton() { _jbtChooseBlockStyles.setEnabled(true); }
+	void enableDatabaseConnectivityButton() { _jbtDBConfig.setEnabled(true); }
 	
-	void disableDifficultyList() { jlstDifficulty.setEnabled(false); }
-	void disableSpecialPiecesButton() { jbtChooseSpecials.setEnabled(false); }
-	void disableBlockStylesButton() { jbtChooseBlockStyles.setEnabled(false); }
-	void disableDatabaseConnectivityButton() { jbtDBConfig.setEnabled(false); }
+	void disableDifficultyList() { _jlstDifficulty.setEnabled(false); }
+	void disableSpecialPiecesButton() { _jbtChooseSpecials.setEnabled(false); }
+	void disableBlockStylesButton() { _jbtChooseBlockStyles.setEnabled(false); }
+	void disableDatabaseConnectivityButton() { _jbtDBConfig.setEnabled(false); }
 		
 }

@@ -27,15 +27,14 @@ public class GameFrame extends JFrame {
 	
 	/** All major GUI components. Declared static so they can 'talk
 	 *  to each other through the GameFrame class **/
-	static GameBoardPanel gameBoardPanel = new GameBoardPanel();
-	static NextPiecePanel nextPiecePanel = new NextPiecePanel("Next Piece");
-	static NextPiecePanel holdPanel = new NextPiecePanel("Hold");
-	static ScorePanel scorePanel = new ScorePanel();
-	static MenuPanel menuPanel = new MenuPanel();
+	static GameBoardPanel _gameBoardPanel = new GameBoardPanel();
+	static NextPiecePanel _nextPiecePanel = new NextPiecePanel("Next Piece");
+	static NextPiecePanel _holdPanel = new NextPiecePanel("Hold");
+	static ScorePanel _scorePanel = new ScorePanel();
+	static MenuPanel _menuPanel = new MenuPanel();
 	
-	// This is public so it can be accessed by the AudioManager
-	// and GameBoardModel
-	public static SettingsPanel settingsPanel = new SettingsPanel();
+	// This is public so it can be accessed by the AudioManager and GameBoardModel
+	public static SettingsPanel _settingsPanel = new SettingsPanel();
 	
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
@@ -49,9 +48,9 @@ public class GameFrame extends JFrame {
 	GameFrame() {
 		
 		add(createHoldPanel(), BorderLayout.WEST);
-		add(gameBoardPanel, BorderLayout.CENTER);
+		add(_gameBoardPanel, BorderLayout.CENTER);
 		add(createInfoPanel(), BorderLayout.EAST);
-		add(menuPanel, BorderLayout.SOUTH);
+		add(_menuPanel, BorderLayout.SOUTH);
 		
 		FrameUtils.setIcon(this, "game-icon.png");
 		setTitle("Tetris");
@@ -66,7 +65,7 @@ public class GameFrame extends JFrame {
 	private JPanel createHoldPanel() {
 		
 		JPanel holdContainer = new JPanel(new BorderLayout());
-		holdContainer.add(holdPanel, BorderLayout.NORTH);
+		holdContainer.add(_holdPanel, BorderLayout.NORTH);
 		holdContainer.add(createControlsPanel(), BorderLayout.CENTER);
 		return holdContainer;
 		
@@ -78,9 +77,9 @@ public class GameFrame extends JFrame {
 		JPanel infoPanel = new JPanel(new BorderLayout());
 		
 		// Add all components to the info panel
-		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
-		infoPanel.add(scorePanel, BorderLayout.CENTER);
-		infoPanel.add(settingsPanel, BorderLayout.SOUTH);
+		infoPanel.add(_nextPiecePanel, BorderLayout.NORTH);
+		infoPanel.add(_scorePanel, BorderLayout.CENTER);
+		infoPanel.add(_settingsPanel, BorderLayout.SOUTH);
 		
 		return infoPanel;
 		

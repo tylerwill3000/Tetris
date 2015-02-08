@@ -12,37 +12,37 @@ import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
 
-// The GameBoardPanel is dedicated to the "View" portion
-// of the game area - it paints the panel according to the
-// existing piece configuration as specified by the GameBoardModel
-// as well as the active piece configuration as specified by
-// the current piece
+/**
+ * The GameBoardPanel is dedicated to the "View" portion of the game area - it paints the panel
+ * according to the existing piece configuration as specified by the GameBoardModel as well as
+ * the active piece configuration as specified by the current piece
+ * @author Tyler
+ */
 public class GameBoardPanel extends GridPainter {
 	
 	// Board dimensions
 	public static final int V_CELLS = 20;
 	public static final int H_CELLS = 10;
 	
-	// Amount to offset to get to the center of the board. Useful
-	// when calculating initial squares for pieces
+	// Amount to offset to get to the center of the board
 	public static final int CENTER_OFFSET = H_CELLS / 2;
 	
 	// List of spiral squares in order from the top left corner going inwards
 	private static final List<int[]> SPIRAL_SQUARES = initSpiralSquares();
 	
-	Thread spiralAnimation = new Thread(new SpiralAnimation());
-	Thread clearAnimation = new Thread(new ClearAnimation());
+	private Thread _spiralAnimation = new Thread(new SpiralAnimation());
+	private Thread _clearAnimation = new Thread(new ClearAnimation());
 	
 	// Keyboard listeners
-	private PieceMovementInput pieceMovementInput = new PieceMovementInput();
-	private MenuHotkeyInput menuHotkeyInput = new MenuHotkeyInput();
+	private PieceMovementInput _pieceMovementInput = new PieceMovementInput();
+	private MenuHotkeyInput _menuHotkeyInput = new MenuHotkeyInput();
 	
 	GameBoardPanel() {
 		
 		super(V_CELLS, H_CELLS);
 		
 		// Piece movement listener is added once start button is clicked
-		addKeyListener(menuHotkeyInput);
+		addKeyListener(_menuHotkeyInput);
 		
 		setFocusable(true);
 		setBorder(GameFrame.LINE_BORDER);
@@ -50,11 +50,11 @@ public class GameBoardPanel extends GridPainter {
 	}
 	
 	void enablePieceMovementInput() {
-		addKeyListener(pieceMovementInput);
+		addKeyListener(_pieceMovementInput);
 	}
 	
 	void disablePieceMovementInput() {
-		removeKeyListener(pieceMovementInput);
+		removeKeyListener(_pieceMovementInput);
 	}
 	
 	// Listener for the piece movement input from the keyboard
@@ -77,8 +77,8 @@ public class GameBoardPanel extends GridPainter {
 					
 					eraseCurrentAndGhost();
 					
-					while (currentPiece.canMove(0,-1))
-						currentPiece.move(0,-1);
+					while (_currentPiece.canMove(0,-1))
+						_currentPiece.move(0,-1);
 					
 					AudioManager.playSuperslideSound();
 					
@@ -86,9 +86,9 @@ public class GameBoardPanel extends GridPainter {
 					
 				}
 				
-				else if (currentPiece.canMove(0,-1)) {
+				else if (_currentPiece.canMove(0,-1)) {
 					eraseCurrentAndGhost();
-					currentPiece.move(0,-1);
+					_currentPiece.move(0,-1);
 					paintCurrentAndGhost();
 				}
 				
@@ -101,8 +101,8 @@ public class GameBoardPanel extends GridPainter {
 					
 					eraseCurrentAndGhost();
 					
-					while (currentPiece.canMove(0,1))
-						currentPiece.move(0,1);
+					while (_currentPiece.canMove(0,1))
+						_currentPiece.move(0,1);
 					
 					AudioManager.playSuperslideSound();
 					
@@ -110,9 +110,9 @@ public class GameBoardPanel extends GridPainter {
 					
 				}
 				
-				else if (currentPiece.canMove(0,1)) {
+				else if (_currentPiece.canMove(0,1)) {
 					eraseCurrentAndGhost();
-					currentPiece.move(0,1);
+					_currentPiece.move(0,1);
 					paintCurrentAndGhost();
 				}					
 				
@@ -120,9 +120,9 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_DOWN:
 				
-				if (currentPiece.canMove(1,0)) {
+				if (_currentPiece.canMove(1,0)) {
 					eraseCurrentPiece();
-					currentPiece.move(1,0);
+					_currentPiece.move(1,0);
 					paintCurrentPiece();
 				}
 				
@@ -130,9 +130,9 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_UP:
 					
-				if (currentPiece.canRotate(1)) {
+				if (_currentPiece.canRotate(1)) {
 					eraseCurrentAndGhost();
-					currentPiece.rotate(1);
+					_currentPiece.rotate(1);
 					AudioManager.playCWRotationSound();
 					paintCurrentAndGhost();
 				}
@@ -142,9 +142,9 @@ public class GameBoardPanel extends GridPainter {
 				
 			case KeyEvent.VK_F:
 				
-				if (currentPiece.canRotate(-1)) {
+				if (_currentPiece.canRotate(-1)) {
 					eraseCurrentAndGhost();
-					currentPiece.rotate(-1);
+					_currentPiece.rotate(-1);
 					AudioManager.playCCWRotationSound();
 					paintCurrentAndGhost();
 				}
@@ -156,38 +156,38 @@ public class GameBoardPanel extends GridPainter {
 				
 				// Can't hold a new piece if you're already holding one or the
 				// piece has been tagged as a hold piece (these must be placed)
-				if (GameFrame.holdPanel.currentPiece != null || currentPiece.isHoldPiece())
+				if (GameFrame._holdPanel._currentPiece != null || _currentPiece.isHoldPiece())
 					return;
 				
-				currentPiece.tagAsHoldPiece();
-				GameFrame.holdPanel.currentPiece = currentPiece;
-				GameFrame.holdPanel.paintCurrentPiece();
+				_currentPiece.tagAsHoldPiece();
+				GameFrame._holdPanel._currentPiece = _currentPiece;
+				GameFrame._holdPanel.paintCurrentPiece();
 				
 				eraseCurrentAndGhost();
-				GameFrame.nextPiecePanel.clear();
+				GameFrame._nextPiecePanel.clear();
 				
 				AudioManager.playHoldSound();
 				
 				Controller.moveConveyorBelt();
 				
 				paintCurrentAndGhost();
-				GameFrame.nextPiecePanel.paintCurrentPiece();
+				GameFrame._nextPiecePanel.paintCurrentPiece();
 			
 				break;
 			
 			// Hold release
 			case KeyEvent.VK_E:
 				
-				if (GameFrame.holdPanel.currentPiece == null) return;
+				if (GameFrame._holdPanel._currentPiece == null) return;
 				
 				eraseCurrentAndGhost();
-				GameFrame.holdPanel.clear();
+				GameFrame._holdPanel.clear();
 				
 				AudioManager.playReleaseSound();
 				
-				currentPiece = GameFrame.holdPanel.currentPiece;
-				GameFrame.holdPanel.currentPiece = null;
-				currentPiece.setInitialSquares();		
+				_currentPiece = GameFrame._holdPanel._currentPiece;
+				GameFrame._holdPanel._currentPiece = null;
+				_currentPiece.setInitialSquares();		
 				
 				paintCurrentAndGhost();
 				
@@ -197,15 +197,15 @@ public class GameBoardPanel extends GridPainter {
 				
 				eraseCurrentPiece();
 				
-				while (currentPiece.canMove(1,0))
-					currentPiece.move(1,0);
+				while (_currentPiece.canMove(1,0))
+					_currentPiece.move(1,0);
 				
 				paintCurrentPiece();
 				
 				AudioManager.playPiecePlacementSound();
 				
 				// Force the next tick to execute immediately on the timer
-				Controller.fallTimer.restart();
+				Controller._fallTimer.restart();
 				
 				break;
 				
@@ -231,29 +231,29 @@ public class GameBoardPanel extends GridPainter {
 				// Only perform a do-click when timer is stopped. Otherwise,
 				// the button click animation gets annoying when pressing
 				// 's' to do a super-slide
-				if (!Controller.fallTimer.isRunning())
-					GameFrame.menuPanel.start.doClick();
+				if (!Controller._fallTimer.isRunning())
+					GameFrame._menuPanel._btnStart.doClick();
 				
 				break;
 			
 			case KeyEvent.VK_P:
 				
-				GameFrame.menuPanel.pause.doClick();
+				GameFrame._menuPanel._btnPause.doClick();
 				break;
 				
 			case KeyEvent.VK_R:
 				
-				GameFrame.menuPanel.resume.doClick();
+				GameFrame._menuPanel._btnResume.doClick();
 				break;
 				
 			case KeyEvent.VK_G:
 				
-				GameFrame.menuPanel.giveUp.doClick();
+				GameFrame._menuPanel._btnGiveUp.doClick();
 				break;
 			
 			case KeyEvent.VK_H:
 				
-				GameFrame.menuPanel.highScores.doClick();
+				GameFrame._menuPanel._btnHighScores.doClick();
 				break;
 			
 			}
@@ -272,64 +272,66 @@ public class GameBoardPanel extends GridPainter {
 		eraseCurrentPiece();
 	}
 	
-	// Lowers the currently active piece down 1 square
+	/**
+	 *  Lowers the currently active piece down 1 square
+	 */
 	void lowerPiece() {
 		eraseCurrentPiece();
-		currentPiece.move(1,0);
+		_currentPiece.move(1,0);
 		paintCurrentPiece();
 	}
 	
-	// Repaints the specified row according to the GameBoardModel
+	/**
+	 *  Repaints the specified row according to the GameBoardModel
+	 * @param row The row to be repainted
+	 */
 	void paintRow(int row) {
 		
 		// Iterate over all cell values in the row
 		for (int cell = 0; cell < H_CELLS; cell++) {
-			
-			// If square is occupied, paint the color. Else,
-			// erase any current contents that may have been
-			// occupying that square
 			if (GameBoardModel.isSquareOccupied(row, cell))
 				paintSquare(row, cell, GameBoardModel.getColor(row, cell));
 			else 
 				eraseSquare(row, cell);
-			
 		}
 		
 	}
 	
-	// Flashes the specified row white (with no border)
+	/**
+	 *  Flashes the specified row white (with no border)
+	 * @param row The row to flash
+	 */
 	private void flashRow(int row) {
-		
 		for (int cell = 0; cell < H_CELLS; cell++) {
-			JPanelGrid[row][cell].setBorder(null);
-			JPanelGrid[row][cell].setBackground(Color.WHITE);
+			_JPanelGrid[row][cell].setBorder(null);
+			_JPanelGrid[row][cell].setBackground(Color.WHITE);
 		}
-		
 	}
 	
 	void paintCurrentPiece() {
-		paintSquares(currentPiece.getLitSquares(), currentPiece.getColor());
+		paintSquares(_currentPiece.getLitSquares(), _currentPiece.getColor());
 	}
 	
 	void paintGhostPiece() {
 		
-		if (!GameFrame.settingsPanel.ghostSquaresOn())
+		if (!GameFrame._settingsPanel.ghostSquaresOn())
 			return;
 		
-		paintSquares(currentPiece.getGhostSquares(), null);
+		paintSquares(_currentPiece.getGhostSquares(), null);
 	
 	}
 	
 	void eraseCurrentPiece() {
-		eraseSquares(currentPiece.getLitSquares());
+		eraseSquares(_currentPiece.getLitSquares());
 	}
 	
 	void eraseGhostPiece() {
-		eraseSquares(currentPiece.getGhostSquares());
+		eraseSquares(_currentPiece.getGhostSquares());
 	}
 	
-	// Reprints all panels on the game board according to
-	// the grid model
+	/**
+	 *  Reprints all panels on the game board according to the game grid model
+	 */
 	void fullReprint() {
 		
 		// Start at row 3 since 3 invisible rows at the top are not printed
@@ -337,18 +339,24 @@ public class GameBoardPanel extends GridPainter {
 		
 	}
 	
-	// Fills in all squares in the grid in a spiral pattern.
+	/**
+	 * Fills in all squares in the grid in a spiral pattern.
+	 */
 	void startSpiralAnimation() {
-		GameFrame.THREAD_EXECUTOR.execute(spiralAnimation);
+		GameFrame.THREAD_EXECUTOR.execute(_spiralAnimation);
 	}
 	
-	// Erases all squares in the grid after filling them bottom to top
+	/** 
+	 * Erases all squares in the grid after filling them bottom to top
+	 */
 	void startClearAnimation() {
-		GameFrame.THREAD_EXECUTOR.execute(clearAnimation);
+		GameFrame.THREAD_EXECUTOR.execute(_clearAnimation);
 	}
 	
-	// Builds the list of spiral squares. Squares are in order
-	// from the top left corner spiraling inwards, CCW
+	/**
+	 *  Builds the list of spiral squares. Squares are in order
+	 * from the top left corner spiraling inwards, CCW
+	 */
 	private static List<int[]> initSpiralSquares() {
 		
 		List<int[]> squares = new ArrayList<int[]>();
@@ -401,7 +409,10 @@ public class GameBoardPanel extends GridPainter {
 
 /***************** Thread task classes *****************/	
 	
-	// Thread task class for painting the game over fill
+	/**
+	 *  Thread task class for painting the game over fill
+	 * @author Tyler
+	 */
 	private class SpiralAnimation implements Runnable {
 		
 		private final static int SLEEP_INTERVAL = 8;
@@ -427,10 +438,10 @@ public class GameBoardPanel extends GridPainter {
 			}
 			
 			// Re-enable the start button once the spiral loop is completed
-			GameFrame.menuPanel.enableStartButton();
+			GameFrame._menuPanel.enableStartButton();
 			
 			// Ask player to save score
-			if (GameFrame.settingsPanel.saveScoreOn()) new SaveScoreFrame();
+			if (GameFrame._settingsPanel.saveScoreOn()) new SaveScoreFrame();
 			
 			}
 			catch (InterruptedException e) {} // Munch
@@ -439,9 +450,12 @@ public class GameBoardPanel extends GridPainter {
 		
 	}
 	
-	// Runnable task class that is started upon game complete
-	// to clear the board. Fills all rows bottom to top, and then
-	// clears all rows top to bottom
+	/**
+	 * Runnable task class that is started upon game complete
+	 * to clear the board. Fills all rows bottom to top, and then
+	 * clears all rows top to bottom
+	 * @author Tyler
+	 */
 	private class ClearAnimation implements Runnable {
 		
 		private final static int SLEEP_INTERVAL = 82;
@@ -477,10 +491,10 @@ public class GameBoardPanel extends GridPainter {
 			}
 			
 			// Re-enable start button
-			GameFrame.menuPanel.enableStartButton();
+			GameFrame._menuPanel.enableStartButton();
 			
 			// Ask player to save score
-			if (GameFrame.settingsPanel.saveScoreOn()) new SaveScoreFrame();
+			if (GameFrame._settingsPanel.saveScoreOn()) new SaveScoreFrame();
 			
 			}
 			catch (InterruptedException e) {}
@@ -489,9 +503,12 @@ public class GameBoardPanel extends GridPainter {
 		
 	}
 	
-	// Thread task class for flashing a row a couple times.
-	// Used when lines are cleared. NOTE: this isn't working
-	// right now! I'm not sure if I will ever fix it...
+	/**
+	 * Thread task class for flashing a row a couple times.
+	 * Used when lines are cleared. NOTE: this isn't working
+	 * right now! I'm not sure if I will ever fix it...
+	 * @author Tyler
+	 */
 	class FlashRowsTask implements Runnable {
 		
 		private List<Integer> rowsToFlash;
@@ -506,7 +523,6 @@ public class GameBoardPanel extends GridPainter {
 			for (int i = 1; i <= 9; i ++) {
 				
 				for (Integer row : rowsToFlash) {
-					
 					if (i % 2 == 0)
 						paintRow(row);
 					else

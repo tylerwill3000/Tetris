@@ -7,16 +7,24 @@ import javax.swing.border.TitledBorder;
 
 import model.Piece;
 
+/**
+ * These are panels that are designed to display a still piece on them
+ * @author Tyler
+ */
 public class NextPiecePanel extends GridPainter {
 	
-	// Contruct a next piece panel with the specified title and initial starting piece
+	/**
+	 *  Contruct a next piece panel with the specified title and initial starting piece
+	 */
 	public NextPiecePanel(String title, Piece currentPiece) {
 		this(title);
-		this.currentPiece = currentPiece;
+		this._currentPiece = currentPiece;
 		paintCurrentPiece();
 	}
 	
-	// Construct a next piece panel with just the title. Initial piece is set later
+	/**
+	 *  Construct a next piece panel with just the title. Initial piece is set later
+	 */
 	NextPiecePanel(String title) {
 		super(4,5);
 		setBorder(new TitledBorder(title));
@@ -33,14 +41,16 @@ public class NextPiecePanel extends GridPainter {
 	}
 	
 	public void paintCurrentPiece() {
-		paintSquares(currentPiece.getNextPanelSquares(), currentPiece.getColor());
+		paintSquares(_currentPiece.getNextPanelSquares(), _currentPiece.getColor());
 	}
 	
-	// Clears all squares on the panel. Used before printing a new next piece
+	/**
+	 *  Clears all squares on the panel. Used before printing a new next piece
+	 */
 	public void clear() {
 
-		for (int row = 0; row < JPanelGrid.length; row++)
-			for (int col = 0; col < JPanelGrid[row].length; col++)
+		for (int row = 0; row < _JPanelGrid.length; row++)
+			for (int col = 0; col < _JPanelGrid[row].length; col++)
 				eraseSquare(row, col);
 	
 	}
