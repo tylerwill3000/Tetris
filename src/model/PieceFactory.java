@@ -374,6 +374,7 @@ public final class PieceFactory {
 		
 		private static List<PieceType> getInitialPieces() {
 			return Arrays.asList(
+				BOX,
 				L_BLOCK_L,
 				L_BLOCK_R,
 				S_BLOCK_L,
