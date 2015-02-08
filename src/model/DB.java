@@ -17,7 +17,7 @@ import ui.SettingsPanel;
  * @author Tyler
  *
  */
-public class DBComm {
+public class DB {
 	
 	static { // Statically load DB driver upon class load
 		try { Class.forName("com.mysql.jdbc.Driver"); }
@@ -123,20 +123,14 @@ public class DBComm {
 			// Populate data
 			while (scores.next()) {
 				
-				Object[] rowData = new Object[colCount];
-				
-				rowData[0] = scoreIDToRank.get(scores.getInt(1)); // Pull rank from map
-				rowData[1] = scores.getString(2); // Name
-				rowData[2] = scores.getInt(3); // Score
-				rowData[3] = scores.getInt(4); // Lines
-				
-				int level = scores.getInt(5);				
-				int diff = scores.getInt(6);
-				
-				rowData[4] = level == 11 ? "Complete" : level; // Level
-				rowData[5] = SettingsPanel.DIFFICULTIES[diff]; // Difficulty
-				
-				data.add(rowData);
+				data.add(new Object[]{
+					scoreIDToRank.get(scores.getInt(1)), // Score ID, pulled from map
+					scores.getString(2), // Player name
+					scores.getInt(3), // Score
+					scores.getInt(4), // Level
+					scores.getInt(5) == 11 ? "Complete" : scores.getInt(5), // Lines
+					SettingsPanel.DIFFICULTIES[scores.getInt(6)] // Difficulty string
+				});
 				
 			}
 			

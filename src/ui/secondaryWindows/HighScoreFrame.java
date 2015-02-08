@@ -21,7 +21,7 @@ import javax.swing.table.TableCellRenderer;
 
 import ui.components.CloseFrameButton;
 import ui.util.FrameUtils;
-import model.DBComm;
+import model.DB;
 import model.Properties;
 
 public class HighScoreFrame extends JFrame {
@@ -107,7 +107,7 @@ public class HighScoreFrame extends JFrame {
 		
 		Object[][] data = null;
 		try {
-			data = DBComm.getHighScoresData(numRecords, difficulty);
+			data = DB.getHighScoresData(numRecords, difficulty);
 		}
 		catch (ClassNotFoundException | SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Database error: " + e1.getMessage());

@@ -17,7 +17,7 @@ import ui.GameFrame;
 import ui.components.CloseFrameButton;
 import ui.components.TetrisButton;
 import ui.util.FrameUtils;
-import model.DBComm;
+import model.DB;
 import model.GameBoardModel;
 import model.Properties;
 
@@ -49,7 +49,7 @@ public class SaveScoreFrame extends JFrame {
 			int rank = 0;
 			try {
 				
-				rank = DBComm.writeScore(
+				rank = DB.writeScore(
 					saveName,
 					GameBoardModel.getScore(),
 					GameBoardModel.getLevel(),
