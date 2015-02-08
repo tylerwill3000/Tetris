@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import model.PieceFactory.PieceType;
 import ui.GameBoardPanel;
 import ui.GameFrame;
 
@@ -26,11 +27,11 @@ public class GameBoardModel {
 	// Amount of milliseconds the timer delay decreases each level
 	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
 	
-	private static final Map<PieceFactory.PieceType, Integer> SPECIAL_PIECE_BONUSES = new HashMap<>();
+	private static final Map<PieceType, Integer> SPECIAL_PIECE_BONUSES = new HashMap<>();
 	static {
-		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.TWIN_PILLARS, 4);
-		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.ROCKET, 6);
-		SPECIAL_PIECE_BONUSES.put(PieceFactory.PieceType.DIAMOND, 10);
+		SPECIAL_PIECE_BONUSES.put(PieceType.TWIN_PILLARS, 4);
+		SPECIAL_PIECE_BONUSES.put(PieceType.ROCKET, 6);
+		SPECIAL_PIECE_BONUSES.put(PieceType.DIAMOND, 10);
 	}
 	
 	// Represents colors on the game grid
@@ -48,8 +49,7 @@ public class GameBoardModel {
 	private static int level = 0;
 	
 	// Flag for whether or not the player just increased level.
-	// Used by the GUI components to know when to process level
-	// up functions
+	// Used by the GUI components to know when to process level up functions
 	public static boolean justLeveled = false;
 	
 	public static Color getColor(int row, int col) { return quilt.get(row)[col]; }
@@ -73,7 +73,7 @@ public class GameBoardModel {
 	public static int getScore() { return score; }
 	public static int getLevel() { return level; }
 	
-	public static int getSpecialPieceBonusPoints(PieceFactory.PieceType pieceType) {
+	public static int getSpecialPieceBonusPoints(PieceType pieceType) {
 		return SPECIAL_PIECE_BONUSES.get(pieceType);
 	}
 	
@@ -88,27 +88,14 @@ public class GameBoardModel {
 	 */
 	public static List<Integer> addPiece(Piece p) {
 		
-		// Log all colors for this piece
 		for (int[] litSquare : p.getLitSquares())
 			setColor(p.getColor(), litSquare[0], litSquare[1]);
-		
-		return getCompleteLines(p);
-	
-	}
-	
-	/**
-	 * Returns a list of complete lines on the grid
-	 * 
-	 * @param justPlaced The piece most recently placed on the grid
-	 * @return A list of line indices denoting complete lines on the grid
-	 */
-	private static List<Integer> getCompleteLines(Piece justPlaced) {
 		
 		List<Integer> completeLines = new ArrayList<>();
 		
 		// Iterate from the bottom row of the piece's bounding
 		// matrix upwards to check for complete lines
-		int startRow = justPlaced.getRow();
+		int startRow = p.getRow();
 		
 		// The highest bounding matrix is 4 units (for the straight line),
 		// so you'll never have to search further than that to find completed
@@ -150,7 +137,6 @@ public class GameBoardModel {
 			
 		}
 		
-		// Increase the score, passing the number of lines removed
 		increaseScore(toRemove.size());
 		
 	}
@@ -162,7 +148,7 @@ public class GameBoardModel {
 		score += (linePoints + difficultyBonus);
 		
 		// Add bonuses for all special pieces
-		for (PieceFactory.PieceType pieceType : PieceFactory.PieceType.getSpecialPieces()) {
+		for (PieceType pieceType : PieceType.getSpecialPieces()) {
 			if (PieceFactory.isPieceActive(pieceType))
 				score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceType));
 		}
@@ -186,9 +172,7 @@ public class GameBoardModel {
 	}
 	
 	public static boolean isSquareOccupied(int row, int col) { 
-		
 		return (row < 0 ? false : getColor(row, col) != null);
-		
 	}
 	
 	private static boolean isInBoundsSquare(int row, int col) {
