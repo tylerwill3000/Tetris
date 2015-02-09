@@ -26,6 +26,11 @@ public final class Properties {
 	private final static String DB_NAME_KEY = "db.name";
 	private final static String DB_USER_KEY = "db.user";
 	private final static String DB_PASS_KEY = "db.pass";
+	private final static String GHOST_SQUARES_KEY = "ghost.squares";
+	private final static String MUSIC_KEY = "music.on";
+	private final static String SOUNDS_EFFECTS_KEY = "sound.effects.on";
+	private final static String SAVE_SCORES_KEY = "save.scores";
+	private final static String TIME_ATTACK_KEY = "time.attack";
 	private final static String PLAYER_SAVE_NAME_KEY = "player.save.name";
 	private final static String PIECE_BORDER_STYLE_KEY = "piece.border.style";
 	private final static String HIGH_SCORES_RECORD_KEY = "highscores.record.count";
@@ -61,6 +66,54 @@ public final class Properties {
 	
 	public static void setDBPassProperty(String pass) {
 		GAME_PROPERTIES.setProperty(DB_PASS_KEY, pass);
+	}
+	
+	private static boolean getCbxProperty(String key) {
+		return GAME_PROPERTIES.getProperty(key).equals("true");
+	}
+	
+	private static void setCbxProperty(String key, boolean on) {
+		GAME_PROPERTIES.setProperty(key, String.valueOf(on));
+	}
+	
+	public static boolean getGhostSquaresProperty() {
+		return getCbxProperty(GHOST_SQUARES_KEY);
+	}
+	
+	public static void setGhostSquaresProperty(boolean on) {
+		setCbxProperty(GHOST_SQUARES_KEY, on);
+	}
+	
+	public static boolean getMusicProperty() {
+		return getCbxProperty(MUSIC_KEY);
+	}
+	
+	public static void setMusicProperty(boolean on) {
+		setCbxProperty(MUSIC_KEY, on);
+	}
+	
+	public static boolean getSoundEffectsProperty() {
+		return getCbxProperty(SOUNDS_EFFECTS_KEY);
+	}
+	
+	public static void setSoundEffectsProperty(boolean on) {
+		setCbxProperty(SOUNDS_EFFECTS_KEY, on);
+	}
+	
+	public static boolean getSaveScoresProperty() {
+		return getCbxProperty(SAVE_SCORES_KEY);
+	}
+	
+	public static void setSaveScoresProperty(boolean on) {
+		setCbxProperty(SAVE_SCORES_KEY, on);
+	}
+	
+	public static boolean getTimeAttackProperty() {
+		return getCbxProperty(TIME_ATTACK_KEY);
+	}
+	
+	public static void setTimeAttackProperty(boolean on) {
+		setCbxProperty(TIME_ATTACK_KEY, on);
 	}
 	
 	public static String getPlayerSaveName() {
@@ -134,6 +187,11 @@ public final class Properties {
 		setDBNameProperty("your database name");
 		setDBUserProperty("your database user");
 		setDBPassProperty("");
+		setGhostSquaresProperty(true);
+		setMusicProperty(true);
+		setSoundEffectsProperty(true);
+		setSaveScoresProperty(true);
+		setTimeAttackProperty(false);
 		setPlayerSaveName("player1");
 		setPieceBorderProperty(0);
 		
