@@ -8,7 +8,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
-import ui.util.FrameUtils;
+import util.FrameUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

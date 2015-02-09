@@ -2,13 +2,10 @@ package ui;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
 import model.GameBoardModel;
@@ -19,20 +16,10 @@ import model.GameBoardModel;
  */
 public class ScorePanel extends JPanel {
 	
-	private int _gameTimeMillis = 0;
-	private final static int MILLIS_PER_MINUTE = 60000;
-	
 	private JLabel _jlbScoreLabel = new JLabel("Score: 0", JLabel.CENTER);
 	private JLabel _jlbTotalLinesLabel = new JLabel("Lines: 0", JLabel.CENTER);
 	private JLabel _jlbLevelLabel = new JLabel("Level: 1", JLabel.CENTER);
 	private JLabel _jlbTime = new JLabel("Time: 00:00", JLabel.CENTER);
-	
-	private Timer _gameTimer = new Timer(1000, new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			_jlbTime.setText("Time: " + getGameTimeString());
-			_gameTimeMillis += 1000;
-		}
-	});
 	
 	private final FlashTextTask FLASH_WIN = new FlashTextTask("You Win!!!", Color.YELLOW);
 	private final FlashTextTask FLASH_GAME_OVER = new FlashTextTask("Game Over!!!", Color.RED);
@@ -50,24 +37,6 @@ public class ScorePanel extends JPanel {
 	}
 	
 	/**
-	 * Converts the game time elapsed milliseconds to a string representation
-	 * in the format '[minutes]:[seconds]'. Each section (minutes, seconds)
-	 * will be at most 2 digits long
-	 */
-	public String getGameTimeString() {
-		
-		String totalMinutes = String.valueOf(_gameTimeMillis / MILLIS_PER_MINUTE);
-		String totalSeconds = String.valueOf(_gameTimeMillis % MILLIS_PER_MINUTE / 1000);
-		
-		// Pad with opening zero if necessary
-		if (totalMinutes.length() == 1) totalMinutes = "0" + totalMinutes;
-		if (totalSeconds.length() == 1) totalSeconds = "0" + totalSeconds;
-		
-		return totalMinutes + ":" + totalSeconds;
-		
-	}
-	
-	/**
 	 *  Pulls the current data from the GameBoardModel and then displays it
 	 */
 	void refreshScoreInfo() {
@@ -76,17 +45,8 @@ public class ScorePanel extends JPanel {
 		_jlbLevelLabel.setText("Level: " + GameBoardModel.getLevel());
 	}
 	
-	void startGameTimer() { _gameTimer.start(); }
-	void stopGameTimer() { _gameTimer.stop(); }
-	
-	/**
-	 * Resets current game time int to 0, the game time label text to '00:00' and then
-	 * restarts the actual timer
-	 */
-	void restartGameTimer() {
-		_jlbTime.setText("Time: 00:00");
-		_gameTimeMillis = 0;
-		_gameTimer.restart();
+	public void setTimeLabel(String label) {
+		_jlbTime.setText(label);
 	}
 	
 	/**

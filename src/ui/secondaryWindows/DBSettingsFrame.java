@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import ui.util.FrameUtils;
+import util.FrameUtils;
 import model.Properties;
 
 public class DBSettingsFrame extends SupplementarySettingsFrame {

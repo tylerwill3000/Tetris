@@ -1,6 +1,8 @@
 package model;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,9 +10,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Timer;
+
 import model.PieceFactory.PieceType;
 import ui.GameBoardPanel;
 import ui.GameFrame;
+import util.FormatUtils;
 
 /**
  *  Describes the current configuration of pieces placed on the
@@ -18,6 +23,23 @@ import ui.GameFrame;
  * @author Tyler
  */
 public class GameBoardModel {
+	
+	private GameBoardModel() {}
+	
+	/**
+	 * Keeps track of amount of time elapsed for this game session
+	 */
+	private static long _gameTimeMillis = 0;
+	
+	/**
+	 * Increments time elapsed for this game session
+	 */
+	private static Timer _gameTimer = new Timer(1000, new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			GameFrame._scorePanel.setTimeLabel("Time: " + FormatUtils.millisToString(_gameTimeMillis));
+			_gameTimeMillis += 1000;
+		}
+	});
 	
 	public static final int INITIAL_TIMER_DELAY = 600;
 	
@@ -72,12 +94,24 @@ public class GameBoardModel {
 	public static int getLinesCompleted() { return _linesCompleted; }
 	public static int getScore() { return _score; }
 	public static int getLevel() { return _level; }
+	public static long getCurrentGameTime() { return _gameTimeMillis; }
 	
 	public static int getSpecialPieceBonusPoints(PieceType pieceType) {
 		return SPECIAL_PIECE_BONUSES.get(pieceType);
 	}
 	
-	private GameBoardModel() {}
+	public static void startGameTimer() { _gameTimer.start(); }
+	public static void stopGameTimer() { _gameTimer.stop(); }
+	
+	/**
+	 * Resets current game time int to 0, the game time label text to '00:00' and then
+	 * restarts the actual timer
+	 */
+	public static void restartGameTimer() {
+		GameFrame._scorePanel.setTimeLabel("Time: 00:00");
+		_gameTimeMillis = 0;
+		_gameTimer.restart();
+	}
 	
 	/**
 	 *  Adds the active squares for a piece to the quilt.

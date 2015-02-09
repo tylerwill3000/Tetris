@@ -1,4 +1,4 @@
-package ui.util;
+package util;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;

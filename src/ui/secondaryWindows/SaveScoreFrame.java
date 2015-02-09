@@ -16,7 +16,8 @@ import javax.swing.JTextField;
 import ui.GameFrame;
 import ui.components.CloseFrameButton;
 import ui.components.TetrisButton;
-import ui.util.FrameUtils;
+import util.FormatUtils;
+import util.FrameUtils;
 import model.DB;
 import model.GameBoardModel;
 import model.Properties;
@@ -55,7 +56,7 @@ public class SaveScoreFrame extends JFrame {
 					GameBoardModel.getLevel(),
 					GameBoardModel.getLinesCompleted(),
 					GameFrame._settingsPanel.getDifficulty(),
-					GameFrame._scorePanel.getGameTimeString()
+					FormatUtils.millisToString(GameBoardModel.getCurrentGameTime())
 				);
 				
 			}

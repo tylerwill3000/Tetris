@@ -419,7 +419,7 @@ public class GameBoardPanel extends GridPainter {
 		
 		public void run() {
 			
-			GameFrame._scorePanel.stopGameTimer();
+			GameBoardModel.stopGameTimer();
 			
 			try { // In order to catch InterupptedException from calling Thread.sleep
 			
@@ -464,7 +464,7 @@ public class GameBoardPanel extends GridPainter {
 		
 		public void run() {
 			
-			GameFrame._scorePanel.stopGameTimer();
+			GameBoardModel.stopGameTimer();
 			
 			try {
 			

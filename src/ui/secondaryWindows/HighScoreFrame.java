@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import ui.components.CloseFrameButton;
-import ui.util.FrameUtils;
+import util.FrameUtils;
 import model.DB;
 import model.Properties;
 

@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
 
 import ui.GameFrame;
 import ui.NextPiecePanel;
-import ui.util.FrameUtils;
+import util.FrameUtils;
 import model.GameBoardModel;
 import model.Piece;
 import model.PieceFactory;

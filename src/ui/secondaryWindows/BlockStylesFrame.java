@@ -12,7 +12,7 @@ import javax.swing.border.Border;
 
 import ui.GameFrame;
 import ui.NextPiecePanel;
-import ui.util.FrameUtils;
+import util.FrameUtils;
 import model.Piece;
 import model.PieceFactory.PieceType;
 import model.Properties;

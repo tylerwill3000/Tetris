@@ -43,7 +43,7 @@ public class MenuPanel extends JPanel {
 			
 			// Clears all old score info from previous games
 			GameFrame._scorePanel.refreshScoreInfo();
-			GameFrame._scorePanel.restartGameTimer();
+			GameBoardModel.restartGameTimer();
 			
 			Controller._fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
 			
@@ -98,7 +98,7 @@ public class MenuPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			
 			Controller._fallTimer.stop();
-			GameFrame._scorePanel.stopGameTimer();
+			GameBoardModel.stopGameTimer();
 			
 			// Don't allow sound to be turned on / off when game is paused
 			GameFrame._settingsPanel.disableMusicCbxListener();
@@ -122,7 +122,7 @@ public class MenuPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			
 			Controller._fallTimer.start();
-			GameFrame._scorePanel.startGameTimer();
+			GameBoardModel.startGameTimer();
 			
 			// Re-enable sound to be turned on / off instantly on
 			// checkbox change
