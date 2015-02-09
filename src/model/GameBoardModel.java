@@ -1,78 +1,24 @@
 package model;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.Timer;
-
-import model.PieceFactory.PieceType;
 import ui.GameBoardPanel;
-import ui.GameFrame;
-import util.FormatUtils;
 
 /**
- *  Describes the current configuration of pieces placed on the
- *  grid as well as keeps track of scoring info
+ *  Describes the current configuration of pieces placed on the grid and
+ *  handles placement of new pieces
  * @author Tyler
  */
-public class GameBoardModel {
+public final class GameBoardModel {
 	
 	private GameBoardModel() {}
 	
-	/**
-	 * Keeps track of amount of time elapsed for this game session
-	 */
-	private static long _gameTimeMillis = 0;
-	
-	/**
-	 * Increments time elapsed for this game session
-	 */
-	private static Timer _gameTimer = new Timer(1000, new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			GameFrame._scorePanel.setTimeLabel("Time: " + FormatUtils.millisToString(_gameTimeMillis));
-			_gameTimeMillis += 1000;
-		}
-	});
-	
-	public static final int INITIAL_TIMER_DELAY = 600;
-	
-	// Bonus points granted upon winning the game. Determined by difficulty
-	private static final int[] WIN_BONUSES = {500,750,1000};
-	
-	// Amount of milliseconds the timer delay decreases each level
-	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
-	
-	private static final Map<PieceType, Integer> SPECIAL_PIECE_BONUSES = new HashMap<>();
-	static {
-		SPECIAL_PIECE_BONUSES.put(PieceType.TWIN_PILLARS, 4);
-		SPECIAL_PIECE_BONUSES.put(PieceType.ROCKET, 6);
-		SPECIAL_PIECE_BONUSES.put(PieceType.DIAMOND, 10);
-	}
-	
 	// Represents colors on the game grid
 	private static LinkedList<Color[]> _quilt;
-	
-	// Index of the selected option in the difficulty list is used
-	// to index into this array to get lines per level
-	private static final int[] LINES_PER_LEVEL = {15,20,25};
-	
-	// Point values per line based on lines cleared
-	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
-	
-	private static int _linesCompleted = 0;
-	private static int _score = 0;
-	private static int _level = 0;
-	
-	// Flag for whether or not the player just increased level.
-	// Used by the GUI components to know when to process level up functions
-	public static boolean _justLeveled = false;
 	
 	public static Color getColor(int row, int col) { return _quilt.get(row)[col]; }
 	
@@ -83,34 +29,6 @@ public class GameBoardModel {
 		
 		_quilt.get(row)[col] = c;
 		
-	}
-	
-	// Returns calculated timer delay based on current level and difficulty
-	public static int getCurrentTimerDelay() {
-		int milliDecrease = TIMER_DECREASE_RATES[GameFrame._settingsPanel.getDifficulty()] * (_level - 1);
-		return INITIAL_TIMER_DELAY - milliDecrease;
-	}
-	
-	public static int getLinesCompleted() { return _linesCompleted; }
-	public static int getScore() { return _score; }
-	public static int getLevel() { return _level; }
-	public static long getCurrentGameTime() { return _gameTimeMillis; }
-	
-	public static int getSpecialPieceBonusPoints(PieceType pieceType) {
-		return SPECIAL_PIECE_BONUSES.get(pieceType);
-	}
-	
-	public static void startGameTimer() { _gameTimer.start(); }
-	public static void stopGameTimer() { _gameTimer.stop(); }
-	
-	/**
-	 * Resets current game time int to 0, the game time label text to '00:00' and then
-	 * restarts the actual timer
-	 */
-	public static void restartGameTimer() {
-		GameFrame._scorePanel.setTimeLabel("Time: 00:00");
-		_gameTimeMillis = 0;
-		_gameTimer.restart();
 	}
 	
 	/**
@@ -161,7 +79,7 @@ public class GameBoardModel {
 		// requires an 'offset' to target the correct line. This offset
 		// is increased each time a line is removed
 		Iterator<Integer> iter = toRemove.iterator();
-		for (int offset = 0; iter.hasNext(); offset++, _linesCompleted++) {
+		for (int offset = 0; iter.hasNext(); offset++) {
 			
 			_quilt.remove(iter.next().intValue() + offset);
 	
@@ -171,37 +89,7 @@ public class GameBoardModel {
 			
 		}
 		
-		increaseScore(toRemove.size());
-		
-	}
-	
-	private static void increaseScore(int completedLines) {
-		
-		int linePoints = completedLines * LINE_POINTS_MAP[completedLines-1];
-		int difficultyBonus = completedLines * 5 * GameFrame._settingsPanel.getDifficulty();
-		_score += (linePoints + difficultyBonus);
-		
-		// Add bonuses for all special pieces
-		for (PieceType pieceType : PieceType.getSpecialPieces()) {
-			if (PieceFactory.isPieceActive(pieceType))
-				_score += (completedLines * SPECIAL_PIECE_BONUSES.get(pieceType));
-		}
-		
-		// Process level ups
-		while (_linesCompleted >= _level * LINES_PER_LEVEL[GameFrame._settingsPanel.getDifficulty()]) {
-			
-			AudioManager.stopCurrentSoundtrack();
-			_level++;
-			
-			if (_level == 11) // Game complete
-				_score += WIN_BONUSES[GameFrame._settingsPanel.getDifficulty()];
-			else
-				AudioManager.beginCurrentSoundtrack(); // Soundtrack for next level
-			
-			// Used to signal the UI components to initiate level up functions
-			_justLeveled = true;
-			
-		}
+		ScoreModel.increaseScore(toRemove.size());
 		
 	}
 	
@@ -265,14 +153,11 @@ public class GameBoardModel {
 	}
 	
 	/**
-	 *  Removes all data from the grid and resets scoring info
+	 *  Removes all data from the grid
 	 */
 	public static void reset() {
 		
 		_quilt = buildStartingquilt();
-		_score = 0;
-		_linesCompleted = 0;
-		_level = 1;
 		
 		/** Method to set a static piece configuration for developing my icon
 		 *  
@@ -305,43 +190,6 @@ public class GameBoardModel {
 			quilt.add(new Color[GameBoardPanel.H_CELLS]);
 			
 		return quilt;
-		
-	}
-	
-	public void print() {
-		
-		for (Color[] colorRow : _quilt) {
-	
-			for (Color c : colorRow) {
-				
-				if (c == Color.RED)
-					System.out.print("R ");
-				else if (c == Color.BLUE)
-					System.out.print("B ");
-				else if (c == Color.ORANGE)
-					System.out.print("O ");
-				else if (c == Color.YELLOW)
-					System.out.print("Y ");
-				else if (c == Color.pink)
-					System.out.print("P ");
-				else if (c == Color.GREEN)
-					System.out.print("G ");
-				else if (c == Color.CYAN)
-					System.out.println("C ");
-				else if (c == Color.LIGHT_GRAY)
-					System.out.print("Y ");
-				else if (c == Color.MAGENTA)
-					System.out.print("M ");
-				else
-					System.out.print(". ");
-			
-			}
-			
-			System.out.println();
-			
-		}
-		
-		System.out.println();
 		
 	}
 	

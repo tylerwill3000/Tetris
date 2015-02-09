@@ -17,7 +17,7 @@ import ui.SettingsPanel;
  * @author Tyler
  *
  */
-public class DB {
+public final class DB {
 	
 	static { // Statically load DB driver upon class load
 		try { Class.forName("com.mysql.jdbc.Driver"); }

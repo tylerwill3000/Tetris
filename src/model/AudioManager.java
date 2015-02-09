@@ -11,7 +11,7 @@ import ui.GameFrame;
  * @author Tyler
  *
  */
-public class AudioManager {
+public final class AudioManager {
 	
 	// Provides a handle to the class directory of the AudioManger.class file.
 	// Used to obtain audio file resources
@@ -54,14 +54,14 @@ public class AudioManager {
 	 */
 	public static void beginCurrentSoundtrack() {
 		
-		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null) {
+		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[ScoreModel.getLevel()-1] != null) {
 			
 			// In case a new game is started before the victory jingle is finished
 			// from a previous game (rare occurrence, but possible)
 			if (VICTORY_FANFARE.isRunning()) VICTORY_FANFARE.stop();			
 			
-			SOUNDTRACK[GameBoardModel.getLevel()-1].setFramePosition(0);
-			SOUNDTRACK[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+			SOUNDTRACK[ScoreModel.getLevel()-1].setFramePosition(0);
+			SOUNDTRACK[ScoreModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 			
 		}
 		
@@ -72,16 +72,16 @@ public class AudioManager {
 	 * if music is turned off.
 	 */
 	public static void resumeCurrentSoundtrack() {
-		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
-			SOUNDTRACK[GameBoardModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
+		if (GameFrame._settingsPanel.musicOn() && SOUNDTRACK[ScoreModel.getLevel()-1] != null)
+			SOUNDTRACK[ScoreModel.getLevel()-1].loop(Clip.LOOP_CONTINUOUSLY);
 	}
 	
 	/**
 	 * Stops the current level's soundtrack.
 	 */
 	public static void stopCurrentSoundtrack() {
-		if (SOUNDTRACK[GameBoardModel.getLevel()-1] != null)
-			SOUNDTRACK[GameBoardModel.getLevel()-1].stop();
+		if (SOUNDTRACK[ScoreModel.getLevel()-1] != null)
+			SOUNDTRACK[ScoreModel.getLevel()-1].stop();
 	}
 	
 	public static void playGameOverSound() {

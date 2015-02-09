@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-import model.GameBoardModel;
+import model.ScoreModel;
 
 /**
  * Displays score info [points, level, lines cleared, game time]
@@ -40,9 +40,9 @@ public class ScorePanel extends JPanel {
 	 *  Pulls the current data from the GameBoardModel and then displays it
 	 */
 	void refreshScoreInfo() {
-		_jlbScoreLabel.setText("Score: " + GameBoardModel.getScore());
-		_jlbTotalLinesLabel.setText("Lines: " + GameBoardModel.getLinesCompleted());
-		_jlbLevelLabel.setText("Level: " + GameBoardModel.getLevel());
+		_jlbScoreLabel.setText("Score: " + ScoreModel.getScore());
+		_jlbTotalLinesLabel.setText("Lines: " + ScoreModel.getLinesCompleted());
+		_jlbLevelLabel.setText("Level: " + ScoreModel.getLevel());
 	}
 	
 	public void setTimeLabel(String label) {

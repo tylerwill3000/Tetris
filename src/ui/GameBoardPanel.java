@@ -11,6 +11,7 @@ import ui.secondaryWindows.SaveScoreFrame;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
+import model.ScoreModel;
 
 /**
  * The GameBoardPanel is dedicated to the "View" portion of the game area - it paints the panel
@@ -419,7 +420,7 @@ public class GameBoardPanel extends GridPainter {
 		
 		public void run() {
 			
-			GameBoardModel.stopGameTimer();
+			ScoreModel.stopGameTimer();
 			
 			try { // In order to catch InterupptedException from calling Thread.sleep
 			
@@ -464,7 +465,7 @@ public class GameBoardPanel extends GridPainter {
 		
 		public void run() {
 			
-			GameBoardModel.stopGameTimer();
+			ScoreModel.stopGameTimer();
 			
 			try {
 			

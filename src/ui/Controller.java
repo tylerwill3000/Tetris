@@ -9,12 +9,16 @@ import javax.swing.Timer;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
+import model.ScoreModel;
 
 /**
  *  Class is dedicated to controlling the game flow
  * @author Tyler
  */
-public class Controller {
+public final class Controller {
+	
+	static final int INITIAL_TIMER_DELAY = 600;
+	private static final int[] TIMER_DECREASE_RATES = {49,55,61};
 	
 	/**
 	 * Fall timer that controls the speed at which pieces
@@ -53,7 +57,7 @@ public class Controller {
 					// after removing lines
 					updateGameGrid(completeLines);
 
-					if (GameBoardModel._justLeveled) processLevelUp();
+					if (ScoreModel._justLeveled) processLevelUp();
 					
 				}
 				
@@ -75,6 +79,12 @@ public class Controller {
 		}
 		
 	});
+	
+	// Returns calculated timer delay based on current level and difficulty
+	public static int getCurrentTimerDelay() {
+		int milliDecrease = TIMER_DECREASE_RATES[GameFrame._settingsPanel.getDifficulty()] * (ScoreModel.getLevel() - 1);
+		return INITIAL_TIMER_DELAY - milliDecrease;
+	}
 	
 	/**
 	 * Moves the factory conveyor belt along 1 piece, setting
@@ -104,14 +114,14 @@ public class Controller {
 	// For if removing lines causes a level up
 	private static void processLevelUp() {
 		
-		if (GameBoardModel.getLevel() == 11)
+		if (ScoreModel.getLevel() == 11)
 			processGameComplete();
 		else {
-			_fallTimer.setDelay(GameBoardModel.getCurrentTimerDelay());
+			_fallTimer.setDelay(getCurrentTimerDelay());
 			GameFrame._scorePanel.flashLevelLabel();
 		}
 		
-		GameBoardModel._justLeveled = false;
+		ScoreModel._justLeveled = false;
 		
 	}
 	

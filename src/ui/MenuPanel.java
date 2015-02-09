@@ -14,6 +14,7 @@ import ui.secondaryWindows.HighScoreFrame;
 import model.AudioManager;
 import model.GameBoardModel;
 import model.PieceFactory;
+import model.ScoreModel;
 
 /**
  *  Holds all the main menu buttons
@@ -33,9 +34,9 @@ public class MenuPanel extends JPanel {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			// Clear all old data from the model in case new
-			// game is launched after previous game ends
+			// Clear old data from previous game
 			GameBoardModel.reset();
+			ScoreModel.reset();
 			
 			// Reprint all squares on the game board. Since
 			// the model was reset, they will all be blank
@@ -43,9 +44,9 @@ public class MenuPanel extends JPanel {
 			
 			// Clears all old score info from previous games
 			GameFrame._scorePanel.refreshScoreInfo();
-			GameBoardModel.restartGameTimer();
+			ScoreModel.restartGameTimer();
 			
-			Controller._fallTimer.setDelay(GameBoardModel.INITIAL_TIMER_DELAY);
+			Controller._fallTimer.setDelay(Controller.INITIAL_TIMER_DELAY);
 			
 			PieceFactory.solidifyActivePieces();
 			
@@ -98,7 +99,7 @@ public class MenuPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			
 			Controller._fallTimer.stop();
-			GameBoardModel.stopGameTimer();
+			ScoreModel.stopGameTimer();
 			
 			// Don't allow sound to be turned on / off when game is paused
 			GameFrame._settingsPanel.disableMusicCbxListener();
@@ -122,7 +123,7 @@ public class MenuPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			
 			Controller._fallTimer.start();
-			GameBoardModel.startGameTimer();
+			ScoreModel.startGameTimer();
 			
 			// Re-enable sound to be turned on / off instantly on
 			// checkbox change

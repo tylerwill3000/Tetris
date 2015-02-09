@@ -20,11 +20,11 @@ import javax.swing.SwingConstants;
 import ui.GameFrame;
 import ui.NextPiecePanel;
 import util.FrameUtils;
-import model.GameBoardModel;
 import model.Piece;
 import model.PieceFactory;
 import model.PieceFactory.PieceType;
 import model.Properties;
+import model.ScoreModel;
 
 public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 	
@@ -44,7 +44,7 @@ public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 			selector.setActiveState(Properties.getActivePieceProperty(pieceType));
 			_pieceSelectorButtons.add(selector);
 			
-			JLabel pointBonus = new JLabel("+" + GameBoardModel.getSpecialPieceBonusPoints(pieceType) + " points per line");
+			JLabel pointBonus = new JLabel("+" + ScoreModel.getSpecialPieceBonusPoints(pieceType) + " points per line");
 			pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 			pointBonus.setBorder(GameFrame.LINE_BORDER);
 			

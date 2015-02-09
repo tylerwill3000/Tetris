@@ -19,8 +19,8 @@ import ui.components.TetrisButton;
 import util.FormatUtils;
 import util.FrameUtils;
 import model.DB;
-import model.GameBoardModel;
 import model.Properties;
+import model.ScoreModel;
 
 // Frame prompting the user whether they want to save their score
 public class SaveScoreFrame extends JFrame {
@@ -52,11 +52,11 @@ public class SaveScoreFrame extends JFrame {
 				
 				rank = DB.writeScore(
 					saveName,
-					GameBoardModel.getScore(),
-					GameBoardModel.getLevel(),
-					GameBoardModel.getLinesCompleted(),
+					ScoreModel.getScore(),
+					ScoreModel.getLevel(),
+					ScoreModel.getLinesCompleted(),
 					GameFrame._settingsPanel.getDifficulty(),
-					FormatUtils.millisToString(GameBoardModel.getCurrentGameTime())
+					FormatUtils.millisToString(ScoreModel.getCurrentGameTime())
 				);
 				
 			}
@@ -96,7 +96,7 @@ public class SaveScoreFrame extends JFrame {
 		setLayout(new GridLayout(3,1));
 		
 		_jlbAttainedScore.setHorizontalAlignment(JLabel.CENTER);
-		_jlbAttainedScore.setText("Your score: " + GameBoardModel.getScore());
+		_jlbAttainedScore.setText("Your score: " + ScoreModel.getScore());
 		add(_jlbAttainedScore);
 		
 		// Input area with instructions and name text field
