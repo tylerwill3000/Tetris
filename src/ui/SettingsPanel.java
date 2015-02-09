@@ -160,5 +160,17 @@ public class SettingsPanel extends JPanel {
 	void disableBlockStylesButton() { _jbtChooseBlockStyles.setEnabled(false); }
 	void disableDatabaseConnectivityButton() { _jbtDBConfig.setEnabled(false); }
 	void disableTimeAttackCheckbox() { _jcbxTimeAttack.setEnabled(false); }
-		
+	
+	/**
+	 * Updates properties class values with current settings
+	 */
+	void syncWithProperties() {
+		Properties.setGhostSquaresProperty(_jcbxGhostSquares.isSelected());
+		Properties.setMusicProperty(_jcbxMusic.isSelected());
+		Properties.setSoundEffectsProperty(_jcbxSoundEffects.isSelected());
+		Properties.setSaveScoresProperty(_jcbxSaveScores.isSelected());
+		Properties.setTimeAttackProperty(_jcbxTimeAttack.isSelected());
+		Properties.setDifficultyProperty(_jlstDifficulty.getSelectedIndex());
+	}
+	
 }

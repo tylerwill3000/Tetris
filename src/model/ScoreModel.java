@@ -76,7 +76,7 @@ public final class ScoreModel {
 	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
 	
 	// Indexed into using difficulty
-	private static final int[] TIME_ATTACK_MILLIS_PER_LEVEL = {90000,105000,120000};
+	private static final int[] TIME_ATTACK_MILLIS_PER_LEVEL = {85000,95000,105000};
 	
 	// Bonus points on level up when in time attack mode
 	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = {150,175,200};

@@ -68,6 +68,7 @@ public class GameFrame extends JFrame {
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				_settingsPanel.syncWithProperties();
 				Properties.saveCurrentProperties(true);
 			}
 		});

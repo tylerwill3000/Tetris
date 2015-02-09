@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import ui.secondaryWindows.BlockStylesFrame;
 import model.Piece;
@@ -59,8 +60,9 @@ public class GridPainter extends JPanel {
 	 * @param row Row of the square to paint
 	 * @param col Column of the square to paint
 	 * @param color Color to paint the square
+	 * @param Border The border style for the square
 	 */
-	protected void paintSquare(int row, int col, Color color) {
+	protected void paintSquare(int row, int col, Color color, Border border) {
 		
 		// -3 to account for the 3 invisible rows at the top of
 		// the board if this is the game board
@@ -71,8 +73,15 @@ public class GridPainter extends JPanel {
 		JPanel toPaint = _JPanelGrid[row][col];
 		
 		toPaint.setBackground(color);
-		toPaint.setBorder(BlockStylesFrame.getCurrentPieceBorder());
+		toPaint.setBorder(border);
 		
+	}
+	
+	/**
+	 * Paints square using default game border setting
+	 */
+	protected void paintSquare(int row, int col, Color color) {
+		paintSquare(row, col, color, BlockStylesFrame.getCurrentPieceBorder());
 	}
 	
 	/**

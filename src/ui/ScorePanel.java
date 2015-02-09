@@ -27,27 +27,15 @@ public class ScorePanel extends JPanel {
 	private final FlashTextTask FLASH_GAME_OVER = new FlashTextTask("Game Over!!!", Color.RED);
 	
 	private ProgressBar _linesClearedProgressBar = new ProgressBar(11, Color.GREEN) {
-
-		public double getCurrentValue() {
-			return ScoreModel.getCurrentLevelLinesCleared();
+		public double getCurrentPercentage() {
+			return ((double) ScoreModel.getCurrentLevelLinesCleared()) / ScoreModel.getLinesPerLevel();
 		}
-
-		public double getMaxValue() {
-			return ScoreModel.getLinesPerLevel();
-		}
-		
 	};
 	
 	private ProgressBar _timerProgressBar = new ProgressBar(11, Color.YELLOW) {
-		
-		public double getCurrentValue() {
-			return ScoreModel.getCurrentGameTime();
+		public double getCurrentPercentage() {
+			return ((double) ScoreModel.getCurrentGameTime()) / ScoreModel.getCurrentTimeAttackLimit();
 		}
-
-		public double getMaxValue() {
-			return ScoreModel.getCurrentTimeAttackLimit();
-		}
-		
 	};
 	
 	private GridLayout _layout;
