@@ -8,12 +8,15 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
+import model.Properties;
 import util.FrameUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,6 +65,12 @@ public class GameFrame extends JFrame {
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, GAME_BOARD_PANEL_HEIGHT);
 		setResizable(false); // I don't want to mess with trying to make this work right
 		setLocationRelativeTo(null);
+		
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				Properties.saveCurrentProperties(true);
+			}
+		});
 		
 	}
 	

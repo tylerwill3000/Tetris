@@ -31,6 +31,7 @@ public final class Properties {
 	private final static String SOUNDS_EFFECTS_KEY = "sound.effects.on";
 	private final static String SAVE_SCORES_KEY = "save.scores";
 	private final static String TIME_ATTACK_KEY = "time.attack";
+	private final static String DIFFICULTY_KEY = "difficulty";
 	private final static String PLAYER_SAVE_NAME_KEY = "player.save.name";
 	private final static String PIECE_BORDER_STYLE_KEY = "piece.border.style";
 	private final static String HIGH_SCORES_RECORD_KEY = "highscores.record.count";
@@ -116,6 +117,14 @@ public final class Properties {
 		setCbxProperty(TIME_ATTACK_KEY, on);
 	}
 	
+	public static int getDifficultyProperty() {
+		return Integer.parseInt(GAME_PROPERTIES.getProperty(DIFFICULTY_KEY));
+	}
+	
+	public static void setDifficultyProperty(int diff) {
+		GAME_PROPERTIES.setProperty(DIFFICULTY_KEY, String.valueOf(diff));
+	}
+	
 	public static String getPlayerSaveName() {
 		return GAME_PROPERTIES.getProperty(PLAYER_SAVE_NAME_KEY);
 	}
@@ -192,6 +201,7 @@ public final class Properties {
 		setSoundEffectsProperty(true);
 		setSaveScoresProperty(true);
 		setTimeAttackProperty(false);
+		setDifficultyProperty(1);
 		setPlayerSaveName("player1");
 		setPieceBorderProperty(0);
 		

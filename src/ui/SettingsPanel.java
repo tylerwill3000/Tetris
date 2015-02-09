@@ -95,6 +95,13 @@ public class SettingsPanel extends JPanel {
 		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diffPanel.add(new JLabel("Difficulty:  "));
 		diffPanel.add(_jlstDifficulty);
+		_jlstDifficulty.setSelectedIndex(Properties.getDifficultyProperty());
+		
+		_jlstDifficulty.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Properties.setDifficultyProperty(_jlstDifficulty.getSelectedIndex());
+			}
+		});
 		
 		JPanel buttonContainer = new JPanel(new GridLayout(3,1));
 		buttonContainer.add(_jbtChooseSpecials);
