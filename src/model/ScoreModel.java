@@ -45,7 +45,6 @@ public final class ScoreModel {
 			
 			GameFrame._scorePanel.refreshProgressBar();
 			
-			// Check if time limit has been breached if time attack mode is one
 			if (GameFrame._settingsPanel.timeAttackOn() && _gameTimeMillis > getCurrentTimeAttackLimit()) {
 				Controller.processGameOver();
 				GameFrame._scorePanel.setTimeLabel("Time's Up!!!");
@@ -75,11 +74,11 @@ public final class ScoreModel {
 	// Point values per line based on lines cleared
 	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
 	
-	// Indexed into using difficulty
-	private static final int[] TIME_ATTACK_MILLIS_PER_LEVEL = {85000,95000,105000};
-	
 	// Bonus points on level up when in time attack mode
 	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = {150,175,200};
+	
+	// Number of milliseconds allowed per line in time attack mode
+	private static final int TIME_ATTACK_MILLIS_PER_LINE = 3000;
 	
 	public static int getTotalLinesCleared() { return _totalLinesCleared; }
 	
@@ -90,13 +89,26 @@ public final class ScoreModel {
 		return LINES_PER_LEVEL[GameFrame._settingsPanel.getDifficulty()];
 	}
 	
+	/**
+	 * Returns number of lines cleared on the current level
+	 */
 	public static int getCurrentLevelLinesCleared() {
 		int currentLevelThreshold = getLinesPerLevel() * (_level - 1);
 		return _totalLinesCleared - currentLevelThreshold;
 	}
 	
+	/**
+	 * Returns number of lines needed for the current level 
+	 */
 	public static int getCurrentLevelLinesNeeded() {
 		return _level * getLinesPerLevel();
+	}
+	
+	/**
+	 * Returns the max milliseconds for the current level for time attack mode
+	 */
+	public static int getCurrentTimeAttackLimit() {
+		return _level * getCurrentLevelLinesNeeded() * TIME_ATTACK_MILLIS_PER_LINE;
 	}
 	
 	public static int getScore() { return _score; }
@@ -118,7 +130,7 @@ public final class ScoreModel {
 	public static void restartGameTimer() {
 		String timeLabel = "Time: 00:00";
 		if (GameFrame._settingsPanel.timeAttackOn()) {
-			timeLabel += " / " + FormatUtils.millisToString(TIME_ATTACK_MILLIS_PER_LEVEL[GameFrame._settingsPanel.getDifficulty()]); 
+			timeLabel += " / " + FormatUtils.millisToString(getCurrentTimeAttackLimit()); 
 		}
 		GameFrame._scorePanel.setTimeLabel(timeLabel);
 		_gameTimer.restart();
@@ -177,13 +189,6 @@ public final class ScoreModel {
 			
 		}
 		
-	}
-	
-	/**
-	 * Returns the max milliseconds for this level for time attack mode
-	 */
-	public static int getCurrentTimeAttackLimit() {
-		return _level * TIME_ATTACK_MILLIS_PER_LEVEL[GameFrame._settingsPanel.getDifficulty()];
 	}
 	
 	/**

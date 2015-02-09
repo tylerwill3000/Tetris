@@ -17,7 +17,7 @@ import ui.GameFrame;
  */
 public class TetrisButton extends JButton {
 	
-	private final static Dimension BUTTON_DIMENSIONS = new Dimension(100,30);
+	private final static int BUTTON_HEIGHT = 30;
 	
 	// Causes the mouse to change to a hand icon when mousing over the button
 	private MouseListener handCursorListener = new MouseAdapter() {
@@ -35,12 +35,22 @@ public class TetrisButton extends JButton {
 		
 	};
 	
-	public TetrisButton(String buttonText) {
+	/**
+	 * Construct button with specified width (height is constant for all)
+	 */
+	public TetrisButton(String buttonText, int width) {
 		setText(buttonText);
-		setPreferredSize(BUTTON_DIMENSIONS);
+		setPreferredSize(new Dimension(width, BUTTON_HEIGHT));
 		setBorder(GameFrame.ETCHED_BORDER);
 		setFocusable(false);
 		addMouseListener(handCursorListener);
+	}
+	
+	/**
+	 * Construct button with default size
+	 */
+	public TetrisButton(String buttonText) {
+		this(buttonText, 100);
 	}
 	
 }
