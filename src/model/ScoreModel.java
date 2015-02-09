@@ -108,7 +108,7 @@ public final class ScoreModel {
 	 * Returns the max milliseconds for the current level for time attack mode
 	 */
 	public static int getCurrentTimeAttackLimit() {
-		return _level * getCurrentLevelLinesNeeded() * TIME_ATTACK_MILLIS_PER_LINE;
+		return getCurrentLevelLinesNeeded() * TIME_ATTACK_MILLIS_PER_LINE;
 	}
 	
 	public static int getScore() { return _score; }
