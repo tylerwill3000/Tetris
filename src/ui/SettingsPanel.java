@@ -21,6 +21,7 @@ import ui.secondaryWindows.BlockStylesFrame;
 import ui.secondaryWindows.DBSettingsFrame;
 import ui.secondaryWindows.SpecialPiecesFrame;
 import model.AudioManager;
+import model.Properties;
 import model.ScoreModel;
 
 /**
@@ -33,11 +34,11 @@ public class SettingsPanel extends JPanel {
 	// GUI classes and the DBComm class
 	public final static String[] DIFFICULTIES = {"Easy","Medium","Hard"};
 	
-	private JCheckBox _jcbxGhostSquares = new JCheckBox("Ghost Squares", true);
-	private JCheckBox _jcbxMusic = new JCheckBox("Music", true);
-	private JCheckBox _jcbxSoundEffects = new JCheckBox("Sound Effects", true);
-	private JCheckBox _jcbxSaveScores = new JCheckBox("Save Scores", true);
-	private JCheckBox _jcbxTimeAttack = new JCheckBox("Time Attack Mode", false);
+	private JCheckBox _jcbxGhostSquares = new JCheckBox("Ghost Squares", Properties.getGhostSquaresProperty());
+	private JCheckBox _jcbxMusic = new JCheckBox("Music", Properties.getMusicProperty());
+	private JCheckBox _jcbxSoundEffects = new JCheckBox("Sound Effects", Properties.getSoundEffectsProperty());
+	private JCheckBox _jcbxSaveScores = new JCheckBox("Save Scores", Properties.getSaveScoresProperty());
+	private JCheckBox _jcbxTimeAttack = new JCheckBox("Time Attack Mode", Properties.getTimeAttackProperty());
 	
 	private JComboBox<String> _jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
