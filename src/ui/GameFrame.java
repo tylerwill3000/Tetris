@@ -27,18 +27,18 @@ public class GameFrame extends JFrame {
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	public static final Border ETCHED_BORDER = BorderFactory.createEtchedBorder();
-	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 19);
+	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
 	
 	/** All major GUI components. Declared static so they can 'talk
 	 *  to each other through the GameFrame class **/
 	static GameBoardPanel _gameBoardPanel = new GameBoardPanel();
 	static NextPiecePanel _nextPiecePanel = new NextPiecePanel("Next Piece");
 	static NextPiecePanel _holdPanel = new NextPiecePanel("Hold");
-	public static ScorePanel _scorePanel = new ScorePanel();
 	static MenuPanel _menuPanel = new MenuPanel();
 	
-	// This is public so it can be accessed by the AudioManager and GameBoardModel
+	// These are public so it can be accessed by the AudioManager and GameBoardModel
 	public static SettingsPanel _settingsPanel = new SettingsPanel();
+	public static ScorePanel _scorePanel = new ScorePanel();
 	
 	// Handles all thread execution for the game
 	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
@@ -62,7 +62,6 @@ public class GameFrame extends JFrame {
 		setSize(GAME_BOARD_PANEL_WIDTH + INFO_PANEL_WIDTH * 2, GAME_BOARD_PANEL_HEIGHT);
 		setResizable(false); // I don't want to mess with trying to make this work right
 		setLocationRelativeTo(null);
-		setVisible(true);
 		
 	}
 	
@@ -88,6 +87,8 @@ public class GameFrame extends JFrame {
 		return infoPanel;
 		
 	}
+	
+	
 	
 	// Creates the controls panel. Basically just a bunch of JLabels
 	private JPanel createControlsPanel() {

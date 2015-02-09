@@ -7,5 +7,10 @@ import ui.GameFrame;
  * @author Tyler
  */
 public class Main {
-	public static void main(String[] args) { new GameFrame(); }
+	
+	static GameFrame _gameFrame = new GameFrame();
+	
+	public static void main(String[] args) {
+		_gameFrame.setVisible(true);
+	}
 }

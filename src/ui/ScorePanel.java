@@ -8,6 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import ui.components.ProgressBar;
+import util.FrameUtils;
 import model.ScoreModel;
 
 /**
@@ -24,26 +26,68 @@ public class ScorePanel extends JPanel {
 	private final FlashTextTask FLASH_WIN = new FlashTextTask("You Win!!!", Color.YELLOW);
 	private final FlashTextTask FLASH_GAME_OVER = new FlashTextTask("Game Over!!!", Color.RED);
 	
+	private ProgressBar _linesClearedProgressBar = new ProgressBar(11, Color.GREEN) {
+
+		public double getCurrentValue() {
+			return ScoreModel.getCurrentLevelLinesCleared();
+		}
+
+		public double getMaxValue() {
+			return ScoreModel.getLinesPerLevel();
+		}
+		
+	};
+	
+	private ProgressBar _timerProgressBar = new ProgressBar(11, Color.YELLOW) {
+		
+		public double getCurrentValue() {
+			return ScoreModel.getCurrentGameTime();
+		}
+
+		public double getMaxValue() {
+			return ScoreModel.getCurrentTimeAttackLimit();
+		}
+		
+	};
+	
+	private GridLayout _layout;
+	
 	ScorePanel() {
 		
-		setLayout(new GridLayout(4,1));
 		setBorder(new TitledBorder("Scoring Info"));
+		_layout = new GridLayout(6,1);
+		setLayout(_layout);
 		
-		for (JLabel l : Arrays.asList(_jlbScoreLabel, _jlbTotalLinesLabel, _jlbLevelLabel, _jlbTime)) {
+		for (JLabel l : Arrays.asList(_jlbScoreLabel, _jlbTotalLinesLabel, _jlbLevelLabel, _jlbTime))
 			l.setFont(GameFrame.LABEL_FONT);
-			add(l);
-		}
+		
+		add(_jlbScoreLabel);
+		add(_jlbLevelLabel);
+		add(_jlbTotalLinesLabel);
+		add(FrameUtils.nestInPanel(_linesClearedProgressBar));
+		add(_jlbTime);
+		
+		add(FrameUtils.nestInPanel(_timerProgressBar));
+		_timerProgressBar.setVisible(GameFrame._settingsPanel.timeAttackOn());
 		
 	}
 	
-	/**
-	 *  Pulls the current data from the GameBoardModel and then displays it
-	 */
+	void showProgressBar() {
+		_timerProgressBar.setVisible(true);
+	}
+	
+	void hideProgressBar() {
+		_timerProgressBar.setVisible(false);
+	}
+	
 	void refreshScoreInfo() {
 		_jlbScoreLabel.setText("Score: " + ScoreModel.getScore());
-		_jlbTotalLinesLabel.setText("Lines: " + ScoreModel.getLinesCompleted());
+		_jlbTotalLinesLabel.setText("Lines: " + ScoreModel.getCurrentLevelLinesCleared() + " / " + ScoreModel.getLinesPerLevel());
+		_linesClearedProgressBar.repaint();
 		_jlbLevelLabel.setText("Level: " + ScoreModel.getLevel());
 	}
+	
+	public void refreshProgressBar() { _timerProgressBar.repaint(); }
 	
 	public void setTimeLabel(String label) {
 		_jlbTime.setText(label);

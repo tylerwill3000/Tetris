@@ -42,9 +42,16 @@ public class MenuPanel extends JPanel {
 			// the model was reset, they will all be blank
 			GameFrame._gameBoardPanel.fullReprint();
 			
-			// Clears all old score info from previous games
+			
+			if (GameFrame._settingsPanel.timeAttackOn()) {
+				GameFrame._scorePanel.showProgressBar();
+				GameFrame._scorePanel.refreshProgressBar();
+			}
+			else {
+				GameFrame._scorePanel.hideProgressBar();
+			}
+			
 			GameFrame._scorePanel.refreshScoreInfo();
-			ScoreModel.restartGameTimer();
 			
 			Controller._fallTimer.setDelay(Controller.INITIAL_TIMER_DELAY);
 			
@@ -58,35 +65,32 @@ public class MenuPanel extends JPanel {
 			// make their way onto the belt
 			PieceFactory.resetConveyorBelt();
 			
+			GameFrame._nextPiecePanel.clear();
+			GameFrame._holdPanel._currentPiece = null;
+			GameFrame._holdPanel.clear();
+			
 			// Sets initial pieces
 			Controller.moveConveyorBelt();
-			
-			// In case these still have pieces from previous games
-			GameFrame._nextPiecePanel.clear();
-			GameFrame._holdPanel.clear();
-			GameFrame._holdPanel._currentPiece = null;
 			
 			GameFrame._settingsPanel.disableDifficultyList();
 			GameFrame._settingsPanel.disableSpecialPiecesButton();
 			GameFrame._settingsPanel.disableBlockStylesButton();
 			GameFrame._settingsPanel.disableDatabaseConnectivityButton();
+			GameFrame._settingsPanel.disableTimeAttackCheckbox();
 			
-			// Paint initial pieces
 			GameFrame._gameBoardPanel.paintCurrentAndGhost();
 			GameFrame._nextPiecePanel.paintCurrentPiece();
 			
 			GameFrame._gameBoardPanel.enablePieceMovementInput();
 			
-			// Enable pause and give up buttons.
-			// There is no reason for these to be enabled before the game starts
 			enablePauseButton();
 			enableGiveUpButton();
 			disableStartButton();
 			
-			// Both checkbox listeners get enabled
 			GameFrame._settingsPanel.enableCbxListeners();
 			
 			Controller._fallTimer.start();
+			ScoreModel.restartGameTimer();
 			
 			AudioManager.beginCurrentSoundtrack();
 			

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -20,6 +21,7 @@ import ui.secondaryWindows.BlockStylesFrame;
 import ui.secondaryWindows.DBSettingsFrame;
 import ui.secondaryWindows.SpecialPiecesFrame;
 import model.AudioManager;
+import model.ScoreModel;
 
 /**
  * Holds all game settings components
@@ -35,6 +37,7 @@ public class SettingsPanel extends JPanel {
 	private JCheckBox _jcbxMusic = new JCheckBox("Music", true);
 	private JCheckBox _jcbxSoundEffects = new JCheckBox("Sound Effects", true);
 	private JCheckBox _jcbxSaveScores = new JCheckBox("Save Scores", true);
+	private JCheckBox _jcbxTimeAttack = new JCheckBox("Time Attack Mode", false);
 	
 	private JComboBox<String> _jlstDifficulty = new JComboBox<String>(DIFFICULTIES);
 	
@@ -76,11 +79,17 @@ public class SettingsPanel extends JPanel {
 		setLayout(new BorderLayout());
 		setBorder(new TitledBorder("Settings"));
 		
-		JPanel checkboxes = new JPanel(new GridLayout(4,1));
-		for (JCheckBox x : Arrays.asList(_jcbxGhostSquares, _jcbxMusic, _jcbxSoundEffects, _jcbxSaveScores)) {
+		List<JCheckBox> panelCheckboxes = Arrays.asList(_jcbxGhostSquares, _jcbxMusic, _jcbxSoundEffects, _jcbxSaveScores, _jcbxTimeAttack); 
+		JPanel checkboxes = new JPanel(new GridLayout(panelCheckboxes.size(),1));
+		for (JCheckBox x : panelCheckboxes) {
 			checkboxes.add(x);
 			x.setFocusable(false);
 		}
+		
+		_jcbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
+				"+" + ScoreModel.getTimeAttackBonusPoints(0) + " points on easy, " +
+				"+" + ScoreModel.getTimeAttackBonusPoints(1) + " points on medium, " +
+				"+" + ScoreModel.getTimeAttackBonusPoints(2) + " points on hard");
 		
 		JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		diffPanel.add(new JLabel("Difficulty:  "));
@@ -113,6 +122,7 @@ public class SettingsPanel extends JPanel {
 	public boolean musicOn() { return _jcbxMusic.isSelected(); }
 	public boolean effectsOn() { return _jcbxSoundEffects.isSelected(); }
 	public boolean saveScoreOn() { return _jcbxSaveScores.isSelected(); }
+	public boolean timeAttackOn() { return _jcbxTimeAttack.isSelected(); }
 	
 	public int getDifficulty() { return _jlstDifficulty.getSelectedIndex(); }
 	
@@ -135,10 +145,12 @@ public class SettingsPanel extends JPanel {
 	void enableSpecialPiecesButton() { _jbtChooseSpecials.setEnabled(true); }
 	void enableBlockStylesButton() { _jbtChooseBlockStyles.setEnabled(true); }
 	void enableDatabaseConnectivityButton() { _jbtDBConfig.setEnabled(true); }
+	void enableTimeAttackCheckbox() { _jcbxTimeAttack.setEnabled(true); }
 	
 	void disableDifficultyList() { _jlstDifficulty.setEnabled(false); }
 	void disableSpecialPiecesButton() { _jbtChooseSpecials.setEnabled(false); }
 	void disableBlockStylesButton() { _jbtChooseBlockStyles.setEnabled(false); }
 	void disableDatabaseConnectivityButton() { _jbtDBConfig.setEnabled(false); }
+	void disableTimeAttackCheckbox() { _jcbxTimeAttack.setEnabled(false); }
 		
 }

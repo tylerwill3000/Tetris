@@ -146,14 +146,11 @@ public final class Controller {
 		GameFrame._settingsPanel.enableSpecialPiecesButton();
 		GameFrame._settingsPanel.enableBlockStylesButton();
 		GameFrame._settingsPanel.enableDatabaseConnectivityButton();
+		GameFrame._settingsPanel.enableTimeAttackCheckbox();
 		
 	}
 	
-	/**
-	 * What happens when the next piece can't emerge. Package-private so
-	 * it can be accessed by the game over listener
-	 */
-	static void processGameOver() {
+	public static void processGameOver() {
 
 		_fallTimer.stop();
 		
@@ -176,6 +173,7 @@ public final class Controller {
 		GameFrame._settingsPanel.enableSpecialPiecesButton();
 		GameFrame._settingsPanel.enableBlockStylesButton();
 		GameFrame._settingsPanel.enableDatabaseConnectivityButton();
+		GameFrame._settingsPanel.enableTimeAttackCheckbox();
 		
 	}
 	

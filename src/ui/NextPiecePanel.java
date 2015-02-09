@@ -52,7 +52,7 @@ public class NextPiecePanel extends GridPainter {
 		for (int row = 0; row < _JPanelGrid.length; row++)
 			for (int col = 0; col < _JPanelGrid[row].length; col++)
 				eraseSquare(row, col);
-	
+		
 	}
 
 }
