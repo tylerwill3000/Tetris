@@ -419,6 +419,8 @@ public class GameBoardPanel extends GridPainter {
 		
 		public void run() {
 			
+			GameFrame._scorePanel.stopGameTimer();
+			
 			try { // In order to catch InterupptedException from calling Thread.sleep
 			
 			// Run 1 loop to paint in all unoccupied squares
@@ -461,6 +463,8 @@ public class GameBoardPanel extends GridPainter {
 		private final static int SLEEP_INTERVAL = 82;
 		
 		public void run() {
+			
+			GameFrame._scorePanel.stopGameTimer();
 			
 			try {
 			
