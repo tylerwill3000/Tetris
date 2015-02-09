@@ -34,7 +34,7 @@ public class GameFrame extends JFrame {
 	static GameBoardPanel _gameBoardPanel = new GameBoardPanel();
 	static NextPiecePanel _nextPiecePanel = new NextPiecePanel("Next Piece");
 	static NextPiecePanel _holdPanel = new NextPiecePanel("Hold");
-	static ScorePanel _scorePanel = new ScorePanel();
+	public static ScorePanel _scorePanel = new ScorePanel();
 	static MenuPanel _menuPanel = new MenuPanel();
 	
 	// This is public so it can be accessed by the AudioManager and GameBoardModel

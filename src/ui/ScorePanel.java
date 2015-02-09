@@ -20,6 +20,7 @@ import model.GameBoardModel;
 public class ScorePanel extends JPanel {
 	
 	private int _gameTimeMillis = 0;
+	private final static int MILLIS_PER_MINUTE = 60000;
 	
 	private JLabel _jlbScoreLabel = new JLabel("Score: 0", JLabel.CENTER);
 	private JLabel _jlbTotalLinesLabel = new JLabel("Lines: 0", JLabel.CENTER);
@@ -27,22 +28,10 @@ public class ScorePanel extends JPanel {
 	private JLabel _jlbTime = new JLabel("Time: 00:00", JLabel.CENTER);
 	
 	private Timer _gameTimer = new Timer(1000, new ActionListener() {
-		
-		private final static int MILLIS_PER_MINUTE = 60000;
-		
 		public void actionPerformed(ActionEvent e) {
-			
-			String totalMinutes = String.valueOf(_gameTimeMillis / MILLIS_PER_MINUTE);
-			String totalSeconds = String.valueOf(_gameTimeMillis % MILLIS_PER_MINUTE / 1000);
-			
-			// Pad with opening zero if necessary
-			if (totalMinutes.length() == 1) totalMinutes = "0" + totalMinutes;
-			if (totalSeconds.length() == 1) totalSeconds = "0" + totalSeconds;
-			
-			_jlbTime.setText("Time: " + totalMinutes + ":" + totalSeconds);
+			_jlbTime.setText("Time: " + getGameTimeString());
 			_gameTimeMillis += 1000;
 		}
-		
 	});
 	
 	private final FlashTextTask FLASH_WIN = new FlashTextTask("You Win!!!", Color.YELLOW);
@@ -57,6 +46,24 @@ public class ScorePanel extends JPanel {
 			l.setFont(GameFrame.LABEL_FONT);
 			add(l);
 		}
+		
+	}
+	
+	/**
+	 * Converts the game time elapsed milliseconds to a string representation
+	 * in the format '[minutes]:[seconds]'. Each section (minutes, seconds)
+	 * will be at most 2 digits long
+	 */
+	public String getGameTimeString() {
+		
+		String totalMinutes = String.valueOf(_gameTimeMillis / MILLIS_PER_MINUTE);
+		String totalSeconds = String.valueOf(_gameTimeMillis % MILLIS_PER_MINUTE / 1000);
+		
+		// Pad with opening zero if necessary
+		if (totalMinutes.length() == 1) totalMinutes = "0" + totalMinutes;
+		if (totalSeconds.length() == 1) totalSeconds = "0" + totalSeconds;
+		
+		return totalMinutes + ":" + totalSeconds;
 		
 	}
 	

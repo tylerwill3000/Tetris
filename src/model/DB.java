@@ -50,7 +50,7 @@ public class DB {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public static int writeScore(String name, int score, int level, int lines, int difficulty) throws ClassNotFoundException, SQLException {
+	public static int writeScore(String name, int score, int level, int lines, int difficulty, String gameTime) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
 		
@@ -62,8 +62,8 @@ public class DB {
 			
 			stmt.executeUpdate(new StringBuilder()
 				.append("insert into score ")
-				.append("(playerName, playerScore, playerLevel, playerLines, playerDifficulty) values ")
-				.append(String.format("('%s', %d, %d, %d, %d);", name, score, level, lines, difficulty))
+				.append("(playerName, playerScore, playerLevel, playerLines, playerDifficulty, gameTime) values ")
+				.append(String.format("('%s', %d, %d, %d, %d, %s);", name, score, level, lines, difficulty, gameTime))
 				.toString()
 			);
 			
@@ -129,7 +129,8 @@ public class DB {
 					scores.getInt(3), // Score
 					scores.getInt(4), // Level
 					scores.getInt(5) == 11 ? "Complete" : scores.getInt(5), // Lines
-					SettingsPanel.DIFFICULTIES[scores.getInt(6)] // Difficulty string
+					scores.getString(6), // Game time
+					SettingsPanel.DIFFICULTIES[scores.getInt(7)] // Difficulty string
 				});
 				
 			}
