@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ui.SettingsPanel;
+import util.FormatUtils;
 
 /**
  * Provides an interface to the score database
@@ -50,7 +51,7 @@ public final class DB {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public static int writeScore(String name, int score, int level, int lines, int difficulty, String gameTime) throws ClassNotFoundException, SQLException {
+	public static int writeScore(String name, int score, int level, int lines, int difficulty, long gameTime) throws ClassNotFoundException, SQLException {
 		
 		Connection conn = null;
 		
@@ -63,7 +64,7 @@ public final class DB {
 			stmt.executeUpdate(new StringBuilder()
 				.append("insert into score ")
 				.append("(playerName, playerScore, playerLevel, playerLines, playerDifficulty, gameTime) values ")
-				.append(String.format("('%s', %d, %d, %d, %d, %s);", name, score, level, lines, difficulty, gameTime))
+				.append(String.format("('%s', %d, %d, %d, %d, %d);", name, score, level, lines, difficulty, gameTime))
 				.toString()
 			);
 			
@@ -113,11 +114,10 @@ public final class DB {
 			
 			conn = getConnection();
 			
-			if (_scoreIDToRank == null) updateScoreIDMap(conn);
+			updateScoreIDMap(conn);
 			
 			ResultSet scores = conn.createStatement().executeQuery(createScoresQuery(numScores, difficulty));
 			
-			int colCount = scores.getMetaData().getColumnCount();
 			List<Object[]> data = new ArrayList<>();
 			
 			// Populate data
@@ -129,13 +129,13 @@ public final class DB {
 					scores.getInt(3), // Score
 					scores.getInt(4), // Level
 					scores.getInt(5) == 11 ? "Complete" : scores.getInt(5), // Lines
-					scores.getString(6), // Game time
-					SettingsPanel.DIFFICULTIES[scores.getInt(7)] // Difficulty string
+					SettingsPanel.DIFFICULTIES[scores.getInt(6)], // Difficulty string
+					FormatUtils.millisToString(scores.getInt(7)), // Game time
 				});
 				
 			}
 			
-			return data.toArray(new Object[data.size()][colCount]);
+			return data.toArray(new Object[data.size()][scores.getMetaData().getColumnCount()]);
 			
 		}
 		finally {

@@ -42,7 +42,6 @@ public class MenuPanel extends JPanel {
 			// the model was reset, they will all be blank
 			GameFrame._gameBoardPanel.fullReprint();
 			
-			
 			if (GameFrame._settingsPanel.timeAttackOn()) {
 				GameFrame._scorePanel.showProgressBar();
 				GameFrame._scorePanel.refreshProgressBar();

@@ -26,7 +26,7 @@ import model.Properties;
 
 public class HighScoreFrame extends JFrame {
 	
-	private final static Object[] COLUMN_HEADERS = {"Rank", "Name", "Score", "Lines", "Level", "Difficulty"};
+	private final static Object[] COLUMN_HEADERS = {"Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time"};
 	
 	private final static Integer[] RECORD_COUNTS = {10,25,50,100};
 	

@@ -18,7 +18,7 @@ import model.PieceFactory.PieceType;
 public final class Properties {
 	
 	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.home") + "/.tetrisconfig"; 
-	public static final java.util.Properties GAME_PROPERTIES = new java.util.Properties();
+	private static final java.util.Properties GAME_PROPERTIES = new java.util.Properties();
 	static { loadPropertiesFromDisk(); }
 	
 	// Centralize management of all property keys

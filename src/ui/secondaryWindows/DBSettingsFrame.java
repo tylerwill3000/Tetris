@@ -28,6 +28,23 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 	private JTextField _jtxUser = new JTextField(Properties.getDBUserProperty(), TEXT_FIELD_WIDTH);
 	private JPasswordField _jpqPass = new JPasswordField(Properties.getDBPassProperty(), TEXT_FIELD_WIDTH);
 	
+	private KeyAdapter _keyListener = new KeyAdapter() {
+		public void keyReleased(KeyEvent e) {
+
+			Object source = e.getSource();
+			if (source == _jtxHost)
+				Properties.setDBHostProperty(_jtxHost.getText());
+			else if (source == _jtxName)
+				Properties.setDBNameProperty(_jtxName.getText());
+			else if (source == _jtxUser)
+				Properties.setDBUserProperty(_jtxUser.getText());
+			else if (source == _jpqPass) {
+				String.valueOf(_jpqPass.getPassword());
+			}
+			
+		}
+	};
+	
 	public DBSettingsFrame() {
 		
 		JPanel fieldLabels = new JPanel(new GridLayout(4,1));
@@ -38,32 +55,8 @@ public class DBSettingsFrame extends SupplementarySettingsFrame {
 		JPanel textFields = new JPanel(new GridLayout(4,1));
 		for (JTextField txt : Arrays.asList(_jtxHost, _jtxName, _jtxUser, _jpqPass)) {
 			textFields.add(txt);
+			txt.addKeyListener(_keyListener);
 		}
-		
-		_jtxHost.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				Properties.setDBHostProperty(_jtxHost.getText());
-			}
-		});
-		
-		_jtxName.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				Properties.setDBNameProperty(_jtxName.getText());
-			}
-		});
-		
-		_jtxUser.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				Properties.setDBUserProperty(_jtxUser.getText());
-			}
-		});
-		
-		_jpqPass.addKeyListener(new KeyAdapter() {
-			@SuppressWarnings("deprecation")
-			public void keyReleased(KeyEvent e) {
-				Properties.setDBPassProperty(_jpqPass.getText());
-			}
-		});
 		
 		JPanel fieldContainer = new JPanel(new BorderLayout());
 		fieldContainer.add(fieldLabels, BorderLayout.WEST);

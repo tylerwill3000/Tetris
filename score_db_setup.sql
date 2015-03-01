@@ -10,6 +10,6 @@ create table score(
 	playerLines integer,
 	playerLevel integer,
 	playerDifficulty integer,
-	gameTime varchar(5),
+	gameTime integer,
 	primary key (scoreID)
 );
