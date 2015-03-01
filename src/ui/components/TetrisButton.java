@@ -18,13 +18,14 @@ import ui.GameFrame;
 public class TetrisButton extends JButton {
 	
 	private final static int BUTTON_HEIGHT = 30;
+	private final static Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 	
 	// Causes the mouse to change to a hand icon when mousing over the button
 	private MouseListener handCursorListener = new MouseAdapter() {
 		
 		public void mouseEntered(MouseEvent e) {
 			if (isEnabled()) {
-				setCursor(new Cursor(Cursor.HAND_CURSOR));
+				setCursor(HAND_CURSOR);
 				setBackground(Color.LIGHT_GRAY);
 			}
 		}
