@@ -53,12 +53,9 @@ public final class DB {
 	 */
 	public static int writeScore(String name, int score, int level, int lines, int difficulty, long gameTime) throws ClassNotFoundException, SQLException {
 		
-		Connection conn = null;
 		
-		try {
+		try (Connection conn = getConnection()) {
 				
-			conn = getConnection();
-			
 			Statement stmt = conn.createStatement();
 			
 			stmt.executeUpdate(new StringBuilder()
@@ -80,9 +77,6 @@ public final class DB {
 			return rank.getInt(1);
 			
 		}
-		finally {
-			if (conn != null) conn.close();
-		}		
 		
 	}
 	
@@ -108,11 +102,7 @@ public final class DB {
 	 */
 	public static Object[][] getHighScoresData(int numScores, int difficulty) throws ClassNotFoundException, SQLException {
 		
-		Connection conn = null;
-		
-		try {
-			
-			conn = getConnection();
+		try (Connection conn = getConnection()) {
 			
 			updateScoreIDMap(conn);
 			
@@ -137,9 +127,6 @@ public final class DB {
 			
 			return data.toArray(new Object[data.size()][scores.getMetaData().getColumnCount()]);
 			
-		}
-		finally {
-			if (conn != null) conn.close();
 		}
 		
 	}
