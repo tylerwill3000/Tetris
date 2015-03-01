@@ -4,8 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import ui.components.TetrisButton;
 import model.Properties;
@@ -28,7 +30,11 @@ public class SupplementarySettingsFrame extends JFrame {
 		// When frames of these type are closed, properties are saved to disk
 		_btnSaveAndClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Properties.saveCurrentProperties(true);
+				try {
+					Properties.saveCurrentProperties();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(null, "Error saving settings to disk: " + e1);
+				}
 				dispose();
 			}
 		});
@@ -37,7 +43,11 @@ public class SupplementarySettingsFrame extends JFrame {
 		// those stored on disk
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				Properties.loadPropertiesFromDisk();
+				try {
+					Properties.loadPropertiesFromDisk();
+				} catch (IOException e1) {
+					// Just munch this I guess;
+				}
 			}
 		});
 		

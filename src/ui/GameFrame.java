@@ -17,6 +17,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -69,7 +70,11 @@ public class GameFrame extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				_settingsPanel.syncWithProperties();
-				Properties.saveCurrentProperties(true);
+				try {
+					Properties.saveCurrentProperties();
+				} catch (IOException e1) {
+					// Just munch this I guess
+				}
 			}
 		});
 		

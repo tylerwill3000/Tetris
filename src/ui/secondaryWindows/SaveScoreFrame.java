@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JFrame;
@@ -44,7 +45,12 @@ public class SaveScoreFrame extends JFrame {
 			}
 			
 			Properties.setPlayerSaveName(saveName);
-			Properties.saveCurrentProperties(true); // Persist player save name
+			
+			try { // Persist player save name
+				Properties.saveCurrentProperties();
+			} catch (IOException e2) {
+				JOptionPane.showMessageDialog(null, "Could not save current player save name to disk: " + e2);
+			}
 			
 			int rank = 0;
 			try {

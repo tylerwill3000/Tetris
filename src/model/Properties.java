@@ -19,7 +19,15 @@ public final class Properties {
 	
 	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.home") + "/.tetrisconfig"; 
 	private static final java.util.Properties GAME_PROPERTIES = new java.util.Properties();
-	static { loadPropertiesFromDisk(); }
+	static {
+		try {
+			loadPropertiesFromDisk();
+		} catch (IOException e) {
+			// I'd rather not add in GUI code in a model class, but I don't really have a choice
+			// here since I need to statically load this
+			JOptionPane.showMessageDialog(null, "Properties could not be loaded from disk: " + e);
+		}
+	}
 	
 	// Centralize management of all property keys
 	private final static String DB_HOST_KEY = "db.host";
@@ -212,51 +220,28 @@ public final class Properties {
 		setHighScoreRecordCount(0);
 		setHighScoresDifficulty(0);
 		
-		saveCurrentProperties(true);
+		saveCurrentProperties();
 	}
 	
-	/**
+	/*
 	 * Persists the current properties stored in the game properties object to the
 	 * properties file.
-	 * @return Whether or not the save was successful
 	 */
-	public static boolean saveCurrentProperties() {
-		return saveCurrentProperties(false);
-	}
-	
-	/**
-	 * Persists the current properties stored in the game properties object to the
-	 * properties file.
-	 * @param quietMode Specifies whether to hide save alerts
-	 * @return Whether or not the save was successful
-	 */
-	public static boolean saveCurrentProperties(boolean quietMode) {
-		try {
-			GAME_PROPERTIES.store(new FileOutputStream(PROPERTIES_FILE_PATH), "Tetris Settings");
-			if (!quietMode) JOptionPane.showMessageDialog(null, "Settings saved.");
-			return true;
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error writing to settings file: " + e.getMessage());
-			return false;
-		}
+	public static void saveCurrentProperties() throws IOException {
+		GAME_PROPERTIES.store(new FileOutputStream(PROPERTIES_FILE_PATH), "Tetris Settings");
 	}
 	
 	/**
 	 * Reloads the properties object with the properties stored on disk
+	 * @throws IOException 
 	 */
-	public static void loadPropertiesFromDisk() {
+	public static void loadPropertiesFromDisk() throws IOException {
 		GAME_PROPERTIES.clear();
-		try {
-			File propsFile = new File(PROPERTIES_FILE_PATH);
-			if (!propsFile.exists()) {
-				initDefaultPropertiesFile(propsFile);
-			}
-			else {
-				GAME_PROPERTIES.load(new FileInputStream(propsFile));
-			}
-		} 
-		catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error while loading properties file: " + e.getMessage());
+		File propsFile = new File(PROPERTIES_FILE_PATH);
+		if (!propsFile.exists()) {
+			initDefaultPropertiesFile(propsFile);
+		} else {
+			GAME_PROPERTIES.load(new FileInputStream(propsFile));
 		}
 	}
 	
