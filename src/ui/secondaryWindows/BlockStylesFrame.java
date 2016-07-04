@@ -10,12 +10,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import model.Piece;
+import model.PieceType;
+import model.Properties;
 import ui.GameFrame;
 import ui.NextPiecePanel;
 import util.FrameUtils;
-import model.Piece;
-import model.PieceFactory.PieceType;
-import model.Properties;
 
 public class BlockStylesFrame extends SupplementarySettingsFrame {
 	

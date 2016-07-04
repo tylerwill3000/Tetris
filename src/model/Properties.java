@@ -9,8 +9,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import model.PieceFactory.PieceType;
-
 /**
  *  Provides an interface to the game's properties
  * @author Tyler

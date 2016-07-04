@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.PieceFactory.PieceType;
 import ui.GameBoardPanel;
 
 /**

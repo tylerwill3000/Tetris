@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
-import model.PieceFactory.PieceType;
 import ui.Controller;
 import ui.GameFrame;
 import util.FormatUtils;

@@ -17,14 +17,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import model.Piece;
+import model.PieceFactory;
+import model.PieceType;
+import model.Properties;
+import model.ScoreModel;
 import ui.GameFrame;
 import ui.NextPiecePanel;
 import util.FrameUtils;
-import model.Piece;
-import model.PieceFactory;
-import model.PieceFactory.PieceType;
-import model.Properties;
-import model.ScoreModel;
 
 public class SpecialPiecesFrame extends SupplementarySettingsFrame {
 	
