@@ -5,7 +5,6 @@
 <project name="Tetris" default="clean">
 	
 	<property environment="env"/> <!-- Sets the string to use to access environment variables -->
-	<property name="jar.deploy.path" value="${env.USERPROFILE}/Desktop"/>
 	<property name="src.dir" value="src"/>
 	<property name="build.dir" value="build"/>
 	<property name="lib.dir" value="lib"/>
@@ -15,29 +14,22 @@
 		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
 	</target>
 	
-	<target name="add-external-resources" description="Adds audio and images to the build folder" depends="compile">
-		<copy todir="${build.dir}/model">
-			<fileset dir="${src.dir}/.." includes="audio/**"/>
+	<target name="jar" description="Creates jar file" depends="compile">
+		
+		<copy todir="${build.dir}/audio">
+			<fileset dir="audio" />
 		</copy>
 		
-		<!-- Copy main game frame icon into main ui folder -->
-		<copy todir="${build.dir}/ui">
-			<fileset dir="${src.dir}/../images" includes="*.png"/>
+		<copy todir="${build.dir}/images">
+			<fileset dir="images" />
 		</copy>
 		
-		<!-- Copy supplementary frame icons into ui.secondaryWindows folder -->
-		<copy toDir="${build.dir}/ui/secondaryWindows">
-			<fileset dir="$(src.dir}/../images/secondary frame images" includes="*.png"/>
-		</copy>
-	</target>
-	
-	<target name="jar" description="Creates jar file" depends="compile, add-external-resources">
-		<jar basedir="${build.dir}" destfile="${jar.deploy.path}/tetris.jar" includes="**">
-			<zipgroupfileset dir="${lib.dir}" includes="*.jar" /> <!-- Includes DB driver classes from mysql jar -->
+		<jar basedir="${build.dir}" destfile="tetris.jar" includes="**">
 			<manifest>
-				<attribute name="Main-class" value="ui.Main"/>
+				<attribute name="Main-class" value="com.tyler.tetris.ui.swing.Main"/>
 			</manifest>
 		</jar>
+		
 	</target>
 	
 	<target name="clean" description="Deletes all build files after compile" depends="jar">
