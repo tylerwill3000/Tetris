@@ -1,4 +1,4 @@
-package com.tyler.tetris.util;
+package com.tyler.tetris.ui.swing;
 
 /**
  * Utility class for formatting data

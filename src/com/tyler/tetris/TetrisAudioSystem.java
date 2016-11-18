@@ -1,6 +1,7 @@
-package com.tyler.tetris.model;
+package com.tyler.tetris;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -12,7 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * Provides an interface to the game's audio
  * @author Tyler
  */
-public final class AudioManager {
+public final class TetrisAudioSystem {
 	
 	// Soundtrack for the game
 	private static final Clip[] SOUNDTRACK = {
@@ -43,43 +44,38 @@ public final class AudioManager {
 	private static final Clip HOLD = getAudioClip("/audio/effects/clang.wav");
 	private static final Clip RELEASE = getAudioClip("/audio/effects/water-drop.wav");
 	
-	public AudioManager() {}
+	private boolean soundtrackMuted = false;
+	private boolean effectsMuted = false;
+	
+	public TetrisAudioSystem() {}
+	
+	public void setSoundtrackMuted(boolean muted) {
+		this.soundtrackMuted = muted;
+	}
+	
+	public void setEffectsMuted(boolean muted) {
+		this.effectsMuted = muted;
+	}
 	
 	public void startSoundtrack(int level) {
 		
-		// In case a new game is started before the victory jingle is finished
-		// from a previous game (rare occurrence, but possible)
-		if (VICTORY_FANFARE != null && VICTORY_FANFARE.isRunning()) {
-			VICTORY_FANFARE.stop();			
+		// In case a new game is started before the victory jingle is finished from a previous game (rare occurrence, but possible)
+		if (VICTORY_FANFARE.isRunning()) {
+			VICTORY_FANFARE.stop();
 		}
 		
-		if (SOUNDTRACK[level] != null) {
-			SOUNDTRACK[level].setFramePosition(0);
-			SOUNDTRACK[level].loop(Clip.LOOP_CONTINUOUSLY);
-		}
+		SOUNDTRACK[level].setFramePosition(0);
+		resumeSoundtrack(level);
 	}
 	
 	public void resumeSoundtrack(int level) {
-		if (SOUNDTRACK[level] != null) {
+		if (!soundtrackMuted) {
 			SOUNDTRACK[level].loop(Clip.LOOP_CONTINUOUSLY);
 		}
 	}
 	
 	public void stopSoundtrack(int level) {
-		if (SOUNDTRACK[level] != null) {
-			SOUNDTRACK[level].stop();
-		}
-	}
-	
-	/**
-	 *  Use this for playing small effect sounds. This resets the clip back to the starting
-	 *  frame position after playing.
-	 */
-	private void playEffect(Clip effect) {
-		if (effect != null) {
-			effect.start();
-			effect.setFramePosition(0);
-		}
+		SOUNDTRACK[level].stop();
 	}
 	
 	public void playGameOverSound() {
@@ -106,9 +102,6 @@ public final class AudioManager {
 		playEffect(RELEASE);
 	}
 	
-	/**
-	 * Plays the audio used when lines are cleared. If lines cleared is equal to 4, a special sound is played
-	 */
 	public void playClearLineSound(int lineCount) {
 		playEffect(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
 	}
@@ -125,15 +118,20 @@ public final class AudioManager {
 		playEffect(SUPERSLIDE);
 	}
 	
+	private void playEffect(Clip effect) {
+		if (!effectsMuted) {
+			effect.start();
+			effect.setFramePosition(0);
+		}
+	}
+	
 	/**
 	 *  Iterates over all clips and resets their frame positions back to the start.
 	 *  This is called to prepare soundtracks for the next game.
 	 */
-	public void resetFramePositions() {
+	public void resetClips() {
 		for (Clip c : SOUNDTRACK) {
-			if (c != null) {
-				c.setFramePosition(0);
-			}
+			c.setFramePosition(0);
 		}
 	}
 	
@@ -144,29 +142,25 @@ public final class AudioManager {
 	 */
 	private static Clip getAudioClip(String file) {
 		
-		// Attempt to initialize clip input object. If there are no supported lines null is returned for the clip
-		Clip c;
+		Clip c = null;
 		
 		if (AudioSystem.isLineSupported(Port.Info.SPEAKER) || AudioSystem.isLineSupported(Port.Info.HEADPHONE)) {
-		
 			try {
-				
-				c = AudioSystem.getClip();
-				
-				// Add a new audio stream to the clip data line. Since I'm
-				// using a clip object, all data is loaded into memory at
-				// once as opposed to being read into a buffer and streamed
-				c.open(AudioSystem.getAudioInputStream(AudioManager.class.getResource(file)));
-				return c;
-				
+				URL audioFile = TetrisAudioSystem.class.getResource(file);
+				if (audioFile != null) {
+					c = AudioSystem.getClip();
+					c.open(AudioSystem.getAudioInputStream(audioFile));
+				}
+				else {
+					System.out.println("Audio file not found for path " + file);
+				}
 			}
-			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+			catch (LineUnavailableException | IOException | UnsupportedAudioFileException ignore) {
 				// Will have no audio
 			}
-			
 		}
 		
-		return null;
+		return c;
 	}
 	
 }

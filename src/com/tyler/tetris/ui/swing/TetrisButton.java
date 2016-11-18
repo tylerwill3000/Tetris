@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing.widget;
+package com.tyler.tetris.ui.swing;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -8,8 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
-
-import com.tyler.tetris.ui.swing.TetrisFrame;
 
 /**
  *  Standard button style for all frames
@@ -36,20 +34,14 @@ public class TetrisButton extends JButton {
 		
 	};
 	
-	/**
-	 * Construct button with specified width (height is constant for all)
-	 */
 	public TetrisButton(String buttonText, int width) {
 		setText(buttonText);
 		setPreferredSize(new Dimension(width, BUTTON_HEIGHT));
-		setBorder(TetrisFrame.ETCHED_BORDER);
+		setBorder(MasterTetrisFrame.ETCHED_BORDER);
 		setFocusable(false);
 		addMouseListener(handCursorListener);
 	}
 	
-	/**
-	 * Construct button with default size
-	 */
 	public TetrisButton(String buttonText) {
 		this(buttonText, 100);
 	}

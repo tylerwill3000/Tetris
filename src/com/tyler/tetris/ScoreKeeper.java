@@ -1,4 +1,4 @@
-package com.tyler.tetris.model;
+package com.tyler.tetris;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -10,22 +10,22 @@ import java.util.Map;
  * lines completed and total game time
  * @author Tyler
  */
-public final class ScoreModel {
+public final class ScoreKeeper {
 	
 	// Index of the selected option in the difficulty list is used to index into this array to get lines per level
-	private static final int[] LINES_PER_LEVEL = {15,20,25};
+	private static final int[] LINES_PER_LEVEL = { 15, 20, 25 };
 	
 	// Point values per line based on lines cleared
-	private static final int[] LINE_POINTS_MAP = {10,15,20,30};
+	private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
 	
 	// Bonus points on level up when in time attack mode
-	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = {150,175,200};
+	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = { 150, 175, 200 };
 	
 	// Number of milliseconds allowed per line in time attack mode
 	private static final int TIME_ATTACK_MILLIS_PER_LINE = 3000;
 	
 	// Bonus points granted upon winning the game. Determined by difficulty
-	private static final int[] WIN_BONUSES = {500,750,1000};
+	private static final int[] WIN_BONUSES = { 500, 750, 1000 };
 	
 	public static final int MAX_LEVEL = 11;
 	
@@ -46,7 +46,7 @@ public final class ScoreModel {
 	private Collection<BlockType> activeBlocks;
 	private boolean timeAttack;
 	
-	public ScoreModel() {
+	public ScoreKeeper() {
 		this.totalLinesCleared = 0;
 		this.score = 0;
 		this.level = 1;

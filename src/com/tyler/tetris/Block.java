@@ -1,4 +1,4 @@
-package com.tyler.tetris.model;
+package com.tyler.tetris;
 
 import java.awt.Color;
 import java.util.List;
@@ -11,41 +11,26 @@ import java.util.Objects;
 public class Block {
 	
 	private BlockType blockType;
-	
-	/**
-	 * Location of piece on the game board. Corresponds to the location of the
-	 * bottom left corner of the bounding grid.
-	 */
 	private int[] location;
-	
-	/**
-	 * Used to index into the orientation map
-	 */
 	private int orientation;
+	private boolean isHoldBlock;
 	
-	/**
-	 *  This flag is necessary since released hold pieces must be placed - they
-	 * can not be re-held. This is to prevent manual shifting of the piece conveyor belt
-	 */
-	private boolean isHoldPiece;
-	
-	Block(BlockType pieceType) {
-		this.blockType = pieceType;
-		this.isHoldPiece = false;
+	Block(BlockType blockType) {
+		this.blockType = blockType;
+		this.isHoldBlock = false;
 		this.orientation = 0;
-	}
-	
-	// Package private for a reason-should only get called by board model
-	void setLocation(int row, int col) {
-		this.location = new int[]{row, col};
 	}
 	
 	public int getRow() {
 		return location[0];
 	}
 	
-	public int getCol() {
+	public int getColumn() {
 		return location[1];
+	}
+
+	public int getOrientation() {
+		return orientation;
 	}
 	
 	public Color getColor() {
@@ -60,11 +45,25 @@ public class Block {
 		return blockType.getNextPanelSquares();
 	}
 	
-	/* Mutators are package private since they should only be called from piece board model */
+	public void tagAsHoldBlock() {
+		isHoldBlock = true;
+	}
+	
+	public boolean isHoldBlock() {
+		return isHoldBlock;
+	}
+	
+	public BlockType getType() {
+		return blockType;
+	}
 	
 	void move(int rowMove, int colMove) {
 		location[0] += rowMove;
 		location[1] += colMove;
+	}
+	
+	void setLocation(int row, int col) {
+		this.location = new int[]{row, col};
 	}
 	
 	void rotate(int rotation) {
@@ -75,18 +74,6 @@ public class Block {
 		else if (orientation == -1) {
 			orientation = 3;
 		}
-	}
-	
-	public void tagAsHoldBlock() {
-		isHoldPiece = true;
-	}
-	
-	public boolean isHoldBlock() {
-		return isHoldPiece;
-	}
-	
-	public BlockType getType() {
-		return blockType;
 	}
 	
 	public static class ColoredSquare {
@@ -120,11 +107,11 @@ public class Block {
 			this.row = row;
 		}
 		
-		public int getCol() {
+		public int getColumn() {
 			return col;
 		}
 		
-		public void setCol(int col) {
+		public void setColumn(int col) {
 			this.col = col;
 		}
 		
@@ -140,6 +127,11 @@ public class Block {
 				return row == other.row && col == other.col;
 			}
 			return false;
+		}
+
+		@Override
+		public String toString() {
+			return "ColoredSquare [color=" + color + ", row=" + row + ", col=" + col + "]";
 		}
 		
 	}

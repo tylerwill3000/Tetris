@@ -1,4 +1,4 @@
-package com.tyler.tetris.model;
+package com.tyler.tetris;
 
 import static java.util.stream.Collectors.toList;
 
@@ -6,20 +6,20 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import com.tyler.tetris.model.Block.ColoredSquare;
+import com.tyler.tetris.Block.ColoredSquare;
 
 public enum BlockType {
 	
 	BOX(
 		
-		// Orientations. All the same for each direction
+		// Offsets. All the same for each direction
 		// XX
 		// XX
 		new int[][][]{ 					
 			{ {0,0},{-1,0},{-1,1},{0,1} },
 			{ {0,0},{-1,0},{-1,1},{0,1} },
 			{ {0,0},{-1,0},{-1,1},{0,1} },
-			{ {0,0},{-1,0},{-1,1},{0,1} }						
+			{ {0,0},{-1,0},{-1,1},{0,1} }
 		},
 		
 		// Next panel squares
@@ -35,7 +35,7 @@ public enum BlockType {
 	
 	L_BLOCK_L(
 		
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// X..
@@ -73,7 +73,7 @@ public enum BlockType {
 	
 	L_BLOCK_R(
 			
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ..X
@@ -111,7 +111,7 @@ public enum BlockType {
 	
 	S_BLOCK_L(
 			
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ...
@@ -124,7 +124,7 @@ public enum BlockType {
 			// X..
 			{ {0,0},{-1,0},{-1,1},{-2,1} },
 		
-			// Other 2 orientations are the same as the first 2, so
+			// Other 2 Offsets are the same as the first 2, so
 			// just cycle through them
 			{ {-1,0},{-1,1},{0,1},{0,2} },
 			{ {0,0},{-1,0},{-1,1},{-2,1} }
@@ -144,7 +144,7 @@ public enum BlockType {
 	
 	S_BLOCK_R(
 		
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ...
@@ -157,7 +157,7 @@ public enum BlockType {
 			// ..X
 			{ {-2,1},{-1,1},{-1,2},{0,2} },
 			
-			// Other 2 orientations are the same as the first 2, so
+			// Other 2 Offsets are the same as the first 2, so
 			// just cycle through them
 			{ {0,0},{0,1},{-1,1},{-1,2} },
 			{ {-2,1},{-1,1},{-1,2},{0,2} }
@@ -177,7 +177,7 @@ public enum BlockType {
 	
 	STRAIGHT_LINE(
 		
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ....
@@ -192,7 +192,7 @@ public enum BlockType {
 			// .X..
 			{ {0,1},{-1,1},{-2,1},{-3,1} },
 			
-			// Other 2 orientations are the same as the first 2, so
+			// Other 2 Offsets are the same as the first 2, so
 			// just cycle through them
 			{ {-1,0},{-1,1},{-1,2},{-1,3} },				
 			{ {0,1},{-1,1},{-2,1},{-3,1} }
@@ -212,7 +212,7 @@ public enum BlockType {
 	
 	T_BLOCK(
 		
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ...
@@ -250,7 +250,7 @@ public enum BlockType {
 	
 	TWIN_PILLARS(
 			
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// ...
@@ -263,7 +263,7 @@ public enum BlockType {
 			// XX.
 			{ {-2,0},{-2,1},{0,0},{0,1} },
 			
-			// Other two orientations are the same, so cycle through them again
+			// Other two Offsets are the same, so cycle through them again
 			{ {0,0},{-1,0},{-1,2},{0,2} },
 			{ {-2,0},{-2,1},{0,0},{0,1} },
 			
@@ -282,7 +282,7 @@ public enum BlockType {
 	
 	ROCKET(
 		
-		// Orientations
+		// Offsets
 		new int[][][]{
 			
 			// .X.
@@ -320,7 +320,7 @@ public enum BlockType {
 	
 	DIAMOND(
 		
-		// Orientations. All the same for each direction:
+		// Offsets. All the same for each direction:
 		// .X.
 		// X.X
 		// .X.
@@ -344,13 +344,13 @@ public enum BlockType {
 	
 	;
 	
-	private int[][][] orientations;
+	private int[][][] offsetMap;
 	private int[][] nextPanelSquares;
 	private int startRow;
 	private Color color;
 	
-	private BlockType(int[][][] orientations, int[][] nextPanelSquares, int startRow, Color color) {
-		this.orientations = orientations;
+	private BlockType(int[][][] offsetMap, int[][] nextPanelSquares, int startRow, Color color) {
+		this.offsetMap = offsetMap;
 		this.nextPanelSquares = nextPanelSquares;
 		this.startRow = startRow;
 		this.color = color;
@@ -377,9 +377,9 @@ public enum BlockType {
 		if (orientation < 0 || orientation > 3) {
 			throw new IllegalArgumentException("Orientation value must be between 0 and 3");
 		}
-		int[][] offsets = orientations[orientation];
+		int[][] offsets = offsetMap[orientation];
 		return Arrays.stream(offsets)
-		             .map(offset -> new ColoredSquare(row + offset[0], col + offset[1]))
+		             .map(offset -> new ColoredSquare(color, row + offset[0], col + offset[1]))
 		             .collect(toList());
 	}
 	

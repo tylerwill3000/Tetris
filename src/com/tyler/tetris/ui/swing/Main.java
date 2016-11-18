@@ -1,6 +1,6 @@
 package com.tyler.tetris.ui.swing;
 
-import com.tyler.tetris.ui.swing.TetrisFrame;
+import com.tyler.tetris.ui.swing.MasterTetrisFrame;
 
 /**
  * Main executable class
@@ -8,9 +8,9 @@ import com.tyler.tetris.ui.swing.TetrisFrame;
  */
 public class Main {
 	
-	static TetrisFrame _gameFrame = new TetrisFrame();
+	private static final MasterTetrisFrame MASTER_FRAME = new MasterTetrisFrame();
 	
 	public static void main(String[] args) {
-		_gameFrame.setVisible(true);
+		MASTER_FRAME.setVisible(true);
 	}
 }

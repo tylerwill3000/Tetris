@@ -1,4 +1,4 @@
-package com.tyler.tetris.util;
+package com.tyler.tetris.ui.swing;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
