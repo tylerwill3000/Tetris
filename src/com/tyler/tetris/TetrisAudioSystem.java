@@ -82,6 +82,11 @@ public final class TetrisAudioSystem {
 		playEffect(GAME_OVER);
 	}
 	
+
+	public void stopGameOverSound() {
+		stopEffect(GAME_OVER);
+	}
+	
 	public void playVictoryFanfare() {
 		playEffect(VICTORY_FANFARE);
 	}
@@ -121,6 +126,13 @@ public final class TetrisAudioSystem {
 	private void playEffect(Clip effect) {
 		if (!effectsMuted) {
 			effect.start();
+			effect.setFramePosition(0);
+		}
+	}
+	
+	private void stopEffect(Clip effect) {
+		if (effect.isActive()) {
+			effect.stop();
 			effect.setFramePosition(0);
 		}
 	}

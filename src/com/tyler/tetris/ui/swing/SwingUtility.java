@@ -5,11 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-/**
- * Provides utility methods for performing some basic functions to manipulate frames and panels
- * @author Tyler
- */
-public final class FrameUtils {
+public final class SwingUtility {
 	
 	/**
 	 * Sets the icon image for a frame. The image must exist in the same directory

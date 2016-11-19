@@ -2,30 +2,37 @@ package com.tyler.tetris.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -34,8 +41,13 @@ import javax.swing.border.TitledBorder;
 import com.tyler.tetris.Block;
 import com.tyler.tetris.Block.ColoredSquare;
 import com.tyler.tetris.BlockConveyor;
+import com.tyler.tetris.BlockType;
 import com.tyler.tetris.ScoreKeeper;
-import com.tyler.tetris.TetrisGameModel;
+import com.tyler.tetris.TetrisAudioSystem;
+import com.tyler.tetris.TetrisBoard;
+import com.tyler.tetris.ui.swing.widget.FlashLabel;
+import com.tyler.tetris.ui.swing.widget.ProgressBar;
+import com.tyler.tetris.ui.swing.widget.TetrisButton;
 
 /**
  * Master frame that holds all other components
@@ -45,21 +57,27 @@ public class MasterTetrisFrame extends JFrame {
 	
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	public static final Border ETCHED_BORDER = BorderFactory.createEtchedBorder();
 	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
-	public static final int INFO_PANEL_WIDTH = 35 * 5;
 	public static final int INITIAL_TIMER_DELAY = 600;
-	static final ExecutorService THREAD_EXECUTOR = Executors.newCachedThreadPool();
+	static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
+	
+	private TetrisAudioSystem audioSystem;
+	private TetrisBoard board;
+	private ScoreKeeper scoreKeeper;
+	private BlockConveyor conveyor;
 	
 	private BoardPanel boardPanel;
-	private NextPiecePanel nextPiecePanel;
-	private NextPiecePanel holdPanel;
+	private BlockDisplayPanel nextBlockPanel;
+	private BlockDisplayPanel holdPanel;
 	private MenuPanel menuPanel;
 	private SettingsPanel settingsPanel;
 	private ScorePanel scorePanel;
-	private TetrisGameModel gameModel;
-	private BlockConveyor conveyor;
-	private boolean beforeFirstGame = true;
+	
+	// Tracks progress of Asynchronous UI effects
+	private Future<?> spiralClearTask;
+	private Future<?> jumpClearTask;
+	private Future<?> flashLabelTask;
+	
 	private Timer fallTimer = new Timer(INITIAL_TIMER_DELAY, e -> onFallTick());
 	
 	private KeyAdapter keyHandler = new KeyAdapter() {
@@ -76,11 +94,11 @@ public class MasterTetrisFrame extends JFrame {
 			case KeyEvent.VK_LEFT:
 				
 				if (pressed.contains(KeyEvent.VK_S)) { // Perform super-shift left if 's' is pressed
-					gameModel.getBoard().ssActiveBlockLeft();
-					gameModel.getAudioSystem().playSuperslideSound();
+					board.ssActiveBlockLeft();
+					audioSystem.playSuperslideSound();
 				}
 				else {
-					gameModel.getBoard().moveActiveBlockLeft();
+					board.moveActiveBlockLeft();
 				}
 				
 				break;
@@ -88,69 +106,69 @@ public class MasterTetrisFrame extends JFrame {
 			case KeyEvent.VK_RIGHT:
 				
 				if (pressed.contains(KeyEvent.VK_S)) { // Perform super-shift right if 's' is pressed
-					gameModel.getBoard().ssActiveBlockRight();
-					gameModel.getAudioSystem().playSuperslideSound();
+					board.ssActiveBlockRight();
+					audioSystem.playSuperslideSound();
 				}
 				else {
-					gameModel.getBoard().moveActiveBlockRight();
+					board.moveActiveBlockRight();
 				}
 				
 				break;
 				
 			case KeyEvent.VK_DOWN:
 				
-				gameModel.getBoard().moveActiveBlockDown();
+				board.moveActiveBlockDown();
 				break;
 				
 			case KeyEvent.VK_UP:
 					
-				if (gameModel.getBoard().rotateActiveBlockCW()) {
-					gameModel.getAudioSystem().playCWRotationSound();
+				if (board.rotateActiveBlockCW()) {
+					audioSystem.playCWRotationSound();
 				}
 				break;
 				
 			case KeyEvent.VK_F:
 				
-				if (gameModel.getBoard().rotateActiveBlockCCW()) {
-					gameModel.getAudioSystem().playCCWRotationSound();
+				if (board.rotateActiveBlockCCW()) {
+					audioSystem.playCCWRotationSound();
 				}
 				break;
 			
 			case KeyEvent.VK_D: // Hold set
 				
-				Block activeBlock = gameModel.getBoard().getActiveBlock();
+				Block activeBlock = board.getActiveBlock();
 				
-				if (!gameModel.getBoard().getHoldBlock().isPresent() && !activeBlock.isHoldBlock()) {
+				if (!board.getHoldBlock().isPresent() && !activeBlock.isHoldBlock()) {
 					activeBlock.tagAsHoldBlock();
-					gameModel.getAudioSystem().playHoldSound();
-					gameModel.getBoard().setHoldBlock(activeBlock);
+					audioSystem.playHoldSound();
+					board.setHoldBlock(activeBlock);
 					Block nextBlock = conveyor.next();
-					gameModel.getBoard().spawn(nextBlock);
+					board.spawn(nextBlock);
 				}
 				
 				break;
 			
 			case KeyEvent.VK_E: // Hold release
 				
-				if (gameModel.getBoard().getHoldBlock().isPresent()) {
-					Block heldPiece = gameModel.getBoard().getHoldBlock().get();
-					gameModel.getBoard().spawn(heldPiece);
-					gameModel.getBoard().clearHoldBlock();
-					gameModel.getAudioSystem().playReleaseSound();
+				if (board.getHoldBlock().isPresent()) {
+					Block heldPiece = board.getHoldBlock().get();
+					board.spawn(heldPiece);
+					board.clearHoldBlock();
+					audioSystem.playReleaseSound();
 				}
 				
 				break;
 				
 			case KeyEvent.VK_SPACE:
 				
-				gameModel.getBoard().dropCurrentBlock();
-				gameModel.getAudioSystem().playPiecePlacementSound();
+				board.dropCurrentBlock();
+				audioSystem.playPiecePlacementSound();
 				onFallTick();
 				break;
 			}
 			
 			holdPanel.repaint();
-			nextPiecePanel.repaint();
+			nextBlockPanel.repaint();
 			boardPanel.repaint();
 		}
 		
@@ -163,26 +181,29 @@ public class MasterTetrisFrame extends JFrame {
 	MasterTetrisFrame() {
 		
 		this.fallTimer.setInitialDelay(0);
-		this.gameModel = new TetrisGameModel();
+		this.audioSystem = new TetrisAudioSystem();
+		this.board = new TetrisBoard();
+		this.scoreKeeper = new ScoreKeeper();
 		this.boardPanel = new BoardPanel();
+		this.conveyor = new BlockConveyor();
 		
-		this.nextPiecePanel = new NextPiecePanel("Next Piece") {
+		this.nextBlockPanel = new BlockDisplayPanel("Next") {
 			@Override
 			public Collection<ColoredSquare> getCurrentColors() {
-				if (beforeFirstGame) {
-					return new ArrayList<>();
+				if (conveyor.peek() != null) {
+					return conveyor.peek().getNextPanelSquares();
 				}
 				else {
-					return conveyor.peek().getNextPanelSquares();
+					return new ArrayList<>();
 				}
 			}
 		};
 		
-		this.holdPanel = new NextPiecePanel("Hold") {
+		this.holdPanel = new BlockDisplayPanel("Hold") {
 			@Override
 			public Collection<ColoredSquare> getCurrentColors() {
-				return gameModel.getBoard().getHoldBlock().isPresent() ?
-						gameModel.getBoard().getHoldBlock().get().getNextPanelSquares() :
+				return board.getHoldBlock().isPresent() ?
+						board.getHoldBlock().get().getNextPanelSquares() :
 						new ArrayList<>();
 			}
 		};
@@ -190,7 +211,6 @@ public class MasterTetrisFrame extends JFrame {
 		this.menuPanel = new MenuPanel();
 		this.settingsPanel = new SettingsPanel();
 		this.scorePanel = new ScorePanel();
-		this.conveyor = new BlockConveyor();
 		
 		JPanel keyCombos = new JPanel(new GridLayout(15,1));
 		for (String keyCombo : new String[]{
@@ -246,7 +266,7 @@ public class MasterTetrisFrame extends JFrame {
 		
 		// Info panel
 		JPanel infoPanel = new JPanel(new BorderLayout());
-		infoPanel.add(nextPiecePanel, BorderLayout.NORTH);
+		infoPanel.add(nextBlockPanel, BorderLayout.NORTH);
 		infoPanel.add(scorePanel, BorderLayout.CENTER);
 		infoPanel.add(settingsPanel, BorderLayout.SOUTH);
 		add(infoPanel, BorderLayout.EAST);
@@ -254,47 +274,54 @@ public class MasterTetrisFrame extends JFrame {
 		// Menu
 		add(menuPanel, BorderLayout.SOUTH);
 		
-		FrameUtils.setIcon(this, "/images/game-icon.png");
+		SwingUtility.setIcon(this, "/images/game-icon.png");
 		setTitle("Tetris");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		int boardPanelWidth = 35 * gameModel.getBoard().getHorizontalDimension();
-		int boardPanelHeight = 35 * (gameModel.getBoard().getVerticalDimension() - 3);
-		setSize(boardPanelWidth + (INFO_PANEL_WIDTH * 2), boardPanelHeight);
+		int masterWidth = (holdPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION) +
+		                  (boardPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION) +
+		                  (nextBlockPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
+		
+		int masterHeight = BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION * (boardPanel.getRows());
+		
+		setSize(masterWidth, masterHeight);
 		setResizable(false); // I don't want to mess with trying to make this work right
 		
 		setLocationRelativeTo(null);
 	}
 	
 	private void onFallTick() {
-		Integer linesCleared = gameModel.getBoard().tryFall();
-		boolean piecePlaced = linesCleared != null;
-		if (piecePlaced) {
+		
+		Integer linesCleared = board.tryFall();
+		
+		if (linesCleared != null) {
 			if (linesCleared > 0) {
-				gameModel.getAudioSystem().playClearLineSound(linesCleared);
-				int currentLevel = gameModel.getScoreKeeper().getLevel();
-				int newLevel = gameModel.getScoreKeeper().increaseScore(linesCleared);
+				audioSystem.playClearLineSound(linesCleared);
+				int currentLevel = scoreKeeper.getLevel();
+				int newLevel = scoreKeeper.increaseScore(linesCleared);
 				boolean levelUp = newLevel > currentLevel;
 				
 				if (levelUp) {
-					gameModel.getAudioSystem().stopSoundtrack(currentLevel);
+					audioSystem.stopSoundtrack(currentLevel);
+					scoreKeeper.pauseTimer();
 					if (newLevel == ScoreKeeper.MAX_LEVEL) {
-						gameModel.getAudioSystem().playVictoryFanfare();
-						List<Callable<Object>> tasks = Arrays.asList(boardPanel::spiralClear, scorePanel::flashWin);
+						audioSystem.playVictoryFanfare();
 						try {
-							THREAD_EXECUTOR.invokeAll(tasks);
+							jumpClearTask = THREAD_POOL.submit(boardPanel::jumpClear);
+							flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
 						}
 						catch (Exception ex) {
 							throw new RuntimeException(ex);
 						}
 					}
 					else {
-						gameModel.getAudioSystem().startSoundtrack(newLevel);
+						flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
+						audioSystem.startSoundtrack(newLevel);
 					}
 				}
 			}
 			
-			if (!gameModel.getBoard().spawn(conveyor.next())) {
+			if (!board.spawn(conveyor.next())) {
 				menuPanel.onGiveUp();
 				return;
 			}
@@ -302,7 +329,7 @@ public class MasterTetrisFrame extends JFrame {
 		}
 		
 		boardPanel.repaint();
-		nextPiecePanel.repaint();
+		nextBlockPanel.repaint();
 		scorePanel.repaint();
 	};
 	
@@ -312,64 +339,92 @@ public class MasterTetrisFrame extends JFrame {
 		private static final int CLEAR_SLEEP_INTERVAL = 82;
 		
 		BoardPanel() {
-			super(gameModel.getBoard().getVerticalDimension() - 3, gameModel.getBoard().getHorizontalDimension());
-			// Piece movement listener is added once start button is clicked
+			super(board.getVerticalDimension() - 3, board.getHorizontalDimension(), BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
 			setFocusable(true);
-			setBorder(MasterTetrisFrame.LINE_BORDER);
+			setBorder(LINE_BORDER);
 		}
 			
-		void enablePieceMovementInput() {
+		void enableBlockMovement() {
 			addKeyListener(keyHandler);
 		}
 			
-		void disablePieceMovementInput() {
+		void disableBlockMovement() {
 			removeKeyListener(keyHandler);
 		}
 			
-		Object spiralClear() {
-			
-			List<Block.ColoredSquare> spiralSquares = gameModel.getBoard().getSpiralSquares();
+		void spiralClear() {
 			
 			try {
-			
+				
+				Collection<ColoredSquare> spiralSquares = new LinkedHashSet<>();
+				
+				int nextLeftCol = 0,
+				    nextRightCol = board.getHorizontalDimension() - 1,
+				    nextTopRow = 0,
+				    nextBottomRow = board.getVerticalDimension() - 1;
+				
+				// Total squares is equal to the dimensions of the visible panels. Loop until the size of squares reaches this amount
+				int maxSquares = board.getVerticalDimension() * board.getHorizontalDimension();
+				while (spiralSquares.size() < maxSquares) {
+					
+					// Get all cells in the next leftmost column
+					for (int row = nextTopRow; row <= nextBottomRow; row++) {
+						spiralSquares.add(new ColoredSquare(row, nextLeftCol));
+					}
+					nextLeftCol++;
+					
+					// Get all cells in the next bottom row
+					for (int col = nextLeftCol; col <= nextRightCol; col++) {
+						spiralSquares.add(new ColoredSquare(nextBottomRow, col));
+					}
+					nextBottomRow--;
+					
+					// Get all cells in the next rightmost column
+					for (int row = nextBottomRow; row >= nextTopRow; row--) {
+						spiralSquares.add(new ColoredSquare(row, nextRightCol));
+					}
+					nextRightCol--;
+					
+					// Get all cells in the next top row
+					for (int col = nextRightCol; col >= nextLeftCol; col--) {
+						spiralSquares.add(new ColoredSquare(nextTopRow, col));
+					}
+					nextTopRow++;
+				}
+				
 				// Run 1 loop to paint in all unoccupied squares
-				for (Block.ColoredSquare spiralSquare : spiralSquares) {
+				for (ColoredSquare spiralSquare : spiralSquares) {
 					if (spiralSquare.getRow() < 3) continue;
-					if (gameModel.getBoard().isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
-						gameModel.getBoard().setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
+					if (board.isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
+						board.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
 					}
 					repaint();
 					Thread.sleep(SPIRAL_SLEEP_INTERVAL);
 				}
 				
 				// Run a second loop to erase all of them
-				List<Block.ColoredSquare> allSquares = new ArrayList<>();
-				allSquares.addAll(spiralSquares);
-				allSquares.addAll(getCurrentColors());
-				
-				for (Block.ColoredSquare spiralSquare : allSquares) {
+				for (ColoredSquare spiralSquare : spiralSquares) {
 					if (spiralSquare.getRow() < 3) continue;
-					gameModel.getBoard().clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
+					board.clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
 					repaint();
 					Thread.sleep(SPIRAL_SLEEP_INTERVAL);
 				}
 				
 			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
+				return; // Will happen if new game is started before spiral clear is finished
 			} 
 			
-			return null;
 		};
 			
-		Object jumpClear() {
+		void jumpClear() {
 			
 			try {
 				
 				// Fill all rows bottom to top
-				for (int row = gameModel.getBoard().getVerticalDimension() - 1; row >= 3; row --) {
-					for (int col = 0; col < gameModel.getBoard().getHorizontalDimension(); col++) {
-						if (gameModel.getBoard().isOpen(row, col)) {
-							gameModel.getBoard().setColor(row, col, Color.RED);
+				for (int row = board.getVerticalDimension() - 1; row >= 3; row --) {
+					for (int col = 0; col < board.getHorizontalDimension(); col++) {
+						if (board.isOpen(row, col)) {
+							board.setColor(row, col, Color.RED);
 						}
 					}
 					repaint();
@@ -377,24 +432,23 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				// Clear all rows top to bottom.
-				for (int row = 0; row < gameModel.getBoard().getVerticalDimension(); row ++) {
-					for (int col = 0; col < gameModel.getBoard().getHorizontalDimension(); col++) {
-						gameModel.getBoard().clearSquare(row, col);
+				for (int row = 0; row < board.getVerticalDimension(); row ++) {
+					for (int col = 0; col < board.getHorizontalDimension(); col++) {
+						board.clearSquare(row, col);
 					}
 					repaint();
 					Thread.sleep(CLEAR_SLEEP_INTERVAL);
 				}
 				
 			} catch (InterruptedException e) {
-				
+				return; // Will happen if we start a new game before task is done
 			}
 			
-			return null;
 		};
 		
 		@Override
 		public Collection<ColoredSquare> getCurrentColors() {
-			return gameModel.getBoard().getColoredSquares();
+			return board.getColoredSquares();
 		}
 		
 		@Override
@@ -406,15 +460,54 @@ public class MasterTetrisFrame extends JFrame {
 	
 	private class ScorePanel extends JPanel {
 		
-		private JLabel lblScore = new JLabel("Score: 0", JLabel.CENTER);
-		private JLabel lblTotalLines = new JLabel("Lines: 0", JLabel.CENTER);
-		private JLabel lblLevel = new JLabel("Level: 1", JLabel.CENTER);
-		private JLabel lblTime = new JLabel("Time: 00:00", JLabel.CENTER);
+		private JLabel lblScore = new JLabel("Score: 0", JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setText("Score: " + scoreKeeper.getScore());
+			}
+			
+		};
+		
+		private JLabel lblTotalLines = new JLabel("Lines: 0 / " + scoreKeeper.getLinesPerLevel(), JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setText("Lines: " + scoreKeeper.getCurrentLevelLinesCleared() + " / " + scoreKeeper.getLinesPerLevel());
+			}
+			
+		};
+		
+		private FlashLabel lblLevel = new FlashLabel("Level: 1", JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setText("Level: " + scoreKeeper.getLevel());
+			}
+			
+		};
+		
+		private JLabel lblTime = new JLabel("Time: 00:00", JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				String timeLabel = "Time: " + formatSeconds(scoreKeeper.getGameTime());
+				if (scoreKeeper.isTimeAttack()) {
+					timeLabel += " / " + formatSeconds(scoreKeeper.getCurrentTimeAttackLimit()); 
+				}
+				setText(timeLabel);
+			}
+			
+		};;
 		
 		private ProgressBar progressBarLinesCleared = new ProgressBar(11, Color.GREEN) {
 			public double getCurrentPercentage() {
-				return ((double) gameModel.getScoreKeeper().getCurrentLevelLinesCleared()) /
-						gameModel.getScoreKeeper().getLinesPerLevel();
+				return ((double) scoreKeeper.getCurrentLevelLinesCleared()) /
+						scoreKeeper.getLinesPerLevel();
 			}
 		};
 		
@@ -435,26 +528,30 @@ public class MasterTetrisFrame extends JFrame {
 			for (JLabel l : Arrays.asList(lblScore, lblTotalLines, lblLevel, lblTime))
 				l.setFont(MasterTetrisFrame.LABEL_FONT);
 			
+			scoreKeeper.subscribe("levelChange", newLevel -> {
+				lblLevel.repaint();
+				lblTotalLines.repaint();
+			});
+			
+			scoreKeeper.subscribe("linesClearedChange", lineInfo -> {
+				lblTotalLines.repaint();
+				progressBarLinesCleared.repaint();
+			});
+			
+			scoreKeeper.subscribe("difficultyChange", newDiff -> lblTotalLines.repaint());
+			scoreKeeper.subscribe("gameTimeChanged", newTime -> lblTime.repaint());
+			scoreKeeper.subscribe("scoreChange", score -> lblScore.repaint());
+			
 			add(lblScore);
 			add(lblLevel);
 			add(lblTotalLines);
-			add(FrameUtils.nestInPanel(progressBarLinesCleared));
+			add(SwingUtility.nestInPanel(progressBarLinesCleared));
 			add(lblTime);
 			
-			add(FrameUtils.nestInPanel(progressBarTime));
+			add(SwingUtility.nestInPanel(progressBarTime));
 			progressBarTime.setVisible(settingsPanel.cbxTimeAttack.isSelected());
 		}
 		
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			lblScore.setText("Score: " + gameModel.getScoreKeeper().getScore());
-			lblTotalLines.setText("Lines: " + gameModel.getScoreKeeper().getCurrentLevelLinesCleared() + " / " + gameModel.getScoreKeeper().getLinesPerLevel());
-			progressBarLinesCleared.repaint();
-			progressBarTime.repaint();
-			lblLevel.setText("Level: " + gameModel.getScoreKeeper().getLevel());
-		}
-
 		void showProgressBar() {
 			progressBarTime.setVisible(true);
 		}
@@ -463,62 +560,67 @@ public class MasterTetrisFrame extends JFrame {
 			progressBarTime.setVisible(false);
 		}
 		
-		Object flashLevel() {
-			return flash(lblLevel.getText(), Color.YELLOW);
-		}
-		
-		Object flashWin() {
-			return flash("You Win!!!", Color.YELLOW);
-		}
-		
-		Object flashGameOver() {
-			return flash("Game Over!!!", Color.YELLOW);
-		}
-		
-		Object flash(String textToFlash, Color flashColor) {
-				
-			lblLevel.setText(textToFlash);
-			
-			try {
-				for (int i = 1; i <= 60; i++) {
-					lblLevel.setForeground(i % 2 == 0 ? Color.BLACK : flashColor);
-					Thread.sleep(50);
-				}
-			}
-			catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-				
-			return null;
+		public String formatSeconds(int seconds) {
+			int totalMinutes = seconds / 60;
+			int secondsLeftover = seconds % 60;
+			return (totalMinutes < 10 ? "0" : "") + totalMinutes +
+			       ":" +
+			       (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
 		}
 		
 	}
 	
 	private class SettingsPanel extends JPanel {
 		
-		private JCheckBox cbxGhostSquares = new JCheckBox("Ghost Squares", true);
-		private JCheckBox cbxMusic = new JCheckBox("Music", true);
-		private JCheckBox cbxSoundEffects = new JCheckBox("Sound Effects", true);
-		private JCheckBox cbxSaveScores = new JCheckBox("Save Scores", true);
-		private JCheckBox cbxTimeAttack = new JCheckBox("Time Attack Mode", false);
+		private JCheckBox cbxGhostSquares;
+		private JCheckBox cbxMusic;
+		private JCheckBox cbxSoundEffects;
+		private JCheckBox cbxSaveScores;
+		private JCheckBox cbxTimeAttack;
 		
-		private JComboBox<String> lstDifficulty = new JComboBox<String>(new String[]{"Easy", "Medium", "Hard"});
+		private JComboBox<String> lstDifficulty;
 		
-		private TetrisButton btnChooseSpecials = new TetrisButton("Special Pieces...");
+		private TetrisButton btnChooseSpecials;
 		
 		SettingsPanel() {
 			
-			setLayout(new BorderLayout());
-			setBorder(new TitledBorder("Settings"));
+			cbxMusic = new JCheckBox("Music", true);
+			cbxMusic.addItemListener(e -> {
+				audioSystem.setSoundtrackMuted(!cbxMusic.isSelected());
+			});
 			
-			cbxMusic.addItemListener(e -> gameModel.getAudioSystem().setSoundtrackMuted(!cbxMusic.isSelected()));
-			cbxSoundEffects.addItemListener(e -> gameModel.getAudioSystem().setSoundtrackMuted(!cbxMusic.isSelected()));
+			cbxSoundEffects = new JCheckBox("Sound Effects", true);
+			cbxSoundEffects.addItemListener(e -> {
+				audioSystem.setEffectsMuted(!cbxSoundEffects.isSelected());
+			});
 			
+			cbxSaveScores = new JCheckBox("Save Scores", true);
 			
+			cbxGhostSquares = new JCheckBox("Ghost Squares", true);
 			cbxGhostSquares.addItemListener(e -> {
-				gameModel.getBoard().setGhostSquaresEnabled(cbxGhostSquares.isSelected());
+				board.setGhostSquaresEnabled(cbxGhostSquares.isSelected());
 				boardPanel.repaint();
 			});
+			
+			cbxTimeAttack = new JCheckBox("Time Attack Mode", false);
+			cbxTimeAttack.addItemListener(e -> {
+				scoreKeeper.setTimeAttack(cbxTimeAttack.isSelected());
+			});
+			cbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
+					"+" + ScoreKeeper.getTimeAttackBonusPoints(0) + " points on easy, " +
+					"+" + ScoreKeeper.getTimeAttackBonusPoints(1) + " points on medium, " +
+					"+" + ScoreKeeper.getTimeAttackBonusPoints(2) + " points on hard");
+			
+			lstDifficulty = new JComboBox<String>(new String[]{"Easy", "Medium", "Hard"});
+			lstDifficulty.addActionListener(e -> {
+				scoreKeeper.setDifficulty(lstDifficulty.getSelectedIndex());
+			});
+			
+			btnChooseSpecials = new TetrisButton("Special Pieces...");
+			btnChooseSpecials.addActionListener(e -> new SpecialPiecesFrame());
+			
+			setLayout(new BorderLayout());
+			setBorder(new TitledBorder("Settings"));
 			
 			List<JCheckBox> checkboxes = Arrays.asList(cbxGhostSquares, cbxMusic, cbxSoundEffects, cbxSaveScores, cbxTimeAttack);
 			JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
@@ -527,24 +629,13 @@ public class MasterTetrisFrame extends JFrame {
 				cbx.setFocusable(false);
 			});
 			
-			cbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(0) + " points on easy, " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(1) + " points on medium, " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(2) + " points on hard");
-			
 			JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			diffPanel.add(new JLabel("Difficulty:  "));
 			diffPanel.add(lstDifficulty);
 			
-			btnChooseSpecials.addActionListener(e -> new SpecialPiecesFrame());
-			
 			add(checkboxPanel, BorderLayout.NORTH);
 			add(diffPanel, BorderLayout.CENTER);
 			add(btnChooseSpecials, BorderLayout.SOUTH);
-		}
-		
-		public int getDifficulty() {
-			return lstDifficulty.getSelectedIndex();
 		}
 		
 	}
@@ -591,13 +682,15 @@ public class MasterTetrisFrame extends JFrame {
 		
 		private void onStart() {
 			
-			gameModel = new TetrisGameModel(
-			                    settingsPanel.cbxTimeAttack.isSelected(),
-			                    settingsPanel.cbxGhostSquares.isSelected(),
-			                    settingsPanel.cbxSaveScores.isSelected(),
-			                    settingsPanel.getDifficulty(),
-			                    settingsPanel.cbxMusic.isSelected(),
-			                    settingsPanel.cbxSoundEffects.isSelected());
+			if (spiralClearTask != null && !spiralClearTask.isDone()) {
+				spiralClearTask.cancel(true);
+			}
+			if (jumpClearTask != null && !jumpClearTask.isDone()) {
+				jumpClearTask.cancel(true);
+			}
+			if (flashLabelTask != null && !flashLabelTask.isDone()) {
+				flashLabelTask.cancel(true);
+			}
 			
 			settingsPanel.lstDifficulty.setEnabled(false);
 			settingsPanel.btnChooseSpecials.setEnabled(false);
@@ -613,7 +706,7 @@ public class MasterTetrisFrame extends JFrame {
 			btnGiveUp.setEnabled(true);
 			btnHighScores.setEnabled(false);
 			
-			boardPanel.enablePieceMovementInput();
+			boardPanel.enableBlockMovement();
 			
 			if (settingsPanel.cbxTimeAttack.isSelected()) {
 				scorePanel.showProgressBar();
@@ -622,25 +715,34 @@ public class MasterTetrisFrame extends JFrame {
 				scorePanel.hideProgressBar();
 			}
 			
-			gameModel.getBoard().spawn(conveyor.next());
-			gameModel.getAudioSystem().startSoundtrack(1);
+			// Reset old game data
+			scoreKeeper.reset();
+			board.clear();
+			conveyor.refresh();
+			
+			board.spawn(conveyor.next());
+			
+			audioSystem.stopGameOverSound();
+			audioSystem.startSoundtrack(1);
+			
+			scoreKeeper.startTimer();
 			fallTimer.start();
-			beforeFirstGame = false;
 		};
 		
 		private void onPause() {
 			
 			fallTimer.stop();
+			scoreKeeper.pauseTimer();
 			
 			settingsPanel.cbxGhostSquares.setEnabled(true);
 			settingsPanel.cbxMusic.setEnabled(true);
 			settingsPanel.cbxSoundEffects.setEnabled(true);
 			settingsPanel.cbxSaveScores.setEnabled(true);
 			
-			gameModel.getAudioSystem().stopSoundtrack(gameModel.getScoreKeeper().getLevel());
-			gameModel.getAudioSystem().playPauseSound();
+			audioSystem.stopSoundtrack(scoreKeeper.getLevel());
+			audioSystem.playPauseSound();
 			
-			boardPanel.disablePieceMovementInput();
+			boardPanel.disableBlockMovement();
 			
 			menuPanel.btnResume.setEnabled(true);
 			menuPanel.btnPause.setEnabled(false);
@@ -650,15 +752,16 @@ public class MasterTetrisFrame extends JFrame {
 		private void onResume() {
 			
 			fallTimer.start();
+			scoreKeeper.startTimer();
 			
 			settingsPanel.cbxGhostSquares.setEnabled(false);
 			settingsPanel.cbxMusic.setEnabled(false);
 			settingsPanel.cbxSoundEffects.setEnabled(false);
 			settingsPanel.cbxSaveScores.setEnabled(false);
 			
-			gameModel.getAudioSystem().resumeSoundtrack(gameModel.getScoreKeeper().getLevel());
+			audioSystem.resumeSoundtrack(scoreKeeper.getLevel());
 			
-			boardPanel.enablePieceMovementInput();
+			boardPanel.enableBlockMovement();
 			
 			btnResume.setEnabled(false);
 			btnPause.setEnabled(true);
@@ -667,13 +770,114 @@ public class MasterTetrisFrame extends JFrame {
 		};
 	
 		private void onGiveUp() {
+			
 			fallTimer.stop();
-			gameModel.getAudioSystem().stopSoundtrack(gameModel.getScoreKeeper().getLevel());
-			gameModel.getAudioSystem().playGameOverSound();
-			THREAD_EXECUTOR.submit(scorePanel::flashGameOver);
-			boardPanel.spiralClear();
+			
+			board.logActiveBlock();
+			board.clearActiveBlock();
+			
+			audioSystem.stopSoundtrack(scoreKeeper.getLevel());
+			audioSystem.playGameOverSound();
+			
+			btnStart.setEnabled(true);
+			btnPause.setEnabled(false);
+			btnResume.setEnabled(false);
+			btnGiveUp.setEnabled(false);
+			btnHighScores.setEnabled(true);
+			
+			settingsPanel.cbxGhostSquares.setEnabled(true);
+			settingsPanel.cbxMusic.setEnabled(true);
+			settingsPanel.cbxSoundEffects.setEnabled(true);
+			settingsPanel.cbxSaveScores.setEnabled(true);
+			settingsPanel.cbxTimeAttack.setEnabled(true);
+			settingsPanel.lstDifficulty.setEnabled(true);
+			settingsPanel.btnChooseSpecials.setEnabled(true);
+			
+			boardPanel.disableBlockMovement();
+			
+			scorePanel.lblLevel.setText("Game Over!!!");
+			flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.RED));
+			
+			spiralClearTask = THREAD_POOL.submit(boardPanel::spiralClear);
 		};
 		
+	}
+	
+	private class SpecialPiecesFrame extends JFrame {
+		
+		private TetrisButton btnClose;
+		
+		public SpecialPiecesFrame() { 
+			
+			this.btnClose = new TetrisButton("Close");
+			this.btnClose.addActionListener(e -> dispose());
+			
+			JPanel blockPanels = new JPanel(new GridLayout(1,3));
+			for (BlockType blockType : BlockType.getSpecialBlocks()) {
+				
+				BlockDisplayPanel display = new BlockDisplayPanel("\"" + blockType + "\"", new Block(blockType));
+				BlockSelectorButton selector = new BlockSelectorButton(blockType);
+				
+				JLabel pointBonus = new JLabel("+" + ScoreKeeper.getSpecialPieceBonusPoints(blockType) + " points per line");
+				pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
+				pointBonus.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				
+				JPanel menu = new JPanel(new BorderLayout());
+				menu.add(selector, BorderLayout.NORTH);
+				menu.add(pointBonus, BorderLayout.SOUTH);
+				
+				JPanel blockPanel = new JPanel(new BorderLayout());
+				blockPanel.add(display, BorderLayout.CENTER);
+				blockPanel.add(menu, BorderLayout.SOUTH);
+				blockPanels.add(blockPanel);
+			}
+			
+			add(blockPanels, BorderLayout.CENTER);
+			add(SwingUtility.nestInPanel(btnClose), BorderLayout.SOUTH);
+			
+			SwingUtility.setIcon(this, "/images/star.png");
+			setTitle("Special Pieces");
+			setResizable(false);
+			pack();
+			setLocationRelativeTo(null);
+			setVisible(true);
+		}
+		
+		private class BlockSelectorButton extends JButton {
+			
+			private BlockType blockType;
+			private boolean active;
+			
+			private BlockSelectorButton(BlockType blockType) {
+				this.blockType = blockType;
+				setActiveState(conveyor.isActive(blockType));
+				setFocusable(false);
+				addMouseMotionListener(new MouseAdapter() {
+					public void mouseMoved(MouseEvent e) {
+						setCursor(new Cursor(Cursor.HAND_CURSOR));
+					}
+				});
+				addActionListener(e -> toggle());
+				setPreferredSize(new Dimension(getWidth(), 28));
+			}
+			
+			private void toggle() {
+				setActiveState(!active);
+				if (active) {
+					conveyor.enableBlockType(blockType);
+				}
+				else {
+					conveyor.disableBlockType(blockType);
+				}
+			}
+			
+			public void setActiveState(boolean active) {
+				this.active = active;
+				setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
+				setText(active ? "Active" : "Inactive");
+			}
+			
+		}
 	}
 	
 }

@@ -5,12 +5,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.Timer;
+
 /**
  * Keeps track of game score data. Score data is composed of player score, player Level,
  * lines completed and total game time
- * @author Tyler
  */
-public final class ScoreKeeper {
+public final class ScoreKeeper extends EventSource {
+	
+	public static final int MAX_LEVEL = 11;
 	
 	// Index of the selected option in the difficulty list is used to index into this array to get lines per level
 	private static final int[] LINES_PER_LEVEL = { 15, 20, 25 };
@@ -26,8 +29,6 @@ public final class ScoreKeeper {
 	
 	// Bonus points granted upon winning the game. Determined by difficulty
 	private static final int[] WIN_BONUSES = { 500, 750, 1000 };
-	
-	public static final int MAX_LEVEL = 11;
 	
 	// Maps block types to bonus points per line
 	private static final Map<BlockType, Integer> SPECIAL_PIECE_BONUSES;
@@ -45,17 +46,41 @@ public final class ScoreKeeper {
 	private Integer difficulty;
 	private Collection<BlockType> activeBlocks;
 	private boolean timeAttack;
+	private int[] gameTime;
+	
+	private Timer gameTimer = new Timer(1000, e -> {
+		gameTime[0]++;
+		publish("gameTimeChanged", gameTime[0]);
+	});
 	
 	public ScoreKeeper() {
-		this.totalLinesCleared = 0;
-		this.score = 0;
-		this.level = 1;
-		this.difficulty = 0;
+		reset();
+	}
+	
+	public void reset() {
+		this.gameTime =  new int[]{57};
+		setScore(0);
+		setLevel(1);
+		setDifficulty(0);
+		addLinesCleared(totalLinesCleared * -1);
 		this.timeAttack = false;
+	}
+	
+	public int getGameTime() {
+		return gameTime[0];
+	}
+	
+	public void pauseTimer() {
+		this.gameTimer.stop();
+	}
+	
+	public void startTimer() {
+		this.gameTimer.start();
 	}
 	
 	public void setDifficulty(int difficulty) {
 		this.difficulty = difficulty;
+		publish("difficultyChange", difficulty);
 	}
 
 	public void setActiveBlocks(Collection<BlockType> activeBlocks) {
@@ -66,8 +91,17 @@ public final class ScoreKeeper {
 		this.timeAttack = timeAttack;
 	}
 
+	public boolean isTimeAttack() {
+		return this.timeAttack;
+	}
+	
 	public int getTotalLinesCleared() {
 		return totalLinesCleared;
+	}
+	
+	private void addLinesCleared(int numCleared) {
+		totalLinesCleared += numCleared;
+		publish("linesClearedChange", new int[]{ getCurrentLevelLinesCleared(), getLinesPerLevel() });
 	}
 	
 	public int getLinesPerLevel() {
@@ -77,6 +111,10 @@ public final class ScoreKeeper {
 	public int getCurrentLevelLinesCleared() {
 		int lastLevelThreshold = getLinesPerLevel() * (level - 1);
 		return totalLinesCleared - lastLevelThreshold;
+	}
+	
+	public int getLinesNeededFor(int level) {
+		return level * getLinesPerLevel();
 	}
 	
 	public int getCurrentLevelLinesNeeded() {
@@ -91,8 +129,18 @@ public final class ScoreKeeper {
 		return score;
 	}
 	
+	private void setScore(int newScore) {
+		this.score = newScore;
+		publish("scoreChange", score);
+	}
+	
 	public int getLevel() {
 		return level;
+	}
+	
+	private void setLevel(int newLevel) {
+		this.level = newLevel;
+		publish("levelChange", level);
 	}
 	
 	public static int getTimeAttackBonusPoints(int difficulty) {
@@ -107,74 +155,53 @@ public final class ScoreKeeper {
 		return SPECIAL_PIECE_BONUSES.get(pieceType);
 	}
 	
-	/*
-	 * Resets the game time label text to '00:00' and then restarts the actual timer.
-	 * If time attack mode is on, game timer will display the limit as well
-	 *
-	public static void restartGameTimer() {
-		String timeLabel = "Time: 00:00";
-		if (GameFrame._settingsPanel.timeAttackOn()) {
-			timeLabel += " / " + FormatUtils.millisToString(getCurrentTimeAttackLimit()); 
-		}
-		GameFrame._scorePanel.setTimeLabel(timeLabel);
-		_gameTimer.restart();
-	}
-	*/
-	
-	/*
-	public String getCurrentTimeLabel() {
-		
-		String timeLabel = "Time: " + FormatUtils.millisToString(totalElapsedTime);
-		
-		if (timeAttack) {
-			long levelLimitMillis = getCurrentTimeAttackLimit();
-			timeLabel += " / " + FormatUtils.millisToString(levelLimitMillis);
-		}
-		
-		return timeLabel;
-	}
-	*/
-	
 	/**
 	 * @return The current level after processing the completed lines
 	 */
 	public int increaseScore(int completedLines) {
 		
-		totalLinesCleared += completedLines;
+		addLinesCleared(completedLines);
 
-		{ // Points from raw lines cleared
-			int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
-			int difficultyBonus = completedLines * (5 * difficulty);
-			score += (linePoints + difficultyBonus);
-		}
+		int newScore = this.score;
+		
+		// Points from raw lines cleared
+		int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
+		int difficultyBonus = completedLines * (5 * difficulty);
+		newScore += (linePoints + difficultyBonus);
 		
 		 // Bonuses for special blocks
 		if (activeBlocks != null) {
-			score += BlockType.getSpecialBlocks()
-			                  .stream()
-			                  .filter(activeBlocks::contains)
-			                  .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
-			                  .sum();
+			newScore += BlockType.getSpecialBlocks()
+			                     .stream()
+			                     .filter(activeBlocks::contains)
+			                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
+			                     .sum();
 		}
 		
-		{ // Level ups
-			while (totalLinesCleared >= getCurrentLevelLinesNeeded()) {
-				
-				level++;
-				if (timeAttack) {
-					score += TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
-				}
-				
-				if (level == MAX_LEVEL) {
-					score += WIN_BONUSES[difficulty];
-					break;
-				}
-				
+		// Level ups
+		int newLevel = this.level;
+		while (totalLinesCleared >= getLinesNeededFor(newLevel)) {
+			
+			newLevel++;
+			
+			if (timeAttack) {
+				newScore += TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
 			}
 			
-			return level;
+			if (level == MAX_LEVEL) {
+				newScore += WIN_BONUSES[difficulty];
+				break;
+			}
+			
+		}
+
+		if (newLevel > this.level) {
+			setLevel(newLevel);
 		}
 		
+		setScore(newScore);
+		
+		return level;
 	}
-	
+
 }

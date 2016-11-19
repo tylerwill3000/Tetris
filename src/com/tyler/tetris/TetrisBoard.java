@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 import com.tyler.tetris.Block.ColoredSquare;
 
-public class TetrisBoard {
+public class TetrisBoard extends EventSource {
 
 	public static final int DEFAULT_V_CELLS = 23;
 	public static final int DEFAULT_H_CELLS = 10;
@@ -72,6 +72,14 @@ public class TetrisBoard {
 		persistedBlocks.get(row)[col] = c;
 	}
 	
+	public void clear() {
+		this.activeBlock = null;
+		this.holdBlock = null;
+		for (Color[] row : persistedBlocks) {
+			Arrays.fill(row, null);
+		}
+	}
+	
 	public boolean isOpen(int row, int col) {
 		return getColor(row, col) == null;
 	}
@@ -96,6 +104,10 @@ public class TetrisBoard {
 		return moveActiveBlock(1, 0);
 	}
 
+	public void clearActiveBlock() {
+		this.activeBlock = null;
+	}
+	
 	/**
 	 * Returns true if piece could successfully move, false if there was not enough room
 	 */
@@ -103,7 +115,7 @@ public class TetrisBoard {
 
 		boolean canMoveBeMade = activeBlock.getOccupiedSquares()
 		                                   .stream()
-		                                   .map(sq -> new Block.ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
+		                                   .map(sq -> new ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
 		                                   .allMatch(moveSq -> isInBounds(moveSq.getRow(), moveSq.getColumn()) && isOpen(moveSq.getRow(), moveSq.getColumn()));
 		if (canMoveBeMade) {
 			activeBlock.move(rowMove, colMove);
@@ -185,10 +197,7 @@ public class TetrisBoard {
 			return null;
 		};
 		
-		// Persist squares for current piece to quilt
-		activeBlock.getOccupiedSquares().forEach(sq -> {
-			setColor(sq.getRow(), sq.getColumn(), sq.getColor());
-		});
+		logActiveBlock();
 		
 		int completeRowScanIndex = Math.min(activeBlock.getRow(), verticalDimension - 1);
 		int minRowScanIndex = Math.max(0, completeRowScanIndex - 3);
@@ -208,6 +217,15 @@ public class TetrisBoard {
 		}
 		
 		return linesCleared;
+	}
+	
+	/**
+	 * Logs the squares for the active block to this game grid
+	 */
+	public void logActiveBlock() {
+		activeBlock.getOccupiedSquares().forEach(sq -> {
+			setColor(sq.getRow(), sq.getColumn(), sq.getColor());
+		});
 	}
 	
 	/**
@@ -239,16 +257,19 @@ public class TetrisBoard {
 	}
 
 	public Collection<ColoredSquare> getColoredSquares() {
+		return getColoredSquares(true);
+	}
+	
+	public Collection<ColoredSquare> getColoredSquares(boolean includeGhosts) {
 		
 		Set<ColoredSquare> squares = new HashSet<>();
-		if (activeBlock == null) {
-			return squares;
-		}
 
 		// Important we add occupied squares before ghost squares so that ghost squares don't overwrite occupied squares
-		squares.addAll(activeBlock.getOccupiedSquares());
-		if (this.ghostSquaresEnabled) {
-			squares.addAll(getGhostSquares());
+		if (activeBlock != null) {
+			squares.addAll(activeBlock.getOccupiedSquares());
+			if (includeGhosts && this.ghostSquaresEnabled) {
+				squares.addAll(getGhostSquares());
+			}
 		}
 		
 		for (int rowIndex = 0; rowIndex < verticalDimension; rowIndex++) {
@@ -258,56 +279,6 @@ public class TetrisBoard {
 					squares.add(new ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
 				}
 			}
-		}
-		
-		return squares;
-	}
-	
-	/**
-	 *  Builds the list of spiral squares. Squares are in order from the top left corner spiraling inwards, CCW
-	 */
-	public List<Block.ColoredSquare> getSpiralSquares() {
-		
-		List<Block.ColoredSquare> squares = new ArrayList<>();
-		
-		// Stores indices of next column / row that needs to be processed
-		int nextLeftCol = 0,
-			nextBottomRow = getVerticalDimension() - 1,
-			nextRightCol = getHorizontalDimension() - 1,
-			nextTopRow = 0;
-		
-		// Total squares is equal to the dimensions of the visible panels.
-		// Loop until the size of squares reaches this amount
-		int maxSquares = getVerticalDimension() * getHorizontalDimension();
-		while (squares.size() < maxSquares) {
-			
-			// Get all cells in the next leftmost column
-			for (int row = nextTopRow; row <= nextBottomRow; row++) {
-				squares.add(new Block.ColoredSquare(row, nextLeftCol));
-			}
-			
-			nextLeftCol++; // Leftmost column has been processed
-			
-			// Get all cells in the next bottom row
-			for (int col = nextLeftCol; col <= nextRightCol; col++) {
-				squares.add(new Block.ColoredSquare(nextBottomRow, col));
-			}
-			
-			nextBottomRow--; // Bottom row has been processed
-			
-			// Get all cells in the next rightmost column
-			for (int row = nextBottomRow; row >= nextTopRow; row--) {
-				squares.add(new Block.ColoredSquare(row, nextRightCol));
-			}
-			
-			nextRightCol--; // Rightmost column has been processed
-			
-			// Get all cells in the next top row
-			for (int col = nextRightCol; col >= nextLeftCol; col--) {
-				squares.add(new Block.ColoredSquare(nextTopRow, col));
-			}
-			
-			nextTopRow++; // Top row has been processed
 		}
 		
 		return squares;

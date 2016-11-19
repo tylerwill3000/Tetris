@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing;
+package com.tyler.tetris.ui.swing.widget;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.tyler.tetris.Block.ColoredSquare;
+import com.tyler.tetris.ui.swing.PixelGrid;
 
 /**
  * Displays a progress bar using JPanels
@@ -13,16 +14,16 @@ import com.tyler.tetris.Block.ColoredSquare;
  */
 public abstract class ProgressBar extends PixelGrid {
 	
+	public static final int PROGRESS_BAR_DIMENSION = 13;
+	
 	private Color barColor;
 	private int percentagePerPanel;
 	
 	protected ProgressBar(int cols, Color barColor) {
-		super(1, cols);
+		super(1, cols, PROGRESS_BAR_DIMENSION);
 		this.barColor = barColor;
 		this.percentagePerPanel = (int)(100.0 / cols);
 	}
-	
-	public abstract double getCurrentPercentage();
 	
 	@Override
 	public Collection<ColoredSquare> getCurrentColors() {
@@ -44,5 +45,7 @@ public abstract class ProgressBar extends PixelGrid {
 		
 		return squares;
 	}
+
+	public abstract double getCurrentPercentage();
 	
 }

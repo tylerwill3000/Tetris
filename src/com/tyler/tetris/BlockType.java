@@ -396,7 +396,7 @@ public enum BlockType {
 			S_BLOCK_L,
 			S_BLOCK_R,
 			STRAIGHT_LINE,
-			T_BLOCK				
+			T_BLOCK
 		);
 	}
 	
@@ -408,4 +408,9 @@ public enum BlockType {
 		);
 	}
 
+	public static Color getRandomColor() {
+		int randomType = Utility.randInRange(0, values().length - 1);
+		return values()[randomType].color;
+	}
+	
 }

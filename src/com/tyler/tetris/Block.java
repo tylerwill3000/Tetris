@@ -15,7 +15,7 @@ public class Block {
 	private int orientation;
 	private boolean isHoldBlock;
 	
-	Block(BlockType blockType) {
+	public Block(BlockType blockType) {
 		this.blockType = blockType;
 		this.isHoldBlock = false;
 		this.orientation = 0;
@@ -82,7 +82,7 @@ public class Block {
 		private int row, col;
 		
 		public ColoredSquare(int row, int col) {
-			this(null, row, col);
+			this(BlockType.getRandomColor(), row, col);
 		}
 		
 		public ColoredSquare(Color color, int row, int col) {

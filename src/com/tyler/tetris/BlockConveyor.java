@@ -1,7 +1,5 @@
 package com.tyler.tetris;
 
-import static java.util.stream.Collectors.toCollection;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +18,7 @@ public final class BlockConveyor {
 	
 	public BlockConveyor() {
 		activeTypes = new ArrayList<>(BlockType.getDefaultBlocks());
-		refreshConveyor();
+		conveyor = new LinkedList<>();
 	}
 	
 	public Block next() {
@@ -32,35 +30,30 @@ public final class BlockConveyor {
 		return conveyor.peek();
 	}
 	
-	public boolean enableBlockType(BlockType pieceType) {
-		return activeTypes.add(pieceType);
+	public boolean enableBlockType(BlockType blockType) {
+		return activeTypes.add(blockType);
 	}
 	
-	public boolean disableBlockType(BlockType pieceType) {
-		return activeTypes.remove(pieceType);
+	public boolean disableBlockType(BlockType blockType) {
+		return activeTypes.remove(blockType);
 	}
 	
 	public boolean isActive(BlockType pieceType) {
 		return activeTypes.contains(pieceType);
 	}
 	
-	public void refreshConveyor() {
-		refreshConveyor(DEFAULT_INITIAL_BLOCKS);
+	public void refresh() {
+		refresh(DEFAULT_INITIAL_BLOCKS);
 	}
 	
-	public void refreshConveyor(int initialBlocks) {
-		conveyor = IntStream.rangeClosed(1, initialBlocks)
-		                    .mapToObj(i -> generateBlock())
-		                    .collect(toCollection(LinkedList::new));
+	public void refresh(int initialBlocks) {
+		conveyor.clear();
+		IntStream.range(0, initialBlocks).forEach(i -> conveyor.add(generateBlock()));
 	}
 	
 	private Block generateBlock() {
-		BlockType pieceType = activeTypes.get(randInRange(0, activeTypes.size() -1));
-		return new Block(pieceType);
+		BlockType blockType = activeTypes.get(Utility.randInRange(0, activeTypes.size() -1));
+		return new Block(blockType);
 	}
 	
-	private static int randInRange(int min, int max) {
-		return (int)(Math.random() * (max - min + 1)) + min;
-	}
-
 }
