@@ -190,13 +190,11 @@ public class TetrisBoard extends EventSource {
 	/**
 	 * Attempts to vertically drop the current active piece 1 square.
 	 * If the piece could not be dropped, its colors are permanately logged to the color grid and any complete rows removed
-	 * 
-	 * @return The number of lines cleared if placed, or else null if piece could move down
 	 */
-	public Integer tryFall() {
+	public void tryFall() {
 		
 		if (moveActiveBlockDown()) {
-			return null;
+			return;
 		};
 		
 		logActiveBlock();
@@ -218,8 +216,10 @@ public class TetrisBoard extends EventSource {
 			}
 		}
 		
-		publish("blockPlaced", linesCleared);
-		return linesCleared;
+		publish("blockPlaced", activeBlock);
+		if (linesCleared > 0) {
+			publish("linesCleared", linesCleared);
+		}
 	}
 	
 	/**

@@ -176,12 +176,53 @@ public class MasterTetrisFrame extends JFrame {
 	
 	MasterTetrisFrame() {
 		
+		// Model classes
 		this.fallTimer.setInitialDelay(0);
 		this.audioSystem = new TetrisAudioSystem();
 		this.board = new TetrisBoard();
 		this.scoreKeeper = new ScoreKeeper();
-		this.boardPanel = new BoardPanel();
 		this.conveyor = new BlockConveyor();
+		
+		// Model-driven event handlers
+		this.board.subscribe("blockPlaced", event -> {
+			if (!board.spawn(conveyor.next())) {
+				onGameOver();
+			}
+		});
+		
+		this.board.subscribe("linesCleared", event -> {
+			int lines = (int) event;
+			audioSystem.playClearLineSound(lines);
+			scoreKeeper.increaseScore(lines);
+		});
+		
+		this.scoreKeeper.subscribe("levelChange", event -> {
+			
+			int newLevel = (int) event;
+			
+			audioSystem.stopSoundtrack(newLevel - 1);
+			
+			if (newLevel == ScoreKeeper.MAX_LEVEL) {
+				scoreKeeper.pauseTimer();
+				audioSystem.playVictoryFanfare();
+				jumpClearTask = THREAD_POOL.submit(boardPanel::jumpClear);
+				scorePanel.lblLevel.setText("You Win!!!");
+			}
+			else {
+				audioSystem.startSoundtrack(newLevel);
+			}
+			
+			if (newLevel > 1) {
+				flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
+			}
+		});
+		
+		this.scoreKeeper.subscribe("timeAttackFail", e -> {
+			scorePanel.progressBarTime.repaint();
+			onGameOver();
+		});
+		
+		this.boardPanel = new BoardPanel();
 		
 		this.nextBlockPanel = new BlockDisplayPanel("Next") {
 			@Override
@@ -207,11 +248,6 @@ public class MasterTetrisFrame extends JFrame {
 		this.menuPanel = new MenuPanel();
 		this.settingsPanel = new SettingsPanel();
 		this.scorePanel = new ScorePanel();
-		
-		this.scoreKeeper.subscribe("timeAttackFail", e -> {
-			scorePanel.progressBarTime.repaint();
-			menuPanel.onGameOver();
-		});
 		
 		JPanel keyCombos = new JPanel(new GridLayout(15,1));
 		for (String keyCombo : new String[]{
@@ -292,46 +328,124 @@ public class MasterTetrisFrame extends JFrame {
 	}
 	
 	private void onFallTick() {
+		board.tryFall();
+		repaint();
+	};
+	
+	private void onStart() {
 		
-		Integer linesCleared = board.tryFall();
-		
-		if (linesCleared != null) {
-			if (linesCleared > 0) {
-				audioSystem.playClearLineSound(linesCleared);
-				int currentLevel = scoreKeeper.getLevel();
-				int newLevel = scoreKeeper.increaseScore(linesCleared);
-				boolean levelUp = newLevel > currentLevel;
-				
-				if (levelUp) {
-					audioSystem.stopSoundtrack(currentLevel);
-					if (newLevel == ScoreKeeper.MAX_LEVEL) {
-						scoreKeeper.pauseTimer();
-						audioSystem.playVictoryFanfare();
-						try {
-							jumpClearTask = THREAD_POOL.submit(boardPanel::jumpClear);
-							flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
-						}
-						catch (Exception ex) {
-							throw new RuntimeException(ex);
-						}
-					}
-					else {
-						flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
-						audioSystem.startSoundtrack(newLevel);
-					}
-				}
-			}
-			
-			if (!board.spawn(conveyor.next())) {
-				menuPanel.onGameOver();
-				return;
-			}
-			
+		if (spiralClearTask != null && !spiralClearTask.isDone()) {
+			spiralClearTask.cancel(true);
+		}
+		if (jumpClearTask != null && !jumpClearTask.isDone()) {
+			jumpClearTask.cancel(true);
+		}
+		if (flashLabelTask != null && !flashLabelTask.isDone()) {
+			flashLabelTask.cancel(true);
 		}
 		
-		boardPanel.repaint();
-		nextBlockPanel.repaint();
-		scorePanel.repaint();
+		settingsPanel.lstDifficulty.setEnabled(false);
+		settingsPanel.btnChooseSpecials.setEnabled(false);
+		settingsPanel.cbxTimeAttack.setEnabled(false);
+		settingsPanel.cbxGhostSquares.setEnabled(false);
+		settingsPanel.cbxMusic.setEnabled(false);
+		settingsPanel.cbxSaveScores.setEnabled(false);
+		settingsPanel.cbxSoundEffects.setEnabled(false);
+		
+		menuPanel.btnStart.setEnabled(false);
+		menuPanel.btnPause.setEnabled(true);
+		menuPanel.btnResume.setEnabled(false);
+		menuPanel.btnGiveUp.setEnabled(true);
+		menuPanel.btnHighScores.setEnabled(false);
+		
+		boardPanel.enableBlockMovement();
+		
+		// Reset old game data
+		scoreKeeper.resetScoreInfo();
+		board.clear();
+		holdPanel.repaint();
+		conveyor.refresh();
+		
+		board.spawn(conveyor.next());
+		
+		audioSystem.stopGameOverSound();
+		
+		scoreKeeper.startTimer();
+		fallTimer.start();
+	};
+	
+	private void onPause() {
+		
+		fallTimer.stop();
+		scoreKeeper.pauseTimer();
+		
+		settingsPanel.cbxGhostSquares.setEnabled(true);
+		settingsPanel.cbxMusic.setEnabled(true);
+		settingsPanel.cbxSoundEffects.setEnabled(true);
+		settingsPanel.cbxSaveScores.setEnabled(true);
+		
+		audioSystem.stopSoundtrack(scoreKeeper.getLevel());
+		audioSystem.playPauseSound();
+		
+		boardPanel.disableBlockMovement();
+		
+		menuPanel.btnResume.setEnabled(true);
+		menuPanel.btnPause.setEnabled(false);
+		menuPanel.btnGiveUp.setEnabled(true);
+		menuPanel.btnHighScores.setEnabled(true);
+	};
+	
+	private void onResume() {
+		
+		fallTimer.start();
+		scoreKeeper.startTimer();
+		
+		settingsPanel.cbxGhostSquares.setEnabled(false);
+		settingsPanel.cbxMusic.setEnabled(false);
+		settingsPanel.cbxSoundEffects.setEnabled(false);
+		settingsPanel.cbxSaveScores.setEnabled(false);
+		
+		audioSystem.resumeSoundtrack(scoreKeeper.getLevel());
+		
+		boardPanel.enableBlockMovement();
+		
+		menuPanel.btnResume.setEnabled(false);
+		menuPanel.btnPause.setEnabled(true);
+		menuPanel.btnGiveUp.setEnabled(true);
+		menuPanel.btnHighScores.setEnabled(true);
+	};
+
+	private void onGameOver() {
+		
+		fallTimer.stop();
+		scoreKeeper.pauseTimer();
+		
+		board.logActiveBlock();
+		board.clearActiveBlock();
+		
+		audioSystem.stopSoundtrack(scoreKeeper.getLevel());
+		audioSystem.playGameOverSound();
+		
+		menuPanel.btnStart.setEnabled(true);
+		menuPanel.btnPause.setEnabled(false);
+		menuPanel.btnResume.setEnabled(false);
+		menuPanel.btnGiveUp.setEnabled(false);
+		menuPanel.btnHighScores.setEnabled(true);
+		
+		settingsPanel.cbxGhostSquares.setEnabled(true);
+		settingsPanel.cbxMusic.setEnabled(true);
+		settingsPanel.cbxSoundEffects.setEnabled(true);
+		settingsPanel.cbxSaveScores.setEnabled(true);
+		settingsPanel.cbxTimeAttack.setEnabled(true);
+		settingsPanel.lstDifficulty.setEnabled(true);
+		settingsPanel.btnChooseSpecials.setEnabled(true);
+		
+		boardPanel.disableBlockMovement();
+		
+		scorePanel.lblLevel.setText("Game Over!!!");
+		flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.RED));
+		
+		spiralClearTask = THREAD_POOL.submit(boardPanel::spiralClear);
 	};
 	
 	private class BoardPanel extends PixelGrid {
@@ -664,123 +778,6 @@ public class MasterTetrisFrame extends JFrame {
 			btnGiveUp.addActionListener(e -> onGameOver());
 			
 		}
-		
-		private void onStart() {
-			
-			if (spiralClearTask != null && !spiralClearTask.isDone()) {
-				spiralClearTask.cancel(true);
-			}
-			if (jumpClearTask != null && !jumpClearTask.isDone()) {
-				jumpClearTask.cancel(true);
-			}
-			if (flashLabelTask != null && !flashLabelTask.isDone()) {
-				flashLabelTask.cancel(true);
-			}
-			
-			settingsPanel.lstDifficulty.setEnabled(false);
-			settingsPanel.btnChooseSpecials.setEnabled(false);
-			settingsPanel.cbxTimeAttack.setEnabled(false);
-			settingsPanel.cbxGhostSquares.setEnabled(false);
-			settingsPanel.cbxMusic.setEnabled(false);
-			settingsPanel.cbxSaveScores.setEnabled(false);
-			settingsPanel.cbxSoundEffects.setEnabled(false);
-			
-			btnStart.setEnabled(false);
-			btnPause.setEnabled(true);
-			btnResume.setEnabled(false);
-			btnGiveUp.setEnabled(true);
-			btnHighScores.setEnabled(false);
-			
-			boardPanel.enableBlockMovement();
-			
-			// Reset old game data
-			scoreKeeper.resetScoreInfo();
-			board.clear();
-			holdPanel.repaint();
-			conveyor.refresh();
-			
-			board.spawn(conveyor.next());
-			
-			audioSystem.stopGameOverSound();
-			audioSystem.startSoundtrack(1);
-			
-			scoreKeeper.startTimer();
-			fallTimer.start();
-		};
-		
-		private void onPause() {
-			
-			fallTimer.stop();
-			scoreKeeper.pauseTimer();
-			
-			settingsPanel.cbxGhostSquares.setEnabled(true);
-			settingsPanel.cbxMusic.setEnabled(true);
-			settingsPanel.cbxSoundEffects.setEnabled(true);
-			settingsPanel.cbxSaveScores.setEnabled(true);
-			
-			audioSystem.stopSoundtrack(scoreKeeper.getLevel());
-			audioSystem.playPauseSound();
-			
-			boardPanel.disableBlockMovement();
-			
-			menuPanel.btnResume.setEnabled(true);
-			menuPanel.btnPause.setEnabled(false);
-			menuPanel.btnGiveUp.setEnabled(true);
-			menuPanel.btnHighScores.setEnabled(true);
-		};
-		
-		private void onResume() {
-			
-			fallTimer.start();
-			scoreKeeper.startTimer();
-			
-			settingsPanel.cbxGhostSquares.setEnabled(false);
-			settingsPanel.cbxMusic.setEnabled(false);
-			settingsPanel.cbxSoundEffects.setEnabled(false);
-			settingsPanel.cbxSaveScores.setEnabled(false);
-			
-			audioSystem.resumeSoundtrack(scoreKeeper.getLevel());
-			
-			boardPanel.enableBlockMovement();
-			
-			btnResume.setEnabled(false);
-			btnPause.setEnabled(true);
-			menuPanel.btnGiveUp.setEnabled(true);
-			menuPanel.btnHighScores.setEnabled(true);
-		};
-	
-		private void onGameOver() {
-			
-			fallTimer.stop();
-			scoreKeeper.pauseTimer();
-			
-			board.logActiveBlock();
-			board.clearActiveBlock();
-			
-			audioSystem.stopSoundtrack(scoreKeeper.getLevel());
-			audioSystem.playGameOverSound();
-			
-			btnStart.setEnabled(true);
-			btnPause.setEnabled(false);
-			btnResume.setEnabled(false);
-			btnGiveUp.setEnabled(false);
-			btnHighScores.setEnabled(true);
-			
-			settingsPanel.cbxGhostSquares.setEnabled(true);
-			settingsPanel.cbxMusic.setEnabled(true);
-			settingsPanel.cbxSoundEffects.setEnabled(true);
-			settingsPanel.cbxSaveScores.setEnabled(true);
-			settingsPanel.cbxTimeAttack.setEnabled(true);
-			settingsPanel.lstDifficulty.setEnabled(true);
-			settingsPanel.btnChooseSpecials.setEnabled(true);
-			
-			boardPanel.disableBlockMovement();
-			
-			scorePanel.lblLevel.setText("Game Over!!!");
-			flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.RED));
-			
-			spiralClearTask = THREAD_POOL.submit(boardPanel::spiralClear);
-		};
 		
 	}
 	
