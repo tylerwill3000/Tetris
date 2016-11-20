@@ -178,6 +178,8 @@ public class TetrisGame extends EventSource {
 		if (newLevel >= MAX_LEVEL) {
 			fallTimer.stop();
 			gameTimer.stop();
+			logActiveBlock();
+			clearActiveBlock();
 			publish("gameWon", level);
 		}
 		else {
@@ -302,24 +304,6 @@ public class TetrisGame extends EventSource {
 		this.activeBlock = null;
 	}
 	
-	/**
-	 * Returns true if piece could successfully move, false if there was not enough room
-	 */
-	private boolean moveActiveBlock(int rowMove, int colMove) {
-
-		boolean canMoveBeMade = activeBlock.getOccupiedSquares()
-		                                   .stream()
-		                                   .map(sq -> new ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
-		                                   .allMatch(moveSq -> isInBounds(moveSq.getRow(), moveSq.getColumn()) && isOpen(moveSq.getRow(), moveSq.getColumn()));
-		if (canMoveBeMade) {
-			activeBlock.move(rowMove, colMove);
-			publish("blockMoved", activeBlock);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	public void dropCurrentBlock() {
 		while (moveActiveBlockDown()) {
 			// Move method returns boolean to control loop
@@ -346,6 +330,24 @@ public class TetrisGame extends EventSource {
 		return rotateActiveBlock(-1);
 	}
 
+	/**
+	 * Returns true if piece could successfully move, false if there was not enough room
+	 */
+	private boolean moveActiveBlock(int rowMove, int colMove) {
+
+		boolean canMoveBeMade = activeBlock.getOccupiedSquares()
+		                                   .stream()
+		                                   .map(sq -> new ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
+		                                   .allMatch(moveSq -> isInBounds(moveSq.getRow(), moveSq.getColumn()) && isOpen(moveSq.getRow(), moveSq.getColumn()));
+		if (canMoveBeMade) {
+			activeBlock.move(rowMove, colMove);
+			publish("blockMoved", activeBlock);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	private boolean rotateActiveBlock(int dir) {
 		
 		if (dir != 1 && dir != -1) {
@@ -415,9 +417,7 @@ public class TetrisGame extends EventSource {
 			publish("linesCleared", linesCleared);
 		}
 		
-		Block nextBlock = conveyor.next();
-		spawn(nextBlock);
-		
+		spawn(conveyor.next());
 	}
 	
 	/**
