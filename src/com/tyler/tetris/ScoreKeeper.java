@@ -15,15 +15,7 @@ public final class ScoreKeeper extends EventSource {
 	
 	public static final int MAX_LEVEL = 11;
 	
-	private Difficulty difficulty;
-	
-	// Point values per line based on lines cleared
 	private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
-	
-	// Number of seconds allowed per line in time attack mode
-	private static final int TIME_ATTACK_SECONDS_PER_LINE = 3;
-	
-	// Maps block types to bonus points per line
 	private static final Map<BlockType, Integer> SPECIAL_PIECE_BONUSES;
 	static {
 		Map<BlockType, Integer> temp = new HashMap<>();
@@ -33,6 +25,7 @@ public final class ScoreKeeper extends EventSource {
 		SPECIAL_PIECE_BONUSES = Collections.unmodifiableMap(temp);
 	}
 	
+	private Difficulty difficulty;
 	private int totalLinesCleared;
 	private int score;
 	private int level;
@@ -126,7 +119,7 @@ public final class ScoreKeeper extends EventSource {
 	}
 	
 	public int getCurrentTimeAttackLimit() {
-		return getCurrentLevelLinesNeeded() * TIME_ATTACK_SECONDS_PER_LINE;
+		return getCurrentLevelLinesNeeded() * difficulty.getTimeAttackSecondsPerLine();
 	}
 	
 	public int getScore() {

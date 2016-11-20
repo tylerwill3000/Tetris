@@ -12,9 +12,6 @@ public enum BlockType {
 	
 	BOX(
 		
-		// Spawn
-		14,
-		
 		// Offsets. All the same for each direction
 		// XX
 		// XX
@@ -38,9 +35,6 @@ public enum BlockType {
 	
 	L_BLOCK_L(
 		
-		// Spawn
-		14,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -79,9 +73,6 @@ public enum BlockType {
 	
 	L_BLOCK_R(
 		
-		// Spawn
-		14,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -120,9 +111,6 @@ public enum BlockType {
 	
 	S_BLOCK_L(
 		
-		// Spawn
-		14,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -156,9 +144,6 @@ public enum BlockType {
 	
 	S_BLOCK_R(
 			
-		// Spawn
-		14,
-		
 		// Offsets
 		new int[][][]{
 			
@@ -192,9 +177,6 @@ public enum BlockType {
 	
 	STRAIGHT_LINE(
 		
-		// Spawn
-		14,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -229,9 +211,6 @@ public enum BlockType {
 	),
 	
 	T_BLOCK(
-		
-		// Spawn
-		14,
 		
 		// Offsets
 		new int[][][]{
@@ -271,9 +250,6 @@ public enum BlockType {
 	
 	TWIN_PILLARS(
 		
-		// Spawn
-		10,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -306,9 +282,6 @@ public enum BlockType {
 	
 	ROCKET(
 		
-		// Spawn
-		8,
-			
 		// Offsets
 		new int[][][]{
 			
@@ -347,9 +320,6 @@ public enum BlockType {
 	
 	DIAMOND(
 		
-		// Spawn
-		5,
-			
 		// Offsets. All the same for each direction:
 		// .X.
 		// X.X
@@ -376,12 +346,10 @@ public enum BlockType {
 	
 	private int[][][] offsetMap;
 	private int[][] nextPanelSquares;
-	private int spawnWeight;
 	private int startRow;
 	private Color color;
 	
-	private BlockType(int spawnWeight, int[][][] offsetMap, int[][] nextPanelSquares, int startRow, Color color) {
-		this.spawnWeight = spawnWeight;
+	private BlockType(int[][][] offsetMap, int[][] nextPanelSquares, int startRow, Color color) {
 		this.offsetMap = offsetMap;
 		this.nextPanelSquares = nextPanelSquares;
 		this.startRow = startRow;
@@ -400,10 +368,6 @@ public enum BlockType {
 
 	public Color getColor() {
 		return color;
-	}
-	
-	public int getSpawnRate() {
-		return this.spawnWeight;
 	}
 	
 	/**

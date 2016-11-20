@@ -735,9 +735,11 @@ public class MasterTetrisFrame extends JFrame {
 			
 			lstDifficulty = new JComboBox<Difficulty>(Difficulty.values());
 			lstDifficulty.addActionListener(e -> {
-				scoreKeeper.setDifficulty((Difficulty) lstDifficulty.getSelectedItem());
+				scoreKeeper.setDifficulty(getSelectedDifficulty());
+				conveyor.setDifficulty(getSelectedDifficulty());
 				fallTimer.setDelay(scoreKeeper.getCurrentTimerDelay());
 			});
+			lstDifficulty.setSelectedIndex(0);
 			
 			btnChooseSpecials = new TetrisButton("Special Pieces...");
 			btnChooseSpecials.addActionListener(e -> new SpecialPiecesFrame());
@@ -759,6 +761,10 @@ public class MasterTetrisFrame extends JFrame {
 			add(checkboxPanel, BorderLayout.NORTH);
 			add(diffPanel, BorderLayout.CENTER);
 			add(btnChooseSpecials, BorderLayout.SOUTH);
+		}
+
+		public Difficulty getSelectedDifficulty() {
+			return (Difficulty) lstDifficulty.getSelectedItem();
 		}
 		
 	}
@@ -867,7 +873,7 @@ public class MasterTetrisFrame extends JFrame {
 			private void toggle() {
 				setActiveState(!active);
 				if (active) {
-					conveyor.enableBlockType(blockType);
+					conveyor.enableBlockType(settingsPanel.getSelectedDifficulty(), blockType);
 				}
 				else {
 					conveyor.disableBlockType(blockType);

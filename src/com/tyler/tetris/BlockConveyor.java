@@ -17,12 +17,8 @@ public final class BlockConveyor {
 	private Queue<Block> conveyor;
 	
 	public BlockConveyor() {
-		
 		typeSampleList = new ArrayList<>();
 		conveyor = new LinkedList<>();
-		
-		BlockType.getDefaultBlocks().forEach(this::enableBlockType);
-		
 	}
 	
 	public Block next() {
@@ -34,8 +30,8 @@ public final class BlockConveyor {
 		return conveyor.peek();
 	}
 	
-	public void enableBlockType(BlockType blockType) {
-		IntStream.range(0, blockType.getSpawnRate()).forEach(i -> typeSampleList.add(blockType));
+	public void enableBlockType(Difficulty diff, BlockType blockType) {
+		IntStream.range(0, diff.getSpawnRate(blockType)).forEach(i -> typeSampleList.add(blockType));
 	}
 	
 	public void disableBlockType(BlockType toRemove) {
@@ -57,6 +53,11 @@ public final class BlockConveyor {
 	
 	private Block generateBlock() {
 		return new Block(Utility.sample(typeSampleList));
+	}
+
+	public void setDifficulty(Difficulty difficulty) {
+		typeSampleList.clear();
+		BlockType.getDefaultBlocks().forEach(type -> enableBlockType(difficulty, type));
 	}
 	
 }
