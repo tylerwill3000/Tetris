@@ -119,6 +119,7 @@ public class TetrisBoard extends EventSource {
 		                                   .allMatch(moveSq -> isInBounds(moveSq.getRow(), moveSq.getColumn()) && isOpen(moveSq.getRow(), moveSq.getColumn()));
 		if (canMoveBeMade) {
 			activeBlock.move(rowMove, colMove);
+			publish("blockMoved", activeBlock);
 			return true;
 		} else {
 			return false;
@@ -165,6 +166,7 @@ public class TetrisBoard extends EventSource {
 		                   .allMatch(moveSq -> moveSq.getColumn() >= 0 && moveSq.getColumn() < horizontalDimension && moveSq.getRow() < verticalDimension);
 		
 		if (areRotatedSquaresLegal) {
+			publish("blockMoved", activeBlock);
 			return true;
 		} else {
 			activeBlock.rotate(dir * -1);
@@ -216,6 +218,7 @@ public class TetrisBoard extends EventSource {
 			}
 		}
 		
+		publish("blockPlaced", linesCleared);
 		return linesCleared;
 	}
 	

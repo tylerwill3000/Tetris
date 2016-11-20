@@ -49,10 +49,6 @@ import com.tyler.tetris.ui.swing.widget.FlashLabel;
 import com.tyler.tetris.ui.swing.widget.ProgressBar;
 import com.tyler.tetris.ui.swing.widget.TetrisButton;
 
-/**
- * Master frame that holds all other components
- * @author Tyler
- */
 public class MasterTetrisFrame extends JFrame {
 	
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
@@ -212,6 +208,11 @@ public class MasterTetrisFrame extends JFrame {
 		this.settingsPanel = new SettingsPanel();
 		this.scorePanel = new ScorePanel();
 		
+		this.scoreKeeper.subscribe("timeAttackFail", e -> {
+			scorePanel.progressBarTime.repaint();
+			menuPanel.onGameOver();
+		});
+		
 		JPanel keyCombos = new JPanel(new GridLayout(15,1));
 		for (String keyCombo : new String[]{
 				" Up: ",
@@ -303,8 +304,8 @@ public class MasterTetrisFrame extends JFrame {
 				
 				if (levelUp) {
 					audioSystem.stopSoundtrack(currentLevel);
-					scoreKeeper.pauseTimer();
 					if (newLevel == ScoreKeeper.MAX_LEVEL) {
+						scoreKeeper.pauseTimer();
 						audioSystem.playVictoryFanfare();
 						try {
 							jumpClearTask = THREAD_POOL.submit(boardPanel::jumpClear);
@@ -322,7 +323,7 @@ public class MasterTetrisFrame extends JFrame {
 			}
 			
 			if (!board.spawn(conveyor.next())) {
-				menuPanel.onGiveUp();
+				menuPanel.onGameOver();
 				return;
 			}
 			
@@ -480,15 +481,7 @@ public class MasterTetrisFrame extends JFrame {
 			
 		};
 		
-		private FlashLabel lblLevel = new FlashLabel("Level: 1", JLabel.CENTER) {
-			
-			@Override
-			protected void paintComponent(Graphics g) {
-				super.paintComponent(g);
-				setText("Level: " + scoreKeeper.getLevel());
-			}
-			
-		};
+		private FlashLabel lblLevel = new FlashLabel("Level: 1", JLabel.CENTER);
 		
 		private JLabel lblTime = new JLabel("Time: 00:00", JLabel.CENTER) {
 			
@@ -502,7 +495,7 @@ public class MasterTetrisFrame extends JFrame {
 				setText(timeLabel);
 			}
 			
-		};;
+		};
 		
 		private ProgressBar progressBarLinesCleared = new ProgressBar(11, Color.GREEN) {
 			public double getCurrentPercentage() {
@@ -513,7 +506,7 @@ public class MasterTetrisFrame extends JFrame {
 		
 		private ProgressBar progressBarTime = new ProgressBar(11, Color.YELLOW) {
 			public double getCurrentPercentage() {
-				return 0; // TODO
+				return scoreKeeper.getGameTime() * 1.0 / scoreKeeper.getCurrentTimeAttackLimit();
 			}
 		};
 		
@@ -521,7 +514,7 @@ public class MasterTetrisFrame extends JFrame {
 		
 		ScorePanel() {
 			
-			setBorder(new TitledBorder("Scoring Info"));
+			setBorder(new TitledBorder("Score"));
 			layout = new GridLayout(6,1);
 			setLayout(layout);
 			
@@ -529,7 +522,7 @@ public class MasterTetrisFrame extends JFrame {
 				l.setFont(MasterTetrisFrame.LABEL_FONT);
 			
 			scoreKeeper.subscribe("levelChange", newLevel -> {
-				lblLevel.repaint();
+				lblLevel.setText("Level: " + newLevel);
 				lblTotalLines.repaint();
 			});
 			
@@ -548,17 +541,10 @@ public class MasterTetrisFrame extends JFrame {
 			add(SwingUtility.nestInPanel(progressBarLinesCleared));
 			add(lblTime);
 			
-			add(SwingUtility.nestInPanel(progressBarTime));
-			progressBarTime.setVisible(settingsPanel.cbxTimeAttack.isSelected());
-		}
-		
-		void showProgressBar() {
-			progressBarTime.setVisible(true);
-		}
-		
-		void hideProgressBar() {
 			progressBarTime.setVisible(false);
+			add(SwingUtility.nestInPanel(progressBarTime));
 		}
+		
 		
 		public String formatSeconds(int seconds) {
 			int totalMinutes = seconds / 60;
@@ -585,14 +571,10 @@ public class MasterTetrisFrame extends JFrame {
 		SettingsPanel() {
 			
 			cbxMusic = new JCheckBox("Music", true);
-			cbxMusic.addItemListener(e -> {
-				audioSystem.setSoundtrackMuted(!cbxMusic.isSelected());
-			});
+			cbxMusic.addItemListener(e -> audioSystem.setSoundtrackMuted(!cbxMusic.isSelected()));
 			
 			cbxSoundEffects = new JCheckBox("Sound Effects", true);
-			cbxSoundEffects.addItemListener(e -> {
-				audioSystem.setEffectsMuted(!cbxSoundEffects.isSelected());
-			});
+			cbxSoundEffects.addItemListener(e -> audioSystem.setEffectsMuted(!cbxSoundEffects.isSelected()));
 			
 			cbxSaveScores = new JCheckBox("Save Scores", true);
 			
@@ -605,6 +587,8 @@ public class MasterTetrisFrame extends JFrame {
 			cbxTimeAttack = new JCheckBox("Time Attack Mode", false);
 			cbxTimeAttack.addItemListener(e -> {
 				scoreKeeper.setTimeAttack(cbxTimeAttack.isSelected());
+				scorePanel.lblTime.repaint();
+				scorePanel.progressBarTime.setVisible(cbxTimeAttack.isSelected());
 			});
 			cbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
 					"+" + ScoreKeeper.getTimeAttackBonusPoints(0) + " points on easy, " +
@@ -677,7 +661,8 @@ public class MasterTetrisFrame extends JFrame {
 			btnHighScores.addActionListener(e -> new HighScoreFrame());
 			
 			btnGiveUp.setEnabled(false);
-			btnGiveUp.addActionListener(e -> onGiveUp());
+			btnGiveUp.addActionListener(e -> onGameOver());
+			
 		}
 		
 		private void onStart() {
@@ -708,16 +693,10 @@ public class MasterTetrisFrame extends JFrame {
 			
 			boardPanel.enableBlockMovement();
 			
-			if (settingsPanel.cbxTimeAttack.isSelected()) {
-				scorePanel.showProgressBar();
-			}
-			else {
-				scorePanel.hideProgressBar();
-			}
-			
 			// Reset old game data
-			scoreKeeper.reset();
+			scoreKeeper.resetScoreInfo();
 			board.clear();
+			holdPanel.repaint();
 			conveyor.refresh();
 			
 			board.spawn(conveyor.next());
@@ -746,7 +725,8 @@ public class MasterTetrisFrame extends JFrame {
 			
 			menuPanel.btnResume.setEnabled(true);
 			menuPanel.btnPause.setEnabled(false);
-			menuPanel.btnGiveUp.setEnabled(false);
+			menuPanel.btnGiveUp.setEnabled(true);
+			menuPanel.btnHighScores.setEnabled(true);
 		};
 		
 		private void onResume() {
@@ -765,13 +745,14 @@ public class MasterTetrisFrame extends JFrame {
 			
 			btnResume.setEnabled(false);
 			btnPause.setEnabled(true);
-			btnGiveUp.setEnabled(true);
-			
+			menuPanel.btnGiveUp.setEnabled(true);
+			menuPanel.btnHighScores.setEnabled(true);
 		};
 	
-		private void onGiveUp() {
+		private void onGameOver() {
 			
 			fallTimer.stop();
+			scoreKeeper.pauseTimer();
 			
 			board.logActiveBlock();
 			board.clearActiveBlock();

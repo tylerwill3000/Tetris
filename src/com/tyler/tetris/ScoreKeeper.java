@@ -24,8 +24,8 @@ public final class ScoreKeeper extends EventSource {
 	// Bonus points on level up when in time attack mode
 	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = { 150, 175, 200 };
 	
-	// Number of milliseconds allowed per line in time attack mode
-	private static final int TIME_ATTACK_MILLIS_PER_LINE = 3000;
+	// Number of seconds allowed per line in time attack mode
+	private static final int TIME_ATTACK_SECONDS_PER_LINE = 3;
 	
 	// Bonus points granted upon winning the game. Determined by difficulty
 	private static final int[] WIN_BONUSES = { 500, 750, 1000 };
@@ -51,19 +51,23 @@ public final class ScoreKeeper extends EventSource {
 	private Timer gameTimer = new Timer(1000, e -> {
 		gameTime[0]++;
 		publish("gameTimeChanged", gameTime[0]);
+		if (timeAttack && gameTime[0] >= getCurrentTimeAttackLimit()) {
+			publish("timeAttackFail", null);
+			((Timer) e.getSource()).stop();
+		}
 	});
 	
 	public ScoreKeeper() {
-		reset();
+		setDifficulty(0);
+		setTimeAttack(false);
+		resetScoreInfo();
 	}
 	
-	public void reset() {
-		this.gameTime =  new int[]{57};
+	public void resetScoreInfo() {
+		this.gameTime =  new int[]{0};
 		setScore(0);
 		setLevel(1);
-		setDifficulty(0);
 		addLinesCleared(totalLinesCleared * -1);
-		this.timeAttack = false;
 	}
 	
 	public int getGameTime() {
@@ -122,7 +126,7 @@ public final class ScoreKeeper extends EventSource {
 	}
 	
 	public int getCurrentTimeAttackLimit() {
-		return getCurrentLevelLinesNeeded() * TIME_ATTACK_MILLIS_PER_LINE;
+		return getCurrentLevelLinesNeeded() * TIME_ATTACK_SECONDS_PER_LINE;
 	}
 	
 	public int getScore() {
