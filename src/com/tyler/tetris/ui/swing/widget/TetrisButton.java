@@ -1,7 +1,7 @@
 package com.tyler.tetris.ui.swing.widget;
 
-import static java.awt.Color.LIGHT_GRAY;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
@@ -17,6 +17,8 @@ public class TetrisButton extends JButton {
 	
 	private final static Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
 	
+	private static final Color BUTTON_HIGHLIGHT = new Color(205, 220, 219);
+	
 	public TetrisButton(String buttonText) {
 		
 		setText(buttonText);
@@ -29,7 +31,7 @@ public class TetrisButton extends JButton {
 			public void mouseEntered(MouseEvent e) {
 				if (isEnabled()) {
 					setCursor(HAND_CURSOR);
-					setBackground(LIGHT_GRAY);
+					setBackground(BUTTON_HIGHLIGHT);
 				}
 			}
 			

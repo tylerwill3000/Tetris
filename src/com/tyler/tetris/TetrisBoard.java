@@ -174,14 +174,14 @@ public class TetrisBoard extends EventSource {
 		}
 	}
 
-	public List<Block.ColoredSquare> getGhostSquares() {
+	public List<ColoredSquare> getGhostSquares() {
 		if (activeBlock == null) {
 			return new ArrayList<>();
 		}
 		int currentRow = activeBlock.getRow();
 		int currentCol = activeBlock.getColumn();
 		dropCurrentBlock();
-		List<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
+		List<ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
 		ghostSquares.forEach(gs -> gs.setColor(null));
 		activeBlock.setLocation(currentRow, currentCol);
 		return ghostSquares;
