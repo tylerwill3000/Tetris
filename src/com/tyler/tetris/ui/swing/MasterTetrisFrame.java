@@ -527,6 +527,10 @@ public class MasterTetrisFrame extends JFrame {
 					Thread.sleep(SPIRAL_SLEEP_INTERVAL);
 				}
 				
+				if (settingsPanel.cbxSaveScores.isSelected()) {
+					new SaveScoreFrame(game);
+				}
+				
 			} catch (InterruptedException e) {
 				return; // Will happen if new game is started before spiral clear is finished
 			} 
@@ -558,6 +562,10 @@ public class MasterTetrisFrame extends JFrame {
 					}
 					repaint();
 					Thread.sleep(CLEAR_SLEEP_INTERVAL);
+				}
+				
+				if (settingsPanel.cbxSaveScores.isSelected()) {
+					new SaveScoreFrame(game);
 				}
 				
 			} catch (InterruptedException e) {
@@ -722,7 +730,7 @@ public class MasterTetrisFrame extends JFrame {
 			setLayout(new BorderLayout());
 			setBorder(new TitledBorder("Settings"));
 			
-			List<JCheckBox> checkboxes = Arrays.asList(cbxGhostSquares, cbxMusic, cbxSoundEffects,  cbxTimeAttack); //,cbxSaveScores;
+			List<JCheckBox> checkboxes = Arrays.asList(cbxGhostSquares, cbxMusic, cbxSoundEffects, cbxSaveScores, cbxTimeAttack);
 			JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
 			checkboxes.forEach(cbx -> {
 				checkboxPanel.add(cbx);
