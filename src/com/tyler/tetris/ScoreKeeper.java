@@ -67,11 +67,20 @@ public final class ScoreKeeper extends EventSource {
 		this.gameTime =  new int[]{0};
 		setScore(0);
 		setLevel(1);
-		addLinesCleared(totalLinesCleared * -1);
+		totalLinesCleared = 0;
 	}
 	
 	public int getGameTime() {
 		return gameTime[0];
+	}
+	
+	public double getTimeAttackPercentage() {
+		return getGameTime() * 1.0 / getCurrentTimeAttackLimit();
+	}
+	
+
+	public double getLinesClearedPercentage() {
+		return getCurrentLevelLinesCleared() * 1.0 / getLinesPerLevel();
 	}
 	
 	public void pauseTimer() {
@@ -84,7 +93,6 @@ public final class ScoreKeeper extends EventSource {
 	
 	public void setDifficulty(int difficulty) {
 		this.difficulty = difficulty;
-		publish("difficultyChange", difficulty);
 	}
 
 	public void setActiveBlocks(Collection<BlockType> activeBlocks) {
@@ -101,11 +109,6 @@ public final class ScoreKeeper extends EventSource {
 	
 	public int getTotalLinesCleared() {
 		return totalLinesCleared;
-	}
-	
-	private void addLinesCleared(int numCleared) {
-		totalLinesCleared += numCleared;
-		publish("linesClearedChange", new int[]{ getCurrentLevelLinesCleared(), getLinesPerLevel() });
 	}
 	
 	public int getLinesPerLevel() {
@@ -135,7 +138,7 @@ public final class ScoreKeeper extends EventSource {
 	
 	private void setScore(int newScore) {
 		this.score = newScore;
-		publish("scoreChange", score);
+		publish("scoreChanged", score);
 	}
 	
 	public int getLevel() {
@@ -144,7 +147,7 @@ public final class ScoreKeeper extends EventSource {
 	
 	private void setLevel(int newLevel) {
 		this.level = newLevel;
-		publish("levelChange", level);
+		publish(newLevel == MAX_LEVEL ? "gameWon" : "levelChanged", level);
 	}
 	
 	public static int getTimeAttackBonusPoints(int difficulty) {
@@ -164,7 +167,7 @@ public final class ScoreKeeper extends EventSource {
 	 */
 	public int increaseScore(int completedLines) {
 		
-		addLinesCleared(completedLines);
+		totalLinesCleared += completedLines;
 
 		int newScore = this.score;
 		
@@ -192,7 +195,7 @@ public final class ScoreKeeper extends EventSource {
 				newScore += TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
 			}
 			
-			if (level == MAX_LEVEL) {
+			if (newLevel == MAX_LEVEL) {
 				newScore += WIN_BONUSES[difficulty];
 				break;
 			}

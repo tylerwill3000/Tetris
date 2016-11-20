@@ -63,31 +63,51 @@ public final class TetrisAudioSystem {
 		if (VICTORY_FANFARE.isRunning()) {
 			VICTORY_FANFARE.stop();
 		}
-		
-		SOUNDTRACK[level].setFramePosition(0);
+
+		killActiveSoundtracks();
+		getSoundtrack(level).setFramePosition(0);
 		resumeSoundtrack(level);
 	}
 	
 	public void resumeSoundtrack(int level) {
 		if (!soundtrackMuted) {
-			SOUNDTRACK[level].loop(Clip.LOOP_CONTINUOUSLY);
+			getSoundtrack(level).loop(Clip.LOOP_CONTINUOUSLY);
 		}
 	}
 	
 	public void stopSoundtrack(int level) {
-		SOUNDTRACK[level].stop();
+		getSoundtrack(level).stop();
+	}
+	
+	public void killActiveSoundtracks() {
+		for (Clip c : SOUNDTRACK) {
+			if (c.isActive()) {
+				c.stop();
+			}
+		}
+	}
+	
+	/**
+	 *  Iterates over all clips and resets their frame positions back to the start.
+	 *  This is called to prepare soundtracks for the next game.
+	 */
+	public void resetClips() {
+		for (Clip c : SOUNDTRACK) {
+			c.setFramePosition(0);
+		}
 	}
 	
 	public void playGameOverSound() {
+		killActiveSoundtracks();
 		playEffect(GAME_OVER);
 	}
-	
 
 	public void stopGameOverSound() {
 		stopEffect(GAME_OVER);
 	}
 	
 	public void playVictoryFanfare() {
+		killActiveSoundtracks();
 		playEffect(VICTORY_FANFARE);
 	}
 	
@@ -137,14 +157,8 @@ public final class TetrisAudioSystem {
 		}
 	}
 	
-	/**
-	 *  Iterates over all clips and resets their frame positions back to the start.
-	 *  This is called to prepare soundtracks for the next game.
-	 */
-	public void resetClips() {
-		for (Clip c : SOUNDTRACK) {
-			c.setFramePosition(0);
-		}
+	private Clip getSoundtrack(int level) {
+		return SOUNDTRACK[level - 1];
 	}
 	
 	/**

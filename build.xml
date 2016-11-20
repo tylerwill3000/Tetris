@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- NOTE: all paths are relative to the location of build.xml -->
-
-<project name="Tetris" default="clean">
+<project name="Tetris" default="jar">
 	
 	<property environment="env"/> <!-- Sets the string to use to access environment variables -->
 	<property name="src.dir" value="src"/>
@@ -24,7 +22,7 @@
 			<fileset dir="images" />
 		</copy>
 		
-		<jar basedir="${build.dir}" destfile="tetris.jar" includes="**">
+		<jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
 			<manifest>
 				<attribute name="Main-class" value="com.tyler.tetris.ui.swing.Main"/>
 			</manifest>
@@ -32,7 +30,7 @@
 		
 	</target>
 	
-	<target name="clean" description="Deletes all build files after compile" depends="jar">
+	<target name="clean" description="Deletes all build files after compile">
 		<delete dir="${build.dir}"/>
 	</target>
 

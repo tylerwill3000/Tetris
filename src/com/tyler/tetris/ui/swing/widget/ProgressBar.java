@@ -12,24 +12,28 @@ import com.tyler.tetris.ui.swing.PixelGrid;
  * Displays a progress bar using JPanels
  * @author Tyler
  */
-public abstract class ProgressBar extends PixelGrid {
+public class ProgressBar extends PixelGrid {
 	
 	public static final int PROGRESS_BAR_DIMENSION = 13;
 	
 	private Color barColor;
 	private int percentagePerPanel;
+	private double percentageComplete;
 	
-	protected ProgressBar(int cols, Color barColor) {
+	public ProgressBar(int cols, Color barColor) {
 		super(1, cols, PROGRESS_BAR_DIMENSION);
 		this.barColor = barColor;
 		this.percentagePerPanel = (int)(100.0 / cols);
+		this.percentageComplete = 0;
+	}
+	
+	public void setPercentageComplete(double complete) {
+		this.percentageComplete = complete;
+		repaint();
 	}
 	
 	@Override
 	public Collection<ColoredSquare> getCurrentColors() {
-		
-		// Keep everything in terms of whole numbers - easier
-		int percentageComplete = (int)(getCurrentPercentage() * 100);
 		
 		// Fill in first panel if it's above zero but below percentage per panel value
 		if (percentageComplete > 0 && percentageComplete < percentagePerPanel) {
@@ -46,6 +50,4 @@ public abstract class ProgressBar extends PixelGrid {
 		return squares;
 	}
 
-	public abstract double getCurrentPercentage();
-	
 }
