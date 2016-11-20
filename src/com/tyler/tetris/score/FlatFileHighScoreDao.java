@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,11 +29,12 @@ public class FlatFileHighScoreDao implements HighScoreDao {
 		}
 		else {
 			try {
+				int[] row = { 1 };
 				return Files.readAllLines(SAVE_PATH)
 				            .stream()
 				            .filter(s -> !s.isEmpty())
 				            .map(line -> line.split("\\" + RECORD_SEP))
-				            .map(FlatFileHighScoreDao::deserialize)
+				            .map(record -> deserialize(record, row[0]++))
 				            .collect(Collectors.toList());
 			}
 			catch (Exception e) {
@@ -68,20 +69,21 @@ public class FlatFileHighScoreDao implements HighScoreDao {
 		                                  score.difficulty.name(),
 		                                  score.linesCleared + "",
 		                                  score.maxLevel + "",
-		                                  score.timeAchieved.toString());
+		                                  score.dateAchieved.toString());
 		
 		return recordData.stream().collect(Collectors.joining(RECORD_SEP));
 	}
 	
-	private static HighScore deserialize(String[] record) {
+	private static HighScore deserialize(String[] record, int row) {
 		return new HighScore(
+		            row,
 		            record[0],
                     parseInt(record[1]),
                     parseLong(record[2]),
                     Difficulty.valueOf(record[3]),
                     parseInt(record[4]),
                     parseInt(record[5]),
-                    LocalDateTime.parse(record[6]));
+                    LocalDate.parse(record[6]));
 	}
 	
 }

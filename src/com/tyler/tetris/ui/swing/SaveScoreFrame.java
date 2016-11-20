@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.tyler.tetris.TetrisGame;
-import com.tyler.tetris.score.FlatFileHighScoreDao;
 import com.tyler.tetris.score.HighScore;
 import com.tyler.tetris.score.HighScoreDao;
 import com.tyler.tetris.ui.swing.widget.TetrisButton;
@@ -20,13 +19,12 @@ public class SaveScoreFrame extends JFrame {
 	
 	public final static int NAME_LENGTH = 20;
 	
-	private HighScoreDao scoreDao = new FlatFileHighScoreDao();
 	private JLabel lblScore = new JLabel();
 	private JTextField txtName = new JTextField(8);
 	private TetrisButton btnSaveScore = new TetrisButton("Save");
 	private TetrisButton btnClose = new TetrisButton("Cancel");
 	
-	public SaveScoreFrame(TetrisGame game) {
+	public SaveScoreFrame(HighScoreDao scoresDao, TetrisGame game) {
 		
 		txtName.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -62,7 +60,7 @@ public class SaveScoreFrame extends JFrame {
 			}
 			
 			try {
-				int rank = scoreDao.saveHighScore(new HighScore(
+				int rank = scoresDao.saveHighScore(new HighScore(
 				                                     saveName,
 				                                     game.getScore(),
 				                                     game.getGameTime(),
@@ -72,6 +70,7 @@ public class SaveScoreFrame extends JFrame {
 				
 				JOptionPane.showMessageDialog(null, "Score saved! Your rank: " + rank);
 				dispose();
+				new HighScoreFrame(scoresDao, rank);
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();

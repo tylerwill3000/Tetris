@@ -1,14 +1,23 @@
 package com.tyler.tetris.score;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.tyler.tetris.Difficulty;
 
 public interface HighScoreDao {
 
-	public default List<HighScore> getScores(Difficulty diff) throws Exception {
-		return getHighScores().stream().filter(s -> s.difficulty == diff).collect(Collectors.toList());
+	public default List<HighScore> getHighScores(Optional<Difficulty> difficulty, Optional<Integer> limit) throws Exception {
+		Stream<HighScore> scores = getHighScores().stream();
+		if (difficulty.isPresent()) {
+			scores = scores.filter(s -> difficulty.get() == s.difficulty);
+		}
+		if (limit.isPresent()) {
+			scores = scores.limit(limit.get());
+		}
+		return scores.collect(Collectors.toList());
 	};
 	
 	public List<HighScore> getHighScores() throws Exception;

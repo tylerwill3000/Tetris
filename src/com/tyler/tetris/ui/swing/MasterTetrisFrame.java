@@ -43,6 +43,9 @@ import com.tyler.tetris.BlockType;
 import com.tyler.tetris.Difficulty;
 import com.tyler.tetris.TetrisAudioSystem;
 import com.tyler.tetris.TetrisGame;
+import com.tyler.tetris.Utility;
+import com.tyler.tetris.score.FlatFileHighScoreDao;
+import com.tyler.tetris.score.HighScoreDao;
 import com.tyler.tetris.ui.swing.widget.FlashLabel;
 import com.tyler.tetris.ui.swing.widget.ProgressBar;
 import com.tyler.tetris.ui.swing.widget.TetrisButton;
@@ -56,6 +59,7 @@ public class MasterTetrisFrame extends JFrame {
 	
 	private TetrisAudioSystem audioSystem;
 	private TetrisGame game;
+	private HighScoreDao scoresDao = new FlatFileHighScoreDao();
 	
 	private BoardPanel boardPanel;
 	private BlockDisplayPanel nextBlockPanel;
@@ -528,7 +532,7 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				if (settingsPanel.cbxSaveScores.isSelected()) {
-					new SaveScoreFrame(game);
+					new SaveScoreFrame(scoresDao, game);
 				}
 				
 			} catch (InterruptedException e) {
@@ -565,7 +569,7 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				if (settingsPanel.cbxSaveScores.isSelected()) {
-					new SaveScoreFrame(game);
+					new SaveScoreFrame(scoresDao, game);
 				}
 				
 			} catch (InterruptedException e) {
@@ -615,9 +619,9 @@ public class MasterTetrisFrame extends JFrame {
 			@Override
 			protected void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				String timeLabel = "Time: " + formatSeconds(game.getGameTime());
+				String timeLabel = "Time: " + Utility.formatSeconds(game.getGameTime());
 				if (game.isTimeAttack()) {
-					timeLabel += " / " + formatSeconds(game.getCurrentTimeAttackLimit()); 
+					timeLabel += " / " + Utility.formatSeconds(game.getCurrentTimeAttackLimit()); 
 				}
 				setText(timeLabel);
 			}
@@ -771,7 +775,7 @@ public class MasterTetrisFrame extends JFrame {
 			mnemonicMap.put(btnGiveUp, 'g');
 			mnemonicMap.put(btnHighScores, 'h');
 			
-			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp)) {//, btnHighScores)) {
+			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp, btnHighScores)) {
 				b.setMnemonic(mnemonicMap.get(b));
 				add(b);
 			}
@@ -786,7 +790,7 @@ public class MasterTetrisFrame extends JFrame {
 			btnResume.addActionListener(e -> onResume());
 			
 			btnHighScores.setEnabled(true);
-			btnHighScores.addActionListener(e -> new HighScoreFrame());
+			btnHighScores.addActionListener(e -> new HighScoreFrame(scoresDao));
 			
 			btnGiveUp.setEnabled(false);
 			btnGiveUp.addActionListener(e -> onGameOver());
@@ -870,14 +874,6 @@ public class MasterTetrisFrame extends JFrame {
 			}
 			
 		}
-	}
-	
-	private static String formatSeconds(int seconds) {
-		int totalMinutes = seconds / 60;
-		int secondsLeftover = seconds % 60;
-		return (totalMinutes < 10 ? "0" : "") + totalMinutes +
-		       ":" +
-		       (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
 	}
 	
 }

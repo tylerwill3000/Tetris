@@ -16,5 +16,13 @@ public final class Utility {
 	public static <T> T sample(T[] values) {
 		return values[RANDOM.nextInt(values.length)];
 	}
+
+	public static String formatSeconds(long seconds) {
+		long totalMinutes = seconds / 60;
+		long secondsLeftover = seconds % 60;
+		return (totalMinutes < 10 ? "0" : "") + totalMinutes +
+		       ":" +
+		       (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
+	}
 	
 }
