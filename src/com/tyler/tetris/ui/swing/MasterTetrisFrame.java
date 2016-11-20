@@ -412,9 +412,6 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnGiveUp.setEnabled(false);
 		menuPanel.btnHighScores.setEnabled(true);
 		
-		game.getFallTimer().stop();
-		game.getGameTimer().stop();
-		
 		audioSystem.playVictoryFanfare();
 		boardPanel.disableBlockMovement();
 		clearTask = THREAD_POOL.submit(boardPanel::jumpClear);

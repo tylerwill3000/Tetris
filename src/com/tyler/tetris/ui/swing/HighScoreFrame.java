@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import com.tyler.tetris.Difficulty;
+import com.tyler.tetris.TetrisGame;
 import com.tyler.tetris.Utility;
 import com.tyler.tetris.score.HighScoreDao;
 import com.tyler.tetris.ui.swing.widget.TetrisButton;
@@ -87,7 +88,7 @@ public class HighScoreFrame extends JFrame {
 		try {
 			data = scoresDao.getHighScores(Optional.ofNullable(difficulty), Optional.of(numRecords))
 			                .stream()
-			                .map(s -> new Object[]{ s.rank, s.name, s.score, s.linesCleared, s.maxLevel,
+			                .map(s -> new Object[]{ s.rank, s.name, s.score, s.linesCleared, s.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : s.maxLevel,
 			                                s.difficulty, Utility.formatSeconds(s.gameTime), s.dateAchieved })
 			                .toArray(Object[][]::new);
 		}
