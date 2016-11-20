@@ -15,24 +15,13 @@ public final class ScoreKeeper extends EventSource {
 	
 	public static final int MAX_LEVEL = 11;
 	
-	// Index of the selected option in the difficulty list is used to index into this array to get lines per level
-	private static final int[] LINES_PER_LEVEL = { 15, 20, 25 };
-	
-	private static final int[] INITIAL_TIMER_DELAYS = { 650, 600, 560 };
-	
-	private static final int[] TIMER_SPEEDUPS = { 40, 45, 55 };
+	private Difficulty difficulty;
 	
 	// Point values per line based on lines cleared
 	private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
 	
-	// Bonus points on level up when in time attack mode
-	private static final int[] TIME_ATTACK_BONUSES_PER_LEVEL = { 150, 175, 200 };
-	
 	// Number of seconds allowed per line in time attack mode
 	private static final int TIME_ATTACK_SECONDS_PER_LINE = 3;
-	
-	// Bonus points granted upon winning the game. Determined by difficulty
-	private static final int[] WIN_BONUSES = { 500, 750, 1000 };
 	
 	// Maps block types to bonus points per line
 	private static final Map<BlockType, Integer> SPECIAL_PIECE_BONUSES;
@@ -47,7 +36,6 @@ public final class ScoreKeeper extends EventSource {
 	private int totalLinesCleared;
 	private int score;
 	private int level;
-	private Integer difficulty;
 	private Collection<BlockType> activeBlocks;
 	private boolean timeAttack;
 	private int gameTime;
@@ -61,7 +49,7 @@ public final class ScoreKeeper extends EventSource {
 	});
 	
 	public ScoreKeeper() {
-		setDifficulty(0);
+		setDifficulty(Difficulty.EASY);
 		setTimeAttack(false);
 		resetScoreInfo();
 	}
@@ -74,8 +62,8 @@ public final class ScoreKeeper extends EventSource {
 	}
 	
 	public int getCurrentTimerDelay() {
-		int initialDelay = INITIAL_TIMER_DELAYS[difficulty];
-		int totalSpeedup = (level - 1) * TIMER_SPEEDUPS[difficulty];
+		int initialDelay = difficulty.getInitialTimerDelay();
+		int totalSpeedup = (level - 1) * difficulty.getTimerSpeedup();
 		return initialDelay - totalSpeedup;
 	}
 	
@@ -100,7 +88,7 @@ public final class ScoreKeeper extends EventSource {
 		this.gameTimer.start();
 	}
 	
-	public void setDifficulty(int difficulty) {
+	public void setDifficulty(Difficulty difficulty) {
 		this.difficulty = difficulty;
 	}
 
@@ -121,7 +109,7 @@ public final class ScoreKeeper extends EventSource {
 	}
 	
 	public int getLinesPerLevel() {
-		return LINES_PER_LEVEL[difficulty];
+		return difficulty.getLinesPerLevel();
 	}
 	
 	public int getCurrentLevelLinesCleared() {
@@ -159,12 +147,8 @@ public final class ScoreKeeper extends EventSource {
 		publish(newLevel == MAX_LEVEL ? "gameWon" : "levelChanged", level);
 	}
 	
-	public static int getTimeAttackBonusPoints(int difficulty) {
-		return TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
-	}
-	
 	public int getTimeAttackBonusPoints() {
-		return TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
+		return difficulty.getTimeAttackBonus();
 	}
 	
 	public static int getSpecialPieceBonusPoints(BlockType pieceType) {
@@ -182,7 +166,7 @@ public final class ScoreKeeper extends EventSource {
 		
 		// Points from raw lines cleared
 		int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
-		int difficultyBonus = completedLines * (5 * difficulty);
+		int difficultyBonus = completedLines * difficulty.getLinesClearedBonus();
 		newScore += (linePoints + difficultyBonus);
 		
 		 // Bonuses for special blocks
@@ -201,11 +185,11 @@ public final class ScoreKeeper extends EventSource {
 			newLevel++;
 			
 			if (timeAttack) {
-				newScore += TIME_ATTACK_BONUSES_PER_LEVEL[difficulty];
+				newScore += difficulty.getTimeAttackBonus();
 			}
 			
 			if (newLevel == MAX_LEVEL) {
-				newScore += WIN_BONUSES[difficulty];
+				newScore += difficulty.getWinBonus();
 				break;
 			}
 			

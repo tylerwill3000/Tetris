@@ -42,6 +42,7 @@ import com.tyler.tetris.Block;
 import com.tyler.tetris.Block.ColoredSquare;
 import com.tyler.tetris.BlockConveyor;
 import com.tyler.tetris.BlockType;
+import com.tyler.tetris.Difficulty;
 import com.tyler.tetris.ScoreKeeper;
 import com.tyler.tetris.TetrisAudioSystem;
 import com.tyler.tetris.TetrisBoard;
@@ -702,7 +703,7 @@ public class MasterTetrisFrame extends JFrame {
 		private JCheckBox cbxSaveScores;
 		private JCheckBox cbxTimeAttack;
 		
-		private JComboBox<String> lstDifficulty;
+		private JComboBox<Difficulty> lstDifficulty;
 		
 		private TetrisButton btnChooseSpecials;
 		
@@ -728,13 +729,13 @@ public class MasterTetrisFrame extends JFrame {
 				scorePanel.progressBarTime.setVisible(cbxTimeAttack.isSelected());
 			});
 			cbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(0) + " points on easy, " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(1) + " points on medium, " +
-					"+" + ScoreKeeper.getTimeAttackBonusPoints(2) + " points on hard");
+					"+" + Difficulty.EASY.getTimeAttackBonus() + " points on easy, " +
+					"+" + Difficulty.MEDIUM.getTimeAttackBonus() + " points on medium, " +
+					"+" + Difficulty.HARD.getTimeAttackBonus() + " points on hard");
 			
-			lstDifficulty = new JComboBox<String>(new String[]{"Easy", "Medium", "Hard"});
+			lstDifficulty = new JComboBox<Difficulty>(Difficulty.values());
 			lstDifficulty.addActionListener(e -> {
-				scoreKeeper.setDifficulty(lstDifficulty.getSelectedIndex());
+				scoreKeeper.setDifficulty((Difficulty) lstDifficulty.getSelectedItem());
 				fallTimer.setDelay(scoreKeeper.getCurrentTimerDelay());
 			});
 			
