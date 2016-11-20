@@ -22,6 +22,12 @@
 			<fileset dir="images" />
 		</copy>
 		
+		<delete>
+			<fileset dir="${build.dir}">
+				<include name="tetris.jar"/>
+			</fileset>
+		</delete>
+		
 		<jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
 			<manifest>
 				<attribute name="Main-class" value="com.tyler.tetris.ui.swing.Main"/>

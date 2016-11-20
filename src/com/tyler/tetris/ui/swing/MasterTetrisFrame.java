@@ -6,6 +6,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -53,7 +54,6 @@ public class MasterTetrisFrame extends JFrame {
 	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
 	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
 	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
-	public static final int INITIAL_TIMER_DELAY = 600;
 	static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 	
 	private TetrisAudioSystem audioSystem;
@@ -72,7 +72,7 @@ public class MasterTetrisFrame extends JFrame {
 	private Future<?> clearTask;
 	private Future<?> flashLabelTask;
 	
-	private Timer fallTimer = new Timer(INITIAL_TIMER_DELAY, e -> onFallTick());
+	private Timer fallTimer = new Timer(0, e -> onFallTick());
 	
 	private KeyAdapter keyHandler = new KeyAdapter() {
 		
@@ -179,7 +179,6 @@ public class MasterTetrisFrame extends JFrame {
 		this.scoreKeeper = new ScoreKeeper();
 		this.conveyor = new BlockConveyor();
 		
-		// Model-driven event handlers
 		this.board.subscribe("blockPlaced", event -> {
 			if (!board.spawn(conveyor.next())) {
 				onGameOver();
@@ -190,40 +189,37 @@ public class MasterTetrisFrame extends JFrame {
 			int lines = (int) event;
 			audioSystem.playClearLineSound(lines);
 			scoreKeeper.increaseScore(lines);
-			scorePanel.lblTotalLines.setText("Lines: " + scoreKeeper.getCurrentLevelLinesCleared() + " / " + scoreKeeper.getLinesPerLevel());
-			scorePanel.progressBarLinesCleared.setPercentageComplete(scoreKeeper.getLinesClearedPercentage());
+			scorePanel.lblTotalLines.repaint();
+			scorePanel.progressBarLinesCleared.repaint();
 		});
 		
 		this.scoreKeeper.subscribe("levelChanged", event -> {
+			
 			int newLevel = (int) event;
+			
 			scorePanel.lblLevel.setText("Level: " + newLevel);
+			scorePanel.progressBarTime.repaint();
+			
 			audioSystem.startSoundtrack(newLevel);
+			
+			fallTimer.setDelay(scoreKeeper.getCurrentTimerDelay());
+			
 			if (newLevel > 1) {
 				flashLabelTask = THREAD_POOL.submit(() -> scorePanel.lblLevel.flash(Color.YELLOW));
 			}
-			scorePanel.progressBarTime.setPercentageComplete(scoreKeeper.getTimeAttackPercentage());
 		});
 		
 		this.scoreKeeper.subscribe("gameWon", event -> onWin());
 		
-		this.scoreKeeper.subscribe("timeAttackFail", e -> {
-			scorePanel.progressBarTime.repaint();
-			onGameOver();
-		});
+		this.scoreKeeper.subscribe("timeAttackFail", e -> onGameOver());
 		
 		this.scoreKeeper.subscribe("gameTimeChanged", newTime -> {
-			
-			String timeLabel = "Time: " + formatSeconds(scoreKeeper.getGameTime());
-			if (scoreKeeper.isTimeAttack()) {
-				timeLabel += " / " + formatSeconds(scoreKeeper.getCurrentTimeAttackLimit()); 
-			}
-			scorePanel.lblTime.setText(timeLabel);
-			
-			scorePanel.progressBarTime.setPercentageComplete(scoreKeeper.getTimeAttackPercentage());
+			scorePanel.lblTime.repaint();
+			scorePanel.progressBarTime.repaint();
 		});
 		
 		this.scoreKeeper.subscribe("scoreChanged", score -> {
-			scorePanel.lblScore.setText("Score: " + score);
+			scorePanel.lblScore.repaint();
 		});
 		
 		this.boardPanel = new BoardPanel();
@@ -357,6 +353,7 @@ public class MasterTetrisFrame extends JFrame {
 		settingsPanel.cbxSaveScores.setEnabled(false);
 		settingsPanel.cbxSoundEffects.setEnabled(false);
 		
+		
 		menuPanel.btnStart.setEnabled(false);
 		menuPanel.btnPause.setEnabled(true);
 		menuPanel.btnResume.setEnabled(false);
@@ -371,6 +368,7 @@ public class MasterTetrisFrame extends JFrame {
 		holdPanel.repaint();
 		conveyor.refresh();
 		
+		scorePanel.lblTotalLines.repaint();
 		board.spawn(conveyor.next());
 		
 		scoreKeeper.startTimer();
@@ -604,13 +602,74 @@ public class MasterTetrisFrame extends JFrame {
 	
 	private class ScorePanel extends JPanel {
 		
-		private JLabel lblScore = new JLabel("Score: 0", JLabel.CENTER);
-		private JLabel lblTotalLines = new JLabel("Lines: 0 / " + scoreKeeper.getLinesPerLevel(), JLabel.CENTER);
-		private FlashLabel lblLevel = new FlashLabel("Level: 1", JLabel.CENTER);
-		private JLabel lblTime = new JLabel("Time: 00:00", JLabel.CENTER);
+		private JLabel lblScore = new JLabel("Score: 0", JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setText("Score: " + scoreKeeper.getScore());
+			}
+			
+		};
 		
-		private ProgressBar progressBarLinesCleared = new ProgressBar(11, Color.GREEN);
-		private ProgressBar progressBarTime = new ProgressBar(11, Color.YELLOW);
+		private JLabel lblTotalLines = new JLabel("Lines: 0 / " + scoreKeeper.getLinesPerLevel(), JLabel.CENTER) {
+			
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				setText("Lines: " + scoreKeeper.getCurrentLevelLinesCleared() + " / " + scoreKeeper.getLinesPerLevel());
+			}
+			
+		};
+		
+		private FlashLabel lblLevel = new FlashLabel("Level: 1", JLabel.CENTER);
+		
+		private JLabel lblTime = new JLabel("Time: 00:00", JLabel.CENTER) {
+		
+			@Override
+			protected void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				String timeLabel = "Time: " + formatSeconds(scoreKeeper.getGameTime());
+				if (scoreKeeper.isTimeAttack()) {
+					timeLabel += " / " + formatSeconds(scoreKeeper.getCurrentTimeAttackLimit()); 
+				}
+				setText(timeLabel);
+			}
+		
+		};
+		
+		private ProgressBar progressBarLinesCleared = new ProgressBar(11, Color.GREEN) {
+
+			@Override
+			protected double getCurrentPercentage() {
+				return scoreKeeper.getLinesClearedPercentage();
+			}
+			
+		};
+		private ProgressBar progressBarTime = new ProgressBar(11, Color.YELLOW) {
+			
+			@Override
+			protected double getCurrentPercentage() {
+				
+				int currentTime = scoreKeeper.getGameTime();
+				int maxLimit = scoreKeeper.getCurrentTimeAttackLimit();
+				double percentage = 100.0 * currentTime / maxLimit;
+				
+				int timeTillMax = maxLimit - currentTime;
+				if (timeTillMax <= 10) {
+					this.barColor = Color.RED;
+				}
+				else if (timeTillMax <= 20) {
+					this.barColor = Color.YELLOW;
+				}
+				else {
+					this.barColor = Color.GREEN;
+				}
+				
+				return percentage;
+			}
+			
+		};
 		
 		private GridLayout layout;
 		
@@ -674,7 +733,10 @@ public class MasterTetrisFrame extends JFrame {
 					"+" + ScoreKeeper.getTimeAttackBonusPoints(2) + " points on hard");
 			
 			lstDifficulty = new JComboBox<String>(new String[]{"Easy", "Medium", "Hard"});
-			lstDifficulty.addActionListener(e -> scoreKeeper.setDifficulty(lstDifficulty.getSelectedIndex()));
+			lstDifficulty.addActionListener(e -> {
+				scoreKeeper.setDifficulty(lstDifficulty.getSelectedIndex());
+				fallTimer.setDelay(scoreKeeper.getCurrentTimerDelay());
+			});
 			
 			btnChooseSpecials = new TetrisButton("Special Pieces...");
 			btnChooseSpecials.addActionListener(e -> new SpecialPiecesFrame());
@@ -682,7 +744,7 @@ public class MasterTetrisFrame extends JFrame {
 			setLayout(new BorderLayout());
 			setBorder(new TitledBorder("Settings"));
 			
-			List<JCheckBox> checkboxes = Arrays.asList(cbxGhostSquares, cbxMusic, cbxSoundEffects, cbxSaveScores, cbxTimeAttack);
+			List<JCheckBox> checkboxes = Arrays.asList(cbxGhostSquares, cbxMusic, cbxSoundEffects,  cbxTimeAttack); //,cbxSaveScores;
 			JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
 			checkboxes.forEach(cbx -> {
 				checkboxPanel.add(cbx);
@@ -719,7 +781,7 @@ public class MasterTetrisFrame extends JFrame {
 			mnemonicMap.put(btnGiveUp, 'g');
 			mnemonicMap.put(btnHighScores, 'h');
 			
-			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp, btnHighScores)) {
+			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp)) {//, btnHighScores)) {
 				b.setMnemonic(mnemonicMap.get(b));
 				add(b);
 			}

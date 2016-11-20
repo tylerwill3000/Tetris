@@ -18,6 +18,10 @@ public final class ScoreKeeper extends EventSource {
 	// Index of the selected option in the difficulty list is used to index into this array to get lines per level
 	private static final int[] LINES_PER_LEVEL = { 15, 20, 25 };
 	
+	private static final int[] INITIAL_TIMER_DELAYS = { 650, 600, 560 };
+	
+	private static final int[] TIMER_SPEEDUPS = { 40, 45, 55 };
+	
 	// Point values per line based on lines cleared
 	private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
 	
@@ -46,12 +50,11 @@ public final class ScoreKeeper extends EventSource {
 	private Integer difficulty;
 	private Collection<BlockType> activeBlocks;
 	private boolean timeAttack;
-	private int[] gameTime;
+	private int gameTime;
 	
 	private Timer gameTimer = new Timer(1000, e -> {
-		gameTime[0]++;
-		publish("gameTimeChanged", gameTime[0]);
-		if (timeAttack && gameTime[0] >= getCurrentTimeAttackLimit()) {
+		setTime(gameTime + 1);
+		if (timeAttack && gameTime >= getCurrentTimeAttackLimit()) {
 			publish("timeAttackFail", null);
 			((Timer) e.getSource()).stop();
 		}
@@ -64,23 +67,29 @@ public final class ScoreKeeper extends EventSource {
 	}
 	
 	public void resetScoreInfo() {
-		this.gameTime =  new int[]{0};
+		setTime(0);
 		setScore(0);
 		setLevel(1);
 		totalLinesCleared = 0;
 	}
 	
+	public int getCurrentTimerDelay() {
+		int initialDelay = INITIAL_TIMER_DELAYS[difficulty];
+		int totalSpeedup = (level - 1) * TIMER_SPEEDUPS[difficulty];
+		return initialDelay - totalSpeedup;
+	}
+	
 	public int getGameTime() {
-		return gameTime[0];
+		return gameTime;
 	}
 	
-	public double getTimeAttackPercentage() {
-		return getGameTime() * 1.0 / getCurrentTimeAttackLimit();
+	private void setTime(int time) {
+		gameTime = time;
+		publish("gameTimeChanged", gameTime);
 	}
 	
-
 	public double getLinesClearedPercentage() {
-		return getCurrentLevelLinesCleared() * 1.0 / getLinesPerLevel();
+		return 100.0 * (getCurrentLevelLinesCleared() * 1.0 / getLinesPerLevel());
 	}
 	
 	public void pauseTimer() {
