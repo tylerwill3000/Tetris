@@ -1,4 +1,4 @@
-package com.tyler.tetris;
+package tetris;
 
 import static java.util.stream.Collectors.toCollection;
 
@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 import javax.swing.Timer;
 
-import com.tyler.tetris.Block.ColoredSquare;
+import tetris.Block.ColoredSquare;
 
 public class TetrisGame extends EventSource {
 

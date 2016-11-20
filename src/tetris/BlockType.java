@@ -1,4 +1,4 @@
-package com.tyler.tetris;
+package tetris;
 
 import static java.util.stream.Collectors.toList;
 
@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
-import com.tyler.tetris.Block.ColoredSquare;
+import tetris.Block.ColoredSquare;
 
 public enum BlockType {
 	

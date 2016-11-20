@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing;
+package tetris.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import javax.swing.JPanel;
 
-import com.tyler.tetris.Block.ColoredSquare;
+import tetris.Block.ColoredSquare;
 
 /**
  * Objects of this class are grid-based panels that are "paintable" - that is, they are able

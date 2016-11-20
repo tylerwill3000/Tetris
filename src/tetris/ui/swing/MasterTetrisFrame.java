@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing;
+package tetris.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,18 +37,15 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
-import com.tyler.tetris.Block;
-import com.tyler.tetris.Block.ColoredSquare;
-import com.tyler.tetris.BlockType;
-import com.tyler.tetris.Difficulty;
-import com.tyler.tetris.TetrisAudioSystem;
-import com.tyler.tetris.TetrisGame;
-import com.tyler.tetris.Utility;
-import com.tyler.tetris.score.FlatFileHighScoreDao;
-import com.tyler.tetris.score.HighScoreDao;
-import com.tyler.tetris.ui.swing.widget.FlashLabel;
-import com.tyler.tetris.ui.swing.widget.ProgressBar;
-import com.tyler.tetris.ui.swing.widget.TetrisButton;
+import tetris.Block;
+import tetris.BlockType;
+import tetris.Difficulty;
+import tetris.FlatFileHighScoreDao;
+import tetris.HighScoreDao;
+import tetris.TetrisAudioSystem;
+import tetris.TetrisGame;
+import tetris.Utility;
+import tetris.Block.ColoredSquare;
 
 public class MasterTetrisFrame extends JFrame {
 	

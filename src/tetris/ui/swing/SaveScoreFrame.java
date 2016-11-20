@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing;
+package tetris.ui.swing;
 
 import java.awt.GridLayout;
 import java.awt.event.KeyAdapter;
@@ -10,10 +10,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.tyler.tetris.TetrisGame;
-import com.tyler.tetris.score.HighScore;
-import com.tyler.tetris.score.HighScoreDao;
-import com.tyler.tetris.ui.swing.widget.TetrisButton;
+import tetris.HighScore;
+import tetris.HighScoreDao;
+import tetris.TetrisGame;
 
 public class SaveScoreFrame extends JFrame {
 	

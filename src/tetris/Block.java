@@ -1,4 +1,4 @@
-package com.tyler.tetris;
+package tetris;
 
 import java.awt.Color;
 import java.util.List;

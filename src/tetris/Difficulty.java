@@ -1,15 +1,15 @@
-package com.tyler.tetris;
+package tetris;
 
-import static com.tyler.tetris.BlockType.BOX;
-import static com.tyler.tetris.BlockType.DIAMOND;
-import static com.tyler.tetris.BlockType.L_BLOCK_L;
-import static com.tyler.tetris.BlockType.L_BLOCK_R;
-import static com.tyler.tetris.BlockType.ROCKET;
-import static com.tyler.tetris.BlockType.STRAIGHT_LINE;
-import static com.tyler.tetris.BlockType.S_BLOCK_L;
-import static com.tyler.tetris.BlockType.S_BLOCK_R;
-import static com.tyler.tetris.BlockType.TWIN_PILLARS;
-import static com.tyler.tetris.BlockType.T_BLOCK;
+import static tetris.BlockType.BOX;
+import static tetris.BlockType.DIAMOND;
+import static tetris.BlockType.L_BLOCK_L;
+import static tetris.BlockType.L_BLOCK_R;
+import static tetris.BlockType.ROCKET;
+import static tetris.BlockType.STRAIGHT_LINE;
+import static tetris.BlockType.S_BLOCK_L;
+import static tetris.BlockType.S_BLOCK_R;
+import static tetris.BlockType.TWIN_PILLARS;
+import static tetris.BlockType.T_BLOCK;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +50,9 @@ public enum Difficulty {
 		type_spawn.put(BOX, 13);
 		type_spawn.put(L_BLOCK_L, 15);
 		type_spawn.put(L_BLOCK_R, 14);
-		type_spawn.put(S_BLOCK_L, 15);
+		type_spawn.put(S_BLOCK_L, 14);
 		type_spawn.put(S_BLOCK_R, 15);
-		type_spawn.put(STRAIGHT_LINE, 12);
+		type_spawn.put(STRAIGHT_LINE, 13);
 		type_spawn.put(T_BLOCK, 14);
 		type_spawn.put(TWIN_PILLARS, 10);
 		type_spawn.put(ROCKET, 8);
@@ -69,12 +69,12 @@ public enum Difficulty {
 		timeAttackSecondsPerLine = 3;
 		winBonus = 1000;
 		
-		type_spawn.put(BOX, 13);
+		type_spawn.put(BOX, 12);
 		type_spawn.put(L_BLOCK_L, 15);
-		type_spawn.put(L_BLOCK_R, 16);
-		type_spawn.put(S_BLOCK_L, 16);
-		type_spawn.put(S_BLOCK_R, 16);
-		type_spawn.put(STRAIGHT_LINE, 11);
+		type_spawn.put(L_BLOCK_R, 14);
+		type_spawn.put(S_BLOCK_L, 15);
+		type_spawn.put(S_BLOCK_R, 15);
+		type_spawn.put(STRAIGHT_LINE, 12);
 		type_spawn.put(T_BLOCK, 13);
 		type_spawn.put(TWIN_PILLARS, 11);
 		type_spawn.put(ROCKET, 8);

@@ -1,4 +1,4 @@
-package com.tyler.tetris;
+package tetris;
 
 import java.io.IOException;
 import java.net.URL;

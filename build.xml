@@ -30,7 +30,7 @@
 		
 		<jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
 			<manifest>
-				<attribute name="Main-class" value="com.tyler.tetris.ui.swing.Main"/>
+				<attribute name="Main-class" value="tetris.ui.swing.Main"/>
 			</manifest>
 		</jar>
 		

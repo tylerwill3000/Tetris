@@ -1,12 +1,12 @@
 
-package com.tyler.tetris.ui.swing;
+package tetris.ui.swing;
 
 import java.util.Collection;
 
 import javax.swing.border.TitledBorder;
 
-import com.tyler.tetris.Block;
-import com.tyler.tetris.Block.ColoredSquare;
+import tetris.Block;
+import tetris.Block.ColoredSquare;
 
 public class BlockDisplayPanel extends PixelGrid {
 	

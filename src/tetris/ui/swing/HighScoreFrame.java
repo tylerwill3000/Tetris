@@ -1,4 +1,4 @@
-package com.tyler.tetris.ui.swing;
+package tetris.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -18,11 +18,10 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import com.tyler.tetris.Difficulty;
-import com.tyler.tetris.TetrisGame;
-import com.tyler.tetris.Utility;
-import com.tyler.tetris.score.HighScoreDao;
-import com.tyler.tetris.ui.swing.widget.TetrisButton;
+import tetris.Difficulty;
+import tetris.HighScoreDao;
+import tetris.TetrisGame;
+import tetris.Utility;
 
 public class HighScoreFrame extends JFrame {
 	

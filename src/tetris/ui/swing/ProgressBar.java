@@ -1,12 +1,11 @@
-package com.tyler.tetris.ui.swing.widget;
+package tetris.ui.swing;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.tyler.tetris.Block.ColoredSquare;
-import com.tyler.tetris.ui.swing.PixelGrid;
+import tetris.Block.ColoredSquare;
 
 /**
  * Displays a progress bar using JPanels

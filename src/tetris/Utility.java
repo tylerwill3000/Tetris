@@ -1,4 +1,4 @@
-package com.tyler.tetris;
+package tetris;
 
 import java.util.List;
 import java.util.Random;

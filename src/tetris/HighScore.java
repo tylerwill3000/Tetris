@@ -1,9 +1,7 @@
-package com.tyler.tetris.score;
+package tetris;
 
 import java.time.LocalDate;
 import java.util.Objects;
-
-import com.tyler.tetris.Difficulty;
 
 public class HighScore implements Comparable<HighScore> {
 

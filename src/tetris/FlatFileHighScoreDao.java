@@ -1,4 +1,4 @@
-package com.tyler.tetris.score;
+package tetris;
 
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
@@ -13,8 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.tyler.tetris.Difficulty;
 
 public class FlatFileHighScoreDao implements HighScoreDao {
 
