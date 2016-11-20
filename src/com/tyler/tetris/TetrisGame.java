@@ -6,40 +6,242 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import javax.swing.Timer;
+
 import com.tyler.tetris.Block.ColoredSquare;
 
-public class TetrisBoard extends EventSource {
+public class TetrisGame extends EventSource {
 
+	public static final int MAX_LEVEL = 11;
 	public static final int DEFAULT_V_CELLS = 23;
 	public static final int DEFAULT_H_CELLS = 10;
-
+	
+	private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
+	private static final Map<BlockType, Integer> SPECIAL_PIECE_BONUSES;
+	static {
+		Map<BlockType, Integer> temp = new HashMap<>();
+		temp.put(BlockType.TWIN_PILLARS, 4);
+		temp.put(BlockType.ROCKET, 6);
+		temp.put(BlockType.DIAMOND, 10);
+		SPECIAL_PIECE_BONUSES = Collections.unmodifiableMap(temp);
+	}
+	
 	private Block activeBlock;
+	private Block holdBlock;
+	private BlockConveyor conveyor;
+	private Collection<BlockType> activeBlocks;
 	private LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
+	private Difficulty difficulty;
+	private int totalLinesCleared;
+	private int score;
+	private int level;
 	private int verticalDimension;
+	private int gameTime;
 	private int horizontalDimension;
 	private boolean ghostSquaresEnabled;
-	private Block holdBlock;
-
-	public TetrisBoard() {
+	private boolean timeAttack;
+	private Timer fallTimer = new Timer(0, e -> tryFall());
+	private Timer gameTimer = new Timer(1000, e -> {
+		setTime(gameTime + 1);
+		if (timeAttack && gameTime >= getCurrentTimeAttackLimit()) {
+			publish("timeAttackFail", null);
+			((Timer) e.getSource()).stop();
+		}
+	});
+	
+	public TetrisGame() {
 		this(DEFAULT_V_CELLS, DEFAULT_H_CELLS);
 	}
 
-	public TetrisBoard(int verticalDimension, int horizontalDimension) {
+	public TetrisGame(int verticalDimension, int horizontalDimension) {
 		this.verticalDimension = verticalDimension;
 		this.horizontalDimension = horizontalDimension;
 		this.ghostSquaresEnabled = true;
+		this.conveyor = new BlockConveyor();
 		this.persistedBlocks = IntStream.range(0, verticalDimension)
 		                                .mapToObj(i -> new Color[horizontalDimension])
 		                                .collect(toCollection(LinkedList::new));
+		setDifficulty(Difficulty.EASY);
+		setLevel(1);
 	}
 
+	public Timer getFallTimer() {
+		return fallTimer;
+	};
+	
+	public Timer getGameTimer() {
+		return gameTimer;
+	}
+	
+	public int getGameTime() {
+		return gameTime;
+	}
+	
+	public BlockConveyor getConveyor() {
+		return conveyor;
+	}
+	
+	private void setTime(int time) {
+		gameTime = time;
+		publish("gameTimeChanged", gameTime);
+	}
+	
+	public double getLinesClearedPercentage() {
+		return 100.0 * (getCurrentLevelLinesCleared() * 1.0 / difficulty.getLinesPerLevel());
+	}
+	
+	public void beginNewGame() {
+		
+		setTime(0);
+		setScore(0);
+		setLevel(1);
+		totalLinesCleared = 0;
+		
+		this.activeBlock = null;
+		this.holdBlock = null;
+		
+		for (Color[] row : persistedBlocks) {
+			Arrays.fill(row, null);
+		}
+		
+		conveyor.refresh();
+		spawn(conveyor.next());
+		
+		gameTimer.start();
+		fallTimer.start();
+	}
+	
+	public void setDifficulty(Difficulty difficulty) {
+		this.difficulty = difficulty;
+		this.conveyor.setDifficulty(difficulty);
+		this.fallTimer.setDelay(difficulty.initialTimerDelay);
+	}
+
+	public Difficulty getDifficulty() {
+		return this.difficulty;
+	}
+	
+	public void setActiveBlocks(Collection<BlockType> activeBlocks) {
+		this.activeBlocks = activeBlocks;
+	}
+
+	public void setTimeAttack(boolean timeAttack) {
+		this.timeAttack = timeAttack;
+	}
+
+	public boolean isTimeAttack() {
+		return this.timeAttack;
+	}
+	
+	public int getTotalLinesCleared() {
+		return totalLinesCleared;
+	}
+	
+	public int getCurrentLevelLinesNeeded() {
+		return level * difficulty.getLinesPerLevel();
+	}
+	
+	public int getCurrentTimeAttackLimit() {
+		return getCurrentLevelLinesNeeded() * difficulty.getTimeAttackSecondsPerLine();
+	}
+	
+	public int getCurrentLevelLinesCleared() {
+		int lastLevelThreshold = difficulty.getLinesPerLevel() * (level - 1);
+		return totalLinesCleared - lastLevelThreshold;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	
+	private void setScore(int newScore) {
+		this.score = newScore;
+		publish("scoreChanged", score);
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	private void setLevel(int newLevel) {
+		this.level = newLevel;
+		if (newLevel >= MAX_LEVEL) {
+			fallTimer.stop();
+			gameTimer.stop();
+			publish("gameWon", level);
+		}
+		else {
+			int initialDelay = difficulty.getInitialTimerDelay();
+			int totalSpeedup = (level - 1) * difficulty.getTimerSpeedup();
+			int newDelay = initialDelay - totalSpeedup;
+			fallTimer.setDelay(newDelay);
+			publish("levelChanged", level);
+		}
+	}
+	
+	public static int getSpecialPieceBonusPoints(BlockType pieceType) {
+		return SPECIAL_PIECE_BONUSES.get(pieceType);
+	}
+	
+	/**
+	 * @return The current level after processing the completed lines
+	 */
+	public int increaseScore(int completedLines) {
+		
+		totalLinesCleared += completedLines;
+
+		int newScore = this.score;
+		
+		// Points from raw lines cleared
+		int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
+		int difficultyBonus = completedLines * difficulty.getLinesClearedBonus();
+		newScore += (linePoints + difficultyBonus);
+		
+		 // Bonuses for special blocks
+		if (activeBlocks != null) {
+			newScore += BlockType.getSpecialBlocks()
+			                     .stream()
+			                     .filter(activeBlocks::contains)
+			                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
+			                     .sum();
+		}
+		
+		// Level ups
+		int newLevel = this.level;
+		while (totalLinesCleared >= (newLevel * difficulty.getLinesPerLevel())) {
+			
+			newLevel++;
+			
+			if (timeAttack) {
+				newScore += difficulty.getTimeAttackBonus();
+			}
+			
+			if (newLevel == MAX_LEVEL) {
+				newScore += difficulty.getWinBonus();
+				break;
+			}
+			
+		}
+
+		if (newLevel > this.level) {
+			setLevel(newLevel);
+		}
+		
+		setScore(newScore);
+		
+		return level;
+	}
+	
 	public int getHorizontalDimension() {
 		return horizontalDimension;
 	}
@@ -70,14 +272,6 @@ public class TetrisBoard extends EventSource {
 	
 	public void setColor(int row, int col, Color c) {
 		persistedBlocks.get(row)[col] = c;
-	}
-	
-	public void clear() {
-		this.activeBlock = null;
-		this.holdBlock = null;
-		for (Color[] row : persistedBlocks) {
-			Arrays.fill(row, null);
-		}
 	}
 	
 	public boolean isOpen(int row, int col) {
@@ -216,10 +410,14 @@ public class TetrisBoard extends EventSource {
 			}
 		}
 		
-		publish("blockPlaced", activeBlock);
 		if (linesCleared > 0) {
+			increaseScore(linesCleared);
 			publish("linesCleared", linesCleared);
 		}
+		
+		Block nextBlock = conveyor.next();
+		spawn(nextBlock);
+		
 	}
 	
 	/**
@@ -245,6 +443,9 @@ public class TetrisBoard extends EventSource {
 			List<Block.ColoredSquare> occupiedSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
 			boolean anyVisible = occupiedSquares.stream().filter(sq -> sq.getRow() >= 3).count() > 0;
 			if (!anyVisible) {
+				fallTimer.stop();
+				gameTimer.stop();
+				publish("spawnFail", block);
 				return false;
 			}
 			

@@ -10,12 +10,16 @@ public class EventSource {
 
 	protected Map<String, List<Consumer<Object>>> eventKey_listeners = new HashMap<>();
 	
-	protected void publish(String event, Object eventData) {
-		eventKey_listeners.computeIfAbsent(event, e -> new ArrayList<>()).forEach(l -> l.accept(eventData));
+	protected void publish(String eventStr, Object eventData) {
+		for (String event : eventStr.split(" ")) {
+			eventKey_listeners.computeIfAbsent(event, e -> new ArrayList<>()).forEach(l -> l.accept(eventData));
+		}
 	}
 	
-	public void subscribe(String event, Consumer<Object> listener) {
-		eventKey_listeners.computeIfAbsent(event, e -> new ArrayList<>()).add(listener);
+	public void subscribe(String eventStr, Consumer<Object> listener) {
+		for (String event : eventStr.split(" ")) {
+			eventKey_listeners.computeIfAbsent(event, e -> new ArrayList<>()).add(listener);
+		}
 	}
 	
 }
