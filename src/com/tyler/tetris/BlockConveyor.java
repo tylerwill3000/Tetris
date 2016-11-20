@@ -13,12 +13,16 @@ public final class BlockConveyor {
 	
 	private static final int DEFAULT_INITIAL_BLOCKS = 2;
 	
-	private List<BlockType> activeTypes;
+	private List<BlockType> typeSampleList;
 	private Queue<Block> conveyor;
 	
 	public BlockConveyor() {
-		activeTypes = new ArrayList<>(BlockType.getDefaultBlocks());
+		
+		typeSampleList = new ArrayList<>();
 		conveyor = new LinkedList<>();
+		
+		BlockType.getDefaultBlocks().forEach(this::enableBlockType);
+		
 	}
 	
 	public Block next() {
@@ -30,16 +34,16 @@ public final class BlockConveyor {
 		return conveyor.peek();
 	}
 	
-	public boolean enableBlockType(BlockType blockType) {
-		return activeTypes.add(blockType);
+	public void enableBlockType(BlockType blockType) {
+		IntStream.range(0, blockType.getSpawnRate()).forEach(i -> typeSampleList.add(blockType));
 	}
 	
-	public boolean disableBlockType(BlockType blockType) {
-		return activeTypes.remove(blockType);
+	public void disableBlockType(BlockType toRemove) {
+		typeSampleList.removeIf(type -> type == toRemove);
 	}
 	
 	public boolean isActive(BlockType pieceType) {
-		return activeTypes.contains(pieceType);
+		return typeSampleList.contains(pieceType);
 	}
 	
 	public void refresh() {
@@ -52,8 +56,7 @@ public final class BlockConveyor {
 	}
 	
 	private Block generateBlock() {
-		BlockType blockType = activeTypes.get(Utility.randInRange(0, activeTypes.size() -1));
-		return new Block(blockType);
+		return new Block(Utility.sample(typeSampleList));
 	}
 	
 }
