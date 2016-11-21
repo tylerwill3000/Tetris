@@ -42,6 +42,10 @@ public class FlatFileScoreDao implements ScoreDao {
 		currentScores.add(toSave);
 		Collections.sort(currentScores);
 		
+		if (currentScores.size() > MIN_RANK) {
+			currentScores = currentScores.subList(0, MIN_RANK);
+		}
+		
 		try (ObjectOutputStream objOut = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
 			objOut.writeObject(currentScores);
 		}
