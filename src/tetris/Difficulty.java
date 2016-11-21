@@ -19,11 +19,11 @@ public enum Difficulty {
 	EASY {{
 		
 		linesPerLevel = 15;
-		initialTimerDelay = 650;
-		timerSpeedup = 40;
-		timeAttackBonus = 150;
-		timeAttackSecondsPerLine = 5;
-		winBonus = 500;
+		initialTimerDelay = 600;
+		timerSpeedup = 55;
+		timeAttackBonus = 100;
+		timeAttackSecondsPerLine = 4;
+		winBonus = 250;
 		
 		type_spawn.put(BOX, 14);
 		type_spawn.put(L_BLOCK_L, 14);
@@ -41,11 +41,11 @@ public enum Difficulty {
 	MEDIUM {{
 		
 		linesPerLevel = 20;
-		initialTimerDelay = 600;
-		timerSpeedup = 45;
-		timeAttackBonus = 175;
+		initialTimerDelay = 575;
+		timerSpeedup = 55;
+		timeAttackBonus = 150;
 		timeAttackSecondsPerLine = 4;
-		winBonus = 750;
+		winBonus = 500;
 		
 		type_spawn.put(BOX, 13);
 		type_spawn.put(L_BLOCK_L, 15);
@@ -63,7 +63,7 @@ public enum Difficulty {
 	HARD {{
 		
 		linesPerLevel = 25;
-		initialTimerDelay = 560;
+		initialTimerDelay = 550;
 		timerSpeedup = 55;
 		timeAttackBonus = 200;
 		timeAttackSecondsPerLine = 3;
@@ -74,8 +74,8 @@ public enum Difficulty {
 		type_spawn.put(L_BLOCK_R, 14);
 		type_spawn.put(S_BLOCK_L, 15);
 		type_spawn.put(S_BLOCK_R, 15);
-		type_spawn.put(STRAIGHT_LINE, 12);
-		type_spawn.put(T_BLOCK, 13);
+		type_spawn.put(STRAIGHT_LINE, 11);
+		type_spawn.put(T_BLOCK, 14);
 		type_spawn.put(TWIN_PILLARS, 11);
 		type_spawn.put(ROCKET, 8);
 		type_spawn.put(DIAMOND, 6);
