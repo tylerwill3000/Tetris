@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import tetris.Difficulty;
-import tetris.HighScoreDao;
+import tetris.ScoreDao;
 import tetris.TetrisGame;
 import tetris.Utility;
 
@@ -27,18 +27,17 @@ public class HighScoreFrame extends JFrame {
 	
 	private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 	
-	private JComboBox<Integer> lstRecords = new JComboBox<Integer>(new Integer[]{ 10, 25, 50, 100 });
 	private JComboBox<String> lstDiff = new JComboBox<>(new String[]{ "Easy", "Medium", "Hard", "All" });
 	private int highlightRank = -1;
 	private TetrisButton btnClose = new TetrisButton("Close");
 	private JTable tblScores = new JTable();
-	private HighScoreDao scoresDao;
+	private ScoreDao scoresDao;
 	
-	public HighScoreFrame(HighScoreDao scoresDao) {
+	public HighScoreFrame(ScoreDao scoresDao) {
 		this(scoresDao, -1);
 	}
 	
-	public HighScoreFrame(HighScoreDao scoresDao, int highlightRank) {
+	public HighScoreFrame(ScoreDao scoresDao, int highlightRank) {
 		
 		this.scoresDao = scoresDao;
 		this.highlightRank = highlightRank;
@@ -46,17 +45,13 @@ public class HighScoreFrame extends JFrame {
 		tblScores.setFillsViewportHeight(true);
 		tblScores.setEnabled(false);;
 		
-		lstRecords.setSelectedItem(50);
 		lstDiff.setSelectedItem("All");
-		lstRecords.addActionListener(e -> refreshTable());
 		lstDiff.addActionListener(e -> refreshTable());
 		btnClose.addActionListener(e -> dispose());
 		
 		// Holds record selector list and labels
 		JPanel recordSelectorPanel = new JPanel();
-		recordSelectorPanel.add(new JLabel("Show top "));
-		recordSelectorPanel.add(lstRecords);
-		recordSelectorPanel.add(new JLabel(" scores for difficulty "));
+		recordSelectorPanel.add(new JLabel("Difficulty: "));
 		recordSelectorPanel.add(lstDiff);
 		
 		// Add all menu components to a master panel
@@ -79,15 +74,14 @@ public class HighScoreFrame extends JFrame {
 	// controls whether to destroy the window upon failed DB connection
 	private void refreshTable() {
 
-		int numRecords = (int) lstRecords.getSelectedItem();
 		int difficultyIndex = lstDiff.getSelectedIndex();
 		Difficulty difficulty = difficultyIndex == 3 ? null : Difficulty.values()[difficultyIndex];
 		
 		Object[][] data = null;
 		try {
-			data = scoresDao.getHighScores(Optional.ofNullable(difficulty), Optional.of(numRecords))
+			data = scoresDao.getScores(Optional.ofNullable(difficulty), Optional.empty())
 			                .stream()
-			                .map(s -> new Object[]{ s.rank, s.name, s.score, s.linesCleared, s.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : s.maxLevel,
+			                .map(s -> new Object[]{ s.rank, s.name, s.points, s.linesCleared, s.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : s.maxLevel,
 			                                s.difficulty, Utility.formatSeconds(s.gameTime), s.dateAchieved })
 			                .toArray(Object[][]::new);
 		}

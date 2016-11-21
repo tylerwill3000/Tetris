@@ -33,30 +33,27 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import tetris.Block;
+import tetris.Block.ColoredSquare;
 import tetris.BlockType;
 import tetris.Difficulty;
-import tetris.FlatFileHighScoreDao;
-import tetris.HighScoreDao;
+import tetris.FlatFileScoreDao;
+import tetris.ScoreDao;
 import tetris.TetrisAudioSystem;
 import tetris.TetrisGame;
 import tetris.Utility;
-import tetris.Block.ColoredSquare;
 
 public class MasterTetrisFrame extends JFrame {
 	
-	public static final Border LINE_BORDER = BorderFactory.createLineBorder(Color.GRAY, 1);
-	public static final Border BEVEL_BORDER = BorderFactory.createBevelBorder(BevelBorder.LOWERED);
-	public static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 17);
+	public static final Font ARIAL_HEADER = new Font("Arial", Font.BOLD, 17);
+	public static final Font ARIAL_DESCRIPTION = new Font("Arial", Font.PLAIN, 13);
 	static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 	
 	private TetrisAudioSystem audioSystem;
 	private TetrisGame game;
-	private HighScoreDao scoresDao = new FlatFileHighScoreDao();
+	private ScoreDao scoresDao = new FlatFileScoreDao();
 	
 	private BoardPanel boardPanel;
 	private BlockDisplayPanel nextBlockPanel;
@@ -453,7 +450,7 @@ public class MasterTetrisFrame extends JFrame {
 		BoardPanel() {
 			super(game.getVerticalDimension() - 3, game.getHorizontalDimension(), BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
 			setFocusable(true);
-			setBorder(LINE_BORDER);
+			setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 		}
 			
 		void enableBlockMovement() {
@@ -526,12 +523,16 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				if (settingsPanel.cbxSaveScores.isSelected()) {
-					new SaveScoreFrame(scoresDao, game);
+					new ScoreResultsFrame(scoresDao, game);
 				}
 				
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				return; // Will happen if new game is started before spiral clear is finished
-			} 
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 			
 		};
 			
@@ -563,11 +564,15 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				if (settingsPanel.cbxSaveScores.isSelected()) {
-					new SaveScoreFrame(scoresDao, game);
+					new ScoreResultsFrame(scoresDao, game);
 				}
 				
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e) {
 				return; // Will happen if we start a new game before task is done
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
 			}
 			
 		};
@@ -664,7 +669,7 @@ public class MasterTetrisFrame extends JFrame {
 			setLayout(layout);
 			
 			for (JLabel l : Arrays.asList(lblScore, lblTotalLines, lblLevel, lblTime))
-				l.setFont(MasterTetrisFrame.LABEL_FONT);
+				l.setFont(MasterTetrisFrame.ARIAL_HEADER);
 			
 			add(lblScore);
 			add(lblLevel);

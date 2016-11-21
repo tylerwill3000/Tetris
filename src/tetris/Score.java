@@ -1,27 +1,28 @@
 package tetris;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class HighScore implements Comparable<HighScore> {
+public class Score implements Comparable<Score>, Serializable {
 
-	public final int score;
-	public final int linesCleared;
-	public final int maxLevel;
-	public final int rank;
-	public final long gameTime;
-	public final String name;
-	public final Difficulty difficulty;
-	public final LocalDate dateAchieved;
+	public int points;
+	public int linesCleared;
+	public int maxLevel;
+	public int rank;
+	public long gameTime;
+	public String name;
+	public Difficulty difficulty;
+	public LocalDate dateAchieved;
 	
-	public HighScore(String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel) {
+	public Score(String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel) {
 		this(-1, name, score, gameTime, difficulty, linesCleared, maxLevel, LocalDate.now());
 	}
 	
-	HighScore(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
+	Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
 		this.rank = rank;
 		this.name = name;
-		this.score = score;
+		this.points = score;
 		this.gameTime = gameTime;
 		this.difficulty = difficulty;
 		this.linesCleared = linesCleared;
@@ -31,16 +32,16 @@ public class HighScore implements Comparable<HighScore> {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(rank, name, score, gameTime, difficulty, linesCleared, maxLevel, dateAchieved);
+		return Objects.hash(rank, name, points, gameTime, difficulty, linesCleared, maxLevel, dateAchieved);
 	}
 	
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof HighScore) {
-			HighScore other = (HighScore) o;
+		if (o instanceof Score) {
+			Score other = (Score) o;
 			return Objects.equals(name, other.name) &&
 			       Objects.equals(rank, other.rank) &&
-			       Objects.equals(score, other.score) &&
+			       Objects.equals(points, other.points) &&
 			       Objects.equals(gameTime, other.gameTime) &&
 			       Objects.equals(difficulty, other.difficulty) &&
 			       Objects.equals(linesCleared, other.linesCleared) &&
@@ -51,8 +52,8 @@ public class HighScore implements Comparable<HighScore> {
 	}
 
 	@Override
-	public int compareTo(HighScore other) {
-		return other.score - score;
+	public int compareTo(Score other) {
+		return other.points - points;
 	}
 
 }
