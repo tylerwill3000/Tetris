@@ -341,7 +341,7 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnPause.setEnabled(true);
 		menuPanel.btnResume.setEnabled(false);
 		menuPanel.btnGiveUp.setEnabled(true);
-		menuPanel.btnHighScores.setEnabled(false);
+		menuPanel.btnLeaderboard.setEnabled(false);
 		
 		boardPanel.enableBlockMovement();
 		
@@ -367,7 +367,7 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnResume.setEnabled(true);
 		menuPanel.btnPause.setEnabled(false);
 		menuPanel.btnGiveUp.setEnabled(true);
-		menuPanel.btnHighScores.setEnabled(true);
+		menuPanel.btnLeaderboard.setEnabled(true);
 	};
 	
 	private void onResume() {
@@ -387,7 +387,7 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnResume.setEnabled(false);
 		menuPanel.btnPause.setEnabled(true);
 		menuPanel.btnGiveUp.setEnabled(true);
-		menuPanel.btnHighScores.setEnabled(true);
+		menuPanel.btnLeaderboard.setEnabled(true);
 	};
 
 	private void onWin() {
@@ -404,7 +404,7 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnPause.setEnabled(false);
 		menuPanel.btnResume.setEnabled(false);
 		menuPanel.btnGiveUp.setEnabled(false);
-		menuPanel.btnHighScores.setEnabled(true);
+		menuPanel.btnLeaderboard.setEnabled(true);
 		
 		audioSystem.playVictoryFanfare();
 		boardPanel.disableBlockMovement();
@@ -424,7 +424,7 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnPause.setEnabled(false);
 		menuPanel.btnResume.setEnabled(false);
 		menuPanel.btnGiveUp.setEnabled(false);
-		menuPanel.btnHighScores.setEnabled(true);
+		menuPanel.btnLeaderboard.setEnabled(true);
 		
 		settingsPanel.cbxGhostSquares.setEnabled(true);
 		settingsPanel.cbxMusic.setEnabled(true);
@@ -631,7 +631,7 @@ public class MasterTetrisFrame extends JFrame {
 
 			@Override
 			protected double getCurrentPercentage() {
-				return game.getLinesClearedPercentage();
+				return 100.0 * (game.getCurrentLevelLinesCleared() * 1.0 / game.getDifficulty().getLinesPerLevel());
 			}
 			
 		};
@@ -761,7 +761,7 @@ public class MasterTetrisFrame extends JFrame {
 		TetrisButton btnPause = new TetrisButton("Pause");
 		TetrisButton btnResume = new TetrisButton("Resume");
 		TetrisButton btnGiveUp = new TetrisButton("Give Up");
-		TetrisButton btnHighScores = new TetrisButton("High Scores");
+		TetrisButton btnLeaderboard = new TetrisButton("Leaderboard");
 		
 		private MenuPanel() {
 			
@@ -772,9 +772,9 @@ public class MasterTetrisFrame extends JFrame {
 			mnemonicMap.put(btnPause, 'p');
 			mnemonicMap.put(btnResume, 'r');
 			mnemonicMap.put(btnGiveUp, 'g');
-			mnemonicMap.put(btnHighScores, 'h');
+			mnemonicMap.put(btnLeaderboard, 'l');
 			
-			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp, btnHighScores)) {
+			for (TetrisButton b : Arrays.asList(btnStart, btnPause, btnResume, btnGiveUp, btnLeaderboard)) {
 				b.setMnemonic(mnemonicMap.get(b));
 				add(b);
 			}
@@ -788,8 +788,8 @@ public class MasterTetrisFrame extends JFrame {
 			btnResume.setEnabled(false);
 			btnResume.addActionListener(e -> onResume());
 			
-			btnHighScores.setEnabled(true);
-			btnHighScores.addActionListener(e -> new HighScoreFrame(scoresDao));
+			btnLeaderboard.setEnabled(true);
+			btnLeaderboard.addActionListener(e -> new LeaderboardFrame(scoresDao));
 			
 			btnGiveUp.setEnabled(false);
 			btnGiveUp.addActionListener(e -> onGameOver());

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -39,7 +40,7 @@ public class TetrisGame extends EventSource {
 	private Block activeBlock;
 	private Block holdBlock;
 	private BlockConveyor conveyor;
-	private Collection<BlockType> activeBlocks;
+	private Collection<BlockType> activeTypes;
 	private LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
 	private Difficulty difficulty;
 	private int totalLinesCleared;
@@ -52,7 +53,7 @@ public class TetrisGame extends EventSource {
 	private boolean timeAttack;
 	private Timer fallTimer = new Timer(0, e -> tryFall());
 	private Timer gameTimer = new Timer(1000, e -> {
-		setTime(gameTime + 1);
+		setGameTime(gameTime + 1);
 		if (timeAttack && gameTime >= getCurrentTimeAttackLimit()) {
 			publish("timeAttackFail", null);
 			((Timer) e.getSource()).stop();
@@ -74,7 +75,35 @@ public class TetrisGame extends EventSource {
 		setDifficulty(Difficulty.EASY);
 		setLevel(1);
 	}
+	
+	public int getHorizontalDimension() {
+		return horizontalDimension;
+	}
 
+	public int getVerticalDimension() {
+		return verticalDimension;
+	}
+
+	public Block getActiveBlock() {
+		return activeBlock;
+	}
+	
+	public Optional<Block> getHoldBlock() {
+		return Optional.ofNullable(holdBlock);
+	}
+	
+	public void setHoldBlock(Block block) {
+		this.holdBlock = Objects.requireNonNull(block, "Hold block may not be null");
+	}
+	
+	public void setGhostSquaresEnabled(boolean ghostSquaresEnabled) {
+		this.ghostSquaresEnabled = ghostSquaresEnabled;
+	}
+	
+	public void clearHoldBlock() {
+		this.holdBlock = null;
+	}
+	
 	public Timer getFallTimer() {
 		return fallTimer;
 	};
@@ -82,43 +111,31 @@ public class TetrisGame extends EventSource {
 	public Timer getGameTimer() {
 		return gameTimer;
 	}
+
+	public int getScore() {
+		return score;
+	}
+	
+	private void setScore(int newScore) {
+		this.score = newScore;
+		publish("scoreChanged", score);
+	}
 	
 	public int getGameTime() {
 		return gameTime;
+	}
+	
+	private void setGameTime(int time) {
+		gameTime = time;
+		publish("gameTimeChanged", gameTime);
 	}
 	
 	public BlockConveyor getConveyor() {
 		return conveyor;
 	}
 	
-	private void setTime(int time) {
-		gameTime = time;
-		publish("gameTimeChanged", gameTime);
-	}
-	
-	public double getLinesClearedPercentage() {
-		return 100.0 * (getCurrentLevelLinesCleared() * 1.0 / difficulty.getLinesPerLevel());
-	}
-	
-	public void beginNewGame() {
-		
-		setTime(0);
-		setScore(0);
-		setLevel(1);
-		totalLinesCleared = 0;
-		
-		this.activeBlock = null;
-		this.holdBlock = null;
-		
-		for (Color[] row : persistedBlocks) {
-			Arrays.fill(row, null);
-		}
-		
-		conveyor.refresh();
-		spawn(conveyor.next());
-		
-		gameTimer.start();
-		fallTimer.start();
+	public Difficulty getDifficulty() {
+		return this.difficulty;
 	}
 	
 	public void setDifficulty(Difficulty difficulty) {
@@ -127,46 +144,12 @@ public class TetrisGame extends EventSource {
 		this.fallTimer.setDelay(difficulty.initialTimerDelay);
 	}
 
-	public Difficulty getDifficulty() {
-		return this.difficulty;
-	}
-	
-	public void setActiveBlocks(Collection<BlockType> activeBlocks) {
-		this.activeBlocks = activeBlocks;
-	}
-
-	public void setTimeAttack(boolean timeAttack) {
-		this.timeAttack = timeAttack;
-	}
-
 	public boolean isTimeAttack() {
 		return this.timeAttack;
 	}
 	
-	public int getTotalLinesCleared() {
-		return totalLinesCleared;
-	}
-	
-	public int getCurrentLevelLinesNeeded() {
-		return level * difficulty.getLinesPerLevel();
-	}
-	
-	public int getCurrentTimeAttackLimit() {
-		return getCurrentLevelLinesNeeded() * difficulty.getTimeAttackSecondsPerLine();
-	}
-	
-	public int getCurrentLevelLinesCleared() {
-		int lastLevelThreshold = difficulty.getLinesPerLevel() * (level - 1);
-		return totalLinesCleared - lastLevelThreshold;
-	}
-	
-	public int getScore() {
-		return score;
-	}
-	
-	private void setScore(int newScore) {
-		this.score = newScore;
-		publish("scoreChanged", score);
+	public void setTimeAttack(boolean timeAttack) {
+		this.timeAttack = timeAttack;
 	}
 	
 	public int getLevel() {
@@ -191,91 +174,10 @@ public class TetrisGame extends EventSource {
 		}
 	}
 	
-	public static int getSpecialPieceBonusPoints(BlockType pieceType) {
-		return SPECIAL_PIECE_BONUSES.get(pieceType);
-	}
-	
-	/**
-	 * @return The current level after processing the completed lines
-	 */
-	public int increaseScore(int completedLines) {
-		
-		totalLinesCleared += completedLines;
-
-		int newScore = this.score;
-		
-		// Points from raw lines cleared
-		int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
-		int difficultyBonus = completedLines * difficulty.getLinesClearedBonus();
-		newScore += (linePoints + difficultyBonus);
-		
-		 // Bonuses for special blocks
-		if (activeBlocks != null) {
-			newScore += BlockType.getSpecialBlocks()
-			                     .stream()
-			                     .filter(activeBlocks::contains)
-			                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
-			                     .sum();
-		}
-		
-		// Level ups
-		int newLevel = this.level;
-		while (totalLinesCleared >= (newLevel * difficulty.getLinesPerLevel())) {
-			
-			newLevel++;
-			
-			if (timeAttack) {
-				newScore += difficulty.getTimeAttackBonus();
-			}
-			
-			if (newLevel == MAX_LEVEL) {
-				newScore += difficulty.getWinBonus();
-				break;
-			}
-			
-		}
-
-		if (newLevel > this.level) {
-			setLevel(newLevel);
-		}
-		
-		setScore(newScore);
-		
-		return level;
-	}
-	
-	public int getHorizontalDimension() {
-		return horizontalDimension;
-	}
-
-	public int getVerticalDimension() {
-		return verticalDimension;
-	}
-
-	public Block getActiveBlock() {
-		return activeBlock;
-	}
-	
-	public Optional<Block> getHoldBlock() {
-		return Optional.ofNullable(holdBlock);
-	}
-	
-	public void setHoldBlock(Block block) {
-		this.holdBlock = block;
-	}
-	
-	public void clearHoldBlock() {
-		this.holdBlock = null;
-	}
-	
 	public void clearSquare(int row, int col) {
 		setColor(row, col, null);
 	}
-	
-	public void setColor(int row, int col, Color c) {
-		persistedBlocks.get(row)[col] = c;
-	}
-	
+		
 	public boolean isOpen(int row, int col) {
 		return getColor(row, col) == null;
 	}
@@ -284,8 +186,29 @@ public class TetrisGame extends EventSource {
 		return persistedBlocks.get(row)[col];
 	}
 	
-	public void setGhostSquaresEnabled(boolean ghostSquaresEnabled) {
-		this.ghostSquaresEnabled = ghostSquaresEnabled;
+	public void setColor(int row, int col, Color c) {
+		persistedBlocks.get(row)[col] = c;
+	}
+	
+	public int getTotalLinesCleared() {
+		return totalLinesCleared;
+	}
+	
+	public int getCurrentLevelLinesNeeded() {
+		return level * difficulty.getLinesPerLevel();
+	}
+	
+	public int getCurrentTimeAttackLimit() {
+		return getCurrentLevelLinesNeeded() * difficulty.getTimeAttackSecondsPerLine();
+	}
+	
+	public int getCurrentLevelLinesCleared() {
+		int lastLevelThreshold = difficulty.getLinesPerLevel() * (level - 1);
+		return totalLinesCleared - lastLevelThreshold;
+	}
+	
+	public static int getSpecialPieceBonusPoints(BlockType pieceType) {
+		return SPECIAL_PIECE_BONUSES.get(pieceType);
 	}
 	
 	public boolean moveActiveBlockRight() {
@@ -420,13 +343,74 @@ public class TetrisGame extends EventSource {
 		spawn(conveyor.next());
 	}
 	
-	/**
-	 * Logs the squares for the active block to this game grid
-	 */
 	public void logActiveBlock() {
 		activeBlock.getOccupiedSquares().forEach(sq -> {
 			setColor(sq.getRow(), sq.getColumn(), sq.getColor());
 		});
+	}
+	
+	public void beginNewGame() {
+		
+		setGameTime(0);
+		setScore(0);
+		setLevel(1);
+		totalLinesCleared = 0;
+		
+		this.activeBlock = null;
+		this.holdBlock = null;
+		
+		for (Color[] row : persistedBlocks) {
+			Arrays.fill(row, null);
+		}
+		
+		conveyor.refresh();
+		spawn(conveyor.next());
+		
+		gameTimer.start();
+		fallTimer.start();
+	}
+	
+	private void increaseScore(int completedLines) {
+		
+		totalLinesCleared += completedLines;
+
+		int newScore = this.score;
+		
+		// Points from raw lines cleared
+		int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
+		int difficultyBonus = completedLines * difficulty.getLinesClearedBonus();
+		newScore += (linePoints + difficultyBonus);
+		
+		 // Bonuses for special blocks
+		if (activeTypes != null) {
+			newScore += BlockType.getSpecialBlocks()
+			                     .stream()
+			                     .filter(activeTypes::contains)
+			                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
+			                     .sum();
+		}
+		
+		// Level ups
+		int newLevel = this.level;
+		while (totalLinesCleared >= (newLevel * difficulty.getLinesPerLevel())) {
+			
+			newLevel++;
+			
+			if (timeAttack) {
+				newScore += difficulty.getTimeAttackBonus();
+			}
+			
+			if (newLevel == MAX_LEVEL) {
+				newScore += difficulty.getWinBonus();
+				break;
+			}
+		}
+
+		if (newLevel > this.level) {
+			setLevel(newLevel);
+		}
+		
+		setScore(newScore);
 	}
 	
 	/**
@@ -461,17 +445,13 @@ public class TetrisGame extends EventSource {
 	}
 
 	public Collection<ColoredSquare> getColoredSquares() {
-		return getColoredSquares(true);
-	}
-	
-	public Collection<ColoredSquare> getColoredSquares(boolean includeGhosts) {
 		
 		Set<ColoredSquare> squares = new HashSet<>();
 
 		// Important we add occupied squares before ghost squares so that ghost squares don't overwrite occupied squares
 		if (activeBlock != null) {
 			squares.addAll(activeBlock.getOccupiedSquares());
-			if (includeGhosts && this.ghostSquaresEnabled) {
+			if (this.ghostSquaresEnabled) {
 				squares.addAll(getGhostSquares());
 			}
 		}

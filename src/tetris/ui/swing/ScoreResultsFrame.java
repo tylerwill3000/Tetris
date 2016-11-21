@@ -70,7 +70,7 @@ public class ScoreResultsFrame extends JFrame {
 					scoresDao.saveScore(new Score(saveName, game.getScore(), game.getGameTime(),
 					                      game.getDifficulty(), game.getTotalLinesCleared(), game.getLevel()));
 					dispose();
-					new HighScoreFrame(scoresDao, rank);
+					new LeaderboardFrame(scoresDao, rank);
 				}
 				catch (Exception e1) {
 					e1.printStackTrace();

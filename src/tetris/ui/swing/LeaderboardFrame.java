@@ -23,7 +23,7 @@ import tetris.ScoreDao;
 import tetris.TetrisGame;
 import tetris.Utility;
 
-public class HighScoreFrame extends JFrame {
+public class LeaderboardFrame extends JFrame {
 	
 	private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 	
@@ -33,11 +33,11 @@ public class HighScoreFrame extends JFrame {
 	private JTable tblScores = new JTable();
 	private ScoreDao scoresDao;
 	
-	public HighScoreFrame(ScoreDao scoresDao) {
+	public LeaderboardFrame(ScoreDao scoresDao) {
 		this(scoresDao, -1);
 	}
 	
-	public HighScoreFrame(ScoreDao scoresDao, int highlightRank) {
+	public LeaderboardFrame(ScoreDao scoresDao, int highlightRank) {
 		
 		this.scoresDao = scoresDao;
 		this.highlightRank = highlightRank;
@@ -64,7 +64,7 @@ public class HighScoreFrame extends JFrame {
 		add(menuPanel, BorderLayout.SOUTH);
 		SwingUtility.setIcon(this, "/images/trophy.png");
 		setSize(600, 400);
-		setTitle("High Scores");
+		setTitle("Leaderboard");
 		setLocationRelativeTo(null);
 		setVisible(true);
 		refreshTable();
