@@ -22,9 +22,11 @@ public final class SwingUtility {
 	 * @param toNest The component to nest in a new JPanel
 	 * @return A new JPanel with the component added inside it
 	 */
-	public static JPanel nestInPanel(JComponent toNest) {
+	public static JPanel nestInPanel(JComponent... toNest) {
 		JPanel container = new JPanel();
-		container.add(toNest);
+		for (JComponent comp : toNest) {
+			container.add(comp);
+		}
 		return container;
 	}
 	

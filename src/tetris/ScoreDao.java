@@ -49,4 +49,6 @@ public interface ScoreDao {
 
 	void doSaveScore(Score score) throws Exception;
 	
+	public void clearAll() throws Exception;
+	
 }

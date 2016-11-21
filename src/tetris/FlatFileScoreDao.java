@@ -51,4 +51,9 @@ public class FlatFileScoreDao implements ScoreDao {
 		}
 	}
 
+	@Override
+	public void clearAll() throws Exception {
+		Files.deleteIfExists(SAVE_PATH);
+	}
+
 }

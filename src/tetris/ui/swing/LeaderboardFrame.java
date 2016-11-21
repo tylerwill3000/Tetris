@@ -29,6 +29,7 @@ public class LeaderboardFrame extends JFrame {
 	
 	private JComboBox<String> lstDiff = new JComboBox<>(new String[]{ "Easy", "Medium", "Hard", "All" });
 	private int highlightRank = -1;
+	private TetrisButton btnClear = new TetrisButton("Clear Scores");
 	private TetrisButton btnClose = new TetrisButton("Close");
 	private JTable tblScores = new JTable();
 	private ScoreDao scoresDao;
@@ -47,6 +48,19 @@ public class LeaderboardFrame extends JFrame {
 		
 		lstDiff.setSelectedItem("All");
 		lstDiff.addActionListener(e -> refreshTable());
+		
+		btnClear.addActionListener(e -> {
+			int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete all saved scores? This cannot be undone", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.YES_OPTION) {
+				try {
+					scoresDao.clearAll();
+					refreshTable();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(null, "Error clearing scores: " + e1.getMessage());
+					return;
+				}
+			}
+		});
 		btnClose.addActionListener(e -> dispose());
 		
 		// Holds record selector list and labels
@@ -57,7 +71,7 @@ public class LeaderboardFrame extends JFrame {
 		// Add all menu components to a master panel
 		JPanel menuPanel = new JPanel(new GridLayout(2,1));
 		menuPanel.add(recordSelectorPanel);
-		menuPanel.add(SwingUtility.nestInPanel(btnClose));
+		menuPanel.add(SwingUtility.nestInPanel(btnClear, btnClose));
 		
 		setLayout(new BorderLayout());
 		add(new JScrollPane(tblScores), BorderLayout.CENTER);
