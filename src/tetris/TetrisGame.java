@@ -161,8 +161,6 @@ public class TetrisGame extends EventSource {
 		if (newLevel >= MAX_LEVEL) {
 			fallTimer.stop();
 			gameTimer.stop();
-			logActiveBlock();
-			clearActiveBlock();
 			publish("gameWon", level);
 		}
 		else {
@@ -340,13 +338,17 @@ public class TetrisGame extends EventSource {
 			publish("linesCleared", linesCleared);
 		}
 		
-		spawn(conveyor.next());
+		if (level < MAX_LEVEL) {
+			spawn(conveyor.next());
+		}
 	}
 	
 	public void logActiveBlock() {
-		activeBlock.getOccupiedSquares().forEach(sq -> {
-			setColor(sq.getRow(), sq.getColumn(), sq.getColor());
-		});
+		if (activeBlock != null) {
+			activeBlock.getOccupiedSquares().forEach(sq -> {
+				setColor(sq.getRow(), sq.getColumn(), sq.getColor());
+			});
+		}
 	}
 	
 	public void beginNewGame() {

@@ -540,9 +540,6 @@ public class MasterTetrisFrame extends JFrame {
 			
 			try {
 				
-				game.logActiveBlock();
-				game.clearActiveBlock();
-				
 				// Fill all rows bottom to top
 				for (int row = game.getVerticalDimension() - 1; row >= 3; row --) {
 					for (int col = 0; col < game.getHorizontalDimension(); col++) {

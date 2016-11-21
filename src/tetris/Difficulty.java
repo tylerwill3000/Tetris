@@ -18,7 +18,7 @@ public enum Difficulty {
 	
 	EASY {{
 		
-		linesPerLevel = 15;
+		linesPerLevel = 1;
 		initialTimerDelay = 650;
 		timerSpeedup = 40;
 		timeAttackBonus = 150;
