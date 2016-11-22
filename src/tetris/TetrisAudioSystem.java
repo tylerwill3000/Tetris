@@ -2,6 +2,7 @@ package tetris;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -29,7 +30,7 @@ public final class TetrisAudioSystem {
 		getAudioClip("/audio/soundtrack/chrono-trigger-final-battle.wav")
 	};
 	
-	// Non-looping soundtrack clips
+	// Non-looping clips
 	private static final Clip GAME_OVER = getAudioClip("/audio/soundtrack/zelda-game-over.wav");
 	private static final Clip VICTORY_FANFARE = getAudioClip("/audio/soundtrack/ff1-victory-fanfare.wav");
 	
@@ -58,100 +59,97 @@ public final class TetrisAudioSystem {
 	}
 	
 	public void startSoundtrack(int level) {
-		
-		// In case a new game is started before the victory jingle is finished from a previous game (rare occurrence, but possible)
-		if (VICTORY_FANFARE.isRunning()) {
-			VICTORY_FANFARE.stop();
+		if (!soundtrackMuted) {
+			stopRunningSoundtracks();
+			Clip track = getSoundtrack(level);
+			if (track != null) {
+				track.setFramePosition(0);
+				track.loop(Clip.LOOP_CONTINUOUSLY);
+			}
 		}
-
-		killActiveSoundtracks();
-		getSoundtrack(level).setFramePosition(0);
-		resumeSoundtrack(level);
 	}
 	
 	public void resumeSoundtrack(int level) {
 		if (!soundtrackMuted) {
-			getSoundtrack(level).loop(Clip.LOOP_CONTINUOUSLY);
+			Clip track = getSoundtrack(level);
+			if (track != null) {
+				track.loop(Clip.LOOP_CONTINUOUSLY);
+			}
 		}
 	}
 	
 	public void stopSoundtrack(int level) {
-		getSoundtrack(level).stop();
-	}
-	
-	public void killActiveSoundtracks() {
-		for (Clip c : SOUNDTRACK) {
-			if (c.isActive()) {
-				c.stop();
+		if (!soundtrackMuted) {
+			Clip track = getSoundtrack(level);
+			if (track != null && track.isRunning()) {
+				track.stop();
 			}
 		}
 	}
 	
 	/**
-	 *  Iterates over all clips and resets their frame positions back to the start.
-	 *  This is called to prepare soundtracks for the next game.
+	 * Stops any currently running soundtracks including the looping level soundtracks and end of game soundtracks 
 	 */
-	public void resetClips() {
-		for (Clip c : SOUNDTRACK) {
-			c.setFramePosition(0);
-		}
+	private void stopRunningSoundtracks() {
+		stopEffect(VICTORY_FANFARE);
+		stopEffect(GAME_OVER);
+		Arrays.stream(SOUNDTRACK)
+		      .filter(clip -> clip != null)
+		      .filter(Clip::isActive)
+		      .forEach(Clip::stop);
 	}
 	
 	public void playGameOverSound() {
-		killActiveSoundtracks();
-		playEffect(GAME_OVER);
+		stopRunningSoundtracks();
+		play(GAME_OVER);
 	}
 
-	public void stopGameOverSound() {
-		stopEffect(GAME_OVER);
-	}
-	
 	public void playVictoryFanfare() {
-		killActiveSoundtracks();
-		playEffect(VICTORY_FANFARE);
+		stopRunningSoundtracks();
+		play(VICTORY_FANFARE);
 	}
 	
 	public void playPauseSound() {
-		playEffect(PAUSE);
+		play(PAUSE);
 	}
 	
 	public void playPiecePlacementSound() {
-		playEffect(PLACE_PIECE);
+		play(PLACE_PIECE);
 	}
 	
 	public void playHoldSound() {
-		playEffect(HOLD);
+		play(HOLD);
 	}
 	
 	public void playReleaseSound() {
-		playEffect(RELEASE);
+		play(RELEASE);
 	}
 	
 	public void playClearLineSound(int lineCount) {
-		playEffect(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
+		play(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
 	}
 	
 	public void playCWRotationSound() {
-		playEffect(SWIPE_UP);
+		play(SWIPE_UP);
 	}
 	
 	public void playCCWRotationSound() {
-		playEffect(SWIPE_DOWN);
+		play(SWIPE_DOWN);
 	}
 	
 	public void playSuperslideSound() {
-		playEffect(SUPERSLIDE);
+		play(SUPERSLIDE);
 	}
 	
-	private void playEffect(Clip effect) {
-		if (!effectsMuted) {
+	private void play(Clip effect) {
+		if (effect != null && !effectsMuted) {
 			effect.start();
 			effect.setFramePosition(0);
 		}
 	}
 	
 	private void stopEffect(Clip effect) {
-		if (effect.isActive()) {
+		if (effect != null && effect.isActive()) {
 			effect.stop();
 			effect.setFramePosition(0);
 		}
@@ -162,31 +160,26 @@ public final class TetrisAudioSystem {
 	}
 	
 	/**
-	 *  Returns a clip audio output device input line from the specified file string
-	 * @param file Pathname to the audio file to receive a Clip dataline for
-	 * @return A clip object with the audio file as its source input stream
+	 * Returns a clip audio output device input line from the specified file string
 	 */
 	private static Clip getAudioClip(String file) {
-		
-		Clip c = null;
 		
 		if (AudioSystem.isLineSupported(Port.Info.SPEAKER) || AudioSystem.isLineSupported(Port.Info.HEADPHONE)) {
 			try {
 				URL audioFile = TetrisAudioSystem.class.getResource(file);
-				if (audioFile != null) {
-					c = AudioSystem.getClip();
-					c.open(AudioSystem.getAudioInputStream(audioFile));
+				if (audioFile == null) {
+					throw new ExceptionInInitializerError("Audio file not found for path " + file);
 				}
-				else {
-					System.out.println("Audio file not found for path " + file);
-				}
+				Clip clip = AudioSystem.getClip();
+				clip.open(AudioSystem.getAudioInputStream(audioFile));
+				return clip;
 			}
 			catch (LineUnavailableException | IOException | UnsupportedAudioFileException ignore) {
 				// Will have no audio
 			}
 		}
 		
-		return c;
+		return null;
 	}
 	
 }
