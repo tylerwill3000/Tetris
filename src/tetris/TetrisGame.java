@@ -23,7 +23,7 @@ import tetris.Block.ColoredSquare;
 
 public class TetrisGame extends EventSource {
 
-	public static final int MAX_LEVEL = 11;
+	public static final int MAX_LEVEL = 10;
 	public static final int DEFAULT_V_CELLS = 23;
 	public static final int DEFAULT_H_CELLS = 10;
 	
@@ -157,8 +157,8 @@ public class TetrisGame extends EventSource {
 	}
 	
 	private void setLevel(int newLevel) {
-		this.level = newLevel;
-		if (newLevel >= MAX_LEVEL) {
+		this.level = Math.min(newLevel, MAX_LEVEL);
+		if (newLevel == MAX_LEVEL) {
 			fallTimer.stop();
 			gameTimer.stop();
 			publish("gameWon", level);
@@ -168,7 +168,7 @@ public class TetrisGame extends EventSource {
 			int totalSpeedup = (level - 1) * difficulty.getTimerSpeedup();
 			int newDelay = initialDelay - totalSpeedup;
 			fallTimer.setDelay(newDelay);
-			publish("levelChanged", level);
+			publish("levelChanged", this.level);
 		}
 	}
 	
@@ -351,25 +351,24 @@ public class TetrisGame extends EventSource {
 		}
 	}
 	
-	public void beginNewGame() {
+	public void beginNew() {
 		
 		setGameTime(0);
 		setScore(0);
 		setLevel(1);
-		totalLinesCleared = 0;
 		
+		// The reason we use setters for the score info but not these are because score info changes publish events, these don't
+		this.totalLinesCleared = 0;
 		this.activeBlock = null;
 		this.holdBlock = null;
 		
-		for (Color[] row : persistedBlocks) {
-			Arrays.fill(row, null);
-		}
+		this.persistedBlocks.stream().forEach(row -> Arrays.fill(row, null));
 		
-		conveyor.refresh();
-		spawn(conveyor.next());
+		this.conveyor.refresh();
+		spawn(this.conveyor.next());
 		
-		gameTimer.start();
-		fallTimer.start();
+		this.gameTimer.start();
+		this.fallTimer.start();
 	}
 	
 	private void increaseScore(int completedLines) {

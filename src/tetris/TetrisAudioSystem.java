@@ -2,7 +2,6 @@ package tetris;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -60,7 +59,6 @@ public final class TetrisAudioSystem {
 	
 	public void startSoundtrack(int level) {
 		if (!soundtrackMuted) {
-			stopRunningSoundtracks();
 			Clip track = getSoundtrack(level);
 			if (track != null) {
 				track.setFramePosition(0);
@@ -87,25 +85,11 @@ public final class TetrisAudioSystem {
 		}
 	}
 	
-	/**
-	 * Stops any currently running soundtracks including the looping level soundtracks and end of game soundtracks 
-	 */
-	private void stopRunningSoundtracks() {
-		stopEffect(VICTORY_FANFARE);
-		stopEffect(GAME_OVER);
-		Arrays.stream(SOUNDTRACK)
-		      .filter(clip -> clip != null)
-		      .filter(Clip::isActive)
-		      .forEach(Clip::stop);
-	}
-	
 	public void playGameOverSound() {
-		stopRunningSoundtracks();
 		play(GAME_OVER);
 	}
 
 	public void playVictoryFanfare() {
-		stopRunningSoundtracks();
 		play(VICTORY_FANFARE);
 	}
 	
@@ -140,6 +124,14 @@ public final class TetrisAudioSystem {
 	public void playSuperslideSound() {
 		play(SUPERSLIDE);
 	}
+
+	public void stopVictoryFanfare() {
+		stop(VICTORY_FANFARE);
+	}
+	
+	public void stopGameOverSound() {
+		stop(GAME_OVER);
+	}
 	
 	private void play(Clip effect) {
 		if (effect != null && !effectsMuted) {
@@ -148,7 +140,7 @@ public final class TetrisAudioSystem {
 		}
 	}
 	
-	private void stopEffect(Clip effect) {
+	private void stop(Clip effect) {
 		if (effect != null && effect.isActive()) {
 			effect.stop();
 			effect.setFramePosition(0);

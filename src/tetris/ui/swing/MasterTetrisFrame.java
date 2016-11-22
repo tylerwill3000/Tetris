@@ -198,6 +198,9 @@ public class MasterTetrisFrame extends JFrame {
 			scorePanel.lblLevel.setText("Level: " + newLevel);
 			scorePanel.progressBarTime.repaint();
 			
+			if (newLevel > 1) {
+				audioSystem.stopSoundtrack(newLevel);
+			}
 			audioSystem.startSoundtrack(newLevel);
 			
 			if (newLevel > 1) {
@@ -320,7 +323,7 @@ public class MasterTetrisFrame extends JFrame {
 	
 	private void onStart() {
 		
-		game.beginNewGame();
+		game.beginNew();
 		
 		if (clearTask != null && !clearTask.isDone()) {
 			clearTask.cancel(true);
@@ -342,6 +345,10 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnResume.setEnabled(false);
 		menuPanel.btnGiveUp.setEnabled(true);
 		menuPanel.btnLeaderboard.setEnabled(false);
+		
+		// Ensures end of game effects don't bleed over into the new game
+		audioSystem.stopGameOverSound();
+		audioSystem.stopVictoryFanfare();
 		
 		boardPanel.enableBlockMovement();
 		
@@ -406,7 +413,9 @@ public class MasterTetrisFrame extends JFrame {
 		menuPanel.btnGiveUp.setEnabled(false);
 		menuPanel.btnLeaderboard.setEnabled(true);
 		
+		audioSystem.stopSoundtrack(game.getLevel());
 		audioSystem.playVictoryFanfare();
+		
 		boardPanel.disableBlockMovement();
 		clearTask = THREAD_POOL.submit(boardPanel::jumpClear);
 		scorePanel.lblLevel.setText("You Win!!!");
@@ -418,6 +427,7 @@ public class MasterTetrisFrame extends JFrame {
 		game.getFallTimer().stop();
 		game.getGameTimer().stop();
 		
+		audioSystem.stopSoundtrack(game.getLevel());
 		audioSystem.playGameOverSound();
 		
 		menuPanel.btnStart.setEnabled(true);
