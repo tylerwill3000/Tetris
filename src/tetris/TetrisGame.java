@@ -23,7 +23,7 @@ import tetris.Block.ColoredSquare;
 
 public class TetrisGame extends EventSource {
 
-	public static final int MAX_LEVEL = 10;
+	public static final int MAX_LEVEL = 11;
 	public static final int DEFAULT_V_CELLS = 23;
 	public static final int DEFAULT_H_CELLS = 10;
 	
@@ -157,8 +157,8 @@ public class TetrisGame extends EventSource {
 	}
 	
 	private void setLevel(int newLevel) {
-		this.level = Math.min(newLevel, MAX_LEVEL);
-		if (newLevel == MAX_LEVEL) {
+		this.level = newLevel;
+		if (newLevel >= MAX_LEVEL) {
 			fallTimer.stop();
 			gameTimer.stop();
 			publish("gameWon", level);
