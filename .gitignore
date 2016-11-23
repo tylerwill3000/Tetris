@@ -1,5 +1,7 @@
 bin/
 build/
 .settings/
+.idea/
+tetris.iml
 .classpath
 .project
