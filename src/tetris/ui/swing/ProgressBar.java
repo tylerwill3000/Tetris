@@ -11,14 +11,14 @@ import tetris.Block.ColoredSquare;
  * Displays a progress bar using JPanels
  * @author Tyler
  */
-public abstract class ProgressBar extends PixelGrid {
+abstract class ProgressBar extends PixelGrid {
 	
-	public static final int PROGRESS_BAR_DIMENSION = 13;
+	private static final int PROGRESS_BAR_DIMENSION = 13;
 	
-	protected Color barColor;
+	Color barColor;
 	private double percentagePerPanel;
 	
-	public ProgressBar(int cols, Color barColor) {
+	ProgressBar(int cols, Color barColor) {
 		super(1, cols, PROGRESS_BAR_DIMENSION);
 		this.barColor = barColor;
 		this.percentagePerPanel = 100.0 / cols;
@@ -45,6 +45,6 @@ public abstract class ProgressBar extends PixelGrid {
 		return squares;
 	}
 
-	protected abstract double getCurrentPercentage();
+	abstract double getCurrentPercentage();
 	
 }

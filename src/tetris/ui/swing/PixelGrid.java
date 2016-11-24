@@ -13,22 +13,22 @@ import tetris.Block.ColoredSquare;
  * to have certain cells filled in a certain color
  * @author Tyler
  */
-public abstract class PixelGrid extends JPanel {
+abstract class PixelGrid extends JPanel {
 	
 	protected int rows;
 	protected int columns;
 	protected int padding;
 	private SquareStyle squareStyle;
 	
-	public PixelGrid(int rows, int columns, int pixelDimension) {
+	PixelGrid(int rows, int columns, int pixelDimension) {
 		this(rows, columns, pixelDimension, 0, SquareStyle.DEFAULT);
 	}
 	
-	public PixelGrid(int rows, int columns, int pixelDimension, int padding) {
+	PixelGrid(int rows, int columns, int pixelDimension, int padding) {
 		this(rows, columns, pixelDimension, padding, SquareStyle.DEFAULT);
 	}
 	
-	public PixelGrid(int rows, int columns, int pixelDimension, int padding, SquareStyle style) {
+	PixelGrid(int rows, int columns, int pixelDimension, int padding, SquareStyle style) {
 		this.rows = rows;
 		this.columns = columns;
 		this.squareStyle = style;
@@ -36,7 +36,7 @@ public abstract class PixelGrid extends JPanel {
 		setPreferredSize(new Dimension(columns * pixelDimension, rows * pixelDimension));
 	}
 
-	public void setSquareStyle(SquareStyle style) {
+	void setSquareStyle(SquareStyle style) {
 		this.squareStyle = style;
 	}
 	
@@ -66,27 +66,27 @@ public abstract class PixelGrid extends JPanel {
 		
 	}
 	
-	public int getRows() {
+	int getRows() {
 		return rows;
 	}
 	
-	public int getColumns() {
+	int getColumns() {
 		return columns;
 	}
 	
-	protected int getUnitWidth() {
+	int getUnitWidth() {
 		return (getWidth() - padding * 2) / columns;
 	}
 	
-	protected int getUnitHeight() {
+	int getUnitHeight() {
 		return (getHeight() - padding * 2) / rows;
 	}
 	
-	protected int getXCoordinate(ColoredSquare sq) {
+	int getXCoordinate(ColoredSquare sq) {
 		return sq.getColumn() * getUnitWidth();
 	}
 	
-	protected int getYCoordinate(ColoredSquare sq) {
+	int getYCoordinate(ColoredSquare sq) {
 		return sq.getRow() * getUnitHeight();
 	}
 	
@@ -95,6 +95,6 @@ public abstract class PixelGrid extends JPanel {
 		return String.format("PixelGrid { rows=%d, columns=%d, unitWidth=%d, unitHeight=%d }", rows, columns, getUnitWidth(), getUnitHeight());
 	}
 	
-	public abstract Collection<ColoredSquare> getCurrentColors();
+	abstract Collection<ColoredSquare> getCurrentColors();
 	
 }

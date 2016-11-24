@@ -3,7 +3,7 @@ package tetris.ui.swing;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public enum SquareStyle {
+enum SquareStyle {
 	
 	DEFAULT {
 
@@ -31,8 +31,8 @@ public enum SquareStyle {
 	}
 	
 ;
-	public abstract void paintSquare(Graphics g, Color color, int x, int y, int width, int height);
+	abstract void paintSquare(Graphics g, Color color, int x, int y, int width, int height);
 	
-	public abstract void paintGhost(Graphics g, int x, int y, int width, int height);
+	abstract void paintGhost(Graphics g, int x, int y, int width, int height);
 	
 }

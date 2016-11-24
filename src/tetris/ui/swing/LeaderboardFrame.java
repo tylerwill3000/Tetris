@@ -23,7 +23,7 @@ import tetris.ScoreDao;
 import tetris.TetrisGame;
 import tetris.Utility;
 
-public class LeaderboardFrame extends JFrame {
+class LeaderboardFrame extends JFrame {
 	
 	private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 	
@@ -34,11 +34,11 @@ public class LeaderboardFrame extends JFrame {
 	private JTable tblScores = new JTable();
 	private ScoreDao scoresDao;
 	
-	public LeaderboardFrame(ScoreDao scoresDao) {
+	LeaderboardFrame(ScoreDao scoresDao) {
 		this(scoresDao, -1);
 	}
 	
-	public LeaderboardFrame(ScoreDao scoresDao, int highlightRank) {
+	LeaderboardFrame(ScoreDao scoresDao, int highlightRank) {
 		
 		this.scoresDao = scoresDao;
 		this.highlightRank = highlightRank;
@@ -120,6 +120,7 @@ public class LeaderboardFrame extends JFrame {
 			this.rankToHighlight = rankToHighlight;
 		}
 		
+		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			
 			if (column == 0 && Integer.parseInt(value.toString()) == rankToHighlight) {

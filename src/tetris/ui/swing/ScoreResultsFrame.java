@@ -14,16 +14,16 @@ import tetris.Score;
 import tetris.ScoreDao;
 import tetris.TetrisGame;
 
-public class ScoreResultsFrame extends JFrame {
+class ScoreResultsFrame extends JFrame {
 	
-	public final static int NAME_LENGTH = 20;
+	private final static int NAME_LENGTH = 20;
 	
-	private JLabel lblScore = new JLabel();
-	private JTextField txtName = new JTextField(8);
-	private TetrisButton btnSaveScore = new TetrisButton("Save");
-	private TetrisButton btnClose = new TetrisButton("Cancel");
+	JLabel lblScore = new JLabel();
+	JTextField txtName = new JTextField(8);
+	TetrisButton btnSaveScore = new TetrisButton("Save");
+	TetrisButton btnClose = new TetrisButton("Cancel");
 	
-	public ScoreResultsFrame(ScoreDao scoresDao, TetrisGame game) throws Exception {
+	ScoreResultsFrame(ScoreDao scoresDao, TetrisGame game) throws Exception {
 		
 		setLayout(new GridLayout(3,1));
 		
