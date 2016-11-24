@@ -129,11 +129,6 @@ public class Block {
 			return false;
 		}
 
-		@Override
-		public String toString() {
-			return "ColoredSquare [color=" + color + ", row=" + row + ", col=" + col + "]";
-		}
-		
 	}
 	
 }

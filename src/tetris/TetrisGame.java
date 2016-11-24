@@ -40,7 +40,6 @@ public class TetrisGame extends EventSource {
 	private Block activeBlock;
 	private Block holdBlock;
 	private BlockConveyor conveyor;
-	private Collection<BlockType> activeTypes;
 	private LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
 	private Difficulty difficulty;
 	private int totalLinesCleared;
@@ -278,7 +277,7 @@ public class TetrisGame extends EventSource {
 		activeBlock.rotate(dir);
 
 		boolean areRotatedSquaresLegal =
-				activeBlock.getOccupiedSquares()
+		        activeBlock.getOccupiedSquares()
 		                   .stream()
 		                   .allMatch(moveSq -> moveSq.getColumn() >= 0 && moveSq.getColumn() < horizontalDimension && moveSq.getRow() < verticalDimension);
 		
@@ -383,13 +382,11 @@ public class TetrisGame extends EventSource {
 		newScore += (linePoints + difficultyBonus);
 		
 		 // Bonuses for special blocks
-		if (activeTypes != null) {
-			newScore += BlockType.getSpecialBlocks()
-			                     .stream()
-			                     .filter(activeTypes::contains)
-			                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
-			                     .sum();
-		}
+		newScore += BlockType.getSpecialBlocks()
+		                     .stream()
+		                     .filter(conveyor::isEnabled)
+		                     .mapToInt(special -> completedLines * SPECIAL_PIECE_BONUSES.get(special))
+		                     .sum();
 		
 		// Level ups
 		int newLevel = this.level;
@@ -416,7 +413,7 @@ public class TetrisGame extends EventSource {
 	
 	/**
 	 * Attempts to spawn the given block object in the board model, replacing
-	 * the current active piece. Returns true if there was room to spawn the piece, false otherwise
+	 * the current active block. Returns true if there was room to spawn the piece, false otherwise
 	 */
 	public boolean spawn(Block block) {
 
@@ -425,8 +422,9 @@ public class TetrisGame extends EventSource {
 
 		while (true) {
 
-			List<Block.ColoredSquare> occupiedSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
-			boolean anyVisible = occupiedSquares.stream().filter(sq -> sq.getRow() >= 3).count() > 0;
+			List<ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
+			
+			boolean anyVisible = spawnSquares.stream().filter(sq -> sq.getRow() >= 3).count() > 0;
 			if (!anyVisible) {
 				fallTimer.stop();
 				gameTimer.stop();
@@ -434,7 +432,7 @@ public class TetrisGame extends EventSource {
 				return false;
 			}
 			
-			boolean allOpen = occupiedSquares.stream().allMatch(sq -> isOpen(sq.getRow(), sq.getColumn()));
+			boolean allOpen = spawnSquares.stream().allMatch(sq -> isOpen(sq.getRow(), sq.getColumn()));
 			if (allOpen) {
 				block.setLocation(startRow, startCol);
 				this.activeBlock = block;

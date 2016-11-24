@@ -852,7 +852,7 @@ public class MasterTetrisFrame extends JFrame {
 			
 			private BlockSelectorButton(BlockType blockType) {
 				this.blockType = blockType;
-				setActiveState(game.getConveyor().isActive(blockType));
+				setActiveState(game.getConveyor().isEnabled(blockType));
 				setFocusable(false);
 				addMouseMotionListener(new MouseAdapter() {
 					public void mouseMoved(MouseEvent e) {
