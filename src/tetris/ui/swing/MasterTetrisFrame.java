@@ -148,7 +148,7 @@ public class MasterTetrisFrame extends JFrame {
 			case KeyEvent.VK_SPACE:
 				
 				game.dropCurrentBlock();
-				audioSystem.playPiecePlacementSound();
+				audioSystem.playBlockPlacementSound();
 				game.tryFall();
 				break;
 			}
