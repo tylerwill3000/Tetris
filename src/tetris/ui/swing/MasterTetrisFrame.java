@@ -333,6 +333,7 @@ public class MasterTetrisFrame extends JFrame {
 		}
 		
 		settingsPanel.lstDifficulty.setEnabled(false);
+		settingsPanel.cbxTimeAttack.isSelected();
 		settingsPanel.btnChooseSpecials.setEnabled(false);
 		settingsPanel.cbxTimeAttack.setEnabled(false);
 		settingsPanel.cbxGhostSquares.setEnabled(false);
@@ -353,6 +354,8 @@ public class MasterTetrisFrame extends JFrame {
 		boardPanel.enableBlockMovement();
 		
 		holdPanel.repaint();
+		
+		scorePanel.progressBarTime.setVisible(settingsPanel.cbxTimeAttack.isSelected());
 		scorePanel.lblTotalLines.repaint();
 	};
 	
@@ -721,7 +724,6 @@ public class MasterTetrisFrame extends JFrame {
 			cbxTimeAttack = new JCheckBox("Time Attack Mode", false);
 			cbxTimeAttack.addItemListener(e -> {
 				game.setTimeAttack(cbxTimeAttack.isSelected());
-				scorePanel.progressBarTime.setVisible(cbxTimeAttack.isSelected());
 			});
 			cbxTimeAttack.setToolTipText("When on, grants a bonus per level cleared: " +
 					"+" + Difficulty.EASY.getTimeAttackBonus() + " points on easy, " +
