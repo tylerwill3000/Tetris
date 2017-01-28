@@ -30,7 +30,7 @@ public class FlatFileScoreDao implements ScoreDao {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				throw new Exception("Malformed high scores file: " + e.getMessage());
+				throw new Exception("Malformed high scores file", e);
 			}
 		}
 	}
