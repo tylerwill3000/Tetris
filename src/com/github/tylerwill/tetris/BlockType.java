@@ -1,12 +1,10 @@
-package tetris;
+package com.github.tylerwill.tetris;
 
-import static java.util.stream.Collectors.toList;
-
-import java.awt.Color;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-import tetris.Block.ColoredSquare;
+import static java.util.stream.Collectors.toList;
 
 public enum BlockType {
 	
@@ -379,7 +377,7 @@ public enum BlockType {
 		}
 		int[][] offsets = offsetMap[orientation];
 		return Arrays.stream(offsets)
-		             .map(offset -> new ColoredSquare(color, row + offset[0], col + offset[1]))
+		             .map(offset -> new Block.ColoredSquare(color, row + offset[0], col + offset[1]))
 		             .collect(toList());
 	}
 	

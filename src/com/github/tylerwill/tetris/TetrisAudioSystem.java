@@ -1,4 +1,4 @@
-package tetris;
+package com.github.tylerwill.tetris;
 
 import javax.sound.sampled.*;
 import java.io.IOException;

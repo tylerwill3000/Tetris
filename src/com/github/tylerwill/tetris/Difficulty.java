@@ -1,18 +1,9 @@
-package tetris;
-
-import static tetris.BlockType.BOX;
-import static tetris.BlockType.DIAMOND;
-import static tetris.BlockType.L_BLOCK_L;
-import static tetris.BlockType.L_BLOCK_R;
-import static tetris.BlockType.ROCKET;
-import static tetris.BlockType.STRAIGHT_LINE;
-import static tetris.BlockType.S_BLOCK_L;
-import static tetris.BlockType.S_BLOCK_R;
-import static tetris.BlockType.TWIN_PILLARS;
-import static tetris.BlockType.T_BLOCK;
+package com.github.tylerwill.tetris;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.github.tylerwill.tetris.BlockType.*;
 
 public enum Difficulty {
 	

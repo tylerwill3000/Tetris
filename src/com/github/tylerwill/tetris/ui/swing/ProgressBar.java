@@ -1,11 +1,11 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.Color;
+import com.github.tylerwill.tetris.Block;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import tetris.Block.ColoredSquare;
 
 /**
  * Displays a progress bar using JPanels
@@ -25,7 +25,7 @@ abstract class ProgressBar extends PixelGrid {
 	}
 	
 	@Override
-	public Collection<ColoredSquare> getCurrentColors() {
+	public Collection<Block.ColoredSquare> getCurrentColors() {
 		
 		double percentageComplete = getCurrentPercentage();
 		
@@ -34,11 +34,11 @@ abstract class ProgressBar extends PixelGrid {
 			percentageComplete = percentagePerPanel;
 		}
 		
-		List<ColoredSquare> squares = new ArrayList<>();
+		List<Block.ColoredSquare> squares = new ArrayList<>();
 		for (int panel = 1; panel <= columns ; panel++) {
 			double panelPerc = Math.min(100.0, panel * percentagePerPanel);
 			Color squareColor = panelPerc <= percentageComplete ? barColor : null;
-			ColoredSquare square = new ColoredSquare(squareColor, 0, panel - 1);
+			Block.ColoredSquare square = new Block.ColoredSquare(squareColor, 0, panel - 1);
 			squares.add(square);
 		}
 		

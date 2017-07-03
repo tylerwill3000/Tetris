@@ -1,25 +1,12 @@
-package tetris;
-
-import static java.util.stream.Collectors.toCollection;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.IntStream;
+package com.github.tylerwill.tetris;
 
 import javax.swing.Timer;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.stream.IntStream;
 
-import tetris.Block.ColoredSquare;
+import static java.util.stream.Collectors.toCollection;
 
 public class TetrisGame extends EventSource {
 
@@ -257,7 +244,7 @@ public class TetrisGame extends EventSource {
 
 		boolean canMoveBeMade = activeBlock.getOccupiedSquares()
 		                                   .stream()
-		                                   .map(sq -> new ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
+		                                   .map(sq -> new Block.ColoredSquare(sq.getRow() + rowMove, sq.getColumn() + colMove))
 		                                   .allMatch(moveSq -> isInBounds(moveSq.getRow(), moveSq.getColumn()) && isOpen(moveSq.getRow(), moveSq.getColumn()));
 		if (canMoveBeMade) {
 			activeBlock.move(rowMove, colMove);
@@ -290,14 +277,14 @@ public class TetrisGame extends EventSource {
 		}
 	}
 
-	public List<ColoredSquare> getGhostSquares() {
+	public List<Block.ColoredSquare> getGhostSquares() {
 		if (activeBlock == null) {
 			return new ArrayList<>();
 		}
 		int currentRow = activeBlock.getRow();
 		int currentCol = activeBlock.getColumn();
 		dropCurrentBlock();
-		List<ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
+		List<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
 		ghostSquares.forEach(gs -> gs.setColor(null));
 		activeBlock.setLocation(currentRow, currentCol);
 		return ghostSquares;
@@ -422,7 +409,7 @@ public class TetrisGame extends EventSource {
 
 		while (true) {
 
-			List<ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
+			List<Block.ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
 			
 			boolean anyVisible = spawnSquares.stream().filter(sq -> sq.getRow() >= 3).count() > 0;
 			if (!anyVisible) {
@@ -443,9 +430,9 @@ public class TetrisGame extends EventSource {
 		}
 	}
 
-	public Collection<ColoredSquare> getColoredSquares() {
+	public Collection<Block.ColoredSquare> getColoredSquares() {
 		
-		Set<ColoredSquare> squares = new HashSet<>();
+		Set<Block.ColoredSquare> squares = new HashSet<>();
 
 		// Important we add occupied squares before ghost squares so that ghost squares don't overwrite occupied squares
 		if (activeBlock != null) {
@@ -459,7 +446,7 @@ public class TetrisGame extends EventSource {
 			Color[] rowColors = persistedBlocks.get(rowIndex);
 			for (int colIndex = 0; colIndex < rowColors.length; colIndex++) {
 				if (rowColors[colIndex] != null) {
-					squares.add(new ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
+					squares.add(new Block.ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
 				}
 			}
 		}

@@ -1,18 +1,13 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.GridLayout;
+import com.github.tylerwill.tetris.Score;
+import com.github.tylerwill.tetris.ScoreDao;
+import com.github.tylerwill.tetris.TetrisGame;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
-import tetris.Score;
-import tetris.ScoreDao;
-import tetris.TetrisGame;
 
 class ScoreResultsFrame extends JFrame {
 	

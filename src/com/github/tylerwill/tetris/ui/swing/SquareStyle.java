@@ -1,7 +1,6 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 enum SquareStyle {
 	

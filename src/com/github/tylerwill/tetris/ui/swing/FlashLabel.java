@@ -1,8 +1,7 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.Color;
-
-import javax.swing.JLabel;
+import javax.swing.*;
+import java.awt.*;
 
 class FlashLabel extends JLabel {
 

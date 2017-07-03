@@ -1,27 +1,16 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.util.Optional;
-import java.util.stream.IntStream;
+import com.github.tylerwill.tetris.Difficulty;
+import com.github.tylerwill.tetris.ScoreDao;
+import com.github.tylerwill.tetris.TetrisGame;
+import com.github.tylerwill.tetris.Utility;
 
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-
-import tetris.Difficulty;
-import tetris.ScoreDao;
-import tetris.TetrisGame;
-import tetris.Utility;
+import java.awt.*;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 class LeaderboardFrame extends JFrame {
 	

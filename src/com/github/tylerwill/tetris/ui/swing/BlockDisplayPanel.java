@@ -1,12 +1,10 @@
 
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.util.Collection;
+import com.github.tylerwill.tetris.Block;
 
 import javax.swing.border.TitledBorder;
-
-import tetris.Block;
-import tetris.Block.ColoredSquare;
+import java.util.Collection;
 
 class BlockDisplayPanel extends PixelGrid {
 	
@@ -27,7 +25,7 @@ class BlockDisplayPanel extends PixelGrid {
 	}
 
 	@Override
-	public Collection<ColoredSquare> getCurrentColors() {
+	public Collection<Block.ColoredSquare> getCurrentColors() {
 		return currentBlock.getNextPanelSquares();
 	}
 

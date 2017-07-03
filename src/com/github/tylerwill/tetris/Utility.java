@@ -1,4 +1,4 @@
-package tetris;
+package com.github.tylerwill.tetris;
 
 import java.util.List;
 import java.util.Random;

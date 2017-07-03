@@ -1,7 +1,6 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import tetris.*;
-import tetris.Block.ColoredSquare;
+import com.github.tylerwill.tetris.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -182,7 +181,7 @@ public class MasterTetrisFrame extends JFrame {
 		this.nextBlockPanel = new BlockDisplayPanel("Next") {
 			
 			@Override
-			public Collection<ColoredSquare> getCurrentColors() {
+			public Collection<Block.ColoredSquare> getCurrentColors() {
 				if (game.getConveyor().peek() != null) {
 					return game.getConveyor().peek().getNextPanelSquares();
 				} else {
@@ -195,7 +194,7 @@ public class MasterTetrisFrame extends JFrame {
 		this.holdPanel = new BlockDisplayPanel("Hold") {
 			
 			@Override
-			public Collection<ColoredSquare> getCurrentColors() {
+			public Collection<Block.ColoredSquare> getCurrentColors() {
 				return game.getHoldBlock().isPresent() ?
 						game.getHoldBlock().get().getNextPanelSquares() :
 						new ArrayList<>();
@@ -445,7 +444,7 @@ public class MasterTetrisFrame extends JFrame {
 				game.logActiveBlock();
 				game.clearActiveBlock();
 				
-				Collection<ColoredSquare> spiralSquares = new LinkedHashSet<>();
+				Collection<Block.ColoredSquare> spiralSquares = new LinkedHashSet<>();
 				
 				int nextLeftCol = 0,
 				    nextRightCol = game.getHorizontalDimension() - 1,
@@ -458,31 +457,31 @@ public class MasterTetrisFrame extends JFrame {
 					
 					// Get all cells in the next leftmost column
 					for (int row = nextTopRow; row <= nextBottomRow; row++) {
-						spiralSquares.add(new ColoredSquare(row, nextLeftCol));
+						spiralSquares.add(new Block.ColoredSquare(row, nextLeftCol));
 					}
 					nextLeftCol++;
 					
 					// Get all cells in the next bottom row
 					for (int col = nextLeftCol; col <= nextRightCol; col++) {
-						spiralSquares.add(new ColoredSquare(nextBottomRow, col));
+						spiralSquares.add(new Block.ColoredSquare(nextBottomRow, col));
 					}
 					nextBottomRow--;
 					
 					// Get all cells in the next rightmost column
 					for (int row = nextBottomRow; row >= nextTopRow; row--) {
-						spiralSquares.add(new ColoredSquare(row, nextRightCol));
+						spiralSquares.add(new Block.ColoredSquare(row, nextRightCol));
 					}
 					nextRightCol--;
 					
 					// Get all cells in the next top row
 					for (int col = nextRightCol; col >= nextLeftCol; col--) {
-						spiralSquares.add(new ColoredSquare(nextTopRow, col));
+						spiralSquares.add(new Block.ColoredSquare(nextTopRow, col));
 					}
 					nextTopRow++;
 				}
 				
 				// Run 1 loop to paint in all unoccupied squares
-				for (ColoredSquare spiralSquare : spiralSquares) {
+				for (Block.ColoredSquare spiralSquare : spiralSquares) {
 					if (spiralSquare.getRow() < 3) continue;
 					if (game.isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
 						game.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
@@ -492,7 +491,7 @@ public class MasterTetrisFrame extends JFrame {
 				}
 				
 				// Run a second loop to erase all of them
-				for (ColoredSquare spiralSquare : spiralSquares) {
+				for (Block.ColoredSquare spiralSquare : spiralSquares) {
 					if (spiralSquare.getRow() < 3) continue;
 					game.clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
 					repaint();
@@ -552,7 +551,7 @@ public class MasterTetrisFrame extends JFrame {
 		};
 		
 		@Override
-		public Collection<ColoredSquare> getCurrentColors() {
+		public Collection<Block.ColoredSquare> getCurrentColors() {
 			return game.getColoredSquares();
 		}
 		

@@ -1,6 +1,4 @@
-package tetris.ui.swing;
-
-import tetris.ui.swing.MasterTetrisFrame;
+package com.github.tylerwill.tetris.ui.swing;
 
 /**
  * Main executable class

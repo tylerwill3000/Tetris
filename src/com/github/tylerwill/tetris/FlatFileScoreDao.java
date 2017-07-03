@@ -1,4 +1,4 @@
-package tetris;
+package com.github.tylerwill.tetris;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

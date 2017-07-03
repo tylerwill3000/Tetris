@@ -1,9 +1,6 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public final class SwingUtility {
 	

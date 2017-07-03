@@ -1,6 +1,6 @@
-package tetris;
+package com.github.tylerwill.tetris;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 

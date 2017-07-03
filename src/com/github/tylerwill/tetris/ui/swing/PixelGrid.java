@@ -1,12 +1,10 @@
-package tetris.ui.swing;
+package com.github.tylerwill.tetris.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
+import com.github.tylerwill.tetris.Block;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.Collection;
-
-import javax.swing.JPanel;
-
-import tetris.Block.ColoredSquare;
 
 /**
  * Objects of this class are grid-based panels that are "paintable" - that is, they are able
@@ -48,7 +46,7 @@ abstract class PixelGrid extends JPanel {
 		
 		super.paintComponent(g);
 		
-		for (ColoredSquare sq : getCurrentColors()) {
+		for (Block.ColoredSquare sq : getCurrentColors()) {
 			
 			int squareX = getXCoordinate(sq) + padding;
 			int squareY = getYCoordinate(sq) + padding;
@@ -82,11 +80,11 @@ abstract class PixelGrid extends JPanel {
 		return (getHeight() - padding * 2) / rows;
 	}
 	
-	int getXCoordinate(ColoredSquare sq) {
+	int getXCoordinate(Block.ColoredSquare sq) {
 		return sq.getColumn() * getUnitWidth();
 	}
 	
-	int getYCoordinate(ColoredSquare sq) {
+	int getYCoordinate(Block.ColoredSquare sq) {
 		return sq.getRow() * getUnitHeight();
 	}
 	
@@ -95,6 +93,6 @@ abstract class PixelGrid extends JPanel {
 		return String.format("PixelGrid { rows=%d, columns=%d, unitWidth=%d, unitHeight=%d }", rows, columns, getUnitWidth(), getUnitHeight());
 	}
 	
-	abstract Collection<ColoredSquare> getCurrentColors();
+	abstract Collection<Block.ColoredSquare> getCurrentColors();
 	
 }
