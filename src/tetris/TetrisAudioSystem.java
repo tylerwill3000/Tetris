@@ -1,14 +1,8 @@
 package tetris;
 
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Port;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  * Provides an interface to the game's audio
@@ -152,24 +146,20 @@ public final class TetrisAudioSystem {
 		return SOUNDTRACK[level - 1];
 	}
 	
-	/**
-	 * Returns a clip audio output device input line from the specified file string
-	 */
+	/** @returns A clip audio output device input line from the specified file string */
 	private static Clip createClip(String file) {
-		
 		if (AudioSystem.isLineSupported(Port.Info.SPEAKER) || AudioSystem.isLineSupported(Port.Info.HEADPHONE)) {
 			try {
 				URL audioFile = TetrisAudioSystem.class.getResource(file);
 				if (audioFile == null) {
-					throw new ExceptionInInitializerError("Audio file not found for path " + file);
+					throw new RuntimeException("Audio file not found for path " + file);
 				}
-				Clip clip = AudioSystem.getClip();
 				AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioFile);
+				Clip clip = AudioSystem.getClip();
 				clip.open(audioIn);
 				return clip;
-			}
-			catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-				throw new ExceptionInInitializerError(e);
+			} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+				throw new RuntimeException(e);
 			}
 		}
 		

@@ -20,8 +20,7 @@ public class FlatFileScoreDao implements ScoreDao {
 	public List<Score> getScores() throws Exception {
 		if (!Files.exists(SAVE_PATH)) {
 			return new ArrayList<>();
-		}
-		else {
+		} else {
 			try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
 				@SuppressWarnings("unchecked")
 				List<Score> scores = (List<Score>) objIn.readObject();
@@ -29,7 +28,6 @@ public class FlatFileScoreDao implements ScoreDao {
 				return scores;
 			}
 			catch (Exception e) {
-				e.printStackTrace();
 				throw new Exception("Malformed high scores file", e);
 			}
 		}

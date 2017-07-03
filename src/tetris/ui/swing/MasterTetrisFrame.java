@@ -1,49 +1,20 @@
 package tetris.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
+import tetris.*;
+import tetris.Block.ColoredSquare;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
-
-import tetris.Block;
-import tetris.Block.ColoredSquare;
-import tetris.BlockType;
-import tetris.Difficulty;
-import tetris.FlatFileScoreDao;
-import tetris.ScoreDao;
-import tetris.TetrisAudioSystem;
-import tetris.TetrisGame;
-import tetris.Utility;
 
 public class MasterTetrisFrame extends JFrame {
 	
@@ -176,13 +147,9 @@ public class MasterTetrisFrame extends JFrame {
 			scorePanel.progressBarTime.repaint();
 		});
 		
-		this.game.subscribe("spawnFail timeAttackFail", event -> {
-			onGameOver();
-		});
+		this.game.subscribe("spawnFail timeAttackFail", event -> onGameOver());
 		
-		this.game.subscribe("gameWon", event -> {
-			onWin();
-		});
+		this.game.subscribe("gameWon", event -> onWin());
 		
 		this.game.subscribe("linesCleared", event -> {
 			int lines = (int) event;
@@ -199,7 +166,7 @@ public class MasterTetrisFrame extends JFrame {
 			scorePanel.progressBarTime.repaint();
 			
 			if (newLevel > 1) {
-				audioSystem.stopSoundtrack(newLevel);
+				audioSystem.stopSoundtrack(newLevel - 1);
 			}
 			audioSystem.startSoundtrack(newLevel);
 			
@@ -208,9 +175,7 @@ public class MasterTetrisFrame extends JFrame {
 			}
 		});
 		
-		this.game.subscribe("scoreChanged", score -> {
-			scorePanel.lblScore.repaint();
-		});
+		this.game.subscribe("scoreChanged", score -> scorePanel.lblScore.repaint());
 		
 		this.boardPanel = new BoardPanel();
 		
@@ -220,8 +185,7 @@ public class MasterTetrisFrame extends JFrame {
 			public Collection<ColoredSquare> getCurrentColors() {
 				if (game.getConveyor().peek() != null) {
 					return game.getConveyor().peek().getNextPanelSquares();
-				}
-				else {
+				} else {
 					return new ArrayList<>();
 				}
 			}
