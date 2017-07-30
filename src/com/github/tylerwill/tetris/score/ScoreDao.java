@@ -28,12 +28,11 @@ public interface ScoreDao {
 
   default int saveScore(Score score) throws Exception {
     int rank = determineRank(score.points);
-    if (isHighScore(rank)) {
-      _saveScore(score);
-      return rank;
-    } else {
+    if (!isHighScore(rank)) {
       throw new IllegalArgumentException("Cannot save score " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
     }
+    _saveScore(score);
+    return rank;
   }
 
   default int determineRank(int score) throws Exception {
