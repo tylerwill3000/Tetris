@@ -2,7 +2,6 @@
 
 <project name="Tetris" default="jar">
 
-  <property environment="env"/> <!-- Sets the string to use to access environment variables -->
   <property name="src.dir" value="src"/>
   <property name="build.dir" value="build"/>
   <property name="lib.dir" value="lib"/>
