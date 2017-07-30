@@ -4,14 +4,13 @@
 
   <property name="src.dir" value="src"/>
   <property name="build.dir" value="build"/>
-  <property name="lib.dir" value="lib"/>
 
-  <target name="compile" description="Compiles class files into build directory">
+  <target name="jar" description="Creates tetris.jar file in build directory">
+
+    <delete dir="${build.dir}" />
+
     <mkdir dir="${build.dir}"/>
     <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
-  </target>
-
-  <target name="jar" description="Creates jar file" depends="compile">
 
     <copy todir="${build.dir}/audio">
       <fileset dir="audio" />
@@ -21,22 +20,17 @@
       <fileset dir="images" />
     </copy>
 
-    <delete>
-      <fileset dir="${build.dir}">
-        <include name="tetris.jar"/>
-      </fileset>
-    </delete>
-
     <jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
       <manifest>
         <attribute name="Main-class" value="com.github.tylerwill.tetris.Main"/>
       </manifest>
     </jar>
 
-  </target>
+    <!-- Gets rid of everything but the .jar file -->
+    <delete dir="${build.dir}/audio" />
+    <delete dir="${build.dir}/images" />
+    <delete dir="${build.dir}/com" />
 
-  <target name="clean" description="Deletes all build files after compile">
-    <delete dir="${build.dir}"/>
   </target>
 
 </project>
