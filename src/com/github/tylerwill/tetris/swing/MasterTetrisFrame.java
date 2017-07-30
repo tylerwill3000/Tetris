@@ -193,47 +193,33 @@ public class MasterTetrisFrame extends JFrame {
     this.settingsPanel = new SettingsPanel();
     this.scorePanel = new ScorePanel();
 
-    JPanel keyCombos = new JPanel(new GridLayout(15, 1));
-    for (String keyCombo : new String[]{
-        " Up: ",
-        " 'F': ",
-        " Down: ",
-        " Left: ",
-        " Right: ",
-        " 'S' + left: ",
-        " 'S' + right: ",
-        " Space: ",
-        " 'D': ",
-        " 'E': ",
-        " 'S': ",
-        " 'P': ",
-        " 'R': ",
-        " 'G': ",
-        " 'H': "
-    }) keyCombos.add(new JLabel(keyCombo));
+    LinkedHashMap<String, String> keys_action = new LinkedHashMap<>(); // LinkedHashMap because order matters for display
+    keys_action.put("Up:",          "Rotate CW");
+    keys_action.put("'F':",         "Rotate CCW");
+    keys_action.put("Down:",        "Shift down");
+    keys_action.put("Left:",        "Shift left");
+    keys_action.put("Right:",       "Shift right");
+    keys_action.put("'S' + left:",  "Super-slide left");
+    keys_action.put("'S' + right:", "Super-slide right");
+    keys_action.put("Spacebar:",    "Instant drop");
+    keys_action.put("'D':",         "Set hold");
+    keys_action.put("'E':",         "Release hold");
+    keys_action.put("Alt + 'S':",   "Start game");
+    keys_action.put("Alt + 'P':",   "Pause game");
+    keys_action.put("Alt + 'R':",   "Resume game");
+    keys_action.put("Alt + 'G':",   "Give up");
+    keys_action.put("Alt + 'H':",   "View high scores");
 
-    JPanel actions = new JPanel(new GridLayout(15, 1));
-    for (String action : new String[]{
-        " Rotate CW ",
-        " Rotate CCW ",
-        " Shift down ",
-        " Shift left ",
-        " Shift right ",
-        " Superslide left ",
-        " Superslide right ",
-        " Instant drop ",
-        " Set hold ",
-        " Release hold ",
-        " Start ",
-        " Pause ",
-        " Resume ",
-        " Give Up ",
-        " High Scores "
-    }) actions.add(new JLabel(action));
+    JPanel keys = new JPanel(new GridLayout(keys_action.size(), 1));
+    JPanel actions = new JPanel(new GridLayout(keys_action.size(), 1));
+    keys_action.forEach((key, action) -> {
+      keys.add(new JLabel(key));
+      actions.add(new JLabel(action));
+    });
 
     JPanel controls = new JPanel(new BorderLayout());
     controls.setBorder(new TitledBorder("Controls"));
-    controls.add(keyCombos, BorderLayout.WEST);
+    controls.add(keys, BorderLayout.WEST);
     controls.add(actions, BorderLayout.EAST);
 
     JPanel holdContainer = new JPanel(new BorderLayout());
