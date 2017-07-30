@@ -18,7 +18,7 @@ public class FlatFileScoreDao implements ScoreDao {
   @Override
   public List<Score> getAllScores() throws Exception {
     if (!Files.exists(SAVE_PATH)) {
-      return Collections.emptyList();
+      return new ArrayList<>();
     } else {
       try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
         @SuppressWarnings("unchecked")
@@ -35,7 +35,7 @@ public class FlatFileScoreDao implements ScoreDao {
 
   @Override
   public void _saveScore(Score toSave) throws Exception  {
-    List<Score> allScores = new ArrayList<>(getAllScores()); // Create new list since returned list may be unmodifiable
+    List<Score> allScores = getAllScores();
     allScores.add(toSave);
     Collections.sort(allScores);
 
