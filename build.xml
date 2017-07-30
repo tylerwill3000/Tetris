@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="Tetris" default="jar">
-	
-	<property environment="env"/> <!-- Sets the string to use to access environment variables -->
-	<property name="src.dir" value="src"/>
-	<property name="build.dir" value="build"/>
-	<property name="lib.dir" value="lib"/>
-	
-	<target name="compile" description="Compiles class files into build directory">
-		<mkdir dir="${build.dir}"/>
-		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
-	</target>
-	
-	<target name="jar" description="Creates jar file" depends="compile">
-		
-		<copy todir="${build.dir}/audio">
-			<fileset dir="audio" />
-		</copy>
-		
-		<copy todir="${build.dir}/images">
-			<fileset dir="images" />
-		</copy>
-		
-		<delete>
-			<fileset dir="${build.dir}">
-				<include name="tetris.jar"/>
-			</fileset>
-		</delete>
-		
-		<jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
-			<manifest>
-				<attribute name="Main-class" value="com.github.tylerwill.tetris.ui.swing.Main"/>
-			</manifest>
-		</jar>
-		
-	</target>
-	
-	<target name="clean" description="Deletes all build files after compile">
-		<delete dir="${build.dir}"/>
-	</target>
+
+  <property environment="env"/> <!-- Sets the string to use to access environment variables -->
+  <property name="src.dir" value="src"/>
+  <property name="build.dir" value="build"/>
+  <property name="lib.dir" value="lib"/>
+
+  <target name="compile" description="Compiles class files into build directory">
+    <mkdir dir="${build.dir}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
+  </target>
+
+  <target name="jar" description="Creates jar file" depends="compile">
+
+    <copy todir="${build.dir}/audio">
+      <fileset dir="audio" />
+    </copy>
+
+    <copy todir="${build.dir}/images">
+      <fileset dir="images" />
+    </copy>
+
+    <delete>
+      <fileset dir="${build.dir}">
+        <include name="tetris.jar"/>
+      </fileset>
+    </delete>
+
+    <jar basedir="${build.dir}" destfile="${build.dir}/tetris.jar" includes="**">
+      <manifest>
+        <attribute name="Main-class" value="com.github.tylerwill.tetris.Main"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="clean" description="Deletes all build files after compile">
+    <delete dir="${build.dir}"/>
+  </target>
 
 </project>
