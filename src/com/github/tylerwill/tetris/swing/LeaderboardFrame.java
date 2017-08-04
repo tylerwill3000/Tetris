@@ -16,7 +16,16 @@ class LeaderboardFrame extends JFrame {
 
   private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 
-  private JComboBox<String> difficulties = new JComboBox<>(new String[]{ "Easy", "Medium", "Hard", "All" });
+  private static final String[] DIFFICULTY_OPTIONS = new String[Difficulty.values().length + 1];
+  static {
+    Difficulty[] diffs = Difficulty.values();
+    for (int i = 0; i < diffs.length; i++) {
+      DIFFICULTY_OPTIONS[i] = diffs[i].toString();
+    }
+    DIFFICULTY_OPTIONS[diffs.length] = "All";
+  }
+
+  private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
   private int highlightRank = -1;
   private TetrisButton clearButton = new TetrisButton("Clear Scores");
   private TetrisButton closeButton = new TetrisButton("Close");
@@ -44,8 +53,9 @@ class LeaderboardFrame extends JFrame {
         try {
           scoresDao.clearAll();
           refreshTable();
-        } catch (Exception e1) {
-          JOptionPane.showMessageDialog(null, "Error clearing scores: " + e1.getMessage());
+        } catch (Exception ex) {
+          ex.printStackTrace();
+          JOptionPane.showMessageDialog(null, "Error clearing scores: " + ex.getMessage());
           return;
         }
       }

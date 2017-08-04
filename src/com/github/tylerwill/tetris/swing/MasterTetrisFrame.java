@@ -617,10 +617,10 @@ public class MasterTetrisFrame extends JFrame {
     SettingsPanel() {
 
       musicCheckbox = new JCheckBox("Music", true);
-      musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackMuted(!musicCheckbox.isSelected()));
+      musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
 
       soundEffectsCheckbox = new JCheckBox("Sound Effects", true);
-      soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsMuted(!soundEffectsCheckbox.isSelected()));
+      soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
       saveScoresCheckbox = new JCheckBox("Save Scores", true);
 
@@ -718,8 +718,9 @@ public class MasterTetrisFrame extends JFrame {
       this.btnClose = new TetrisButton("Close");
       this.btnClose.addActionListener(e -> dispose());
 
-      JPanel blockPanels = new JPanel(new GridLayout(1,3));
-      for (BlockType blockType : BlockType.getSpecialBlocks()) {
+      List<BlockType> specialBlocks = BlockType.getSpecialBlocks();
+      JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
+      for (BlockType blockType : specialBlocks) {
 
         BlockDisplayPanel display = new BlockDisplayPanel("\"" + blockType + "\"", new Block(blockType));
         BlockSelectorButton selector = new BlockSelectorButton(blockType);
@@ -771,8 +772,7 @@ public class MasterTetrisFrame extends JFrame {
         setActiveState(!active);
         if (active) {
           game.getConveyor().enableBlockType(settingsPanel.getSelectedDifficulty(), blockType);
-        }
-        else {
+        } else {
           game.getConveyor().disableBlockType(blockType);
         }
       }

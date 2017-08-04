@@ -35,42 +35,37 @@ public final class TetrisAudioSystem {
   private static final Clip HOLD = createClip("/audio/effects/clang.wav");
   private static final Clip RELEASE = createClip("/audio/effects/water-drop.wav");
 
-  private boolean soundtrackMuted = false;
-  private boolean effectsMuted = false;
+  private boolean soundtrackEnabled = true;
+  private boolean effectsEnabled = true;
 
   public TetrisAudioSystem() {}
 
-  public void setSoundtrackMuted(boolean muted) {
-    this.soundtrackMuted = muted;
+  public void setSoundtrackEnabled(boolean muted) {
+    this.soundtrackEnabled = muted;
   }
 
-  public void setEffectsMuted(boolean muted) {
-    this.effectsMuted = muted;
+  public void setEffectsEnabled(boolean muted) {
+    this.effectsEnabled = muted;
   }
 
   public void startSoundtrack(int level) {
-    if (!soundtrackMuted) {
+    if (soundtrackEnabled) {
       Clip track = getSoundtrack(level);
-      if (track != null) {
-        track.setFramePosition(0);
-        track.loop(Clip.LOOP_CONTINUOUSLY);
-      }
+      track.setFramePosition(0);
+      track.loop(Clip.LOOP_CONTINUOUSLY);
     }
   }
 
   public void resumeSoundtrack(int level) {
-    if (!soundtrackMuted) {
-      Clip track = getSoundtrack(level);
-      if (track != null) {
-        track.loop(Clip.LOOP_CONTINUOUSLY);
-      }
+    if (soundtrackEnabled) {
+      getSoundtrack(level).loop(Clip.LOOP_CONTINUOUSLY);
     }
   }
 
   public void stopSoundtrack(int level) {
-    if (!soundtrackMuted) {
+    if (soundtrackEnabled) {
       Clip track = getSoundtrack(level);
-      if (track != null && track.isRunning()) {
+      if (track.isRunning()) {
         track.stop();
       }
     }
@@ -125,16 +120,16 @@ public final class TetrisAudioSystem {
   }
 
   private void play(Clip effect) {
-    if (effect != null && !effectsMuted) {
-      effect.start();
+    if (effectsEnabled) {
       effect.setFramePosition(0);
+      effect.start();
     }
   }
 
   private void stop(Clip effect) {
-    if (effect != null && effect.isActive()) {
-      effect.stop();
+    if (effect.isActive()) {
       effect.setFramePosition(0);
+      effect.stop();
     }
   }
 
@@ -143,21 +138,18 @@ public final class TetrisAudioSystem {
   }
 
   private static Clip createClip(String resourcePath) {
-    if (AudioSystem.isLineSupported(Port.Info.SPEAKER) || AudioSystem.isLineSupported(Port.Info.HEADPHONE)) {
-      try {
-        URL audioFile = TetrisAudioSystem.class.getResource(resourcePath);
-        if (audioFile == null) {
-          throw new RuntimeException("Audio file not found for path " + resourcePath);
-        }
-        AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioFile);
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioIn);
-        return clip;
-      } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-        throw new RuntimeException(e);
+    try {
+      URL audioFile = TetrisAudioSystem.class.getResource(resourcePath);
+      if (audioFile == null) {
+        throw new RuntimeException("Audio file not found for path " + resourcePath);
       }
+      AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioFile);
+      Clip clip = AudioSystem.getClip();
+      clip.open(audioIn);
+      return clip;
+    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+      throw new RuntimeException(e);
     }
-    return null;
   }
 
 }

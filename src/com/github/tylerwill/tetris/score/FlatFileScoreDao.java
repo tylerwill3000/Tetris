@@ -37,7 +37,7 @@ public class FlatFileScoreDao implements ScoreDao {
   public void _saveScore(Score toSave) throws Exception  {
     List<Score> allScores = getAllScores();
     allScores.add(toSave);
-    Collections.sort(allScores);
+    Collections.sort(allScores, (s1, s2) -> s2.points - s1.points); // Sort by points DESC
 
     if (allScores.size() > MIN_RANK) {
       allScores = allScores.subList(0, MIN_RANK);

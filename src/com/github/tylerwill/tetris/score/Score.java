@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class Score implements Comparable<Score>, Serializable {
+public class Score implements Serializable {
 
   public int points;
   public int linesCleared;
@@ -51,11 +51,6 @@ public class Score implements Comparable<Score>, Serializable {
              Objects.equals(dateAchieved, other.dateAchieved);
     }
     return false;
-  }
-
-  @Override
-  public int compareTo(Score other) {
-    return other.points - points;
   }
 
 }

@@ -35,9 +35,9 @@ public interface ScoreDao {
     return rank;
   }
 
-  default int determineRank(int score) throws Exception {
+  default int determineRank(int pointsOfScoreToSave) throws Exception {
     long numScoresGreater = getAllScores().stream()
-                                       .filter(existingScore -> existingScore.points > score)
+                                       .filter(existingScore -> existingScore.points > pointsOfScoreToSave)
                                        .count();
     return (int) numScoresGreater + 1;
   }
