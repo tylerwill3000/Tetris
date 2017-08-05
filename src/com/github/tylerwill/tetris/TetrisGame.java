@@ -347,8 +347,7 @@ public class TetrisGame extends EventSource {
 
     // Points from raw lines cleared
     int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
-    int difficultyBonus = completedLines * difficulty.getLinesClearedBonus();
-    newScore += (linePoints + difficultyBonus);
+    newScore += linePoints;
 
      // Bonuses for special blocks
     newScore += BlockType.getSpecialBlocks()
