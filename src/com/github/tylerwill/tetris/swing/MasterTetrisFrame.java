@@ -207,7 +207,7 @@ public class MasterTetrisFrame extends JFrame {
     keys_action.put("Alt + 'P':",   "Pause game");
     keys_action.put("Alt + 'R':",   "Resume game");
     keys_action.put("Alt + 'G':",   "Give up");
-    keys_action.put("Alt + 'H':",   "View high scores");
+    keys_action.put("Alt + 'L':",   "View leaderboard");
 
     JPanel keys = new JPanel(new GridLayout(keys_action.size(), 1));
     JPanel actions = new JPanel(new GridLayout(keys_action.size(), 1));
