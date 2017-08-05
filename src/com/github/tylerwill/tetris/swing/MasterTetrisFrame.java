@@ -20,6 +20,9 @@ import java.util.concurrent.Future;
 
 public class MasterTetrisFrame extends JFrame {
 
+  // Prevents tooltips from disappearing while mouse is over them
+  static { ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE); }
+
   static final Font ARIAL_HEADER = new Font("Arial", Font.BOLD, 17);
   static final Font ARIAL_DESCRIPTION = new Font("Arial", Font.PLAIN, 13);
   private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
@@ -614,14 +617,18 @@ public class MasterTetrisFrame extends JFrame {
     SettingsPanel() {
 
       musicCheckbox = new JCheckBox("Music", true);
+      musicCheckbox.setToolTipText("Controls whether music is played during game play");
       musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
 
       soundEffectsCheckbox = new JCheckBox("Sound Effects", true);
+      soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
       soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
       saveScoresCheckbox = new JCheckBox("Save Scores", true);
+      saveScoresCheckbox.setToolTipText("Controls whether you are prompted to save your score after the game is finished");
 
       ghostSquaresCheckbox = new JCheckBox("Ghost Squares", true);
+      ghostSquaresCheckbox.setToolTipText("Controls whether block placement squares are shown as the block falls");
       ghostSquaresCheckbox.addItemListener(e -> {
         game.setGhostSquaresEnabled(ghostSquaresCheckbox.isSelected());
         boardPanel.repaint();
@@ -629,10 +636,17 @@ public class MasterTetrisFrame extends JFrame {
 
       timeAttackCheckbox = new JCheckBox("Time Attack Mode", false);
       timeAttackCheckbox.addItemListener(e -> game.setTimeAttack(timeAttackCheckbox.isSelected()));
-      timeAttackCheckbox.setToolTipText("When on, grants a bonus per level cleared: " +
-                                          "+" + Difficulty.EASY.getTimeAttackBonus() + " points on easy, " +
-                                          "+" + Difficulty.MEDIUM.getTimeAttackBonus() + " points on medium, " +
-                                          "+" + Difficulty.HARD.getTimeAttackBonus() + " points on hard");
+      timeAttackCheckbox.setToolTipText(
+        "<html>" +
+          "<p>Limits available time per level as well as grants a point bonus per level cleared:</p>" +
+          "<ul>" +
+            "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
+            "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
+            "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
+          "</ul>" +
+          "<p>The amount of time remaining at the end of each level is rolled over to the next level</p>" +
+       "</html>"
+      );
 
       difficultyCombobox = new JComboBox<>(Difficulty.values());
       difficultyCombobox.addActionListener(e -> game.setDifficulty(getSelectedDifficulty()));
@@ -654,6 +668,39 @@ public class MasterTetrisFrame extends JFrame {
       JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       diffPanel.add(new JLabel("Difficulty:  "));
       diffPanel.add(difficultyCombobox);
+      difficultyCombobox.setToolTipText(
+        "<html>" +
+          "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
+          "<ul>" +
+            "<li>" +
+              "Number of lines required to complete each level:" +
+              "<ul>" +
+                "<li>" + Difficulty.EASY.getLinesPerLevel() + " on easy</li>" +
+                "<li>" + Difficulty.MEDIUM.getLinesPerLevel() + " on medium</li>" +
+                "<li>" + Difficulty.HARD.getLinesPerLevel() + " on hard</li>" +
+              "</ul>" +
+            "</li>" +
+            "<li>" +
+              "Bonus points awared upon game completion:" +
+              "<ul>" +
+                "<li>" + Difficulty.EASY.getWinBonus() + " on easy</li>" +
+                "<li>" + Difficulty.MEDIUM.getWinBonus() + " on medium</li>" +
+                "<li>" + Difficulty.HARD.getWinBonus() + " on hard</li>" +
+              "</ul>" +
+            "</li>" +
+            "<li>The likelihood of different block types appearing. Harder difficulties will cause 'easier' blocks to appear less often</li>" +
+            "<li>" +
+              "Initial block speed:" +
+              "<ul>" +
+                "<li>Initial fall delay of " + Difficulty.EASY.getInitialTimerDelay() + " milliseconds on easy</li>" +
+                "<li>Initial fall delay of " + Difficulty.MEDIUM.getInitialTimerDelay() + " milliseconds on medium</li>" +
+                "<li>Initial fall delay of " + Difficulty.HARD.getInitialTimerDelay() + " milliseconds on hard</li>" +
+              "</ul>" +
+            "</li>" +
+            "<p>The block falling speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
+          "</ul>" +
+        "</html>"
+      );
 
       add(checkboxPanel, BorderLayout.NORTH);
       add(diffPanel, BorderLayout.CENTER);

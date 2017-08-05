@@ -146,7 +146,7 @@ public class TetrisGame extends EventSource {
       publish(TetrisEvent.GAME_WON, level);
     } else {
       int initialDelay = difficulty.getInitialTimerDelay();
-      int totalSpeedup = (level - 1) * difficulty.getTimerSpeedup();
+      int totalSpeedup = (level - 1) * Difficulty.TIMER_SPEEDUP;
       int newDelay = initialDelay - totalSpeedup;
       fallTimer.setDelay(newDelay);
       publish(TetrisEvent.LEVEL_CHANGED, newLevel);
