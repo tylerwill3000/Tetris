@@ -148,8 +148,8 @@ public class MasterTetrisFrame extends JFrame {
       scorePanel.timeProgressBar.repaint();
     });
 
-    this.game.subscribe(new TetrisEvent[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, event -> onGameOver());
-    this.game.subscribe(TetrisEvent.GAME_WON, event -> onWin());
+    this.game.subscribe(new TetrisEvent[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, e -> onGameOver());
+    this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
     this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
       int lines = (int) event;
       audioSystem.playClearLineSound(lines);
@@ -169,7 +169,6 @@ public class MasterTetrisFrame extends JFrame {
         flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.YELLOW));
       }
     });
-
     this.game.subscribe(TetrisEvent.SCORE_CHANGED, score -> scorePanel.scoreLabel.repaint());
 
     this.boardPanel = new BoardPanel();
@@ -545,9 +544,9 @@ public class MasterTetrisFrame extends JFrame {
     private JLabel timeLabel = new JLabel("Time: 00:00", JLabel.CENTER) {
       @Override protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        String timeLabel = "Time: " + Utility.formatSeconds(game.getGameTime());
+        String timeLabel = "Time: " + Utility.formatSeconds(game.getCurrentLevelTime());
         if (game.isTimeAttack()) {
-          timeLabel += " / " + Utility.formatSeconds(game.getCurrentTimeAttackLimit());
+          timeLabel += " / " + Utility.formatSeconds(game.getDifficulty().getTimeAttackSecondsPerLevel());
         }
         setText(timeLabel);
       }
@@ -562,8 +561,8 @@ public class MasterTetrisFrame extends JFrame {
     private ProgressBar timeProgressBar = new ProgressBar(11, Color.YELLOW) {
       @Override protected double getCurrentPercentage() {
 
-        int currentTime = game.getGameTime();
-        int maxLimit = game.getCurrentTimeAttackLimit();
+        int currentTime = game.getCurrentLevelTime();
+        int maxLimit = game.getDifficulty().getTimeAttackSecondsPerLevel();
         double percentage = 100.0 * currentTime / maxLimit;
 
         int timeTillMax = maxLimit - currentTime;
@@ -640,11 +639,10 @@ public class MasterTetrisFrame extends JFrame {
         "<html>" +
           "<p>Limits available time per level as well as grants a point bonus per level cleared:</p>" +
           "<ul>" +
-            "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
-            "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
-            "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLine() + "</b> seconds per line and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level</li>" +
+            "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+            "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+            "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
           "</ul>" +
-          "<p>The amount of time remaining at the end of each level is rolled over to the next level</p>" +
        "</html>"
       );
 

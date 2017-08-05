@@ -22,7 +22,7 @@ public class TetrisGame extends EventSource {
 
   private Block activeBlock;
   private Block holdBlock;
-  private BlockConveyor conveyor;
+  private BlockConveyor conveyor = new BlockConveyor();
   private LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
   private Difficulty difficulty;
   private int totalLinesCleared;
@@ -31,14 +31,17 @@ public class TetrisGame extends EventSource {
   private int verticalDimension;
   private int gameTime;
   private int horizontalDimension;
-  private boolean ghostSquaresEnabled;
+  private boolean ghostSquaresEnabled = true;
   private boolean timeAttack;
+  private int currentLevelTime;
   private Timer fallTimer = new Timer(0, e -> tryFall());
   private Timer gameTimer = new Timer(1000, e -> {
     setGameTime(gameTime + 1);
-    if (timeAttack && gameTime >= getCurrentTimeAttackLimit()) {
+    currentLevelTime++;
+    if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
       publish(TetrisEvent.TIME_ATTACK_FAIL, null);
       ((Timer) e.getSource()).stop();
+      fallTimer.stop();
     }
   });
 
@@ -49,13 +52,9 @@ public class TetrisGame extends EventSource {
   private TetrisGame(int verticalDimension, int horizontalDimension) {
     this.verticalDimension = verticalDimension;
     this.horizontalDimension = horizontalDimension;
-    this.ghostSquaresEnabled = true;
-    this.conveyor = new BlockConveyor();
     this.persistedBlocks = IntStream.range(0, verticalDimension)
                                     .mapToObj(i -> new Color[horizontalDimension])
                                     .collect(toCollection(LinkedList::new));
-    setDifficulty(Difficulty.EASY);
-    setLevel(1);
   }
 
   public int getHorizontalDimension() {
@@ -75,15 +74,15 @@ public class TetrisGame extends EventSource {
   }
 
   public void setHoldBlock(Block block) {
-    this.holdBlock = Objects.requireNonNull(block, "Hold block may not be null");
+    this.holdBlock = block;
+  }
+
+  public void clearHoldBlock() {
+    setHoldBlock(null);
   }
 
   public void setGhostSquaresEnabled(boolean ghostSquaresEnabled) {
     this.ghostSquaresEnabled = ghostSquaresEnabled;
-  }
-
-  public void clearHoldBlock() {
-    this.holdBlock = null;
   }
 
   public Timer getFallTimer() {
@@ -133,22 +132,28 @@ public class TetrisGame extends EventSource {
     this.timeAttack = timeAttack;
   }
 
+  public int getCurrentLevelTime() {
+    return this.currentLevelTime;
+  }
+
   public int getLevel() {
     return level;
   }
 
   private void setLevel(int newLevel) {
-    this.level = newLevel;
     if (newLevel >= MAX_LEVEL) {
+      this.level = MAX_LEVEL;
       fallTimer.stop();
       gameTimer.stop();
       clearActiveBlock(); // Needed so that this block's squares don't get re-painted during victory clear animation
       publish(TetrisEvent.GAME_WON, level);
-    } else {
+    } else if (newLevel != this.level) {
+      this.level = newLevel;
       int initialDelay = difficulty.getInitialTimerDelay();
       int totalSpeedup = (level - 1) * Difficulty.TIMER_SPEEDUP;
       int newDelay = initialDelay - totalSpeedup;
       fallTimer.setDelay(newDelay);
+      this.currentLevelTime = 0;
       publish(TetrisEvent.LEVEL_CHANGED, newLevel);
     }
   }
@@ -173,16 +178,8 @@ public class TetrisGame extends EventSource {
     return totalLinesCleared;
   }
 
-  private int getCurrentLevelLinesNeeded() {
-    return level * difficulty.getLinesPerLevel();
-  }
-
-  public int getCurrentTimeAttackLimit() {
-    return getCurrentLevelLinesNeeded() * difficulty.getTimeAttackSecondsPerLine();
-  }
-
   public int getCurrentLevelLinesCleared() {
-    int lastLevelThreshold = difficulty.getLinesPerLevel() * (level - 1);
+    int lastLevelThreshold = level == 0 ? 0 : difficulty.getLinesPerLevel() * (level - 1);
     return totalLinesCleared - lastLevelThreshold;
   }
 
@@ -320,13 +317,17 @@ public class TetrisGame extends EventSource {
   }
 
   public void beginNew() {
-
     setGameTime(0);
     setScore(0);
+
+    // Necessary in order to cause level change listeners to fire if we are starting a new game and the previous game ended at level 1
+    // There is probably a cleaner way to handle this
+    this.level = 0;
     setLevel(1);
 
     // The reason we use setters for the score info but not these are because score info changes publish events, these don't
     this.totalLinesCleared = 0;
+    this.currentLevelTime = 0;
     clearActiveBlock();
     clearHoldBlock();
 
@@ -371,10 +372,7 @@ public class TetrisGame extends EventSource {
       }
     }
 
-    if (newLevel > this.level) {
-      setLevel(newLevel);
-    }
-
+    setLevel(newLevel);
     setScore(newScore);
   }
 

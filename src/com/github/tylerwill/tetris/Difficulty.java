@@ -7,7 +7,7 @@ import static com.github.tylerwill.tetris.Utility.map;
 
 public enum Difficulty {
 
-  EASY(15, 600, 100, 4, 250, map(
+  EASY(15, 600, 100, 60, 250, map(
     BOX, 14,
     L_BLOCK_L, 14,
     L_BLOCK_R, 14,
@@ -20,7 +20,7 @@ public enum Difficulty {
     DIAMOND, 5
   )),
 
-  MEDIUM(20, 575, 150, 4, 500, map(
+  MEDIUM(20, 575, 150, 70, 500, map(
     BOX, 13,
     L_BLOCK_L, 15,
     L_BLOCK_R, 14,
@@ -33,7 +33,7 @@ public enum Difficulty {
     DIAMOND, 5
   )),
 
-  HARD(25, 550, 200, 3, 1000, map(
+  HARD(25, 550, 200, 80, 1000, map(
     BOX, 12,
     L_BLOCK_L, 15,
     L_BLOCK_R, 14,
@@ -51,15 +51,15 @@ public enum Difficulty {
   protected int linesPerLevel;
   protected int initialTimerDelay;
   protected int timeAttackBonus;
-  protected int timeAttackSecondsPerLine;
+  protected int timeAttackSecondsPerLevel;
   protected int winBonus;
   protected Map<BlockType, Integer> type_spawn;
 
-  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLine, int winBonus, Map<BlockType, Integer> type_spawn) {
+  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> type_spawn) {
     this.linesPerLevel = linesPerLevel;
     this.initialTimerDelay = initialTimerDelay;
     this.timeAttackBonus = timeAttackBonus;
-    this.timeAttackSecondsPerLine = timeAttackSecondsPerLine;
+    this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
     this.winBonus = winBonus;
     this.type_spawn = type_spawn;
   }
@@ -76,8 +76,8 @@ public enum Difficulty {
     return timeAttackBonus;
   }
 
-  public int getTimeAttackSecondsPerLine() {
-    return timeAttackSecondsPerLine;
+  public int getTimeAttackSecondsPerLevel() {
+    return timeAttackSecondsPerLevel;
   }
 
   public int getWinBonus() {
