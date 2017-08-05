@@ -142,6 +142,7 @@ public class TetrisGame extends EventSource {
     if (newLevel >= MAX_LEVEL) {
       fallTimer.stop();
       gameTimer.stop();
+      activeBlock = null; // Needed so that this block's squares don't get re-painted during victory clear animation
       publish(TetrisEvent.GAME_WON, level);
     } else {
       int initialDelay = difficulty.getInitialTimerDelay();
@@ -356,7 +357,6 @@ public class TetrisGame extends EventSource {
                          .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                          .sum();
 
-    // Level ups
     int newLevel = this.level;
     while (totalLinesCleared >= (newLevel * difficulty.getLinesPerLevel())) {
 

@@ -35,39 +35,41 @@ public final class TetrisAudioSystem {
   private static final Clip HOLD = createClip("/audio/effects/clang.wav");
   private static final Clip RELEASE = createClip("/audio/effects/water-drop.wav");
 
+  private Clip currentSoundtrack;
   private boolean soundtrackEnabled = true;
   private boolean effectsEnabled = true;
 
   public TetrisAudioSystem() {}
 
-  public void setSoundtrackEnabled(boolean muted) {
-    this.soundtrackEnabled = muted;
+  public void setSoundtrackEnabled(boolean enabled) {
+    this.soundtrackEnabled = enabled;
   }
 
-  public void setEffectsEnabled(boolean muted) {
-    this.effectsEnabled = muted;
+  public void setEffectsEnabled(boolean enabled) {
+    this.effectsEnabled = enabled;
   }
 
   public void startSoundtrack(int level) {
     if (soundtrackEnabled) {
+      if (currentSoundtrack != null) {
+        currentSoundtrack.stop();
+      }
       Clip track = getSoundtrack(level);
       track.setFramePosition(0);
       track.loop(Clip.LOOP_CONTINUOUSLY);
+      currentSoundtrack = track;
     }
   }
 
-  public void resumeSoundtrack(int level) {
-    if (soundtrackEnabled) {
-      getSoundtrack(level).loop(Clip.LOOP_CONTINUOUSLY);
+  public void resumeCurrentSoundtrack() {
+    if (soundtrackEnabled && currentSoundtrack != null) {
+      currentSoundtrack.loop(Clip.LOOP_CONTINUOUSLY);
     }
   }
 
-  public void stopSoundtrack(int level) {
-    if (soundtrackEnabled) {
-      Clip track = getSoundtrack(level);
-      if (track.isRunning()) {
-        track.stop();
-      }
+  public void stopCurrentSoundtrack() {
+    if (soundtrackEnabled && currentSoundtrack != null) {
+      currentSoundtrack.stop();
     }
   }
 
