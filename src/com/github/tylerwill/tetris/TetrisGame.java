@@ -391,7 +391,7 @@ public class TetrisGame extends EventSource {
 
       List<Block.ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
 
-      boolean anyVisible = spawnSquares.stream().filter(sq -> sq.getRow() >= 3).count() > 0;
+      boolean anyVisible = spawnSquares.stream().filter(square -> square.getRow() >= 3).count() > 0;
       if (!anyVisible) {
         fallTimer.stop();
         gameTimer.stop();
@@ -399,7 +399,7 @@ public class TetrisGame extends EventSource {
         return false;
       }
 
-      boolean allOpen = spawnSquares.stream().allMatch(sq -> isOpen(sq.getRow(), sq.getColumn()));
+      boolean allOpen = spawnSquares.stream().allMatch(square -> isOpen(square.getRow(), square.getColumn()));
       if (allOpen) {
         block.setLocation(startRow, startCol);
         this.activeBlock = block;

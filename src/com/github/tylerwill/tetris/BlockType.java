@@ -387,10 +387,6 @@ public enum BlockType {
     return startRow;
   }
 
-  public Color getColor() {
-    return color;
-  }
-
   public int getBonusPointsPerLine() {
     return bonusPointsPerLine;
   }

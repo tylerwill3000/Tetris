@@ -4,10 +4,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-/**
- *  Data-layer class that represents blocks and provides an interface for changing their position and orientation
- * @author Tyler
- */
+/**  Data-layer class that represents blocks and provides an interface for changing their position and orientation */
 public class Block {
 
   private BlockType blockType;
@@ -21,23 +18,15 @@ public class Block {
     this.orientation = 0;
   }
 
-  public int getRow() {
+  int getRow() {
     return location[0];
   }
 
-  public int getColumn() {
+  int getColumn() {
     return location[1];
   }
 
-  public int getOrientation() {
-    return orientation;
-  }
-
-  public Color getColor() {
-    return blockType.getColor();
-  }
-
-  public List<ColoredSquare> getOccupiedSquares() {
+  List<ColoredSquare> getOccupiedSquares() {
     return blockType.calcOccupiedSquares(orientation, location[0], location[1]);
   }
 
@@ -53,7 +42,7 @@ public class Block {
     return isHoldBlock;
   }
 
-  public BlockType getType() {
+  BlockType getType() {
     return blockType;
   }
 
@@ -63,7 +52,7 @@ public class Block {
   }
 
   void setLocation(int row, int col) {
-    this.location = new int[]{row, col};
+    this.location = new int[]{ row, col };
   }
 
   void rotate(int rotation) {
@@ -103,16 +92,8 @@ public class Block {
       return row;
     }
 
-    public void setRow(int row) {
-      this.row = row;
-    }
-
     public int getColumn() {
       return col;
-    }
-
-    public void setColumn(int col) {
-      this.col = col;
     }
 
     @Override

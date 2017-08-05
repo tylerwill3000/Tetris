@@ -3,9 +3,7 @@ package com.github.tylerwill.tetris;
 import java.util.*;
 import java.util.stream.IntStream;
 
-/**
- * Manages generating new blocks and maintaining the queue of upcoming blocks
- */
+/** Manages generating new blocks and maintaining the queue of upcoming blocks */
 public final class BlockConveyor {
 
   private static final int DEFAULT_INITIAL_BLOCKS = 2;
@@ -14,7 +12,7 @@ public final class BlockConveyor {
   private List<BlockType> typeSampleList;
   private Queue<Block> conveyor;
 
-  public BlockConveyor() {
+  BlockConveyor() {
     typeSampleList = new ArrayList<>();
     conveyor = new LinkedList<>();
     enabledTypes = new HashSet<>();
@@ -29,16 +27,16 @@ public final class BlockConveyor {
     return conveyor.peek();
   }
 
-  public void refresh() {
+  void refresh() {
     refresh(DEFAULT_INITIAL_BLOCKS);
   }
 
-  public void refresh(int initialBlocks) {
+  private void refresh(int initialBlocks) {
     conveyor.clear();
     IntStream.range(0, initialBlocks).forEach(i -> conveyor.add(generateBlock()));
   }
 
-  public void setDifficulty(Difficulty difficulty) {
+  void setDifficulty(Difficulty difficulty) {
     typeSampleList.clear();
     BlockType.getDefaultBlocks().forEach(type -> enableBlockType(difficulty, type));
   }

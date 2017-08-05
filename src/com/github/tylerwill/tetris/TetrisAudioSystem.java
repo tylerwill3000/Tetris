@@ -143,7 +143,7 @@ public final class TetrisAudioSystem {
     try {
       URL audioFile = TetrisAudioSystem.class.getResource(resourcePath);
       if (audioFile == null) {
-        throw new RuntimeException("Audio file not found for path " + resourcePath);
+        throw new RuntimeException("Audio file not found for path [" + resourcePath + "]");
       }
       AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioFile);
       Clip clip = AudioSystem.getClip();
