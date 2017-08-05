@@ -4,7 +4,6 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
 
-/** Provides an interface to the game's audio */
 public final class TetrisAudioSystem {
 
   private static final Clip[] SOUNDTRACK = {

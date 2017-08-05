@@ -1,9 +1,6 @@
 package com.github.tylerwill.tetris.score;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,17 +15,20 @@ public class FlatFileScoreDao implements ScoreDao {
   public List<Score> getAllScores() throws Exception {
     if (!Files.exists(SAVE_PATH)) {
       return new ArrayList<>();
-    } else {
-      try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-        @SuppressWarnings("unchecked")
-        List<Score> scores = (List<Score>) objIn.readObject();
-        for (int rank = 1; rank <= scores.size(); rank++) {
-          scores.get(rank -1).rank = rank;
-        }
-        return scores;
-      } catch (Exception e) {
-        throw new Exception("Malformed high scores file", e);
+    }
+    try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
+
+      @SuppressWarnings("unchecked")
+      List<Score> scores = (List<Score>) objIn.readObject();
+      scores.sort((s1, s2) -> s2.points - s1.points); // Sort by points DESC
+
+      for (int rank = 1; rank <= scores.size(); rank++) {
+        scores.get(rank -1).rank = rank;
       }
+
+      return scores;
+    } catch (IOException | ClassNotFoundException e) {
+      throw new Exception("Malformed high scores file", e);
     }
   }
 
@@ -36,7 +36,6 @@ public class FlatFileScoreDao implements ScoreDao {
   public void _saveScore(Score toSave) throws Exception  {
     List<Score> allScores = getAllScores();
     allScores.add(toSave);
-    allScores.sort((s1, s2) -> s2.points - s1.points); // Sort by points DESC
 
     if (allScores.size() > MIN_RANK) {
       allScores = allScores.subList(0, MIN_RANK);

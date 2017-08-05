@@ -391,9 +391,7 @@ public enum BlockType {
     return bonusPointsPerLine;
   }
 
-  /**
-   * Renders the list of squares this type occupies at the given orientation, row and column
-   */
+  /** Calculates the list of squares this type occupies at the given orientation, row and column */
   public List<Block.ColoredSquare> calcOccupiedSquares(int orientation, int row, int col) {
     if (orientation < 0 || orientation > 3) {
       throw new IllegalArgumentException("Orientation value must be between 0 and 3");

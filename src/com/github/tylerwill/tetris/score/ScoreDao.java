@@ -11,25 +11,26 @@ public interface ScoreDao {
 
   int MIN_RANK = 25;
 
-  default List<Score> getAllScores() throws Exception {
-    return getScores(Optional.empty(), Optional.empty());
-  }
-
   default List<Score> getScores(Optional<Difficulty> difficulty, Optional<Integer> limit) throws Exception {
-    Stream<Score> scores = getAllScores().stream();
+    List<Score> allScores = getAllScores();
+    if (!difficulty.isPresent() && !limit.isPresent()) {
+      return allScores;
+    }
+
+    Stream<Score> scoresStream = allScores.stream();
     if (difficulty.isPresent()) {
-      scores = scores.filter(score -> difficulty.get() == score.difficulty);
+      scoresStream = scoresStream.filter(score -> difficulty.get() == score.difficulty);
     }
     if (limit.isPresent()) {
-      scores = scores.limit(limit.get());
+      scoresStream = scoresStream.limit(limit.get());
     }
-    return scores.collect(Collectors.toList());
+    return scoresStream.collect(Collectors.toList());
   }
 
   default int saveScore(Score score) throws Exception {
     int rank = determineRank(score.points);
     if (!isHighScore(rank)) {
-      throw new IllegalArgumentException("Cannot save score " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
+      throw new IllegalArgumentException("Cannot save " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
     }
     _saveScore(score);
     return rank;
@@ -37,14 +38,16 @@ public interface ScoreDao {
 
   default int determineRank(int pointsOfScoreToSave) throws Exception {
     long numScoresGreater = getAllScores().stream()
-                                       .filter(existingScore -> existingScore.points > pointsOfScoreToSave)
-                                       .count();
+                                          .filter(existingScore -> existingScore.points > pointsOfScoreToSave)
+                                          .count();
     return (int) numScoresGreater + 1;
   }
 
   static boolean isHighScore(int rank) {
     return rank <= MIN_RANK;
   }
+
+  List<Score> getAllScores() throws Exception;
 
   void _saveScore(Score score) throws Exception;
 

@@ -9,7 +9,7 @@ import java.util.Collection;
 class BlockDisplayPanel extends PixelGrid {
 
   static final int DEFAULT_BLOCK_DIMENSION = 35;
-  static final int BLOCK_PADDING = 15;
+  private static final int BLOCK_PADDING = 15;
 
   private Block currentBlock;
 

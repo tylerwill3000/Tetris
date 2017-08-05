@@ -142,7 +142,7 @@ public class TetrisGame extends EventSource {
     if (newLevel >= MAX_LEVEL) {
       fallTimer.stop();
       gameTimer.stop();
-      activeBlock = null; // Needed so that this block's squares don't get re-painted during victory clear animation
+      clearActiveBlock(); // Needed so that this block's squares don't get re-painted during victory clear animation
       publish(TetrisEvent.GAME_WON, level);
     } else {
       int initialDelay = difficulty.getInitialTimerDelay();
@@ -327,8 +327,8 @@ public class TetrisGame extends EventSource {
 
     // The reason we use setters for the score info but not these are because score info changes publish events, these don't
     this.totalLinesCleared = 0;
-    this.activeBlock = null;
-    this.holdBlock = null;
+    clearActiveBlock();
+    clearHoldBlock();
 
     this.persistedBlocks.forEach(row -> Arrays.fill(row, null));
 

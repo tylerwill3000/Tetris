@@ -145,7 +145,7 @@ public class MasterTetrisFrame extends JFrame {
       scorePanel.timeProgressBar.repaint();
     });
 
-    this.game.subscribe(new String[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, event -> onGameOver());
+    this.game.subscribe(new TetrisEvent[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, event -> onGameOver());
     this.game.subscribe(TetrisEvent.GAME_WON, event -> onWin());
     this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
       int lines = (int) event;

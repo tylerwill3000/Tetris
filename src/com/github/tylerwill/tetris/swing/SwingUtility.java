@@ -4,6 +4,8 @@ import javax.swing.*;
 
 public final class SwingUtility {
 
+  private SwingUtility() {}
+
   /** Sets the icon image for a frame. The image must exist in the same directory* as the frame class' .class file */
   public static void setIcon(JFrame f, String image) {
     f.setIconImage(new ImageIcon(f.getClass().getResource(image)).getImage());

@@ -27,7 +27,11 @@ public final class Utility {
            (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
   }
 
+  @SuppressWarnings("unchecked")
   public static <K, V> Map<K, V> map(Object... entries) {
+    if (entries.length % 2 != 0) {
+      throw new IllegalArgumentException("Number of entry arguments must be divisible by 2");
+    }
     Map<K, V> map = new HashMap<>(entries.length);
     for (int i = 0; i < entries.length - 1; i++) {
       map.put((K) entries[i], (V) entries[i + 1]);

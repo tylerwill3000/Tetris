@@ -9,9 +9,9 @@ import java.util.Collection;
 /** Objects of this class are grid-based panels that represent a set of 'pixels'  */
 abstract class PixelGrid extends JPanel {
 
-  protected int rows;
-  protected int columns;
-  protected int padding;
+  int rows;
+  int columns;
+  int padding;
   private SquareStyle squareStyle;
 
   PixelGrid(int rows, int columns, int pixelDimension) {
@@ -72,11 +72,11 @@ abstract class PixelGrid extends JPanel {
     return (getHeight() - padding * 2) / rows;
   }
 
-  int getXCoordinate(Block.ColoredSquare square) {
+  protected int getXCoordinate(Block.ColoredSquare square) {
     return square.getColumn() * getUnitWidth();
   }
 
-  int getYCoordinate(Block.ColoredSquare square) {
+  protected int getYCoordinate(Block.ColoredSquare square) {
     return square.getRow() * getUnitHeight();
   }
 

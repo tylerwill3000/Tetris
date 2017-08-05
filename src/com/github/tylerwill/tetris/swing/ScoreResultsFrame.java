@@ -68,7 +68,6 @@ class ScoreResultsFrame extends JFrame {
         } catch (Exception ex) {
           ex.printStackTrace();
           JOptionPane.showMessageDialog(null, "Error saving score: " + ex.getMessage());
-          return;
         }
       });
 

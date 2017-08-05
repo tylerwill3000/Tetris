@@ -11,7 +11,7 @@ abstract class ProgressBar extends PixelGrid {
 
   private static final int PROGRESS_BAR_DIMENSION = 13;
 
-  protected Color barColor;
+  Color barColor;
   private double percentagePerPanel;
 
   ProgressBar(int cols, Color barColor) {

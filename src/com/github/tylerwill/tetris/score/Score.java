@@ -1,6 +1,7 @@
 package com.github.tylerwill.tetris.score;
 
 import com.github.tylerwill.tetris.Difficulty;
+import com.github.tylerwill.tetris.Utility;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -51,6 +52,12 @@ public class Score implements Serializable {
              Objects.equals(dateAchieved, other.dateAchieved);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Score(rank=%i, name=%s, points=%i, gameTime=%s, difficulty=%s, dateAchieved=%s, maxLevel=%i, linesCleared=%i)",
+                             rank, name, points, Utility.formatSeconds(gameTime), difficulty.toString(), dateAchieved.toString(), maxLevel, linesCleared);
   }
 
 }

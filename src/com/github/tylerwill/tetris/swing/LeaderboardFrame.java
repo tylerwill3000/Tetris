@@ -27,8 +27,6 @@ class LeaderboardFrame extends JFrame {
 
   private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
   private int highlightRank = -1;
-  private TetrisButton clearButton = new TetrisButton("Clear Scores");
-  private TetrisButton closeButton = new TetrisButton("Close");
   private JTable scoresTable = new JTable();
   private ScoreDao scoresDao;
 
@@ -47,6 +45,8 @@ class LeaderboardFrame extends JFrame {
     difficulties.setSelectedItem("All");
     difficulties.addActionListener(e -> refreshTable());
 
+    TetrisButton clearButton = new TetrisButton("Clear Scores");
+    clearButton.setMnemonic('c');
     clearButton.addActionListener(e -> {
       int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete all saved scores? This cannot be undone", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
       if (result == JOptionPane.YES_OPTION) {
@@ -56,10 +56,12 @@ class LeaderboardFrame extends JFrame {
         } catch (Exception ex) {
           ex.printStackTrace();
           JOptionPane.showMessageDialog(null, "Error clearing scores: " + ex.getMessage());
-          return;
         }
       }
     });
+
+    TetrisButton closeButton = new TetrisButton("Close");
+    closeButton.setMnemonic('l');
     closeButton.addActionListener(e -> dispose());
 
     JPanel recordSelectorPanel = new JPanel();
@@ -85,12 +87,13 @@ class LeaderboardFrame extends JFrame {
   // controls whether to destroy the window upon failed DB connection
   private void refreshTable() {
 
-    int difficultyIndex = difficulties.getSelectedIndex();
-    Difficulty difficulty = difficultyIndex == 3 ? null : Difficulty.values()[difficultyIndex];
+    int selectedIndex = difficulties.getSelectedIndex();
+    String selectedItem = (String) difficulties.getSelectedItem();
+    Difficulty selectedDifficulty = "All".equals(selectedItem) ? null : Difficulty.values()[selectedIndex];
 
     Object[][] scoreData;
     try {
-      scoreData = scoresDao.getScores(Optional.ofNullable(difficulty), Optional.empty())
+      scoreData = scoresDao.getScores(Optional.ofNullable(selectedDifficulty), Optional.empty())
                            .stream()
                            .map(score -> new Object[]{
                              score.rank,
