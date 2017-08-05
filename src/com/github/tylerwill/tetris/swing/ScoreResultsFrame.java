@@ -67,7 +67,7 @@ class ScoreResultsFrame extends JFrame {
           new LeaderboardFrame(scoresDao, rank);
         } catch (Exception ex) {
           ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Error saving score: " + ex.getMessage());
+          JOptionPane.showMessageDialog(null, "Error saving score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
       });
 

@@ -107,7 +107,7 @@ class LeaderboardFrame extends JFrame {
                            .toArray(Object[][]::new);
     } catch (Exception ex) {
       ex.printStackTrace();
-      JOptionPane.showMessageDialog(null, "Error reading scores: " + ex.getMessage());
+      JOptionPane.showMessageDialog(null, "Error reading scores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
       return;
     }
 
