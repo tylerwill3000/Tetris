@@ -343,6 +343,10 @@ public class TetrisGame extends EventSource {
   private void increaseScore(int completedLines) {
 
     totalLinesCleared += completedLines;
+    int maxGameLines = difficulty.getLinesPerLevel() * (MAX_LEVEL - 1);
+    if (totalLinesCleared > maxGameLines) {
+      totalLinesCleared = maxGameLines;
+    }
 
     int newScore = this.score;
 
@@ -357,25 +361,19 @@ public class TetrisGame extends EventSource {
                          .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                          .sum();
 
-    int newLevel = this.level;
-    while (totalLinesCleared >= (newLevel * difficulty.getLinesPerLevel()) && newLevel < MAX_LEVEL) {
-      newLevel++;
-    }
+    int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
+    int newLevel = 1 + levelsCompleted;
+    int levelIncrease = newLevel - this.level;
 
-    if (timeAttack && newLevel > this.level) {
-      int levelIncrease = newLevel - this.level;
+    if (timeAttack && levelIncrease > 0) {
       newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
     }
 
     if (newLevel == MAX_LEVEL) {
       newScore += difficulty.getWinBonus();
-      int maxGameLines = difficulty.getLinesPerLevel() * (MAX_LEVEL - 1);
-      if (totalLinesCleared > maxGameLines) {
-        totalLinesCleared = maxGameLines;
-      }
     }
 
-    if (newLevel != this.level) {
+    if (levelIncrease > 0) {
       setLevel(newLevel);
     }
     setScore(newScore);
