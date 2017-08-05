@@ -679,7 +679,7 @@ public class MasterTetrisFrame extends JFrame {
               "</ul>" +
             "</li>" +
             "<li>" +
-              "Bonus points awared upon game completion:" +
+              "Bonus points awarded upon game completion:" +
               "<ul>" +
                 "<li>" + Difficulty.EASY.getWinBonus() + " on easy</li>" +
                 "<li>" + Difficulty.MEDIUM.getWinBonus() + " on medium</li>" +
