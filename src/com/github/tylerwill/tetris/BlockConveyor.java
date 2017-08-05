@@ -1,7 +1,8 @@
 package com.github.tylerwill.tetris;
 
 import java.util.*;
-import java.util.stream.IntStream;
+
+import static com.github.tylerwill.tetris.Utility.nTimes;
 
 /** Manages generating new blocks and maintaining the queue of upcoming blocks */
 public final class BlockConveyor {
@@ -33,7 +34,7 @@ public final class BlockConveyor {
 
   private void refresh(int initialBlocks) {
     conveyor.clear();
-    IntStream.range(0, initialBlocks).forEach(i -> conveyor.add(generateBlock()));
+    nTimes(initialBlocks, i -> conveyor.add(generateBlock()));
   }
 
   void setDifficulty(Difficulty difficulty) {
@@ -44,7 +45,7 @@ public final class BlockConveyor {
   public void enableBlockType(Difficulty diff, BlockType blockType) {
     enabledTypes.add(blockType);
     int spawnRate = diff.getSpawnRate(blockType);
-    IntStream.range(0, spawnRate).forEach(i -> typeSampleList.add(blockType));
+    nTimes(spawnRate, i -> typeSampleList.add(blockType));
   }
 
   public void disableBlockType(BlockType toRemove) {
