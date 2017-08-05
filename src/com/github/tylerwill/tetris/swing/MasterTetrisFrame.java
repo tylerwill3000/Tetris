@@ -387,7 +387,7 @@ public class MasterTetrisFrame extends JFrame {
   private class BoardPanel extends PixelGrid {
 
     private static final int SPIRAL_SLEEP_INTERVAL = 8;
-    private static final int CLEAR_SLEEP_INTERVAL = 82;
+    private static final int CLEAR_SLEEP_INTERVAL = 79;
 
     BoardPanel() {
       super(game.getVerticalDimension() - 3, game.getHorizontalDimension(), BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
