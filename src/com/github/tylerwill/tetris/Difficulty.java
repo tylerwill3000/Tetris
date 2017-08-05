@@ -1,77 +1,50 @@
 package com.github.tylerwill.tetris;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.github.tylerwill.tetris.BlockType.*;
+import static com.github.tylerwill.tetris.Utility.map;
 
 public enum Difficulty {
 
-  EASY {{
+  EASY(15, 600, 55, 100, 4, 250, map(
+    BOX, 14,
+    L_BLOCK_L, 14,
+    L_BLOCK_R, 14,
+    S_BLOCK_L, 14,
+    S_BLOCK_R, 14,
+    STRAIGHT_LINE, 14,
+    T_BLOCK, 14,
+    TWIN_PILLARS, 10,
+    ROCKET, 8,
+    DIAMOND, 5
+  )),
 
-    linesPerLevel = 15;
-    initialTimerDelay = 600;
-    timerSpeedup = 55;
-    timeAttackBonus = 100;
-    timeAttackSecondsPerLine = 4;
-    winBonus = 250;
+  MEDIUM(20, 575, 55, 150, 4, 500, map(
+    BOX, 13,
+    L_BLOCK_L, 15,
+    L_BLOCK_R, 14,
+    S_BLOCK_L, 14,
+    S_BLOCK_R, 15,
+    STRAIGHT_LINE, 13,
+    T_BLOCK, 14,
+    TWIN_PILLARS, 10,
+    ROCKET, 8,
+    DIAMOND, 5
+  )),
 
-    type_spawn.put(BOX, 14);
-    type_spawn.put(L_BLOCK_L, 14);
-    type_spawn.put(L_BLOCK_R, 14);
-    type_spawn.put(S_BLOCK_L, 14);
-    type_spawn.put(S_BLOCK_R, 14);
-    type_spawn.put(STRAIGHT_LINE, 14);
-    type_spawn.put(T_BLOCK, 14);
-    type_spawn.put(TWIN_PILLARS, 10);
-    type_spawn.put(ROCKET, 8);
-    type_spawn.put(DIAMOND, 5);
-
-  }},
-
-  MEDIUM {{
-
-    linesPerLevel = 20;
-    initialTimerDelay = 575;
-    timerSpeedup = 55;
-    timeAttackBonus = 150;
-    timeAttackSecondsPerLine = 4;
-    winBonus = 500;
-
-    type_spawn.put(BOX, 13);
-    type_spawn.put(L_BLOCK_L, 15);
-    type_spawn.put(L_BLOCK_R, 14);
-    type_spawn.put(S_BLOCK_L, 14);
-    type_spawn.put(S_BLOCK_R, 15);
-    type_spawn.put(STRAIGHT_LINE, 13);
-    type_spawn.put(T_BLOCK, 14);
-    type_spawn.put(TWIN_PILLARS, 10);
-    type_spawn.put(ROCKET, 8);
-    type_spawn.put(DIAMOND, 5);
-
-  }},
-
-  HARD {{
-
-    linesPerLevel = 25;
-    initialTimerDelay = 550;
-    timerSpeedup = 55;
-    timeAttackBonus = 200;
-    timeAttackSecondsPerLine = 3;
-    winBonus = 1000;
-
-    type_spawn.put(BOX, 12);
-    type_spawn.put(L_BLOCK_L, 15);
-    type_spawn.put(L_BLOCK_R, 14);
-    type_spawn.put(S_BLOCK_L, 15);
-    type_spawn.put(S_BLOCK_R, 15);
-    type_spawn.put(STRAIGHT_LINE, 11);
-    type_spawn.put(T_BLOCK, 14);
-    type_spawn.put(TWIN_PILLARS, 11);
-    type_spawn.put(ROCKET, 8);
-    type_spawn.put(DIAMOND, 6);
-
-  }};
+  HARD(25, 550, 55, 200, 3, 100, map(
+    BOX, 12,
+    L_BLOCK_L, 15,
+    L_BLOCK_R, 14,
+    S_BLOCK_L, 15,
+    S_BLOCK_R, 15,
+    STRAIGHT_LINE, 11,
+    T_BLOCK, 14,
+    TWIN_PILLARS, 11,
+    ROCKET, 8,
+    DIAMOND, 6
+  ));
 
   protected int linesPerLevel;
   protected int initialTimerDelay;
@@ -79,8 +52,17 @@ public enum Difficulty {
   protected int timeAttackBonus;
   protected int timeAttackSecondsPerLine;
   protected int winBonus;
-  protected int linesClearedBonus;
-  protected Map<BlockType, Integer> type_spawn = new HashMap<>();
+  protected Map<BlockType, Integer> type_spawn;
+
+  Difficulty(int linesPerLevel, int initialTimerDelay, int timerSpeedup, int timeAttackBonus, int timeAttackSecondsPerLine, int winBonus, Map<BlockType, Integer> type_spawn) {
+    this.linesPerLevel = linesPerLevel;
+    this.initialTimerDelay = initialTimerDelay;
+    this.timerSpeedup = timerSpeedup;
+    this.timeAttackBonus = timeAttackBonus;
+    this.timeAttackSecondsPerLine = timeAttackSecondsPerLine;
+    this.winBonus = winBonus;
+    this.type_spawn = type_spawn;
+  }
 
   public int getLinesPerLevel() {
     return linesPerLevel;
@@ -104,10 +86,6 @@ public enum Difficulty {
 
   public int getWinBonus() {
     return winBonus;
-  }
-
-  public int getLinesClearedBonus() {
-    return linesClearedBonus;
   }
 
   public int getSpawnRate(BlockType type) {
