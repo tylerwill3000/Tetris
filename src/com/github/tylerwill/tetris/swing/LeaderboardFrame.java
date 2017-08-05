@@ -55,7 +55,7 @@ class LeaderboardFrame extends JFrame {
           refreshTable();
         } catch (Exception ex) {
           ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Error clearing scores: " + ex.getMessage());
+          JOptionPane.showMessageDialog(null, "Error clearing scores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
       }
     });
@@ -108,6 +108,7 @@ class LeaderboardFrame extends JFrame {
     } catch (Exception ex) {
       ex.printStackTrace();
       JOptionPane.showMessageDialog(null, "Error reading scores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      dispose();
       return;
     }
 
