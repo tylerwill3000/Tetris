@@ -3,6 +3,7 @@ package com.github.tylerwill.tetris;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -283,6 +284,45 @@ public enum BlockType {
     4
   ),
 
+  WAVE(
+
+    // Offsets
+    new int[][][]{
+
+      // ..X..
+      // ..X..
+      // .X...
+      // .X...
+      {{0, 1}, {-1, 1}, {-2, 2}, {-3, 2}},
+
+
+      // ....
+      // XX..
+      // ..XX
+      // ....
+      {{-2, 0}, {-2, 1}, {-1, 2}, {-1, 3}},
+
+      // Other 2 orientations cycle back through
+      {{0, 1}, {-1, 1}, {-2, 2}, {-3, 2}},
+      {{-2, 0}, {-2, 1}, {-1, 2}, {-1, 3}},
+    },
+
+    // Next panel squares
+    new int[][]{ {3,1},{2,1},{1,2},{0,2} },
+
+    // Start row
+    6,
+
+    // Color
+    Color.CYAN,
+
+    // Special
+    true,
+
+    // Bonus points per line
+    6
+  ),
+
   ROCKET(
 
     // Offsets
@@ -323,8 +363,9 @@ public enum BlockType {
     true,
 
     // Bonus points per line
-    6
+    8
   ),
+
 
   DIAMOND(
 
@@ -404,7 +445,9 @@ public enum BlockType {
 
   @Override
   public String toString() {
-    return name().charAt(0) + name().substring(1).toLowerCase().replace('_', ' ');
+    return Arrays.stream(name().split("_"))
+                 .map(word -> word.charAt(0) + word.substring(1).toLowerCase())
+                 .collect(Collectors.joining(" "));
   }
 
   public static List<BlockType> getDefaultBlocks() {

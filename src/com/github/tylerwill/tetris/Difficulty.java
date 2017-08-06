@@ -15,8 +15,9 @@ public enum Difficulty {
     S_BLOCK_R, 14,
     STRAIGHT_LINE, 14,
     T_BLOCK, 14,
-    TWIN_PILLARS, 10,
-    ROCKET, 8,
+    TWIN_PILLARS, 11,
+    WAVE, 10,
+    ROCKET, 7,
     DIAMOND, 5
   )),
 
@@ -28,22 +29,24 @@ public enum Difficulty {
     S_BLOCK_R, 15,
     STRAIGHT_LINE, 13,
     T_BLOCK, 14,
-    TWIN_PILLARS, 10,
+    TWIN_PILLARS, 12,
+    WAVE, 10,
     ROCKET, 8,
     DIAMOND, 5
   )),
 
   HARD(25, 550, 200, 80, 1000, map(
-    BOX, 12,
-    L_BLOCK_L, 15,
-    L_BLOCK_R, 14,
+    BOX, 11,
+    L_BLOCK_L, 16,
+    L_BLOCK_R, 15,
     S_BLOCK_L, 15,
-    S_BLOCK_R, 15,
+    S_BLOCK_R, 16,
     STRAIGHT_LINE, 11,
-    T_BLOCK, 14,
-    TWIN_PILLARS, 11,
+    T_BLOCK, 12,
+    TWIN_PILLARS, 13,
+    WAVE, 11,
     ROCKET, 8,
-    DIAMOND, 6
+    DIAMOND, 7
   ));
 
   public static final int TIMER_SPEEDUP = 55;

@@ -769,15 +769,14 @@ public class MasterTetrisFrame extends JFrame {
 
         JLabel pointBonus = new JLabel("+" + blockType.getBonusPointsPerLine() + " points per line");
         pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
-        pointBonus.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        JPanel menu = new JPanel(new BorderLayout());
-        menu.add(selector, BorderLayout.NORTH);
-        menu.add(pointBonus, BorderLayout.SOUTH);
+        JPanel toggleControlPanel = new JPanel(new BorderLayout());
+        toggleControlPanel.add(selector, BorderLayout.NORTH);
+        toggleControlPanel.add(pointBonus, BorderLayout.SOUTH);
 
         JPanel blockPanel = new JPanel(new BorderLayout());
         blockPanel.add(display, BorderLayout.CENTER);
-        blockPanel.add(menu, BorderLayout.SOUTH);
+        blockPanel.add(toggleControlPanel, BorderLayout.SOUTH);
         blockPanels.add(blockPanel);
       }
 
