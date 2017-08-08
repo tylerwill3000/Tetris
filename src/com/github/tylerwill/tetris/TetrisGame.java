@@ -17,9 +17,6 @@ public class TetrisGame extends EventSource {
   private static final int DEFAULT_VERTICAL_CELLS = 23;
   private static final int DEFAULT_HORIZONTAL_CELLS = 10;
 
-  // Maps difficulty -> points per line
-  private static final int[] LINE_POINTS_MAP = { 10, 15, 20, 30 };
-
   private Block activeBlock;
   private Block holdBlock;
   private BlockConveyor conveyor = new BlockConveyor();
@@ -352,11 +349,12 @@ public class TetrisGame extends EventSource {
 
     int newScore = this.score;
 
-    // Points from raw lines cleared
-    int linePoints = completedLines * LINE_POINTS_MAP[completedLines - 1];
+    int linePoints = completedLines * 5;
+    if (completedLines == 4) {
+      linePoints *= 2;
+    }
     newScore += linePoints;
 
-     // Bonuses for special blocks
     newScore += BlockType.getSpecialBlocks()
                          .stream()
                          .filter(conveyor::isEnabled)
