@@ -231,7 +231,8 @@ public class TetrisGame extends EventSource {
     boolean canMoveBeMade = activeBlock.getOccupiedSquares()
                                        .stream()
                                        .map(square -> new Block.ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
-                                       .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) && isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+                                       .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
+                                                               isOpen(moveSquare.getRow(), moveSquare.getColumn()));
     if (canMoveBeMade) {
       activeBlock.move(rowMove, colMove);
       return true;
@@ -249,7 +250,8 @@ public class TetrisGame extends EventSource {
 
     boolean areRotatedSquaresLegal = activeBlock.getOccupiedSquares()
                                                 .stream()
-                                                .allMatch(moveSquare -> moveSquare.getColumn() >= 0 && moveSquare.getColumn() < horizontalDimension && moveSquare.getRow() < verticalDimension);
+                                                .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
+                                                                        isOpen(moveSquare.getRow(), moveSquare.getColumn()));
     if (areRotatedSquaresLegal) {
       return true;
     } else {
