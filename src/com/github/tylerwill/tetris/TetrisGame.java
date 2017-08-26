@@ -13,9 +13,9 @@ import static java.util.stream.Collectors.toCollection;
 
 public class TetrisGame extends EventSource {
 
-  private static final int MAX_LEVEL = 11,
-                           DEFAULT_VERTICAL_CELLS = 23,
-                           DEFAULT_HORIZONTAL_CELLS = 10;
+  public static final int MAX_LEVEL = 11,
+                          DEFAULT_VERTICAL_CELLS = 23,
+                          DEFAULT_HORIZONTAL_CELLS = 10;
 
   private Block activeBlock;
   private Block holdBlock;
