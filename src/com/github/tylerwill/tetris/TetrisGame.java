@@ -13,11 +13,9 @@ import static java.util.stream.Collectors.toCollection;
 
 public class TetrisGame extends EventSource {
 
-  public static final int
-          MAX_LEVEL = 11,
-          DEFAULT_VERTICAL_CELLS = 23,
-          DEFAULT_HORIZONTAL_CELLS = 10,
-          POINTS_PER_LINE = 5;
+  private static final int MAX_LEVEL = 11,
+                           DEFAULT_VERTICAL_CELLS = 23,
+                           DEFAULT_HORIZONTAL_CELLS = 10;
 
   private Block activeBlock;
   private Block holdBlock;
@@ -345,13 +343,13 @@ public class TetrisGame extends EventSource {
 
     int newScore = this.score;
 
-    int linePoints = completedLines * POINTS_PER_LINE;
+    int linePoints = completedLines * 5;
     if (completedLines == 4) { // Double points bonus when we complete max number of lines (4)
       linePoints *= 2;
     }
     newScore += linePoints;
 
-    // Add special piece bonus points
+    // Special piece bonus points
     newScore += BlockType.getSpecialBlocks()
                          .stream()
                          .filter(conveyor::isEnabled)
@@ -361,9 +359,9 @@ public class TetrisGame extends EventSource {
     int maxGameLines = difficulty.getLinesPerLevel() * (MAX_LEVEL - 1);
     totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
     int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
-    int newLevel = 1 + levelsCompleted;
-    int levelIncrease = newLevel - this.level;
+    int newLevel = levelsCompleted + 1;
 
+    int levelIncrease = newLevel - this.level;
     if (timeAttack && levelIncrease > 0) {
       newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
     }
