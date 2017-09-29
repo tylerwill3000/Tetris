@@ -1,6 +1,7 @@
 package com.github.tylerwill.tetris;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.github.tylerwill.tetris.Utility.nTimes;
 
@@ -12,6 +13,7 @@ public final class BlockConveyor {
   private Set<BlockType> enabledTypes;
   private List<BlockType> typeSampleList;
   private Queue<Block> conveyor;
+  private Set<BlockType> activeSpecialTypes; // Cached for performance when calculating score
 
   BlockConveyor() {
     typeSampleList = new ArrayList<>();
@@ -43,14 +45,23 @@ public final class BlockConveyor {
   }
 
   public void enableBlockType(Difficulty diff, BlockType blockType) {
+    activeSpecialTypes = null;
     enabledTypes.add(blockType);
     int spawnRate = diff.getSpawnRate(blockType);
     nTimes(spawnRate, i -> typeSampleList.add(blockType));
   }
 
   public void disableBlockType(BlockType toRemove) {
+    activeSpecialTypes = null;
     enabledTypes.remove(toRemove);
     typeSampleList.removeIf(type -> type == toRemove);
+  }
+
+  public Set<BlockType> getEnabledSpecials() {
+    if (activeSpecialTypes == null) {
+      activeSpecialTypes = BlockType.getSpecialBlocks().stream().filter(this::isEnabled).collect(Collectors.toSet());
+    }
+    return activeSpecialTypes;
   }
 
   public boolean isEnabled(BlockType blockType) {

@@ -64,20 +64,20 @@ abstract class PixelGrid extends JPanel {
 
   }
 
-  protected int getUnitWidth() {
-    return (getWidth() - padding * 2) / columns;
-  }
-
-  protected int getUnitHeight() {
-    return (getHeight() - padding * 2) / rows;
-  }
-
   protected int getXCoordinate(Block.ColoredSquare square) {
     return square.getColumn() * getUnitWidth();
   }
 
   protected int getYCoordinate(Block.ColoredSquare square) {
     return square.getRow() * getUnitHeight();
+  }
+
+  protected int getUnitWidth() {
+    return (getWidth() - padding * 2) / columns;
+  }
+
+  protected int getUnitHeight() {
+    return (getHeight() - padding * 2) / rows;
   }
 
   abstract Collection<Block.ColoredSquare> getCurrentColors();

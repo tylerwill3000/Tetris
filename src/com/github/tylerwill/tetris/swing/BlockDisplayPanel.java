@@ -5,6 +5,7 @@ import com.github.tylerwill.tetris.Block;
 
 import javax.swing.border.TitledBorder;
 import java.util.Collection;
+import java.util.Collections;
 
 class BlockDisplayPanel extends PixelGrid {
 
@@ -26,7 +27,7 @@ class BlockDisplayPanel extends PixelGrid {
 
   @Override
   public Collection<Block.ColoredSquare> getCurrentColors() {
-    return currentBlock.getNextPanelSquares();
+    return currentBlock == null ? Collections.emptyList() : currentBlock.getNextPanelSquares();
   }
 
 }

@@ -29,11 +29,15 @@ public interface ScoreDao {
 
   default int saveScore(Score score) throws Exception {
     int rank = determineRank(score.points);
-    if (!isHighScore(rank)) {
+    if (!isLeaderboardRank(rank)) {
       throw new IllegalArgumentException("Cannot save " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
     }
     _saveScore(score);
     return rank;
+  }
+
+  static boolean isLeaderboardRank(int rank) {
+    return rank < MIN_RANK;
   }
 
   default int determineRank(int pointsOfScoreToSave) throws Exception {
@@ -41,10 +45,6 @@ public interface ScoreDao {
                                           .filter(existingScore -> existingScore.points > pointsOfScoreToSave)
                                           .count();
     return (int) numScoresGreater + 1;
-  }
-
-  static boolean isHighScore(int rank) {
-    return rank <= MIN_RANK;
   }
 
   List<Score> getAllScores() throws Exception;

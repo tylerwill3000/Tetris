@@ -343,18 +343,17 @@ public class TetrisGame extends EventSource {
 
     int newScore = this.score;
 
-    int linePoints = completedLines * 5;
-    if (completedLines == 4) { // Double points bonus when we complete max number of lines (4)
-      linePoints *= 2;
+    switch (completedLines) {
+      case 1: newScore += 10; break;
+      case 2: newScore += 30; break;
+      case 3: newScore += 50; break;
+      case 4: newScore += 100; break;
     }
-    newScore += linePoints;
 
-    // Special piece bonus points
-    newScore += BlockType.getSpecialBlocks()
-                         .stream()
-                         .filter(conveyor::isEnabled)
-                         .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
-                         .sum();
+    newScore += conveyor.getEnabledSpecials()
+                        .stream()
+                        .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
+                        .sum();
 
     int maxGameLines = difficulty.getLinesPerLevel() * (MAX_LEVEL - 1);
     totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
@@ -389,7 +388,7 @@ public class TetrisGame extends EventSource {
 
       List<Block.ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
 
-      boolean anyVisible = spawnSquares.stream().filter(square -> square.getRow() >= 3).count() > 0;
+      boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.getRow() >= 3);
       if (!anyVisible) {
         fallTimer.stop();
         gameTimer.stop();

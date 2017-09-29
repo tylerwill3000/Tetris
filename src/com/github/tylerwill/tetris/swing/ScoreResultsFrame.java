@@ -36,7 +36,7 @@ class ScoreResultsFrame extends JFrame {
     lblScore.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
     add(lblScore);
 
-    if (ScoreDao.isHighScore(rank)) {
+    if (ScoreDao.isLeaderboardRank(rank)) {
 
       JPanel inputPanel = new JPanel();
       JLabel congrats = new JLabel("Congratulations! You made the leaderboard! Enter the name to save your score under or press cancel: ");
