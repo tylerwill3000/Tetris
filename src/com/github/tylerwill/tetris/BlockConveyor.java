@@ -3,12 +3,8 @@ package com.github.tylerwill.tetris;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.github.tylerwill.tetris.Utility.nTimes;
-
 /** Manages generating new blocks and maintaining the queue of upcoming blocks */
 public final class BlockConveyor {
-
-  private static final int DEFAULT_INITIAL_BLOCKS = 2;
 
   private Set<BlockType> enabledTypes;
   private List<BlockType> typeSampleList;
@@ -30,25 +26,27 @@ public final class BlockConveyor {
     return conveyor.peek();
   }
 
-  void refresh() {
-    refresh(DEFAULT_INITIAL_BLOCKS);
-  }
-
-  private void refresh(int initialBlocks) {
+  void prepareForStart() {
     conveyor.clear();
-    nTimes(initialBlocks, i -> conveyor.add(generateBlock()));
+    conveyor.add(generateBlock());
+    conveyor.add(generateBlock());
   }
 
-  void setDifficulty(Difficulty difficulty) {
+  void applySpawnRates(Difficulty difficulty) {
     typeSampleList.clear();
-    BlockType.getDefaultBlocks().forEach(type -> enableBlockType(difficulty, type));
+    for (BlockType defaultType : BlockType.getDefaultBlocks()) {
+      enableBlockType(difficulty, defaultType);
+    }
   }
 
   public void enableBlockType(Difficulty diff, BlockType blockType) {
     activeSpecialTypes = null;
     enabledTypes.add(blockType);
+    typeSampleList.removeIf(type -> type == blockType);
     int spawnRate = diff.getSpawnRate(blockType);
-    nTimes(spawnRate, i -> typeSampleList.add(blockType));
+    for (int i = 1; i <= spawnRate; i++) {
+      typeSampleList.add(blockType);
+    }
   }
 
   public void disableBlockType(BlockType toRemove) {

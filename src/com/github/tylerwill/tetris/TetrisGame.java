@@ -117,7 +117,7 @@ public class TetrisGame extends EventSource {
 
   public void setDifficulty(Difficulty difficulty) {
     this.difficulty = difficulty;
-    this.conveyor.setDifficulty(difficulty);
+    this.conveyor.applySpawnRates(difficulty);
     this.fallTimer.setDelay(difficulty.initialTimerDelay);
   }
 
@@ -332,7 +332,7 @@ public class TetrisGame extends EventSource {
 
     this.persistedBlocks.forEach(row -> Arrays.fill(row, null));
 
-    this.conveyor.refresh();
+    this.conveyor.prepareForStart();
     spawn(this.conveyor.next());
 
     this.gameTimer.start();
