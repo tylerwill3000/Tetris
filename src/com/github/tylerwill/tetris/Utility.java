@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 public final class Utility {
 
@@ -27,10 +25,6 @@ public final class Utility {
     return (totalMinutes < 10 ? "0" : "") + totalMinutes +
            ":" +
            (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
-  }
-
-  public static void nTimes(int num, Consumer<Integer> action) {
-    IntStream.rangeClosed(1, num).forEach(action::accept);
   }
 
   @SuppressWarnings("unchecked")
