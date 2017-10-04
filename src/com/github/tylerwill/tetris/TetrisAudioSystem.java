@@ -144,9 +144,8 @@ public final class TetrisAudioSystem {
       if (audioFile == null) {
         throw new RuntimeException("Audio file not found for path [" + resourcePath + "]");
       }
-      AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioFile);
       Clip clip = AudioSystem.getClip();
-      clip.open(audioIn);
+      clip.open(AudioSystem.getAudioInputStream(audioFile));
       return clip;
     } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
       throw new RuntimeException(e);

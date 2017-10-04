@@ -1,5 +1,6 @@
 package com.github.tylerwill.tetris;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static com.github.tylerwill.tetris.BlockType.*;
@@ -25,13 +26,13 @@ public enum Difficulty {
     BOX, 13,
     L_BLOCK_L, 14,
     L_BLOCK_R, 14,
-    S_BLOCK_L, 14,
+    S_BLOCK_L, 15,
     S_BLOCK_R, 14,
     STRAIGHT_LINE, 13,
     T_BLOCK, 14,
     TWIN_PILLARS, 12,
     WAVE, 10,
-    ROCKET, 8,
+    ROCKET, 7,
     DIAMOND, 7
   )),
 
@@ -64,7 +65,7 @@ public enum Difficulty {
     this.timeAttackBonus = timeAttackBonus;
     this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
     this.winBonus = winBonus;
-    this.type_spawn = type_spawn;
+    this.type_spawn = Collections.unmodifiableMap(type_spawn);
   }
 
   public int getLinesPerLevel() {
@@ -94,6 +95,5 @@ public enum Difficulty {
   public String toString() {
     return name().charAt(0) + name().substring(1).toLowerCase();
   }
-
 
 }

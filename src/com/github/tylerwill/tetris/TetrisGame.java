@@ -6,16 +6,14 @@ import com.github.tylerwill.tetris.event.TetrisEvent;
 import javax.swing.Timer;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toCollection;
 
 public class TetrisGame extends EventSource {
 
-  public static final int MAX_LEVEL = 11,
-                          DEFAULT_VERTICAL_CELLS = 23,
-                          DEFAULT_HORIZONTAL_CELLS = 10;
+  public static final int MAX_LEVEL = 10;
+  private static final int DEFAULT_VERTICAL_CELLS = 23, DEFAULT_HORIZONTAL_CELLS = 10;
 
   private Block activeBlock;
   private Block holdBlock;
@@ -36,7 +34,7 @@ public class TetrisGame extends EventSource {
     setGameTime(gameTime + 1);
     currentLevelTime++;
     if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
-      publish(TetrisEvent.TIME_ATTACK_FAIL, null);
+      publish(TetrisEvent.TIME_ATTACK_FAIL);
       ((Timer) e.getSource()).stop();
       fallTimer.stop();
     }
@@ -95,8 +93,10 @@ public class TetrisGame extends EventSource {
   }
 
   private void setScore(int newScore) {
-    this.score = newScore;
-    publish(TetrisEvent.SCORE_CHANGED, score);
+    if (newScore != this.score) {
+      this.score = newScore;
+      publish(TetrisEvent.SCORE_CHANGED, score);
+    }
   }
 
   public int getGameTime() {
@@ -257,15 +257,15 @@ public class TetrisGame extends EventSource {
     }
   }
 
-  private List<Block.ColoredSquare> getGhostSquares() {
+  private Collection<Block.ColoredSquare> getGhostSquares() {
     if (activeBlock == null) {
       return Collections.emptyList();
     }
     int currentRow = activeBlock.getRow();
     int currentCol = activeBlock.getColumn();
     dropCurrentBlock();
-    List<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
-    ghostSquares.forEach(ghostSquare -> ghostSquare.setColor(null));
+    Collection<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
+    ghostSquares.forEach(Block.ColoredSquare::clearColor);
     activeBlock.setLocation(currentRow, currentCol); // Returns block to location it was in before dropping to ghost position
     return ghostSquares;
   }
@@ -309,9 +309,7 @@ public class TetrisGame extends EventSource {
 
   public void logActiveBlock() {
     if (activeBlock != null) {
-      for (Block.ColoredSquare activeBlockSquare : activeBlock.getOccupiedSquares()) {
-        setColor(activeBlockSquare.getRow(), activeBlockSquare.getColumn(), activeBlockSquare.getColor());
-      }
+      activeBlock.getOccupiedSquares().forEach(sq -> setColor(sq.getRow(), sq.getColumn(), sq.getColor()));
     }
   }
 
@@ -386,7 +384,7 @@ public class TetrisGame extends EventSource {
 
     while (true) {
 
-      List<Block.ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
+      Collection<Block.ColoredSquare> spawnSquares = block.getType().calcOccupiedSquares(0, startRow, startCol);
 
       boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.getRow() >= 3);
       if (!anyVisible) {

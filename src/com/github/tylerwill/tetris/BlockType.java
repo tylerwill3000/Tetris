@@ -2,7 +2,8 @@ package com.github.tylerwill.tetris;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -418,7 +419,7 @@ public enum BlockType {
     this.bonusPointsPerLine = bonusPointsPerLine;
   }
 
-  public List<Block.ColoredSquare> getNextPanelSquares() {
+  public Collection<Block.ColoredSquare> getNextPanelSquares() {
     return Arrays.stream(nextPanelSquares)
                  .map(coordinates -> new Block.ColoredSquare(color, coordinates[0], coordinates[1]))
                  .collect(toList());
@@ -433,7 +434,7 @@ public enum BlockType {
   }
 
   /** Calculates the list of squares this type occupies at the given orientation, row and column */
-  public List<Block.ColoredSquare> calcOccupiedSquares(int orientation, int row, int col) {
+  public Collection<Block.ColoredSquare> calcOccupiedSquares(int orientation, int row, int col) {
     if (orientation < 0 || orientation > 3) {
       throw new IllegalArgumentException("Orientation value must be between 0 and 3");
     }
@@ -450,12 +451,16 @@ public enum BlockType {
                  .collect(Collectors.joining(" "));
   }
 
-  public static List<BlockType> getDefaultBlocks() {
-    return Arrays.stream(BlockType.values()).filter(type -> !type.special).collect(toList());
+  public static Collection<BlockType> getDefaultBlocks() {
+    return filterTypes(type -> !type.special);
   }
 
-  public static List<BlockType> getSpecialBlocks() {
-    return Arrays.stream(BlockType.values()).filter(type -> type.special).collect(toList());
+  public static Collection<BlockType> getSpecialBlocks() {
+    return filterTypes(type -> type.special);
+  }
+
+  private static Collection<BlockType> filterTypes(Predicate<BlockType> test) {
+    return Arrays.stream(BlockType.values()).filter(test).collect(toList());
   }
 
   public static Color getRandomColor() {

@@ -760,7 +760,7 @@ public class MasterTetrisFrame extends JFrame {
       this.btnClose = new TetrisButton("Close");
       this.btnClose.addActionListener(e -> dispose());
 
-      List<BlockType> specialBlocks = BlockType.getSpecialBlocks();
+      Collection<BlockType> specialBlocks = BlockType.getSpecialBlocks();
       JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
       for (BlockType blockType : specialBlocks) {
 

@@ -1,7 +1,7 @@
 package com.github.tylerwill.tetris;
 
 import java.awt.*;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 /**  Data-layer class that represents blocks and provides an interface for changing their position and orientation */
@@ -26,11 +26,11 @@ public class Block {
     return location[1];
   }
 
-  List<ColoredSquare> getOccupiedSquares() {
+  Collection<ColoredSquare> getOccupiedSquares() {
     return blockType.calcOccupiedSquares(orientation, location[0], location[1]);
   }
 
-  public List<ColoredSquare> getNextPanelSquares() {
+  public Collection<ColoredSquare> getNextPanelSquares() {
     return blockType.getNextPanelSquares();
   }
 
@@ -84,8 +84,8 @@ public class Block {
       return color;
     }
 
-    public void setColor(Color color) {
-      this.color = color;
+    public void clearColor() {
+      this.color = null;
     }
 
     public int getRow() {
