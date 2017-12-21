@@ -6,11 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-/** Objects of this class are grid-based panels that represent a set of 'pixels'  */
+/** Grid-based panels that represent a matrix of colorable squares  */
 abstract class PixelGrid extends JPanel {
 
-  int rows;
-  int columns;
+  int rows, columns;
   int padding;
   private SquareStyle squareStyle;
 
@@ -40,7 +39,8 @@ abstract class PixelGrid extends JPanel {
 
   @Override
   public String toString() {
-    return String.format("PixelGrid(rows=%d, columns=%d, unitWidth=%d, unitHeight=%d)", rows, columns, getUnitWidth(), getUnitHeight());
+    return String.format("PixelGrid(rows=%d, columns=%d, padding=%d, unitWidth=%d, unitHeight=%d, squareStyle=%s)",
+                                    rows,    columns,    padding,    getUnitWidth(), getUnitHeight(), squareStyle);
   }
 
   /** Re-renders and updates the display of this grid according to the current state of its color model */
@@ -80,6 +80,7 @@ abstract class PixelGrid extends JPanel {
     return (getHeight() - padding * 2) / rows;
   }
 
+  /** *@return A collection of colored squares to paint in this grid */
   abstract Collection<Block.ColoredSquare> getCurrentColors();
 
 }

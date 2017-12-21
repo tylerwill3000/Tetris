@@ -3,7 +3,7 @@ package com.github.tylerwill.tetris;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.github.tylerwill.tetris.BlockType.*;
+import static com.github.tylerwill.tetris.Block.Type.*;
 import static com.github.tylerwill.tetris.Utility.map;
 
 public enum Difficulty {
@@ -57,9 +57,9 @@ public enum Difficulty {
   protected int timeAttackBonus;
   protected int timeAttackSecondsPerLevel;
   protected int winBonus;
-  protected Map<BlockType, Integer> type_spawn;
+  protected Map<Block.Type, Integer> type_spawn;
 
-  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> type_spawn) {
+  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<Block.Type, Integer> type_spawn) {
     this.linesPerLevel = linesPerLevel;
     this.initialTimerDelay = initialTimerDelay;
     this.timeAttackBonus = timeAttackBonus;
@@ -88,7 +88,7 @@ public enum Difficulty {
     return winBonus;
   }
 
-  public int getSpawnRate(BlockType type) {
+  public int getSpawnRate(Block.Type type) {
     return type_spawn.get(type);
   }
 

@@ -9,10 +9,7 @@ import java.util.Objects;
 
 public class Score implements Serializable {
 
-  public int points;
-  public int linesCleared;
-  public int maxLevel;
-  public int rank;
+  public int points, linesCleared, maxLevel, rank;
   public long gameTime;
   public String name;
   public Difficulty difficulty;
@@ -22,7 +19,7 @@ public class Score implements Serializable {
     this(-1, name, score, gameTime, difficulty, linesCleared, maxLevel, LocalDate.now());
   }
 
-  Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
+  private Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
     this.rank = rank;
     this.name = name;
     this.points = score;

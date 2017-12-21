@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FlatFileScoreDao implements ScoreDao {
@@ -14,13 +14,11 @@ public class FlatFileScoreDao implements ScoreDao {
   @Override
   public List<Score> getAllScores() throws Exception {
     if (!Files.exists(SAVE_PATH)) {
-      return new ArrayList<>();
+      return Collections.emptyList();
     }
-    try (ObjectInputStream objIn = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-
+    try (ObjectInputStream scoresInput = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
       @SuppressWarnings("unchecked")
-      List<Score> scores = (List<Score>) objIn.readObject();
-      scores.sort((s1, s2) -> s2.points - s1.points); // Sort by points DESC
+      List<Score> scores = (List<Score>) scoresInput.readObject();
 
       for (int rank = 1; rank <= scores.size(); rank++) {
         scores.get(rank -1).rank = rank;

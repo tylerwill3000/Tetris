@@ -482,7 +482,7 @@ public class MasterTetrisFrame extends JFrame {
         for (int row = game.getVerticalDimension() - 1; row >= 3; row --) {
           for (int col = 0; col < game.getHorizontalDimension(); col++) {
             if (game.isOpen(row, col)) {
-              game.setColor(row, col, BlockType.getRandomColor());
+              game.setColor(row, col, Block.Type.getRandomColor());
             }
           }
           repaint();
@@ -553,13 +553,15 @@ public class MasterTetrisFrame extends JFrame {
     };
 
     private ProgressBar linesClearedProgressBar = new ProgressBar(11, Color.GREEN) {
-      @Override protected double getCurrentPercentage() {
+      @Override
+      protected double getCurrentPercentage() {
         return 100.0 * (game.getCurrentLevelLinesCleared() * 1.0 / game.getDifficulty().getLinesPerLevel());
       }
     };
 
     private ProgressBar timeProgressBar = new ProgressBar(11, Color.YELLOW) {
-      @Override protected double getCurrentPercentage() {
+      @Override
+      protected double getCurrentPercentage() {
 
         int currentTime = game.getCurrentLevelTime();
         int maxLimit = game.getDifficulty().getTimeAttackSecondsPerLevel();
@@ -760,14 +762,14 @@ public class MasterTetrisFrame extends JFrame {
       this.btnClose = new TetrisButton("Close");
       this.btnClose.addActionListener(e -> dispose());
 
-      Collection<BlockType> specialBlocks = BlockType.getSpecialBlocks();
+      Collection<Block.Type> specialBlocks = Block.Type.getSpecialBlocks();
       JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
-      for (BlockType blockType : specialBlocks) {
+      for (Block.Type specialType : specialBlocks) {
 
-        BlockDisplayPanel display = new BlockDisplayPanel("\"" + blockType + "\"", new Block(blockType));
-        BlockSelectorButton selector = new BlockSelectorButton(blockType);
+        BlockDisplayPanel display = new BlockDisplayPanel("\"" + specialType + "\"", new Block(specialType));
+        BlockSelectorButton selector = new BlockSelectorButton(specialType);
 
-        JLabel pointBonus = new JLabel("+" + blockType.getBonusPointsPerLine() + " points per line");
+        JLabel pointBonus = new JLabel("+" + specialType.getBonusPointsPerLine() + " points per line");
         pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 
         JPanel toggleControlPanel = new JPanel(new BorderLayout());
@@ -793,12 +795,12 @@ public class MasterTetrisFrame extends JFrame {
 
     private class BlockSelectorButton extends JButton {
 
-      private BlockType blockType;
+      private Block.Type type;
       private boolean active;
 
-      private BlockSelectorButton(BlockType blockType) {
-        this.blockType = blockType;
-        setActiveState(game.getConveyor().isEnabled(blockType));
+      private BlockSelectorButton(Block.Type type) {
+        this.type = type;
+        setActiveState(game.getConveyor().isEnabled(type));
         setFocusable(false);
         addMouseMotionListener(new MouseAdapter() {
           public void mouseMoved(MouseEvent e) {
@@ -812,9 +814,9 @@ public class MasterTetrisFrame extends JFrame {
       private void toggle() {
         setActiveState(!active);
         if (active) {
-          game.getConveyor().enableBlockType(settingsPanel.getSelectedDifficulty(), blockType);
+          game.getConveyor().enableBlock(settingsPanel.getSelectedDifficulty(), type);
         } else {
-          game.getConveyor().disableBlockType(blockType);
+          game.getConveyor().disableBlock(type);
         }
       }
 

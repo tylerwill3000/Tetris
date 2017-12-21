@@ -11,24 +11,24 @@ public final class Utility {
 
   private Utility() {}
 
-  public static <T> T sample(List<T> items) {
-    return items.get(RANDOM.nextInt(items.size()));
-  }
-
-  public static <T> T sample(T[] values) {
-    return values[RANDOM.nextInt(values.length)];
-  }
-
   public static String formatSeconds(long seconds) {
     long totalMinutes = seconds / 60;
     long secondsLeftover = seconds % 60;
     return (totalMinutes < 10 ? "0" : "") + totalMinutes +
-           ":" +
-           (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
+            ":" +
+            (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
+  }
+
+  static <T> T sample(List<T> items) {
+    return items.get(RANDOM.nextInt(items.size()));
+  }
+
+  static <T> T sample(T[] values) {
+    return values[RANDOM.nextInt(values.length)];
   }
 
   @SuppressWarnings("unchecked")
-  public static <K, V> Map<K, V> map(Object... entries) {
+  static <K, V> Map<K, V> map(Object... entries) {
     if (entries.length % 2 != 0) {
       throw new IllegalArgumentException("Number of entry arguments must be divisible by 2");
     }

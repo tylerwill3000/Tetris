@@ -3,47 +3,41 @@ package com.github.tylerwill.tetris.score;
 import com.github.tylerwill.tetris.Difficulty;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public interface ScoreDao {
 
   int MIN_RANK = 25;
 
-  default List<Score> getScores(Optional<Difficulty> difficulty, Optional<Integer> limit) throws Exception {
-    List<Score> allScores = getAllScores();
-    if (!difficulty.isPresent() && !limit.isPresent()) {
-      return allScores;
+  default List<Score> getScores(Difficulty difficulty, Integer limit) throws Exception {
+    Stream<Score> scoresStream = getAllScores().stream();
+    if (difficulty != null) {
+      scoresStream = scoresStream.filter(score -> difficulty == score.difficulty);
     }
-
-    Stream<Score> scoresStream = allScores.stream();
-    if (difficulty.isPresent()) {
-      scoresStream = scoresStream.filter(score -> difficulty.get() == score.difficulty);
+    if (limit != null) {
+      scoresStream = scoresStream.limit(limit);
     }
-    if (limit.isPresent()) {
-      scoresStream = scoresStream.limit(limit.get());
-    }
-    return scoresStream.collect(Collectors.toList());
+    // Sort by points DESC
+    return scoresStream.sorted((s1, s2) -> s2.points - s1.points).collect(toList());
   }
 
   default int saveScore(Score score) throws Exception {
     int rank = determineRank(score.points);
-    if (!isLeaderboardRank(rank)) {
+    if (!isLeaderBoardRank(rank)) {
       throw new IllegalArgumentException("Cannot save " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
     }
     _saveScore(score);
     return rank;
   }
 
-  static boolean isLeaderboardRank(int rank) {
+  static boolean isLeaderBoardRank(int rank) {
     return rank < MIN_RANK;
   }
 
   default int determineRank(int pointsOfScoreToSave) throws Exception {
-    long numScoresGreater = getAllScores().stream()
-                                          .filter(existingScore -> existingScore.points > pointsOfScoreToSave)
-                                          .count();
+    long numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
     return (int) numScoresGreater + 1;
   }
 

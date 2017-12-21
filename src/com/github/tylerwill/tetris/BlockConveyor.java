@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 /** Manages generating new blocks and maintaining the queue of upcoming blocks */
 public final class BlockConveyor {
 
-  private Set<BlockType> enabledTypes;
-  private List<BlockType> typeSampleList;
+  private Set<Block.Type> enabledTypes;
+  private List<Block.Type> typeSampleList;
   private Queue<Block> conveyor;
-  private Set<BlockType> activeSpecialTypes; // Cached for performance when calculating score
+  private Set<Block.Type> activeSpecialTypes; // Cached for performance when calculating score
 
   BlockConveyor() {
     typeSampleList = new ArrayList<>();
@@ -34,36 +34,36 @@ public final class BlockConveyor {
 
   void applySpawnRates(Difficulty difficulty) {
     typeSampleList.clear();
-    for (BlockType defaultType : BlockType.getDefaultBlocks()) {
-      enableBlockType(difficulty, defaultType);
+    for (Block.Type defaultType : Block.Type.getDefaultBlocks()) {
+      enableBlock(difficulty, defaultType);
     }
   }
 
-  public void enableBlockType(Difficulty diff, BlockType blockType) {
+  public void enableBlock(Difficulty diff, Block.Type type) {
     activeSpecialTypes = null;
-    enabledTypes.add(blockType);
-    typeSampleList.removeIf(type -> type == blockType);
-    int spawnRate = diff.getSpawnRate(blockType);
+    enabledTypes.add(type);
+    typeSampleList.removeIf(sampleType -> sampleType == type);
+    int spawnRate = diff.getSpawnRate(type);
     for (int i = 1; i <= spawnRate; i++) {
-      typeSampleList.add(blockType);
+      typeSampleList.add(type);
     }
   }
 
-  public void disableBlockType(BlockType toRemove) {
+  public void disableBlock(Block.Type toRemove) {
     activeSpecialTypes = null;
     enabledTypes.remove(toRemove);
     typeSampleList.removeIf(type -> type == toRemove);
   }
 
-  public Set<BlockType> getEnabledSpecials() {
+  Set<Block.Type> getEnabledSpecials() {
     if (activeSpecialTypes == null) {
-      activeSpecialTypes = BlockType.getSpecialBlocks().stream().filter(this::isEnabled).collect(Collectors.toSet());
+      activeSpecialTypes = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(Collectors.toSet());
     }
     return activeSpecialTypes;
   }
 
-  public boolean isEnabled(BlockType blockType) {
-    return enabledTypes.contains(blockType);
+  public boolean isEnabled(Block.Type type) {
+    return enabledTypes.contains(type);
   }
 
   private Block generateBlock() {

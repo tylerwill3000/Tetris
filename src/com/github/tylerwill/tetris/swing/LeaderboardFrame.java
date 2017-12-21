@@ -1,15 +1,14 @@
 package com.github.tylerwill.tetris.swing;
 
 import com.github.tylerwill.tetris.Difficulty;
-import com.github.tylerwill.tetris.score.ScoreDao;
 import com.github.tylerwill.tetris.TetrisGame;
 import com.github.tylerwill.tetris.Utility;
+import com.github.tylerwill.tetris.score.ScoreDao;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 class LeaderboardFrame extends JFrame {
@@ -50,7 +49,7 @@ class LeaderboardFrame extends JFrame {
     clearButton.addActionListener(e -> {
       int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete all saved scores? This cannot be undone", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
       if (result == JOptionPane.YES_OPTION) {
-        try {
+          try {
           scoresDao.clearAll();
           refreshTable();
         } catch (Exception ex) {
@@ -83,8 +82,7 @@ class LeaderboardFrame extends JFrame {
     refreshTable();
   }
 
-  // Populates table with appropriate data depending on selected row count. Boolean
-  // controls whether to destroy the window upon failed DB connection
+  // Populates table with appropriate data depending on selected row count
   private void refreshTable() {
 
     int selectedIndex = difficulties.getSelectedIndex();
@@ -93,7 +91,7 @@ class LeaderboardFrame extends JFrame {
 
     Object[][] scoreData;
     try {
-      scoreData = scoresDao.getScores(Optional.ofNullable(selectedDifficulty), Optional.empty())
+      scoreData = scoresDao.getScores(selectedDifficulty, null)
                            .stream()
                            .map(score -> new Object[]{
                              score.rank,
