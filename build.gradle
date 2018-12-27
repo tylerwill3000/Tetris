@@ -1,0 +1,52 @@
+import javax.imageio.ImageIO
+import java.awt.Image
+import java.awt.image.BufferedImage
+
+apply plugin: 'idea'
+apply plugin: 'java'
+
+wrapper.gradleVersion = '5.0'
+
+task scaleImages(group: 'build', description: 'Scales down all image assets and writes them to the build directory') {
+    File sourceDir = file('src/main/resources/images')
+    File outputDir = new File(buildDir, 'resources/main/images')
+    inputs.dir(sourceDir)
+    outputs.dir(outputDir)
+
+    // Force us to use scaled images instead of just copying images from resource folder
+    sourceSets.main.resources.exclude 'images'
+
+    doFirst {
+        outputDir.mkdirs()
+
+        for (sourceImage in sourceDir.listFiles()) {
+            BufferedImage scaledImage = scaleImage(sourceImage, 60)
+            def resultFile = new File(outputDir, sourceImage.name)
+            ImageIO.write(scaledImage, 'png', resultFile)
+        }
+    }
+}
+
+processResources.dependsOn(scaleImages)
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.github.tylersharpe.tetris.Main'
+    }
+}
+
+task run(type: JavaExec) {
+    main = 'com.github.tylersharpe.tetris.Main'
+    classpath sourceSets.main.runtimeClasspath
+}
+
+private static BufferedImage scaleImage(File image, int desiredWidth) {
+    BufferedImage buffImage = ImageIO.read(image)
+    double scaleFactor = ((double) desiredWidth) / buffImage.width
+    int desiredHeight = (int) (buffImage.height * scaleFactor)
+    Image scaledImage = buffImage.getScaledInstance(desiredWidth, desiredHeight, Image.SCALE_SMOOTH)
+
+    BufferedImage buffScaledImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.TYPE_INT_ARGB)
+    buffScaledImage.graphics.drawImage(scaledImage, 0, 0, null)
+    buffScaledImage
+}
