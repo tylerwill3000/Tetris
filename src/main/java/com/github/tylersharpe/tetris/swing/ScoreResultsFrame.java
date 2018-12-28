@@ -1,8 +1,8 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.score.Score;
-import com.github.tylersharpe.tetris.score.ScoreDao;
+import com.github.tylersharpe.tetris.Score;
 import com.github.tylersharpe.tetris.TetrisGame;
+import com.github.tylersharpe.tetris.ScoreRepository;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ class ScoreResultsFrame extends JFrame {
 	private TetrisButton saveScoreButton = new TetrisButton("Save");
 	private TetrisButton closeButton = new TetrisButton("Cancel");
 
-  ScoreResultsFrame(ScoreDao scoresDao, TetrisGame game) throws Exception {
+  ScoreResultsFrame(ScoreRepository scoresDao, TetrisGame game) {
 
     setLayout(new GridLayout(3, 1));
 
@@ -36,7 +36,7 @@ class ScoreResultsFrame extends JFrame {
     lblScore.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
     add(lblScore);
 
-    if (ScoreDao.isLeaderBoardRank(rank)) {
+    if (ScoreRepository.isLeaderBoardRank(rank)) {
 
       JPanel inputPanel = new JPanel();
       JLabel congrats = new JLabel("Congratulations! You made the leaderboard! Enter the name to save your score under or press cancel: ");
@@ -64,7 +64,7 @@ class ScoreResultsFrame extends JFrame {
           scoresDao.saveScore(new Score(saveName, game.getScore(), game.getGameTime(),
                                 game.getDifficulty(), game.getTotalLinesCleared(), game.getLevel()));
           dispose();
-          new LeaderboardFrame(scoresDao, rank);
+          new LeaderBoardFrame(scoresDao, rank);
         } catch (Exception ex) {
           ex.printStackTrace();
           JOptionPane.showMessageDialog(null, "Error saving score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

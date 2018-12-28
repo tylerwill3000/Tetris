@@ -1,7 +1,4 @@
-package com.github.tylersharpe.tetris.score;
-
-import com.github.tylersharpe.tetris.Difficulty;
-import com.github.tylersharpe.tetris.Utility;
+package com.github.tylersharpe.tetris;
 
 import java.io.Serializable;
 import java.time.LocalDate;

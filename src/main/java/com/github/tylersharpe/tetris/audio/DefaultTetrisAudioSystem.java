@@ -1,10 +1,12 @@
-package com.github.tylersharpe.tetris;
+package com.github.tylersharpe.tetris.audio;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
 
-public final class DefaultTetrisAudioSystem implements TetrisAudioSystem {
+class DefaultTetrisAudioSystem implements TetrisAudioSystem {
+
+  private static DefaultTetrisAudioSystem INSTANCE;
 
   private static final Clip[] SOUNDTRACK = {
     createClip("/audio/soundtrack/tetris-theme.wav"),
@@ -39,6 +41,10 @@ public final class DefaultTetrisAudioSystem implements TetrisAudioSystem {
   private boolean effectsEnabled = true;
 
   public DefaultTetrisAudioSystem() {}
+
+  static DefaultTetrisAudioSystem getInstance() {
+    return INSTANCE == null ? INSTANCE = new DefaultTetrisAudioSystem() : INSTANCE;
+  }
 
   public void setSoundtrackEnabled(boolean enabled) {
     this.soundtrackEnabled = enabled;

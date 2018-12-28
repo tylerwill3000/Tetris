@@ -1,4 +1,4 @@
-package com.github.tylersharpe.tetris;
+package com.github.tylersharpe.tetris.audio;
 
 public class AudioFileNotFound extends RuntimeException {
 

@@ -1,6 +1,6 @@
 package com.github.tylersharpe.tetris;
 
-import com.github.tylersharpe.tetris.event.EventSource;
+import com.github.tylersharpe.tetris.event.TetrisEventBus;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
 
 import javax.swing.Timer;
@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toCollection;
 
-public class TetrisGame extends EventSource {
+public class TetrisGame extends TetrisEventBus {
 
   public static final int MAX_LEVEL = 10;
   private static final int DEFAULT_VERTICAL_CELLS = 23, DEFAULT_HORIZONTAL_CELLS = 10;

@@ -37,7 +37,7 @@ jar {
         archivesBaseName += '-NoAudio'
     }
 
-    manifest{
+    manifest {
         attributes 'Main-Class': mainClass
         attributes 'Audio-Enabled': packageAudio
     }

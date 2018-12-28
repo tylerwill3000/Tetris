@@ -3,7 +3,6 @@ package com.github.tylersharpe.tetris;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/** Manages generating new blocks and maintaining the queue of upcoming blocks */
 public final class BlockConveyor {
 
   private Set<Block.Type> enabledTypes;
@@ -34,6 +33,7 @@ public final class BlockConveyor {
 
   void applySpawnRates(Difficulty difficulty) {
     typeSampleList.clear();
+
     for (Block.Type defaultType : Block.Type.getDefaultBlocks()) {
       enableBlock(difficulty, defaultType);
     }
@@ -43,6 +43,7 @@ public final class BlockConveyor {
     activeSpecialTypes = null;
     enabledTypes.add(type);
     typeSampleList.removeIf(sampleType -> sampleType == type);
+
     int spawnRate = diff.getSpawnRate(type);
     for (int i = 1; i <= spawnRate; i++) {
       typeSampleList.add(type);

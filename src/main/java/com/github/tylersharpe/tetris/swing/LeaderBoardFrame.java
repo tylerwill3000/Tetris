@@ -3,7 +3,7 @@ package com.github.tylersharpe.tetris.swing;
 import com.github.tylersharpe.tetris.Difficulty;
 import com.github.tylersharpe.tetris.TetrisGame;
 import com.github.tylersharpe.tetris.Utility;
-import com.github.tylersharpe.tetris.score.ScoreDao;
+import com.github.tylersharpe.tetris.ScoreRepository;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,7 +11,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.stream.IntStream;
 
-class LeaderboardFrame extends JFrame {
+class LeaderBoardFrame extends JFrame {
 
   private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 
@@ -27,13 +27,13 @@ class LeaderboardFrame extends JFrame {
   private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
   private int highlightRank = -1;
   private JTable scoresTable = new JTable();
-  private ScoreDao scoresDao;
+  private ScoreRepository scoresDao;
 
-  LeaderboardFrame(ScoreDao scoresDao) {
+  LeaderBoardFrame(ScoreRepository scoresDao) {
     this(scoresDao, -1);
   }
 
-  LeaderboardFrame(ScoreDao scoresDao, int highlightRank) {
+  LeaderBoardFrame(ScoreRepository scoresDao, int highlightRank) {
 
     this.scoresDao = scoresDao;
     this.highlightRank = highlightRank;

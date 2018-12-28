@@ -1,4 +1,4 @@
-package com.github.tylersharpe.tetris;
+package com.github.tylersharpe.tetris.audio;
 
 import java.io.IOException;
 import java.net.URL;
@@ -6,8 +6,15 @@ import java.util.jar.Manifest;
 
 public interface TetrisAudioSystem {
 
-    // Used when sound is not enabled
+    // Used when running the no-audio distribution
     class NoopTetrisAudioSystem implements TetrisAudioSystem {
+
+        private static NoopTetrisAudioSystem INSTANCE;
+
+        private static NoopTetrisAudioSystem getInstance() {
+            return INSTANCE == null ? INSTANCE = new NoopTetrisAudioSystem() : INSTANCE;
+        }
+
         public void setSoundtrackEnabled(boolean enabled) {}
         public void setEffectsEnabled(boolean enabled) {}
         public void startSoundtrack(int level) {}
@@ -37,7 +44,7 @@ public interface TetrisAudioSystem {
             Manifest manifest = new Manifest(manifestStream);
             String audioEnabledAttr = manifest.getMainAttributes().getValue("Audio-Enabled");
             boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);
-            return audioEnabled ? new DefaultTetrisAudioSystem() : new NoopTetrisAudioSystem();
+            return audioEnabled ? DefaultTetrisAudioSystem.getInstance() : NoopTetrisAudioSystem.getInstance();
         } catch (IOException e) {
             throw new RuntimeException("Could not read JAR manifest file", e);
         }

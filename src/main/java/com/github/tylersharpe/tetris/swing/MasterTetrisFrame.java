@@ -1,9 +1,10 @@
 package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.*;
+import com.github.tylersharpe.tetris.audio.AudioFileNotFound;
+import com.github.tylersharpe.tetris.audio.TetrisAudioSystem;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
-import com.github.tylersharpe.tetris.score.FlatFileScoreDao;
-import com.github.tylersharpe.tetris.score.ScoreDao;
+import com.github.tylersharpe.tetris.ScoreRepository;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -30,7 +31,7 @@ public class MasterTetrisFrame extends JFrame {
 
   private TetrisAudioSystem audioSystem;
   private TetrisGame game;
-  private ScoreDao scoresDao = new FlatFileScoreDao();
+  private ScoreRepository scoresDao = new ScoreRepository();
 
   private BoardPanel boardPanel;
   private BlockDisplayPanel nextBlockPanel;
@@ -757,7 +758,7 @@ public class MasterTetrisFrame extends JFrame {
 
       leaderboardButton.setMnemonic('l');
       leaderboardButton.setEnabled(true);
-      leaderboardButton.addActionListener(e -> new LeaderboardFrame(scoresDao));
+      leaderboardButton.addActionListener(e -> new LeaderBoardFrame(scoresDao));
       add(leaderboardButton);
 
       giveUpButton.setMnemonic('g');

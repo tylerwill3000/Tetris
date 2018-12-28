@@ -32,7 +32,7 @@ public final class Utility {
     if (entries.length % 2 != 0) {
       throw new IllegalArgumentException("Number of entry arguments must be divisible by 2");
     }
-    Map<K, V> map = new HashMap<>(entries.length);
+    Map<K, V> map = new HashMap<>(entries.length / 2);
     for (int i = 0; i < entries.length - 1; i++) {
       map.put((K) entries[i], (V) entries[i + 1]);
     }

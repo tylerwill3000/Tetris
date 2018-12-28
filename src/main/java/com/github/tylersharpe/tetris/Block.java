@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-/** Represents a block on the game board */
 public class Block {
 
   private Type type;
@@ -536,12 +535,13 @@ public class Block {
       return bonusPointsPerLine;
     }
 
-    /** Calculates the list of squares this type occupies at the given orientation, row and column */
     public Collection<Block.ColoredSquare> calculateOccupiedSquares(int orientation, int row, int col) {
       if (orientation < 0 || orientation > 3) {
         throw new IllegalArgumentException("Orientation value must be between 0 and 3");
       }
+
       int[][] offsets = offsetMap[orientation];
+
       return Arrays.stream(offsets)
               .map(offset -> new Block.ColoredSquare(color, row + offset[0], col + offset[1]))
               .collect(toList());
