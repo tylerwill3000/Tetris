@@ -29,14 +29,22 @@ task scaleImages(group: 'build', description: 'Scales down all image assets and 
 
 processResources.dependsOn(scaleImages)
 
+final String mainClass = 'com.github.tylersharpe.tetris.Main'
 jar {
-    manifest {
-        attributes 'Main-Class': 'com.github.tylersharpe.tetris.Main'
+    boolean packageAudio = project.hasProperty('packageAudio') ? Boolean.parseBoolean(project.property('packageAudio')) : true
+    if (!packageAudio) {
+        exclude 'audio'
+        archivesBaseName += '-NoAudio'
+    }
+
+    manifest{
+        attributes 'Main-Class': mainClass
+        attributes 'Audio-Enabled': packageAudio
     }
 }
 
 task run(type: JavaExec) {
-    main = 'com.github.tylersharpe.tetris.Main'
+    main = mainClass
     classpath sourceSets.main.runtimeClasspath
 }
 

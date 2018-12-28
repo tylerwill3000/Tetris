@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class MasterTetrisFrame extends JFrame {
 
@@ -57,7 +58,7 @@ public class MasterTetrisFrame extends JFrame {
 
           if (pressed.contains(KeyEvent.VK_S)) {
             game.superSlideActiveBlockLeft();
-            audioSystem.playSuperslideSound();
+            audioSystem.playSuperSlideSound();
           } else {
             game.moveActiveBlockLeft();
           }
@@ -68,7 +69,7 @@ public class MasterTetrisFrame extends JFrame {
 
           if (pressed.contains(KeyEvent.VK_S)) {
             game.superSlideActiveBlockRight();
-            audioSystem.playSuperslideSound();
+            audioSystem.playSuperSlideSound();
           } else {
             game.moveActiveBlockRight();
           }
@@ -138,7 +139,12 @@ public class MasterTetrisFrame extends JFrame {
 
   public MasterTetrisFrame() {
 
-    this.audioSystem = new TetrisAudioSystem();
+    try {
+      this.audioSystem = TetrisAudioSystem.create();
+    } catch (AudioFileNotFound ex) {
+      JOptionPane.showMessageDialog(null, "Audio files were not found. Please re-build the archive", "Error", JOptionPane.ERROR_MESSAGE);
+      System.exit(1);
+    }
 
     this.game = new TetrisGame();
     this.game.getFallTimer().setInitialDelay(0);
@@ -625,6 +631,11 @@ public class MasterTetrisFrame extends JFrame {
       soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
       soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
+      if (audioSystem instanceof TetrisAudioSystem.NoopTetrisAudioSystem) {
+        musicCheckbox.setVisible(false);
+        soundEffectsCheckbox.setVisible(false);
+      }
+
       saveScoresCheckbox = new JCheckBox("Save Scores", true);
       saveScoresCheckbox.setToolTipText("Controls whether you are prompted to save your score after the game is finished");
 
@@ -658,7 +669,11 @@ public class MasterTetrisFrame extends JFrame {
       setLayout(new BorderLayout());
       setBorder(new TitledBorder("Settings"));
 
-      List<JCheckBox> checkboxes = Arrays.asList(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, saveScoresCheckbox, timeAttackCheckbox);
+      List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, saveScoresCheckbox, timeAttackCheckbox)
+              .stream()
+              .filter(Component::isVisible)// Sound checkboxes will be invisible if we are running the no-sound distribution
+              .collect(Collectors.toList());
+
       JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
       for (JCheckBox checkbox : checkboxes) {
         checkboxPanel.add(checkbox);

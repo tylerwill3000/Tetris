@@ -1,155 +1,79 @@
 package com.github.tylersharpe.tetris;
 
-import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
+import java.util.jar.Manifest;
 
-public final class TetrisAudioSystem {
+public interface TetrisAudioSystem {
 
-  private static final Clip[] SOUNDTRACK = {
-    createClip("/audio/soundtrack/tetris-theme.wav"),
-    createClip("/audio/soundtrack/bean-machine-1-4.wav"),
-    createClip("/audio/soundtrack/tetris-music-3.wav"),
-    createClip("/audio/soundtrack/metroid-kraid.wav"),
-    createClip("/audio/soundtrack/sonic-scrap-brain-zone.wav"),
-    createClip("/audio/soundtrack/chrono-trigger-bike-theme.wav"),
-    createClip("/audio/soundtrack/mega-man-dr-wily.wav"),
-    createClip("/audio/soundtrack/sonic-ice-cap-zone.wav"),
-    createClip("/audio/soundtrack/bean-machine-9-12.wav"),
-    createClip("/audio/soundtrack/chrono-trigger-final-battle.wav")
-  };
-
-  // Non-looping clips
-  private static final Clip GAME_OVER = createClip("/audio/soundtrack/zelda-game-over.wav");
-  private static final Clip VICTORY_FANFARE = createClip("/audio/soundtrack/ff1-victory-fanfare.wav");
-
-  // Effects
-  private static final Clip PAUSE = createClip("/audio/effects/mario-64-pause.wav");
-  private static final Clip PLACE_BLOCK = createClip("/audio/effects/pipe.wav");
-  private static final Clip CLEAR_LINE = createClip("/audio/effects/laser.wav");
-  private static final Clip ULTRA_LINE = createClip("/audio/effects/explosion.wav");
-  private static final Clip SWIPE_UP = createClip("/audio/effects/swish-up.wav");
-  private static final Clip SWIPE_DOWN = createClip("/audio/effects/swish-down.wav");
-  private static final Clip SUPER_SLIDE = createClip("/audio/effects/superslide.wav");
-  private static final Clip HOLD = createClip("/audio/effects/clang.wav");
-  private static final Clip RELEASE = createClip("/audio/effects/water-drop.wav");
-
-  private Clip currentSoundtrack;
-  private boolean soundtrackEnabled = true;
-  private boolean effectsEnabled = true;
-
-  public TetrisAudioSystem() {}
-
-  public void setSoundtrackEnabled(boolean enabled) {
-    this.soundtrackEnabled = enabled;
-  }
-
-  public void setEffectsEnabled(boolean enabled) {
-    this.effectsEnabled = enabled;
-  }
-
-  public void startSoundtrack(int level) {
-    if (soundtrackEnabled) {
-      if (currentSoundtrack != null) {
-        currentSoundtrack.stop();
-      }
-      Clip track = getSoundtrack(level);
-      track.setFramePosition(0);
-      track.loop(Clip.LOOP_CONTINUOUSLY);
-      currentSoundtrack = track;
+    // Used when sound is not enabled
+    class NoopTetrisAudioSystem implements TetrisAudioSystem {
+        public void setSoundtrackEnabled(boolean enabled) {}
+        public void setEffectsEnabled(boolean enabled) {}
+        public void startSoundtrack(int level) {}
+        public void resumeCurrentSoundtrack() {}
+        public void stopCurrentSoundtrack() {}
+        public void playGameOverSound() {}
+        public void playVictoryFanfare() {}
+        public void playPauseSound() {}
+        public void playBlockPlacementSound() {}
+        public void playHoldSound() {}
+        public void playReleaseSound() {}
+        public void playClearLineSound(int lineCount) {}
+        public void playCWRotationSound() {}
+        public void playCCWRotationSound() {}
+        public void playSuperSlideSound() {}
+        public void stopVictoryFanfare() {}
+        public void stopGameOverSound() {}
     }
-  }
 
-  public void resumeCurrentSoundtrack() {
-    if (soundtrackEnabled && currentSoundtrack != null) {
-      currentSoundtrack.loop(Clip.LOOP_CONTINUOUSLY);
+    static TetrisAudioSystem create() {
+        URL manifestUrl = TetrisAudioSystem.class.getResource("/META-INF/MANIFEST.MF");
+        if (manifestUrl == null) {
+            throw new RuntimeException("jar manifest file not found");
+        }
+
+        try (var manifestStream = manifestUrl.openStream()) {
+            Manifest manifest = new Manifest(manifestStream);
+            String audioEnabledAttr = manifest.getMainAttributes().getValue("Audio-Enabled");
+            boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);
+            return audioEnabled ? new DefaultTetrisAudioSystem() : new NoopTetrisAudioSystem();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read JAR manifest file", e);
+        }
     }
-  }
 
-  public void stopCurrentSoundtrack() {
-    if (soundtrackEnabled && currentSoundtrack != null) {
-      currentSoundtrack.stop();
-    }
-  }
+    void setSoundtrackEnabled(boolean enabled);
 
-  public void playGameOverSound() {
-    play(GAME_OVER);
-  }
+    void setEffectsEnabled(boolean enabled);
 
-  public void playVictoryFanfare() {
-    play(VICTORY_FANFARE);
-  }
+    void startSoundtrack(int level);
 
-  public void playPauseSound() {
-    play(PAUSE);
-  }
+    void resumeCurrentSoundtrack();
 
-  public void playBlockPlacementSound() {
-    play(PLACE_BLOCK);
-  }
+    void stopCurrentSoundtrack();
 
-  public void playHoldSound() {
-    play(HOLD);
-  }
+    void playGameOverSound();
 
-  public void playReleaseSound() {
-    play(RELEASE);
-  }
+    void playVictoryFanfare();
 
-  public void playClearLineSound(int lineCount) {
-    play(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
-  }
+    void playPauseSound();
 
-  public void playCWRotationSound() {
-    play(SWIPE_UP);
-  }
+    void playBlockPlacementSound();
 
-  public void playCCWRotationSound() {
-    play(SWIPE_DOWN);
-  }
+    void playHoldSound();
 
-  public void playSuperslideSound() {
-    play(SUPER_SLIDE);
-  }
+    void playReleaseSound();
 
-  public void stopVictoryFanfare() {
-    stop(VICTORY_FANFARE);
-  }
+    void playClearLineSound(int lineCount);
 
-  public void stopGameOverSound() {
-    stop(GAME_OVER);
-  }
+    void playCWRotationSound();
 
-  private void play(Clip effect) {
-    if (effectsEnabled) {
-      effect.setFramePosition(0);
-      effect.start();
-    }
-  }
+    void playCCWRotationSound();
 
-  private void stop(Clip effect) {
-    if (effect.isActive()) {
-      effect.setFramePosition(0);
-      effect.stop();
-    }
-  }
+    void playSuperSlideSound();
 
-  private Clip getSoundtrack(int level) {
-    return SOUNDTRACK[level - 1];
-  }
+    void stopVictoryFanfare();
 
-  private static Clip createClip(String resourcePath) {
-    try {
-      URL audioFile = TetrisAudioSystem.class.getResource(resourcePath);
-      if (audioFile == null) {
-        throw new RuntimeException("Audio file not found for path [" + resourcePath + "]");
-      }
-      Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(audioFile));
-      return clip;
-    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
+    void stopGameOverSound();
 }
