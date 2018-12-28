@@ -141,7 +141,7 @@ public class MasterTetrisFrame extends JFrame {
   public MasterTetrisFrame() {
 
     try {
-      this.audioSystem = TetrisAudioSystem.create();
+      this.audioSystem = TetrisAudioSystem.getInstance();
     } catch (AudioFileNotFound ex) {
       JOptionPane.showMessageDialog(null, "Audio files were not found. Please re-build the archive", "Error", JOptionPane.ERROR_MESSAGE);
       System.exit(1);

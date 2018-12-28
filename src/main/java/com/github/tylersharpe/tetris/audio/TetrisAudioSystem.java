@@ -34,7 +34,7 @@ public interface TetrisAudioSystem {
         public void stopGameOverSound() {}
     }
 
-    static TetrisAudioSystem create() {
+    static TetrisAudioSystem getInstance() {
         URL manifestUrl = TetrisAudioSystem.class.getResource("/META-INF/MANIFEST.MF");
         if (manifestUrl == null) {
             throw new RuntimeException("jar manifest file not found");
