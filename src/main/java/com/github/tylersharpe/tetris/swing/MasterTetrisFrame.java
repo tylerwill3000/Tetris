@@ -150,6 +150,7 @@ public class MasterTetrisFrame extends JFrame {
     this.game = new TetrisGame();
     this.game.getFallTimer().setInitialDelay(0);
     this.game.getFallTimer().addActionListener(e -> repaint());
+
     this.game.getGameTimer().addActionListener(e -> {
       scorePanel.timeLabel.repaint();
       scorePanel.timeProgressBar.repaint();
@@ -157,12 +158,14 @@ public class MasterTetrisFrame extends JFrame {
 
     this.game.subscribe(new TetrisEvent[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, e -> onGameOver());
     this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
+
     this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
       int lines = (int) event;
       audioSystem.playClearLineSound(lines);
       scorePanel.totalLinesLabel.repaint();
       scorePanel.linesClearedProgressBar.repaint();
     });
+
     this.game.subscribe(TetrisEvent.LEVEL_CHANGED, event -> {
 
       int newLevel = (int) event;
@@ -176,22 +179,23 @@ public class MasterTetrisFrame extends JFrame {
         flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.YELLOW));
       }
     });
+
     this.game.subscribe(TetrisEvent.SCORE_CHANGED, score -> scorePanel.scoreLabel.repaint());
 
     this.boardPanel = new BoardPanel();
 
     this.nextBlockPanel = new BlockDisplayPanel("Next") {
-      @Override public Collection<Block.ColoredSquare> getCurrentColors() {
+      @Override
+      public Collection<Block.ColoredSquare> getCurrentColors() {
         Block nextBlock = game.getConveyor().peek();
         return nextBlock == null ? Collections.emptyList() : nextBlock.getNextPanelSquares();
       }
     };
 
     this.holdPanel = new BlockDisplayPanel("Hold") {
-      @Override public Collection<Block.ColoredSquare> getCurrentColors() {
-        return game.getHoldBlock().isPresent() ?
-            game.getHoldBlock().get().getNextPanelSquares() :
-            Collections.emptyList();
+      @Override
+      public Collection<Block.ColoredSquare> getCurrentColors() {
+        return game.getHoldBlock().map(Block::getNextPanelSquares).orElse(Collections.emptyList());
       }
     };
 
@@ -266,6 +270,7 @@ public class MasterTetrisFrame extends JFrame {
     if (clearTask != null && !clearTask.isDone()) {
       clearTask.cancel(true);
     }
+
     if (flashLabelTask != null && !flashLabelTask.isDone()) {
       flashLabelTask.cancel(true);
     }
@@ -533,14 +538,16 @@ public class MasterTetrisFrame extends JFrame {
     private GridLayout layout;
 
     private JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER) {
-      @Override protected void paintComponent(Graphics g) {
+      @Override
+      protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setText("Score: " + game.getScore());
       }
     };
 
     private JLabel totalLinesLabel = new JLabel("Lines: 0 / " + game.getDifficulty().getLinesPerLevel(), JLabel.CENTER) {
-      @Override protected void paintComponent(Graphics g) {
+      @Override
+      protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setText("Lines: " + game.getCurrentLevelLinesCleared() + " / " + game.getDifficulty().getLinesPerLevel());
       }
@@ -549,7 +556,8 @@ public class MasterTetrisFrame extends JFrame {
     private FlashLabel levelLabel = new FlashLabel("Level: 1", JLabel.CENTER);
 
     private JLabel timeLabel = new JLabel("Time: 00:00", JLabel.CENTER) {
-      @Override protected void paintComponent(Graphics g) {
+      @Override
+      protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         String timeLabel = "Time: " + Utility.formatSeconds(game.getCurrentLevelTime());
         if (game.isTimeAttack()) {
