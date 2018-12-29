@@ -7,14 +7,14 @@ import java.util.Objects;
 
 public class Score implements Serializable {
 
-  static final Comparator<Score> COMPARING_BY_POINTS = Comparator.comparing((Score s) -> s.points).reversed();
+  static final Comparator<Score> POINTS_HIGH_TO_LOW = Comparator.comparing((Score s) -> s.points).reversed();
 
-  public int points, linesCleared, maxLevel;
+  public final int points, linesCleared, maxLevel;
   public transient int rank; // transient since calculated based on points of other scores
-  public long gameTime;
-  public String name;
-  public Difficulty difficulty;
-  public LocalDate dateAchieved;
+  public final long gameTime;
+  public final String name;
+  public final Difficulty difficulty;
+  public final LocalDate dateAchieved;
 
   public Score(String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel) {
     this(-1, name, score, gameTime, difficulty, linesCleared, maxLevel, LocalDate.now());

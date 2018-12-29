@@ -28,8 +28,7 @@ public class ScoreRepository {
       scoresStream = scoresStream.limit(limit);
     }
 
-    // Sort by points DESC
-    return scoresStream.sorted((s1, s2) -> s2.points - s1.points).collect(toList());
+    return scoresStream.collect(toList());
   }
 
   public int saveScore(Score score) throws IOException {
@@ -69,7 +68,7 @@ public class ScoreRepository {
     try (var scoresInput = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
       @SuppressWarnings("unchecked")
       List<Score> scores = ((List<Score>) scoresInput.readObject());
-      scores.sort(Score.COMPARING_BY_POINTS);
+      scores.sort(Score.POINTS_HIGH_TO_LOW);
 
       for (int rank = 1; rank <= scores.size(); rank++) {
         scores.get(rank -1).rank = rank;
@@ -79,10 +78,6 @@ public class ScoreRepository {
     } catch (ClassNotFoundException e) {
       throw new RuntimeException("Malformed high scores file", e);
     }
-  }
-
-  public void clearAll() throws Exception {
-    Files.deleteIfExists(SAVE_PATH);
   }
 
 }

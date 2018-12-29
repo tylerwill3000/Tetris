@@ -2,6 +2,7 @@ package com.github.tylersharpe.tetris;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 public enum Difficulty {
 

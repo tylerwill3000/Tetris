@@ -3,6 +3,8 @@ package com.github.tylersharpe.tetris;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
+
 public final class BlockConveyor {
 
   private Set<Block.Type> enabledTypes;
@@ -58,7 +60,7 @@ public final class BlockConveyor {
 
   Set<Block.Type> getEnabledSpecials() {
     if (activeSpecialTypes == null) {
-      activeSpecialTypes = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(Collectors.toSet());
+      activeSpecialTypes = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(toSet());
     }
     return activeSpecialTypes;
   }

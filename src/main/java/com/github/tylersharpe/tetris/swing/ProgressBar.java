@@ -22,7 +22,6 @@ abstract class ProgressBar extends PixelGrid {
 
   @Override
   public Collection<Block.ColoredSquare> getCurrentColors() {
-
     double percentageComplete = getCurrentPercentage();
 
     // This is necessary so that at least 1 panel gets filled in if we are > 0 percentage complete but not within percentage per panel window
@@ -31,7 +30,7 @@ abstract class ProgressBar extends PixelGrid {
     }
 
     List<Block.ColoredSquare> squares = new ArrayList<>();
-    for (int panel = 1; panel <= columns ; panel++) {
+    for (int panel = 1; panel <= getColumns() ; panel++) {
       double panelPercentage = Math.min(100.0, panel * percentagePerPanel);
       Color squareColor = panelPercentage <= percentageComplete ? barColor : null;
       squares.add(new Block.ColoredSquare(squareColor, 0, panel - 1));

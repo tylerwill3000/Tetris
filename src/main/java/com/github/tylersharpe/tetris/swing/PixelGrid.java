@@ -11,8 +11,8 @@ import java.util.Collection;
  */
 abstract class PixelGrid extends JPanel {
 
-  int rows, columns;
-  int padding;
+  private int rows, columns;
+  private int padding;
   private SquareStyle squareStyle;
 
   PixelGrid(int rows, int columns, int pixelDimension) {
@@ -52,20 +52,18 @@ abstract class PixelGrid extends JPanel {
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
 
-    for (Block.ColoredSquare coloredSquare : getCurrentColors()) {
-
-      int squareX = getXCoordinate(coloredSquare) + padding;
-      int squareY = getYCoordinate(coloredSquare) + padding;
+    for (var square : getCurrentColors()) {
+      int squareX = getXCoordinate(square) + padding;
+      int squareY = getYCoordinate(square) + padding;
       int width = getUnitWidth();
       int height = getUnitHeight();
 
-      if (coloredSquare.getColor() == null) {
+      if (square.getColor() == null) {
         squareStyle.paintGhost(g, squareX, squareY, width, height);
       } else {
-        squareStyle.paintSquare(g, coloredSquare.getColor(), squareX, squareY, width, height);
+        squareStyle.paintSquare(g, square.getColor(), squareX, squareY, width, height);
       }
     }
-
   }
 
   protected int getXCoordinate(Block.ColoredSquare square) {

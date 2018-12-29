@@ -14,7 +14,6 @@ enum SquareStyle {
 
     @Override
     public void paintGhost(Graphics g, int x, int y, int width, int height) {
-
       // Light gray for left and top border
       g.setColor(Color.LIGHT_GRAY);
       g.drawLine(x, y, x + width, y);

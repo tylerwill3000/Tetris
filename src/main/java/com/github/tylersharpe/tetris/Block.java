@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 public class Block {
 
   private Type type;
-  private int[] location;
+  private int row, column;
   private int orientation;
   private boolean isHoldBlock;
 
@@ -21,11 +21,11 @@ public class Block {
   }
 
   int getRow() {
-    return location[0];
+    return row;
   }
 
   int getColumn() {
-    return location[1];
+    return column;
   }
 
   Collection<ColoredSquare> getOccupiedSquares() {
@@ -49,21 +49,18 @@ public class Block {
   }
 
   void move(int rowMove, int colMove) {
-    location[0] += rowMove;
-    location[1] += colMove;
+    row += rowMove;
+    column += colMove;
   }
 
   void setLocation(int row, int col) {
-    this.location = new int[]{ row, col };
+    this.row = row;
+    this.column = col;
   }
 
-  void rotate(int rotation) {
-    orientation += rotation;
-    if (orientation == 4) {
-      orientation = 0;
-    } else if (orientation == -1) {
-      orientation = 3;
-    }
+  void rotate(Rotation rotation) {
+    int orientationChange = rotation == Rotation.CLOCKWISE ? 1 : -1;
+    orientation = (orientation + orientationChange) % 4;
   }
 
   public static class ColoredSquare {

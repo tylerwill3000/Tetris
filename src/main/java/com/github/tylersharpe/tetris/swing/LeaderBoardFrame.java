@@ -1,14 +1,12 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.Difficulty;
-import com.github.tylersharpe.tetris.TetrisGame;
-import com.github.tylersharpe.tetris.Utility;
-import com.github.tylersharpe.tetris.ScoreRepository;
+import com.github.tylersharpe.tetris.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.io.IOException;
 import java.util.stream.IntStream;
 
 class LeaderBoardFrame extends JFrame {
@@ -25,17 +23,16 @@ class LeaderBoardFrame extends JFrame {
   }
 
   private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
-  private int highlightRank = -1;
+  private int highlightRank;
   private JTable scoresTable = new JTable();
-  private ScoreRepository scoresDao;
+  private ScoreRepository scoreRepository;
 
-  LeaderBoardFrame(ScoreRepository scoresDao) {
-    this(scoresDao, -1);
+  LeaderBoardFrame(ScoreRepository scoreRepository) {
+    this(scoreRepository, -1);
   }
 
-  LeaderBoardFrame(ScoreRepository scoresDao, int highlightRank) {
-
-    this.scoresDao = scoresDao;
+  LeaderBoardFrame(ScoreRepository scoreRepository, int highlightRank) {
+    this.scoreRepository = scoreRepository;
     this.highlightRank = highlightRank;
 
     scoresTable.setFillsViewportHeight(true);
@@ -73,28 +70,30 @@ class LeaderBoardFrame extends JFrame {
     String selectedItem = (String) difficulties.getSelectedItem();
     Difficulty selectedDifficulty = "All".equals(selectedItem) ? null : Difficulty.values()[selectedIndex];
 
-    Object[][] scoreData;
+    java.util.List<Score> scores;
     try {
-      scoreData = scoresDao.getScores(selectedDifficulty, null)
-                           .stream()
-                           .map(score -> new Object[]{
-                             score.rank,
-                             score.name,
-                             score.points,
-                             score.linesCleared,
-                             score.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : score.maxLevel,
-                             score.difficulty,
-                             Utility.formatSeconds(score.gameTime),
-                             score.dateAchieved})
-                           .toArray(Object[][]::new);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      JOptionPane.showMessageDialog(null, "Error reading scores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      scores = scoreRepository.getScores(selectedDifficulty, null);
+    } catch (IOException e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Could not read high scores", "Error", JOptionPane.ERROR_MESSAGE);
       dispose();
       return;
     }
 
-    scoresTable.setModel(new DefaultTableModel(scoreData, COLUMN_HEADERS));
+    Object[][] renderedScoreData = scores.stream()
+            .map(score -> new Object[]{
+              score.rank,
+              score.name,
+              score.points,
+              score.linesCleared,
+              score.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : score.maxLevel,
+              score.difficulty,
+              Utility.formatSeconds(score.gameTime),
+              score.dateAchieved
+            })
+            .toArray(Object[][]::new);
+
+    scoresTable.setModel(new DefaultTableModel(renderedScoreData, COLUMN_HEADERS));
 
     TableCellRenderer renderer = new HighScoreCellRenderer(highlightRank);
     IntStream.range(0, scoresTable.getColumnCount())
@@ -103,7 +102,6 @@ class LeaderBoardFrame extends JFrame {
   }
 
   private static class HighScoreCellRenderer implements TableCellRenderer {
-
     private int rankToHighlight;
     private int rowToHighlight = -1;
 

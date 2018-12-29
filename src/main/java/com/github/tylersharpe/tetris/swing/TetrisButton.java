@@ -20,7 +20,6 @@ class TetrisButton extends JButton {
     setFocusable(false);
 
     addMouseListener(new MouseAdapter() {
-
       public void mouseEntered(MouseEvent e) {
         if (isEnabled()) {
           setCursor(HAND_CURSOR);
@@ -33,7 +32,6 @@ class TetrisButton extends JButton {
       }
 
     });
-
   }
 
 }

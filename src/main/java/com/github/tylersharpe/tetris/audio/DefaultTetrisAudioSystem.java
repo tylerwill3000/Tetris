@@ -105,11 +105,11 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
     play(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
   }
 
-  public void playCWRotationSound() {
+  public void playClockwiseRotationSound() {
     play(SWIPE_UP);
   }
 
-  public void playCCWRotationSound() {
+  public void playCounterClockwiseRotationSound() {
     play(SWIPE_DOWN);
   }
 

@@ -28,8 +28,8 @@ public interface TetrisAudioSystem {
         public void playHoldSound() {}
         public void playReleaseSound() {}
         public void playClearLineSound(int lineCount) {}
-        public void playCWRotationSound() {}
-        public void playCCWRotationSound() {}
+        public void playClockwiseRotationSound() {}
+        public void playCounterClockwiseRotationSound() {}
         public void playSuperSlideSound() {}
     }
 
@@ -45,7 +45,7 @@ public interface TetrisAudioSystem {
         }
 
         try (var manifestStream = manifestUrl.openStream()) {
-            Manifest manifest = new Manifest(manifestStream);
+            var manifest = new Manifest(manifestStream);
             String audioEnabledAttr = manifest.getMainAttributes().getValue("Audio-Enabled");
             boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);
             return audioEnabled ? DefaultTetrisAudioSystem.getInstance() : NoopTetrisAudioSystem.getInstance();
@@ -78,9 +78,9 @@ public interface TetrisAudioSystem {
 
     void playClearLineSound(int lineCount);
 
-    void playCWRotationSound();
+    void playClockwiseRotationSound();
 
-    void playCCWRotationSound();
+    void playCounterClockwiseRotationSound();
 
     void playSuperSlideSound();
 

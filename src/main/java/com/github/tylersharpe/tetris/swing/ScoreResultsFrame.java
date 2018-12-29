@@ -8,17 +8,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 class ScoreResultsFrame extends JFrame {
 
-  private final static int NAME_LENGTH = 20;
+  private final static int NAME_LENGTH = 40;
 
-  private JLabel lblScore = new JLabel();
-	private JTextField nameField = new JTextField(10);
-	private TetrisButton saveScoreButton = new TetrisButton("Save");
-	private TetrisButton closeButton = new TetrisButton("Cancel");
+  private JTextField nameField = new JTextField(10);
 
-  ScoreResultsFrame(ScoreRepository scoresDao, TetrisGame game) {
+  ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame game) {
 
     setLayout(new GridLayout(3, 1));
 
@@ -30,30 +28,26 @@ class ScoreResultsFrame extends JFrame {
       }
     });
 
-    int rank = scoresDao.determineRank(game.getScore());
-    lblScore.setFont(MasterTetrisFrame.ARIAL_HEADER);
-    lblScore.setHorizontalAlignment(JLabel.CENTER);
-    lblScore.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
-    add(lblScore);
+    int rank = scoreRepository.determineRank(game.getScore());
+
+    var scoreLabel = new JLabel();
+    scoreLabel.setFont(MasterTetrisFrame.ARIAL_HEADER);
+    scoreLabel.setHorizontalAlignment(JLabel.CENTER);
+    scoreLabel.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
+    add(scoreLabel);
 
     if (ScoreRepository.isLeaderBoardRank(rank)) {
-
-      JPanel inputPanel = new JPanel();
       JLabel congrats = new JLabel("Congratulations! You made the leaderboard! Enter the name to save your score under or press cancel: ");
       congrats.setFont(MasterTetrisFrame.ARIAL_DESCRIPTION);
+
+      var inputPanel = new JPanel();
       inputPanel.add(congrats);
       inputPanel.add(nameField);
 
-      JPanel buttonPanel = new JPanel();
-      buttonPanel.add(saveScoreButton);
-      buttonPanel.add(closeButton);
-
+      var saveScoreButton = new TetrisButton("Save");
       saveScoreButton.setMnemonic('s');
-      closeButton.setMnemonic('c');
-
       saveScoreButton.addActionListener(e -> {
-
-        String saveName = nameField.getText();
+        String saveName = nameField.getText().trim();
 
         if (saveName.equals("")) {
           JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
@@ -61,17 +55,23 @@ class ScoreResultsFrame extends JFrame {
         }
 
         try {
-          scoresDao.saveScore(new Score(saveName, game.getScore(), game.getGameTime(),
-                                game.getDifficulty(), game.getTotalLinesCleared(), game.getLevel()));
+          scoreRepository.saveScore(new Score(saveName, game.getScore(), game.getGameTime(),
+                  game.getDifficulty(), game.getTotalLinesCleared(), game.getLevel()));
           dispose();
-          new LeaderBoardFrame(scoresDao, rank);
-        } catch (Exception ex) {
+          new LeaderBoardFrame(scoreRepository, rank);
+        } catch (IOException ex) {
           ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Error saving score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(null, "Could not save score", "Error", JOptionPane.ERROR_MESSAGE);
         }
       });
 
+      var closeButton = new TetrisButton("Cancel");
+      closeButton.setMnemonic('c');
       closeButton.addActionListener(e -> dispose());
+
+      JPanel buttonPanel = new JPanel();
+      buttonPanel.add(saveScoreButton);
+      buttonPanel.add(closeButton);
 
       add(inputPanel);
       add(buttonPanel);

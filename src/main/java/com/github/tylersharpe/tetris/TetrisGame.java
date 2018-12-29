@@ -6,6 +6,7 @@ import com.github.tylersharpe.tetris.event.TetrisEvent;
 import javax.swing.Timer;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toCollection;
@@ -13,8 +14,8 @@ import static java.util.stream.Collectors.toCollection;
 public class TetrisGame extends TetrisEventBus {
 
   public static final int MAX_LEVEL = 10;
-  private static final int DEFAULT_VERTICAL_CELLS = 23;
-  private static final int DEFAULT_HORIZONTAL_CELLS = 10;
+  private static final int VERTICAL_CELLS = 23;
+  private static final int HORIZONTAL_CELLS = 10;
 
   private Block activeBlock;
   private Block holdBlock;
@@ -30,21 +31,11 @@ public class TetrisGame extends TetrisEventBus {
   private boolean ghostSquaresEnabled = true;
   private boolean timeAttack;
   private int currentLevelTime;
-
-  private Timer fallTimer = new Timer(0, e -> tryFall());
-
-  private Timer gameTimer = new Timer(1000, e -> {
-    setGameTime(gameTime + 1);
-    currentLevelTime++;
-    if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
-      publish(TetrisEvent.TIME_ATTACK_FAIL);
-      ((Timer) e.getSource()).stop();
-      fallTimer.stop();
-    }
-  });
+  private Timer fallTimer;
+  private Timer gameTimer;
 
   public TetrisGame() {
-    this(DEFAULT_VERTICAL_CELLS, DEFAULT_HORIZONTAL_CELLS);
+    this(VERTICAL_CELLS, HORIZONTAL_CELLS);
   }
 
   private TetrisGame(int verticalDimension, int horizontalDimension) {
@@ -53,6 +44,19 @@ public class TetrisGame extends TetrisEventBus {
     this.persistedBlocks = IntStream.range(0, verticalDimension)
                                     .mapToObj(i -> new Color[horizontalDimension])
                                     .collect(toCollection(LinkedList::new));
+
+    this.fallTimer = new Timer(0, e -> tryFall());
+
+    this.gameTimer = new Timer(1000, e -> {
+      setGameTime(gameTime + 1);
+      currentLevelTime++;
+
+      if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
+        publish(TetrisEvent.TIME_ATTACK_FAIL);
+        ((Timer) e.getSource()).stop();
+        fallTimer.stop();
+      }
+    });
   }
 
   public int getHorizontalDimension() {
@@ -217,22 +221,14 @@ public class TetrisGame extends TetrisEventBus {
     }
   }
 
-  public boolean rotateActiveBlockCW() {
-    return rotateActiveBlock(1);
-  }
-
-  public boolean rotateActiveBlockCCW() {
-    return rotateActiveBlock(-1);
-  }
-
   /** @return True if piece could successfully move, false if there was not enough room */
   private boolean moveActiveBlock(int rowMove, int colMove) {
-
     boolean canMoveBeMade = activeBlock.getOccupiedSquares()
-                                       .stream()
-                                       .map(square -> new Block.ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
-                                       .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
-                                                               isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+            .stream()
+            .map(square -> new Block.ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
+            .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
+                                    isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+
     if (canMoveBeMade) {
       activeBlock.move(rowMove, colMove);
       return true;
@@ -241,35 +237,37 @@ public class TetrisGame extends TetrisEventBus {
     }
   }
 
-  private boolean rotateActiveBlock(int dir) {
-    if (dir != 1 && dir != -1) {
-      throw new IllegalArgumentException("Rotation argument must be either 1 or -1");
-    }
-
-    activeBlock.rotate(dir);
+  public boolean rotateActiveBlock(Rotation rotation) {
+    activeBlock.rotate(rotation);
 
     boolean areRotatedSquaresLegal = activeBlock.getOccupiedSquares()
-                                                .stream()
-                                                .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
-                                                                        isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+            .stream()
+            .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
+                                    isOpen(moveSquare.getRow(), moveSquare.getColumn()));
     if (areRotatedSquaresLegal) {
       return true;
     } else {
-      activeBlock.rotate(dir * -1);
+      activeBlock.rotate(rotation.reverse());
       return false;
     }
   }
 
   private Collection<Block.ColoredSquare> getGhostSquares() {
     if (activeBlock == null) {
-      return Collections.emptyList();
+      return List.of();
     }
+
     int currentRow = activeBlock.getRow();
     int currentCol = activeBlock.getColumn();
+
     dropCurrentBlock();
+
     Collection<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
     ghostSquares.forEach(Block.ColoredSquare::clearColor);
-    activeBlock.setLocation(currentRow, currentCol); // Returns block to location it was in before dropping to ghost position
+
+    // Returns block to location it was in before dropping to ghost position
+    activeBlock.setLocation(currentRow, currentCol);
+
     return ghostSquares;
   }
 
@@ -286,6 +284,7 @@ public class TetrisGame extends TetrisEventBus {
 
     int completeRowScanIndex = Math.min(activeBlock.getRow(), verticalDimension - 1);
     int minRowScanIndex = Math.max(0, completeRowScanIndex - 3);
+
     int linesCleared = 0;
     while (completeRowScanIndex >= minRowScanIndex && linesCleared <= 4) {
 
@@ -312,17 +311,17 @@ public class TetrisGame extends TetrisEventBus {
 
   public void logActiveBlock() {
     if (activeBlock != null) {
-      activeBlock.getOccupiedSquares().forEach(sq -> setColor(sq.getRow(), sq.getColumn(), sq.getColor()));
+      for (var square : activeBlock.getOccupiedSquares()) {
+        setColor(square.getRow(), square.getColumn(), square.getColor());
+      }
     }
   }
 
   public void beginNew() {
     setGameTime(0);
     setScore(0);
-
     setLevel(1);
 
-    // The reason we use setters for the score info but not these are because score info changes publish events, these don't
     this.totalLinesCleared = 0;
     this.currentLevelTime = 0;
     clearActiveBlock();
@@ -338,7 +337,6 @@ public class TetrisGame extends TetrisEventBus {
   }
 
   private void increaseScore(int completedLines) {
-
     int newScore = this.score;
 
     switch (completedLines) {
@@ -348,6 +346,7 @@ public class TetrisGame extends TetrisEventBus {
       case 4: newScore += 100; break;
     }
 
+    // Special pieces bonus
     newScore += conveyor.getEnabledSpecials()
                         .stream()
                         .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
@@ -355,10 +354,11 @@ public class TetrisGame extends TetrisEventBus {
 
     int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
     totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
+
     int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
     int newLevel = levelsCompleted + 1;
-
     int levelIncrease = newLevel - this.level;
+
     if (timeAttack && levelIncrease > 0) {
       newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
     }
@@ -370,6 +370,7 @@ public class TetrisGame extends TetrisEventBus {
     if (levelIncrease > 0) {
       setLevel(newLevel);
     }
+
     setScore(newScore);
   }
 
@@ -378,13 +379,11 @@ public class TetrisGame extends TetrisEventBus {
    * @return True if there was room to spawn the piece, false otherwise
    */
   public boolean spawn(Block block) {
-
     int startRow = block.getType().getStartRow();
     int startCol = horizontalDimension / 2;
 
     while (true) {
-
-      Collection<Block.ColoredSquare> spawnSquares = block.getType().calculateOccupiedSquares(0, startRow, startCol);
+      var spawnSquares = block.getType().calculateOccupiedSquares(0, startRow, startCol);
 
       boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.getRow() >= 3);
       if (!anyVisible) {

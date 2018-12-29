@@ -84,15 +84,15 @@ public class MasterTetrisFrame extends JFrame {
 
         case KeyEvent.VK_UP:
 
-          if (game.rotateActiveBlockCW()) {
-            audioSystem.playCWRotationSound();
+          if (game.rotateActiveBlock(Rotation.CLOCKWISE)) {
+            audioSystem.playClockwiseRotationSound();
           }
           break;
 
         case KeyEvent.VK_F:
 
-          if (game.rotateActiveBlockCCW()) {
-            audioSystem.playCCWRotationSound();
+          if (game.rotateActiveBlock(Rotation.COUNTER_CLOCKWISE)) {
+            audioSystem.playCounterClockwiseRotationSound();
           }
           break;
 
