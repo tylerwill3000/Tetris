@@ -12,7 +12,6 @@ import static java.util.stream.Collectors.toList;
 public class ScoreRepository {
 
   private static final Path SAVE_PATH = Paths.get(System.getProperty("user.home"), ".tetris-scores");
-
   private static final int MIN_RANK = 25;
 
   public static boolean isLeaderBoardRank(int rank) {
@@ -53,14 +52,13 @@ public class ScoreRepository {
     return rank;
   }
 
-  public int determineRank(int pointsOfScoreToSave)  {
-    long numScoresGreater = 0;
+  public int determineRank(int pointsOfScoreToSave) {
     try {
-      numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
+      long numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
+      return (int) numScoresGreater + 1;
     } catch (IOException e) {
-      e.printStackTrace();
+      throw new UncheckedIOException(e);
     }
-    return (int) numScoresGreater + 1;
   }
 
   public List<Score> getAllScores() throws IOException {
@@ -70,7 +68,8 @@ public class ScoreRepository {
 
     try (var scoresInput = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
       @SuppressWarnings("unchecked")
-      List<Score> scores = (List<Score>) scoresInput.readObject();
+      List<Score> scores = ((List<Score>) scoresInput.readObject());
+      scores.sort(Score.COMPARING_BY_POINTS);
 
       for (int rank = 1; rank <= scores.size(); rank++) {
         scores.get(rank -1).rank = rank;

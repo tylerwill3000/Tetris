@@ -2,11 +2,15 @@ package com.github.tylersharpe.tetris;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class Score implements Serializable {
 
-  public int points, linesCleared, maxLevel, rank;
+  static final Comparator<Score> COMPARING_BY_POINTS = Comparator.comparing((Score s) -> s.points).reversed();
+
+  public int points, linesCleared, maxLevel;
+  public transient int rank; // transient since calculated based on points of other scores
   public long gameTime;
   public String name;
   public Difficulty difficulty;

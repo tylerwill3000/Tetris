@@ -55,11 +55,8 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
   }
 
   public void startSoundtrack(int level) {
-    if (soundtrackEnabled) {
-      SOUNDTRACK_CLIP.close(); // Close out stream to current level
-      openAudioStream(SOUNDTRACK_CLIP, SOUNDTRACK_FILE_PATHS[level - 1]);
-      SOUNDTRACK_CLIP.loop(Clip.LOOP_CONTINUOUSLY);
-    }
+    loadAudioStream(SOUNDTRACK_CLIP, SOUNDTRACK_FILE_PATHS[level - 1]);
+    resumeCurrentSoundtrack();
   }
 
   public void resumeCurrentSoundtrack() {
@@ -69,23 +66,21 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
   }
 
   public void stopCurrentSoundtrack() {
-    if (soundtrackEnabled) {
-      SOUNDTRACK_CLIP.stop();
-    }
+    SOUNDTRACK_CLIP.stop();
   }
 
   public void playGameOverSound() {
+    loadAudioStream(SOUNDTRACK_CLIP, GAME_OVER_FILE_PATH);
+
     if (soundtrackEnabled) {
-      SOUNDTRACK_CLIP.close();
-      openAudioStream(SOUNDTRACK_CLIP, GAME_OVER_FILE_PATH);
       SOUNDTRACK_CLIP.start();
     }
   }
 
   public void playVictoryFanfare() {
+    loadAudioStream(SOUNDTRACK_CLIP, VICTORY_FANFARE_FILE_PATH);
+
     if (soundtrackEnabled) {
-      SOUNDTRACK_CLIP.close();
-      openAudioStream(SOUNDTRACK_CLIP, VICTORY_FANFARE_FILE_PATH);
       SOUNDTRACK_CLIP.start();
     }
   }
@@ -131,17 +126,18 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
 
   private static Clip createBufferedClip(String audioFilePath) {
     Clip clip = retrieveSystemAudioClip();
-    openAudioStream(clip, audioFilePath);
+    loadAudioStream(clip, audioFilePath);
     return clip;
   }
 
-  private static void openAudioStream(Clip clip, String audioFilePath) {
+  private static void loadAudioStream(Clip clip, String audioFilePath) {
     URL audioFile = DefaultTetrisAudioSystem.class.getResource(audioFilePath);
     if (audioFile == null) {
       throw new AudioFileNotFound(audioFilePath);
     }
 
     try {
+      clip.close(); // Ensure we close resources if there is an existing stream loaded into this clip
       clip.open(AudioSystem.getAudioInputStream(audioFile));
     } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
       throw new RuntimeException("Could not open audio stream for path '" + audioFilePath + "'", e);

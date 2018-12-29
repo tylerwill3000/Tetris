@@ -44,21 +44,6 @@ class LeaderBoardFrame extends JFrame {
     difficulties.setSelectedItem("All");
     difficulties.addActionListener(e -> refreshTable());
 
-    TetrisButton clearButton = new TetrisButton("Clear Scores");
-    clearButton.setMnemonic('c');
-    clearButton.addActionListener(e -> {
-      int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete all saved scores? This cannot be undone", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-      if (result == JOptionPane.YES_OPTION) {
-          try {
-          scoresDao.clearAll();
-          refreshTable();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Error clearing scores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-      }
-    });
-
     TetrisButton closeButton = new TetrisButton("Close");
     closeButton.setMnemonic('l');
     closeButton.addActionListener(e -> dispose());
@@ -69,7 +54,6 @@ class LeaderBoardFrame extends JFrame {
 
     JPanel menuPanel = new JPanel(new GridLayout(2, 1));
     menuPanel.add(recordSelectorPanel);
-    menuPanel.add(SwingUtility.nestInPanel(clearButton, closeButton));
 
     setLayout(new BorderLayout());
     add(new JScrollPane(scoresTable), BorderLayout.CENTER);
