@@ -2,6 +2,8 @@ package com.github.tylersharpe.tetris.audio;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.jar.Manifest;
 
 public interface TetrisAudioSystem {
@@ -36,8 +38,13 @@ public interface TetrisAudioSystem {
 
     static TetrisAudioSystem getInstance() {
         URL manifestUrl = TetrisAudioSystem.class.getResource("/META-INF/MANIFEST.MF");
-        if (manifestUrl == null) {
-            throw new RuntimeException("jar manifest file not found");
+        if (manifestUrl == null) { // Running through IDE (meaning JAR has not been built)
+            try {
+                var manifestFile = Paths.get(".").toAbsolutePath().resolve("build/tmp/jar/MANIFEST.MF");
+                manifestUrl = manifestFile.toUri().toURL();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         try (var manifestStream = manifestUrl.openStream()) {
