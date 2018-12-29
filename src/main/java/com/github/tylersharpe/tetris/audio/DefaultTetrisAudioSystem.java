@@ -8,35 +8,35 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
 
   private static DefaultTetrisAudioSystem INSTANCE;
 
-  private static final Clip[] SOUNDTRACK = {
-    createClip("/audio/soundtrack/tetris-theme.wav"),
-    createClip("/audio/soundtrack/bean-machine-1-4.wav"),
-    createClip("/audio/soundtrack/tetris-music-3.wav"),
-    createClip("/audio/soundtrack/metroid-kraid.wav"),
-    createClip("/audio/soundtrack/sonic-scrap-brain-zone.wav"),
-    createClip("/audio/soundtrack/chrono-trigger-bike-theme.wav"),
-    createClip("/audio/soundtrack/mega-man-dr-wily.wav"),
-    createClip("/audio/soundtrack/sonic-ice-cap-zone.wav"),
-    createClip("/audio/soundtrack/bean-machine-9-12.wav"),
-    createClip("/audio/soundtrack/chrono-trigger-final-battle.wav")
+  private static final Clip SOUNDTRACK_CLIP = retrieveSystemAudioClip();
+
+  private static final String[] SOUNDTRACK_FILE_PATHS = {
+    "/audio/soundtrack/tetris-theme.wav",
+    "/audio/soundtrack/bean-machine-1-4.wav",
+    "/audio/soundtrack/tetris-music-3.wav",
+    "/audio/soundtrack/metroid-kraid.wav",
+    "/audio/soundtrack/sonic-scrap-brain-zone.wav",
+    "/audio/soundtrack/chrono-trigger-bike-theme.wav",
+    "/audio/soundtrack/mega-man-dr-wily.wav",
+    "/audio/soundtrack/sonic-ice-cap-zone.wav",
+    "/audio/soundtrack/bean-machine-9-12.wav",
+    "/audio/soundtrack/chrono-trigger-final-battle.wav"
   };
 
-  // Non-looping clips
-  private static final Clip GAME_OVER = createClip("/audio/soundtrack/zelda-game-over.wav");
-  private static final Clip VICTORY_FANFARE = createClip("/audio/soundtrack/ff1-victory-fanfare.wav");
+  private static final String GAME_OVER_FILE_PATH = "/audio/soundtrack/zelda-game-over.wav";
+  private static final String VICTORY_FANFARE_FILE_PATH = "/audio/soundtrack/ff1-victory-fanfare.wav";
 
-  // Effects
-  private static final Clip PAUSE = createClip("/audio/effects/mario-64-pause.wav");
-  private static final Clip PLACE_BLOCK = createClip("/audio/effects/pipe.wav");
-  private static final Clip CLEAR_LINE = createClip("/audio/effects/laser.wav");
-  private static final Clip ULTRA_LINE = createClip("/audio/effects/explosion.wav");
-  private static final Clip SWIPE_UP = createClip("/audio/effects/swish-up.wav");
-  private static final Clip SWIPE_DOWN = createClip("/audio/effects/swish-down.wav");
-  private static final Clip SUPER_SLIDE = createClip("/audio/effects/superslide.wav");
-  private static final Clip HOLD = createClip("/audio/effects/clang.wav");
-  private static final Clip RELEASE = createClip("/audio/effects/water-drop.wav");
+  // Fully buffered effects clips
+  private static final Clip PAUSE = createBufferedClip("/audio/effects/mario-64-pause.wav");
+  private static final Clip PLACE_BLOCK = createBufferedClip("/audio/effects/pipe.wav");
+  private static final Clip CLEAR_LINE = createBufferedClip("/audio/effects/laser.wav");
+  private static final Clip ULTRA_LINE = createBufferedClip("/audio/effects/explosion.wav");
+  private static final Clip SWIPE_UP = createBufferedClip("/audio/effects/swish-up.wav");
+  private static final Clip SWIPE_DOWN = createBufferedClip("/audio/effects/swish-down.wav");
+  private static final Clip SUPER_SLIDE = createBufferedClip("/audio/effects/superslide.wav");
+  private static final Clip HOLD = createBufferedClip("/audio/effects/clang.wav");
+  private static final Clip RELEASE = createBufferedClip("/audio/effects/water-drop.wav");
 
-  private Clip currentSoundtrack;
   private boolean soundtrackEnabled = true;
   private boolean effectsEnabled = true;
 
@@ -56,34 +56,38 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
 
   public void startSoundtrack(int level) {
     if (soundtrackEnabled) {
-      if (currentSoundtrack != null) {
-        currentSoundtrack.stop();
-      }
-      Clip track = getSoundtrack(level);
-      track.setFramePosition(0);
-      track.loop(Clip.LOOP_CONTINUOUSLY);
-      currentSoundtrack = track;
+      SOUNDTRACK_CLIP.close(); // Close out stream to current level
+      openAudioStream(SOUNDTRACK_CLIP, SOUNDTRACK_FILE_PATHS[level - 1]);
+      SOUNDTRACK_CLIP.loop(Clip.LOOP_CONTINUOUSLY);
     }
   }
 
   public void resumeCurrentSoundtrack() {
-    if (soundtrackEnabled && currentSoundtrack != null) {
-      currentSoundtrack.loop(Clip.LOOP_CONTINUOUSLY);
+    if (soundtrackEnabled) {
+      SOUNDTRACK_CLIP.loop(Clip.LOOP_CONTINUOUSLY);
     }
   }
 
   public void stopCurrentSoundtrack() {
-    if (soundtrackEnabled && currentSoundtrack != null) {
-      currentSoundtrack.stop();
+    if (soundtrackEnabled) {
+      SOUNDTRACK_CLIP.stop();
     }
   }
 
   public void playGameOverSound() {
-    play(GAME_OVER);
+    if (soundtrackEnabled) {
+      SOUNDTRACK_CLIP.close();
+      openAudioStream(SOUNDTRACK_CLIP, GAME_OVER_FILE_PATH);
+      SOUNDTRACK_CLIP.start();
+    }
   }
 
   public void playVictoryFanfare() {
-    play(VICTORY_FANFARE);
+    if (soundtrackEnabled) {
+      SOUNDTRACK_CLIP.close();
+      openAudioStream(SOUNDTRACK_CLIP, VICTORY_FANFARE_FILE_PATH);
+      SOUNDTRACK_CLIP.start();
+    }
   }
 
   public void playPauseSound() {
@@ -118,14 +122,6 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
     play(SUPER_SLIDE);
   }
 
-  public void stopVictoryFanfare() {
-    stop(VICTORY_FANFARE);
-  }
-
-  public void stopGameOverSound() {
-    stop(GAME_OVER);
-  }
-
   private void play(Clip effect) {
     if (effectsEnabled) {
       effect.setFramePosition(0);
@@ -133,28 +129,30 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
     }
   }
 
-  private void stop(Clip effect) {
-    if (effect.isActive()) {
-      effect.setFramePosition(0);
-      effect.stop();
+  private static Clip createBufferedClip(String audioFilePath) {
+    Clip clip = retrieveSystemAudioClip();
+    openAudioStream(clip, audioFilePath);
+    return clip;
+  }
+
+  private static void openAudioStream(Clip clip, String audioFilePath) {
+    URL audioFile = DefaultTetrisAudioSystem.class.getResource(audioFilePath);
+    if (audioFile == null) {
+      throw new AudioFileNotFound(audioFilePath);
+    }
+
+    try {
+      clip.open(AudioSystem.getAudioInputStream(audioFile));
+    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+      throw new RuntimeException("Could not open audio stream for path '" + audioFilePath + "'", e);
     }
   }
 
-  private Clip getSoundtrack(int level) {
-    return SOUNDTRACK[level - 1];
-  }
-
-  private static Clip createClip(String resourcePath) {
+  private static Clip retrieveSystemAudioClip() {
     try {
-      URL audioFile = DefaultTetrisAudioSystem.class.getResource(resourcePath);
-      if (audioFile == null) {
-        throw new AudioFileNotFound(resourcePath);
-      }
-      Clip clip = AudioSystem.getClip();
-      clip.open(AudioSystem.getAudioInputStream(audioFile));
-      return clip;
-    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-      throw new RuntimeException(e);
+      return AudioSystem.getClip();
+    } catch (LineUnavailableException e) {
+      throw new RuntimeException("Could not retrieve system audio clip", e);
     }
   }
 

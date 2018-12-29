@@ -13,7 +13,8 @@ import static java.util.stream.Collectors.toCollection;
 public class TetrisGame extends TetrisEventBus {
 
   public static final int MAX_LEVEL = 10;
-  private static final int DEFAULT_VERTICAL_CELLS = 23, DEFAULT_HORIZONTAL_CELLS = 10;
+  private static final int DEFAULT_VERTICAL_CELLS = 23;
+  private static final int DEFAULT_HORIZONTAL_CELLS = 10;
 
   private Block activeBlock;
   private Block holdBlock;
@@ -29,7 +30,9 @@ public class TetrisGame extends TetrisEventBus {
   private boolean ghostSquaresEnabled = true;
   private boolean timeAttack;
   private int currentLevelTime;
+
   private Timer fallTimer = new Timer(0, e -> tryFall());
+
   private Timer gameTimer = new Timer(1000, e -> {
     setGameTime(gameTime + 1);
     currentLevelTime++;
@@ -134,18 +137,18 @@ public class TetrisGame extends TetrisEventBus {
   }
 
   public int getLevel() {
-    return level;
+    return Math.min(level, MAX_LEVEL);
   }
 
   private void setLevel(int newLevel) {
-    if (newLevel >= MAX_LEVEL) {
-      this.level = MAX_LEVEL;
+    this.level = newLevel;
+
+    if (newLevel > MAX_LEVEL) {
       fallTimer.stop();
       gameTimer.stop();
       clearActiveBlock(); // Needed so that this block's squares don't get re-painted during victory clear animation
       publish(TetrisEvent.GAME_WON, level);
-    } else if (newLevel != this.level) {
-      this.level = newLevel;
+    } else {
       int initialDelay = difficulty.getInitialTimerDelay();
       int totalSpeedup = (level - 1) * Difficulty.TIMER_SPEEDUP;
       int newDelay = initialDelay - totalSpeedup;
@@ -302,7 +305,7 @@ public class TetrisGame extends TetrisEventBus {
       publish(TetrisEvent.LINES_CLEARED, linesCleared);
     }
 
-    if (level < MAX_LEVEL) {
+    if (level <= MAX_LEVEL) {
       spawn(conveyor.next());
     }
   }
@@ -317,9 +320,6 @@ public class TetrisGame extends TetrisEventBus {
     setGameTime(0);
     setScore(0);
 
-    // Necessary in order to cause level change listeners to fire if we are starting a new game and the previous game ended at level 1
-    // There is probably a cleaner way to handle this
-    this.level = 0;
     setLevel(1);
 
     // The reason we use setters for the score info but not these are because score info changes publish events, these don't
@@ -353,7 +353,7 @@ public class TetrisGame extends TetrisEventBus {
                         .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                         .sum();
 
-    int maxGameLines = difficulty.getLinesPerLevel() * (MAX_LEVEL - 1);
+    int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
     totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
     int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
     int newLevel = levelsCompleted + 1;
@@ -363,7 +363,7 @@ public class TetrisGame extends TetrisEventBus {
       newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
     }
 
-    if (newLevel == MAX_LEVEL) {
+    if (newLevel > MAX_LEVEL) {
       newScore += difficulty.getWinBonus();
     }
 

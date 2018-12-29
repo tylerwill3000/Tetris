@@ -290,10 +290,6 @@ public class MasterTetrisFrame extends JFrame {
     menuPanel.giveUpButton.setEnabled(true);
     menuPanel.leaderboardButton.setEnabled(false);
 
-    // Ensures end of game effects don't bleed over into the new game
-    audioSystem.stopGameOverSound();
-    audioSystem.stopVictoryFanfare();
-
     boardPanel.enableBlockMovement();
 
     holdPanel.repaint();
@@ -400,7 +396,7 @@ public class MasterTetrisFrame extends JFrame {
 
   private class BoardPanel extends PixelGrid {
 
-    private static final int SPIRAL_SLEEP_INTERVAL = 8;
+    private static final int SPIRAL_SLEEP_INTERVAL = 7;
     private static final int CLEAR_SLEEP_INTERVAL = 79;
 
     BoardPanel() {
@@ -426,11 +422,12 @@ public class MasterTetrisFrame extends JFrame {
 
         int nextLeftCol = 0,
             nextRightCol = game.getHorizontalDimension() - 1,
-            nextTopRow = 0,
+            nextTopRow = 3,
             nextBottomRow = game.getVerticalDimension() - 1;
 
-        // Total squares is equal to the dimensions of the visible panels. Loop until the size of squares reaches this amount
         int maxSquares = game.getVerticalDimension() * game.getHorizontalDimension();
+        maxSquares -= (3 * game.getHorizontalDimension()); // Knock off invisible rows at top
+
         while (spiralSquares.size() < maxSquares) {
 
           // All cells in the next leftmost column
@@ -460,7 +457,6 @@ public class MasterTetrisFrame extends JFrame {
 
         // Run 1 loop to paint in all unoccupied squares
         for (Block.ColoredSquare spiralSquare : spiralSquares) {
-          if (spiralSquare.getRow() < 3) continue;
           if (game.isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
             game.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
           }
@@ -470,7 +466,6 @@ public class MasterTetrisFrame extends JFrame {
 
         // Run a second loop to erase all of them
         for (Block.ColoredSquare spiralSquare : spiralSquares) {
-          if (spiralSquare.getRow() < 3) continue;
           game.clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
           repaint();
           Thread.sleep(SPIRAL_SLEEP_INTERVAL);

@@ -2,7 +2,6 @@ package com.github.tylersharpe.tetris.audio;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.jar.Manifest;
 
@@ -32,8 +31,6 @@ public interface TetrisAudioSystem {
         public void playCWRotationSound() {}
         public void playCCWRotationSound() {}
         public void playSuperSlideSound() {}
-        public void stopVictoryFanfare() {}
-        public void stopGameOverSound() {}
     }
 
     static TetrisAudioSystem getInstance() {
@@ -87,7 +84,4 @@ public interface TetrisAudioSystem {
 
     void playSuperSlideSound();
 
-    void stopVictoryFanfare();
-
-    void stopGameOverSound();
 }

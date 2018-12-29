@@ -111,6 +111,10 @@ public class Block {
       return false;
     }
 
+    @Override
+    public String toString() {
+      return String.format("[%d, %d] (%s)", row, col, color);
+    }
   }
 
   public enum Type {
