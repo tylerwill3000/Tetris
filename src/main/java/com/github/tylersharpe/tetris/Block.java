@@ -49,8 +49,7 @@ public class Block {
   }
 
   void move(int rowMove, int colMove) {
-    row += rowMove;
-    column += colMove;
+    setLocation(row + rowMove, column + colMove);
   }
 
   void setLocation(int row, int col) {
@@ -112,7 +111,7 @@ public class Block {
 
     @Override
     public String toString() {
-      return String.format("[%d, %d] (%s)", row, col, color);
+      return String.format("(row=%d, column=%d, color=%s)", row, col, color);
     }
   }
 

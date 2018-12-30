@@ -5,9 +5,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class Score implements Serializable {
-
-  static final Comparator<Score> POINTS_HIGH_TO_LOW = Comparator.comparing((Score s) -> s.points).reversed();
+public class Score implements Serializable, Comparable<Score> {
 
   public final int points, linesCleared, maxLevel;
   public transient int rank; // transient since calculated based on points of other scores
@@ -29,6 +27,10 @@ public class Score implements Serializable {
     this.linesCleared = linesCleared;
     this.maxLevel = maxLevel;
     this.dateAchieved = date;
+  }
+
+  public boolean completedGame() {
+    return linesCleared == difficulty.getLinesPerLevel() * TetrisGame.MAX_LEVEL;
   }
 
   @Override
@@ -56,6 +58,11 @@ public class Score implements Serializable {
   public String toString() {
     return String.format("Score(rank=%d, name=%s, points=%d, gameTime=%s, difficulty=%s, dateAchieved=%s, maxLevel=%d, linesCleared=%d)",
                                 rank,    name,    points, Utility.formatSeconds(gameTime), difficulty.toString(), dateAchieved.toString(), maxLevel, linesCleared);
+  }
+
+  @Override
+  public int compareTo(Score other) {
+    return other.points - points;
   }
 
 }

@@ -2,7 +2,7 @@ package com.github.tylersharpe.tetris;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
 
 public final class BlockConveyor {
 
@@ -14,7 +14,7 @@ public final class BlockConveyor {
   BlockConveyor() {
     typeSampleList = new ArrayList<>();
     conveyor = new LinkedList<>();
-    enabledTypes = new HashSet<>();
+    enabledTypes = EnumSet.noneOf(Block.Type.class);
   }
 
   public Block next() {
@@ -59,7 +59,8 @@ public final class BlockConveyor {
 
   Set<Block.Type> getEnabledSpecials() {
     if (activeSpecialTypes == null) {
-      activeSpecialTypes = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(toSet());
+      var activeSpecialsList = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(toList());
+      activeSpecialTypes = EnumSet.copyOf(activeSpecialsList);
     }
     return activeSpecialTypes;
   }

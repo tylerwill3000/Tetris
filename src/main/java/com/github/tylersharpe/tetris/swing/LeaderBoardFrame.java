@@ -1,12 +1,16 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.*;
+import com.github.tylersharpe.tetris.Difficulty;
+import com.github.tylersharpe.tetris.Score;
+import com.github.tylersharpe.tetris.ScoreRepository;
+import com.github.tylersharpe.tetris.Utility;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
+import java.util.SortedSet;
 import java.util.stream.IntStream;
 
 class LeaderBoardFrame extends JFrame {
@@ -70,7 +74,7 @@ class LeaderBoardFrame extends JFrame {
     String selectedItem = (String) difficulties.getSelectedItem();
     Difficulty selectedDifficulty = "All".equals(selectedItem) ? null : Difficulty.values()[selectedIndex];
 
-    java.util.List<Score> scores;
+    SortedSet<Score> scores;
     try {
       scores = scoreRepository.getScores(selectedDifficulty, null);
     } catch (IOException e) {
@@ -86,7 +90,7 @@ class LeaderBoardFrame extends JFrame {
               score.name,
               score.points,
               score.linesCleared,
-              score.maxLevel == TetrisGame.MAX_LEVEL ? "Complete" : score.maxLevel,
+              score.completedGame() ? "Complete" : score.maxLevel,
               score.difficulty,
               Utility.formatSeconds(score.gameTime),
               score.dateAchieved
