@@ -33,6 +33,7 @@ public class TetrisGame extends TetrisEventBus {
   private int currentLevelTime;
   private Timer fallTimer;
   private Timer gameTimer;
+  private boolean isGameWon;
 
   public TetrisGame() {
     this(VERTICAL_CELLS, HORIZONTAL_CELLS);
@@ -148,6 +149,7 @@ public class TetrisGame extends TetrisEventBus {
     this.level = newLevel;
 
     if (newLevel > MAX_LEVEL) {
+      this.isGameWon = true;
       fallTimer.stop();
       gameTimer.stop();
       clearActiveBlock(); // Needed so that this block's squares don't get re-painted during victory clear animation
@@ -304,7 +306,7 @@ public class TetrisGame extends TetrisEventBus {
       publish(TetrisEvent.LINES_CLEARED, linesCleared);
     }
 
-    if (level <= MAX_LEVEL) {
+    if (!isGameWon) {
       spawn(conveyor.next());
     }
   }
@@ -322,8 +324,10 @@ public class TetrisGame extends TetrisEventBus {
     setScore(0);
     setLevel(1);
 
+    this.isGameWon = false;
     this.totalLinesCleared = 0;
     this.currentLevelTime = 0;
+
     clearActiveBlock();
     clearHoldBlock();
 
