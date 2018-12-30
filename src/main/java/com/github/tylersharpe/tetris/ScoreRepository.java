@@ -31,7 +31,7 @@ public class ScoreRepository {
     return scoresStream.collect(toList());
   }
 
-  public int saveScore(Score score) throws IOException {
+  public void saveScore(Score score) throws IOException {
     int rank = determineRank(score.points);
     if (!isLeaderBoardRank(rank)) {
       throw new IllegalArgumentException("Cannot save " + score + ", score does not meet minimum rank requirement of " + MIN_RANK);
@@ -47,8 +47,6 @@ public class ScoreRepository {
     try (var objOut = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
       objOut.writeObject(allScores);
     }
-
-    return rank;
   }
 
   public int determineRank(int pointsOfScoreToSave) {

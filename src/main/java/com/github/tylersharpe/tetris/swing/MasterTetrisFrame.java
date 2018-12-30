@@ -100,7 +100,7 @@ public class MasterTetrisFrame extends JFrame {
 
           Block activeBlock = game.getActiveBlock();
 
-          if (!game.getHoldBlock().isPresent() && !activeBlock.isHoldBlock()) {
+          if (game.getHoldBlock().isEmpty() && !activeBlock.isHoldBlock()) {
             activeBlock.tagAsHoldBlock();
             audioSystem.playHoldSound();
             game.setHoldBlock(activeBlock);

@@ -13,8 +13,8 @@ public final class Utility {
     long totalMinutes = seconds / 60;
     long secondsLeftover = seconds % 60;
     return (totalMinutes < 10 ? "0" : "") + totalMinutes +
-            ":" +
-            (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
+           ":" +
+           (secondsLeftover < 10 ? "0" : "") + secondsLeftover;
   }
 
   static <T> T sample(List<T> items) {

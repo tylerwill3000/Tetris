@@ -205,18 +205,21 @@ public class TetrisGame extends TetrisEventBus {
     this.activeBlock = null;
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   public void dropCurrentBlock() {
     while (moveActiveBlockDown()) {
       // Move method returns boolean to control loop
     }
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   public void superSlideActiveBlockLeft() {
     while (moveActiveBlockLeft()) {
       // Move method returns boolean to control loop
     }
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   public void superSlideActiveBlockRight() {
     while (moveActiveBlockRight()) {
       // Move method returns boolean to control loop
@@ -380,9 +383,8 @@ public class TetrisGame extends TetrisEventBus {
 
   /**
    * Attempts to spawn the given block object in the board model, replacing the current active block.
-   * @return True if there was room to spawn the piece, false otherwise
    */
-  public boolean spawn(Block block) {
+  public void spawn(Block block) {
     int startRow = block.getType().getStartRow();
     int startCol = horizontalDimension / 2;
 
@@ -394,14 +396,14 @@ public class TetrisGame extends TetrisEventBus {
         fallTimer.stop();
         gameTimer.stop();
         publish(TetrisEvent.SPAWN_FAIL, block);
-        return false;
+        return;
       }
 
       boolean allOpen = spawnSquares.stream().allMatch(square -> isOpen(square.getRow(), square.getColumn()));
       if (allOpen) {
         block.setLocation(startRow, startCol);
         this.activeBlock = block;
-        return true;
+        return;
       } else {
         startRow--; // Try to push piece upwards past board bounds if we can
       }

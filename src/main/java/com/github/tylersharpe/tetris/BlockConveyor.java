@@ -1,7 +1,6 @@
 package com.github.tylersharpe.tetris;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 

@@ -1,6 +1,5 @@
 package com.github.tylersharpe.tetris;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Map.entry;

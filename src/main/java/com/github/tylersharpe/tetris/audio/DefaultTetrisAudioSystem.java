@@ -40,7 +40,7 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
   private boolean soundtrackEnabled = true;
   private boolean effectsEnabled = true;
 
-  public DefaultTetrisAudioSystem() {}
+  DefaultTetrisAudioSystem() {}
 
   static DefaultTetrisAudioSystem getInstance() {
     return INSTANCE == null ? INSTANCE = new DefaultTetrisAudioSystem() : INSTANCE;
