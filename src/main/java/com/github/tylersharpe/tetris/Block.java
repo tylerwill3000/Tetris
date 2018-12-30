@@ -60,7 +60,9 @@ public class Block {
 
   void rotate(Rotation rotation) {
     int orientationChange = rotation == Rotation.CLOCKWISE ? 1 : -1;
-    orientation = (orientation + orientationChange) % 4;
+    orientation += orientationChange;
+    if (orientation > 3) orientation = 0;
+    if (orientation < 0) orientation = 3;
   }
 
   public static class ColoredSquare {

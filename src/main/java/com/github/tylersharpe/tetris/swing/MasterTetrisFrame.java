@@ -139,7 +139,6 @@ public class MasterTetrisFrame extends JFrame {
   };
 
   public MasterTetrisFrame() {
-
     try {
       this.audioSystem = TetrisAudioSystem.getInstance();
     } catch (AudioFileNotFound ex) {
@@ -156,18 +155,20 @@ public class MasterTetrisFrame extends JFrame {
       scorePanel.timeProgressBar.repaint();
     });
 
-    this.game.subscribe(new TetrisEvent[]{ TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL }, e -> onGameOver());
+    for (var gameOverEvent : List.of(TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL)) {
+      this.game.subscribe(gameOverEvent, e -> onGameOver());
+    }
     this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
 
     this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
       int lines = (int) event;
+
       audioSystem.playClearLineSound(lines);
       scorePanel.totalLinesLabel.repaint();
       scorePanel.linesClearedProgressBar.repaint();
     });
 
     this.game.subscribe(TetrisEvent.LEVEL_CHANGED, event -> {
-
       int newLevel = (int) event;
 
       scorePanel.levelLabel.setText("Level: " + newLevel);
@@ -188,7 +189,7 @@ public class MasterTetrisFrame extends JFrame {
       @Override
       public Collection<Block.ColoredSquare> getCurrentColors() {
         Block nextBlock = game.getConveyor().peek();
-        return nextBlock == null ? Collections.emptyList() : nextBlock.getNextPanelSquares();
+        return nextBlock == null ? List.of() : nextBlock.getNextPanelSquares();
       }
     };
 

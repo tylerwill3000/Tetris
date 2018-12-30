@@ -18,12 +18,6 @@ public class TetrisEventBus {
     event_listeners.computeIfAbsent(event, e -> new ArrayList<>()).forEach(listener -> listener.accept(eventData));
   }
 
-  public void subscribe(TetrisEvent[] events, Consumer<Object> listener) {
-    for (var event : events) {
-      subscribe(event, listener);
-    }
-  }
-
   public void subscribe(TetrisEvent event, Consumer<Object> listener) {
     event_listeners.computeIfAbsent(event, e -> new ArrayList<>()).add(listener);
   }

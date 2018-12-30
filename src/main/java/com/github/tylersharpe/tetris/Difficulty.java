@@ -2,50 +2,51 @@ package com.github.tylersharpe.tetris;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.function.Function;
+
+import static java.util.Map.entry;
 
 public enum Difficulty {
 
-  EASY(15, 600, 100, 60, 250, Utility.map(
-    Block.Type.BOX, 14,
-    Block.Type.L_BLOCK_L, 14,
-    Block.Type.L_BLOCK_R, 14,
-    Block.Type.S_BLOCK_L, 14,
-    Block.Type.S_BLOCK_R, 14,
-    Block.Type.STRAIGHT_LINE, 14,
-    Block.Type.T_BLOCK, 14,
-    Block.Type.TWIN_PILLARS, 11,
-    Block.Type.WAVE, 10,
-    Block.Type.ROCKET, 7,
-    Block.Type.DIAMOND, 7
+  EASY(15, 600, 100, 60, 250, Map.ofEntries(
+    entry(Block.Type.BOX, 14),
+    entry(Block.Type.L_BLOCK_L, 14),
+    entry(Block.Type.L_BLOCK_R, 14),
+    entry(Block.Type.S_BLOCK_L, 14),
+    entry(Block.Type.S_BLOCK_R, 14),
+    entry(Block.Type.STRAIGHT_LINE, 14),
+    entry(Block.Type.T_BLOCK, 14),
+    entry(Block.Type.TWIN_PILLARS, 11),
+    entry(Block.Type.WAVE, 10),
+    entry(Block.Type.ROCKET, 7),
+    entry(Block.Type.DIAMOND, 7)
   )),
 
-  MEDIUM(20, 575, 150, 70, 500, Utility.map(
-    Block.Type.BOX, 13,
-    Block.Type.L_BLOCK_L, 14,
-    Block.Type.L_BLOCK_R, 14,
-    Block.Type.S_BLOCK_L, 15,
-    Block.Type.S_BLOCK_R, 14,
-    Block.Type.STRAIGHT_LINE, 13,
-    Block.Type.T_BLOCK, 14,
-    Block.Type.TWIN_PILLARS, 12,
-    Block.Type.WAVE, 10,
-    Block.Type.ROCKET, 7,
-    Block.Type.DIAMOND, 7
+  MEDIUM(20, 575, 150, 70, 500, Map.ofEntries(
+    entry(Block.Type.BOX, 13),
+    entry(Block.Type.L_BLOCK_L, 14),
+    entry(Block.Type.L_BLOCK_R, 14),
+    entry(Block.Type.S_BLOCK_L, 15),
+    entry(Block.Type.S_BLOCK_R, 14),
+    entry(Block.Type.STRAIGHT_LINE, 13),
+    entry(Block.Type.T_BLOCK, 14),
+    entry(Block.Type.TWIN_PILLARS, 12),
+    entry(Block.Type.WAVE, 10),
+    entry(Block.Type.ROCKET, 7),
+    entry(Block.Type.DIAMOND, 7)
   )),
 
-  HARD(25, 550, 200, 80, 1000, Utility.map(
-    Block.Type.BOX, 12,
-    Block.Type.L_BLOCK_L, 15,
-    Block.Type.L_BLOCK_R, 14,
-    Block.Type.S_BLOCK_L, 15,
-    Block.Type.S_BLOCK_R, 15,
-    Block.Type.STRAIGHT_LINE, 12,
-    Block.Type.T_BLOCK, 13,
-    Block.Type.TWIN_PILLARS, 12,
-    Block.Type.WAVE, 11,
-    Block.Type.ROCKET, 8,
-    Block.Type.DIAMOND, 8
+  HARD(25, 550, 200, 80, 1000, Map.ofEntries(
+    entry(Block.Type.BOX, 12),
+    entry(Block.Type.L_BLOCK_L, 15),
+    entry(Block.Type.L_BLOCK_R, 14),
+    entry(Block.Type.S_BLOCK_L, 15),
+    entry(Block.Type.S_BLOCK_R, 15),
+    entry(Block.Type.STRAIGHT_LINE, 12),
+    entry(Block.Type.T_BLOCK, 13),
+    entry(Block.Type.TWIN_PILLARS, 12),
+    entry(Block.Type.WAVE, 11),
+    entry(Block.Type.ROCKET, 8),
+    entry(Block.Type.DIAMOND, 8)
   ));
 
   public static final int TIMER_SPEEDUP = 55;
@@ -63,7 +64,7 @@ public enum Difficulty {
     this.timeAttackBonus = timeAttackBonus;
     this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
     this.winBonus = winBonus;
-    this.type_spawn = Collections.unmodifiableMap(type_spawn);
+    this.type_spawn = type_spawn;
   }
 
   public int getLinesPerLevel() {
