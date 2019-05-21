@@ -61,6 +61,7 @@ task deploy(type: Copy, group: 'build', dependsOn: [jarWithAudio, jarWithoutAudi
 
 task run(type: JavaExec) {
     main = mainClass
+    systemProperty 'audio.enabled', System.getProperty('audio.enabled', 'true')
     classpath sourceSets.main.runtimeClasspath
 }
 

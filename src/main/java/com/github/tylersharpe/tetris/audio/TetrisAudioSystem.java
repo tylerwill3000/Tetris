@@ -3,7 +3,6 @@ package com.github.tylersharpe.tetris.audio;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.jar.Manifest;
 
 public interface TetrisAudioSystem {
@@ -35,24 +34,21 @@ public interface TetrisAudioSystem {
     }
 
     static TetrisAudioSystem getInstance() {
-        URL manifestUrl = TetrisAudioSystem.class.getResource("/META-INF/MANIFEST.MF");
-        if (manifestUrl == null) { // Running through IDE (meaning JAR has not been built)
-            try {
-                var manifestFile = Paths.get(".").toAbsolutePath().resolve("build/tmp/jar/MANIFEST.MF");
-                manifestUrl = manifestFile.toUri().toURL();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+      String audioEnabledAttr;
 
+      URL manifestUrl = TetrisAudioSystem.class.getResource("/META-INF/MANIFEST.MF");
+      if (manifestUrl == null) { // Running through IDE (meaning JAR has not been built) - use system properties to determine audio type
+        audioEnabledAttr = System.getProperty("audio.enabled");
+      } else {
         try (InputStream manifestStream = manifestUrl.openStream()) {
-            var manifest = new Manifest(manifestStream);
-            String audioEnabledAttr = manifest.getMainAttributes().getValue("Audio-Enabled");
-            boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);
-            return audioEnabled ? DefaultTetrisAudioSystem.getInstance() : NoopTetrisAudioSystem.getInstance();
+          audioEnabledAttr = new Manifest(manifestStream).getMainAttributes().getValue("Audio-Enabled");
         } catch (IOException e) {
-            throw new RuntimeException("Could not read JAR manifest file", e);
+          throw new RuntimeException("Could not read JAR manifest file", e);
         }
+      }
+
+      boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);
+      return audioEnabled ? DefaultTetrisAudioSystem.getInstance() : NoopTetrisAudioSystem.getInstance();
     }
 
     void setSoundtrackEnabled(boolean enabled);
