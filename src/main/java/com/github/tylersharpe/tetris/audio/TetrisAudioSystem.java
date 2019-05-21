@@ -1,6 +1,7 @@
 package com.github.tylersharpe.tetris.audio;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.jar.Manifest;
@@ -44,7 +45,7 @@ public interface TetrisAudioSystem {
             }
         }
 
-        try (var manifestStream = manifestUrl.openStream()) {
+        try (InputStream manifestStream = manifestUrl.openStream()) {
             var manifest = new Manifest(manifestStream);
             String audioEnabledAttr = manifest.getMainAttributes().getValue("Audio-Enabled");
             boolean audioEnabled = audioEnabledAttr == null || Boolean.parseBoolean(audioEnabledAttr);

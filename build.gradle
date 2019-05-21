@@ -2,10 +2,12 @@ import javax.imageio.ImageIO
 import java.awt.Image
 import java.awt.image.BufferedImage
 
-apply plugin: 'idea'
-apply plugin: 'java'
+plugins {
+    id 'idea'
+    id 'java'
+}
 
-wrapper.gradleVersion = '5.0'
+wrapper.gradleVersion = '5.4.1'
 
 task scaleImages(group: 'build', description: 'Scales down all image assets and writes them to the build directory') {
     File sourceDir = file('src/main/resources/images')
@@ -13,7 +15,7 @@ task scaleImages(group: 'build', description: 'Scales down all image assets and 
     inputs.dir(sourceDir)
     outputs.dir(outputDir)
 
-    // Force us to use scaled images instead of just copying images from resource folder
+    // Prevents copying over unscaled images from resource folder
     sourceSets.main.resources.exclude 'images'
 
     doFirst {
@@ -21,7 +23,7 @@ task scaleImages(group: 'build', description: 'Scales down all image assets and 
 
         for (sourceImage in sourceDir.listFiles()) {
             BufferedImage scaledImage = scaleImage(sourceImage, 60)
-            def resultFile = new File(outputDir, sourceImage.name)
+            File resultFile = new File(outputDir, sourceImage.name)
             ImageIO.write(scaledImage, 'png', resultFile)
         }
     }
@@ -29,18 +31,32 @@ task scaleImages(group: 'build', description: 'Scales down all image assets and 
 
 processResources.dependsOn(scaleImages)
 
+task jarWithAudio(type: GradleBuild, group: 'build') {
+    startParameter.projectProperties.packageAudio = true
+    tasks = ['jar']
+}
+
+task jarWithoutAudio(type: GradleBuild, group: 'build') {
+    startParameter.projectProperties.packageAudio = false
+    tasks = ['jar']
+}
+
 final String mainClass = 'com.github.tylersharpe.tetris.Main'
 jar {
-    boolean packageAudio = project.hasProperty('packageAudio') ? Boolean.parseBoolean(project.property('packageAudio')) : true
+    boolean packageAudio = project.hasProperty('packageAudio') ? Boolean.parseBoolean(project.property('packageAudio').toString()) : true
     if (!packageAudio) {
         exclude 'audio'
         archivesBaseName += '-NoAudio'
     }
 
     manifest {
-        attributes 'Main-Class': mainClass
-        attributes 'Audio-Enabled': packageAudio
+        attributes 'Main-Class': mainClass, 'Audio-Enabled': packageAudio
     }
+}
+
+task deploy(type: Copy, group: 'build', dependsOn: [jarWithAudio, jarWithoutAudio]) {
+    from new File(buildDir, 'libs')
+    into new File(System.getenv('USERPROFILE'), 'Development/bin')
 }
 
 task run(type: JavaExec) {

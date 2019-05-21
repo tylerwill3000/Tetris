@@ -1,17 +1,17 @@
 package com.github.tylersharpe.tetris;
 
-import com.github.tylersharpe.tetris.event.TetrisEventBus;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
+import com.github.tylersharpe.tetris.event.TetrisPubSub;
 
 import javax.swing.Timer;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toCollection;
 
-public class TetrisGame extends TetrisEventBus {
+public class TetrisGame extends TetrisPubSub {
 
   public static final int MAX_LEVEL = 10;
   private static final int VERTICAL_CELLS = 23;

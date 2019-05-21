@@ -10,8 +10,19 @@ import static java.util.stream.Collectors.toCollection;
 
 public class ScoreRepository {
 
-  private static final Path SAVE_PATH = Paths.get(System.getProperty("user.home"), ".tetris-scores");
+  private static final Path SAVE_PATH = Paths.get(System.getProperty("user.home"), ".config", "tetris-scores");
   private static final int LEADER_BOARD_RANK_THRESHOLD = 20;
+
+  static {
+    final var dotConfigDir = SAVE_PATH.getParent();
+    if (!Files.isDirectory(dotConfigDir)) {
+      try {
+        Files.createDirectory(dotConfigDir);
+      } catch (IOException e) {
+        throw new ExceptionInInitializerError(e);
+      }
+    }
+  }
 
   public static boolean isLeaderBoardRank(int rank) {
     return rank <= LEADER_BOARD_RANK_THRESHOLD;
