@@ -60,7 +60,7 @@ public final class BlockConveyor {
   Set<Block.Type> getEnabledSpecials() {
     if (activeSpecialTypes == null) {
       var activeSpecialsList = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(toList());
-      activeSpecialTypes = EnumSet.copyOf(activeSpecialsList);
+      activeSpecialTypes = activeSpecialsList.isEmpty() ? EnumSet.noneOf(Block.Type.class) : EnumSet.copyOf(activeSpecialsList);
     }
     return activeSpecialTypes;
   }
