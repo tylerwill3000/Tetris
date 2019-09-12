@@ -10,21 +10,19 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 class LeaderBoardFrame extends JFrame {
 
   private final static String[] COLUMN_HEADERS = { "Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 
-  private static final String[] DIFFICULTY_OPTIONS = new String[Difficulty.values().length + 1];
-  static {
-    Difficulty[] diffs = Difficulty.values();
-    for (int i = 0; i < diffs.length; i++) {
-      DIFFICULTY_OPTIONS[i] = diffs[i].toString();
-    }
-    DIFFICULTY_OPTIONS[diffs.length] = "All";
-  }
+  private static final String[] DIFFICULTY_OPTIONS = Stream.concat(
+    Stream.of(Difficulty.values()).map(Difficulty::getDisplay),
+    Stream.of("All")
+  ).toArray(String[]::new);
 
   private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
   private int highlightRank;
@@ -69,10 +67,8 @@ class LeaderBoardFrame extends JFrame {
 
   // Populates table with appropriate data depending on selected row count
   private void refreshTable() {
-
-    int selectedIndex = difficulties.getSelectedIndex();
-    String selectedItem = (String) difficulties.getSelectedItem();
-    Difficulty selectedDifficulty = "All".equals(selectedItem) ? null : Difficulty.values()[selectedIndex];
+    String selectedDifficultyDisplay = (String) difficulties.getSelectedItem();
+    Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromDisplay(selectedDifficultyDisplay);
 
     SortedSet<Score> scores;
     try {
@@ -84,7 +80,7 @@ class LeaderBoardFrame extends JFrame {
       return;
     }
 
-    Object[][] renderedScoreData = scores.stream()
+    Object[][] formattedScoreData = scores.stream()
             .map(score -> new Object[]{
               score.rank,
               score.name,
@@ -97,7 +93,7 @@ class LeaderBoardFrame extends JFrame {
             })
             .toArray(Object[][]::new);
 
-    scoresTable.setModel(new DefaultTableModel(renderedScoreData, COLUMN_HEADERS));
+    scoresTable.setModel(new DefaultTableModel(formattedScoreData, COLUMN_HEADERS));
 
     TableCellRenderer renderer = new HighScoreCellRenderer(highlightRank);
     IntStream.range(0, scoresTable.getColumnCount())

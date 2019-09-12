@@ -90,8 +90,21 @@ public enum Difficulty {
     return type_spawn.get(type);
   }
 
-  public String toString() {
+  public static Difficulty fromDisplay(String display) {
+    for (var diff : values()) {
+      if (diff.getDisplay().equals(display)) {
+        return diff;
+      }
+    }
+    throw new IllegalArgumentException("No difficulty exists for display value '" + display + "'");
+  }
+
+  public String getDisplay() {
     return name().charAt(0) + name().substring(1).toLowerCase();
+  }
+
+  public String toString() {
+    return getDisplay();
   }
 
 }
