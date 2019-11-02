@@ -10,8 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.SortedSet;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -70,7 +69,7 @@ class LeaderBoardFrame extends JFrame {
     String selectedDifficultyDisplay = (String) difficulties.getSelectedItem();
     Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromDisplay(selectedDifficultyDisplay);
 
-    SortedSet<Score> scores;
+    List<Score> scores;
     try {
       scores = scoreRepository.getScores(selectedDifficulty, null);
     } catch (IOException e) {

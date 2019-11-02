@@ -1,14 +1,15 @@
 package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.Score;
-import com.github.tylersharpe.tetris.TetrisGame;
 import com.github.tylersharpe.tetris.ScoreRepository;
+import com.github.tylersharpe.tetris.TetrisGame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.time.LocalDate;
 
 class ScoreResultsFrame extends JFrame {
 
@@ -55,8 +56,16 @@ class ScoreResultsFrame extends JFrame {
         }
 
         try {
-          scoreRepository.saveScore(new Score(saveName, game.getScore(), game.getGameTime(),
-                  game.getDifficulty(), game.getTotalLinesCleared(), game.getLevel()));
+          scoreRepository.saveScore(new Score(
+                  rank,
+                  saveName,
+                  game.getScore(),
+                  game.getGameTime(),
+                  game.getDifficulty(),
+                  game.getTotalLinesCleared(),
+                  game.getLevel(),
+                  LocalDate.now())
+          );
           dispose();
           new LeaderBoardFrame(scoreRepository, rank);
         } catch (IOException ex) {

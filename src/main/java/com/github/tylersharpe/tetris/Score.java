@@ -2,23 +2,18 @@ package com.github.tylersharpe.tetris;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.Objects;
 
 public class Score implements Serializable, Comparable<Score> {
 
   public final int points, linesCleared, maxLevel;
-  public transient int rank; // transient since calculated based on points of other scores
+  public final int rank;
   public final long gameTime;
   public final String name;
   public final Difficulty difficulty;
   public final LocalDate dateAchieved;
 
-  public Score(String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel) {
-    this(-1, name, score, gameTime, difficulty, linesCleared, maxLevel, LocalDate.now());
-  }
-
-  private Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
+  public Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
     this.rank = rank;
     this.name = name;
     this.points = score;

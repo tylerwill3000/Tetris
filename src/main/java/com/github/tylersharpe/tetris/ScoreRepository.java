@@ -4,9 +4,11 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 public class ScoreRepository {
 
@@ -28,7 +30,7 @@ public class ScoreRepository {
     return rank <= LEADER_BOARD_RANK_THRESHOLD;
   }
 
-  public SortedSet<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
+  public List<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
     var scoresStream = getAllScores().stream();
 
     if (difficulty != null) {
@@ -38,7 +40,7 @@ public class ScoreRepository {
       scoresStream = scoresStream.limit(limit);
     }
 
-    return scoresStream.collect(toCollection(TreeSet::new));
+    return scoresStream.collect(toList());
   }
 
   public int determineRank(int pointsOfScoreToSave) {
@@ -51,7 +53,7 @@ public class ScoreRepository {
   }
 
   public void saveScore(Score score) throws IOException {
-    var allScores = new TreeSet<>(getAllScores());
+    var allScores = new ArrayList<>(getAllScores());
     allScores.add(score);
 
     try (var objOut = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
@@ -59,20 +61,16 @@ public class ScoreRepository {
     }
   }
 
-  public SortedSet<Score> getAllScores() throws IOException {
+  @SuppressWarnings("unchecked")
+  private List<Score> getAllScores() throws IOException {
     if (!Files.exists(SAVE_PATH)) {
-      return Collections.emptySortedSet();
+      return Collections.emptyList();
     }
 
     try (var scoresInput = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-      @SuppressWarnings("unchecked")
-      List<Score> scores = new ArrayList<>((Collection<Score>) scoresInput.readObject());
-
-      for (int rank = 1; rank <= scores.size(); rank++) {
-        scores.get(rank -1).rank = rank;
-      }
-
-      return new TreeSet<>(scores);
+      var scores = (List<Score>) scoresInput.readObject();
+      Collections.sort(scores);
+      return scores;
     } catch (ClassNotFoundException e) {
       throw new RuntimeException("Malformed high scores file", e);
     }

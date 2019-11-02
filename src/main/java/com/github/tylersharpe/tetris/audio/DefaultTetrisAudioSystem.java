@@ -1,6 +1,9 @@
 package com.github.tylersharpe.tetris.audio;
 
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.net.URL;
 
@@ -86,38 +89,38 @@ class DefaultTetrisAudioSystem implements TetrisAudioSystem {
   }
 
   public void playPauseSound() {
-    play(PAUSE);
+    playEffect(PAUSE);
   }
 
   public void playBlockPlacementSound() {
-    play(PLACE_BLOCK);
+    playEffect(PLACE_BLOCK);
   }
 
   public void playHoldSound() {
-    play(HOLD);
+    playEffect(HOLD);
   }
 
   public void playReleaseSound() {
-    play(RELEASE);
+    playEffect(RELEASE);
   }
 
   public void playClearLineSound(int lineCount) {
-    play(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
+    playEffect(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
   }
 
   public void playClockwiseRotationSound() {
-    play(SWIPE_UP);
+    playEffect(SWIPE_UP);
   }
 
   public void playCounterClockwiseRotationSound() {
-    play(SWIPE_DOWN);
+    playEffect(SWIPE_DOWN);
   }
 
   public void playSuperSlideSound() {
-    play(SUPER_SLIDE);
+    playEffect(SUPER_SLIDE);
   }
 
-  private void play(Clip effect) {
+  private void playEffect(Clip effect) {
     if (effectsEnabled) {
       effect.setFramePosition(0);
       effect.start();
