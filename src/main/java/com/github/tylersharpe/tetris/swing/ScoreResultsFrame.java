@@ -15,7 +15,7 @@ class ScoreResultsFrame extends JFrame {
 
   private final static int NAME_LENGTH = 40;
 
-  private JTextField nameField = new JTextField(10);
+  private final JTextField nameField = new JTextField(10);
 
   ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame game) {
 
@@ -29,9 +29,16 @@ class ScoreResultsFrame extends JFrame {
       }
     });
 
-    int rank = scoreRepository.determineRank(game.getScore());
+    int rank;
+    try {
+      rank = scoreRepository.determineRank(game.getScore());
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Could not determine rank: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
 
-    var scoreLabel = new JLabel();
+    JLabel scoreLabel = new JLabel();
     scoreLabel.setFont(MasterTetrisFrame.ARIAL_HEADER);
     scoreLabel.setHorizontalAlignment(JLabel.CENTER);
     scoreLabel.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
@@ -70,7 +77,7 @@ class ScoreResultsFrame extends JFrame {
           new LeaderBoardFrame(scoreRepository, rank);
         } catch (IOException ex) {
           ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Could not save score", "Error", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
       });
 

@@ -1,7 +1,7 @@
 package com.github.tylersharpe.tetris;
 
+import com.github.tylersharpe.tetris.event.Broker;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
-import com.github.tylersharpe.tetris.event.TetrisPubSub;
 
 import javax.swing.Timer;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toCollection;
 
-public class TetrisGame extends TetrisPubSub {
+public class TetrisGame extends Broker {
 
   public static final int MAX_LEVEL = 10;
   private static final int VERTICAL_CELLS = 23;
@@ -19,20 +19,20 @@ public class TetrisGame extends TetrisPubSub {
 
   private Block activeBlock;
   private Block holdBlock;
-  private BlockConveyor conveyor = new BlockConveyor();
-  private LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
+  private final BlockConveyor conveyor = new BlockConveyor();
+  private final LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
   private Difficulty difficulty;
   private int totalLinesCleared;
   private int score;
   private int level;
-  private int verticalDimension;
+  private final int verticalDimension;
   private int gameTime;
-  private int horizontalDimension;
+  private final int horizontalDimension;
   private boolean ghostSquaresEnabled = true;
   private boolean timeAttack;
   private int currentLevelTime;
-  private Timer fallTimer;
-  private Timer gameTimer;
+  private final Timer fallTimer;
+  private final Timer gameTimer;
   private boolean isGameWon;
 
   public TetrisGame() {
@@ -46,7 +46,7 @@ public class TetrisGame extends TetrisPubSub {
                                     .mapToObj(i -> new Color[horizontalDimension])
                                     .collect(toCollection(LinkedList::new));
 
-    this.fallTimer = new Timer(0, e -> tryFall());
+    this.fallTimer = new Timer(0, e -> tryMoveActiveBlockDown());
 
     this.gameTimer = new Timer(1000, e -> {
       setGameTime(gameTime + 1);
@@ -126,7 +126,7 @@ public class TetrisGame extends TetrisPubSub {
   public void setDifficulty(Difficulty difficulty) {
     this.difficulty = difficulty;
     this.conveyor.applySpawnRates(difficulty);
-    this.fallTimer.setDelay(difficulty.initialTimerDelay);
+    this.fallTimer.setDelay(difficulty.getInitialTimerDelay());
   }
 
   public boolean isTimeAttack() {
@@ -226,11 +226,10 @@ public class TetrisGame extends TetrisPubSub {
     }
   }
 
-  /** @return True if piece could successfully move, false if there was not enough room */
   private boolean moveActiveBlock(int rowMove, int colMove) {
     boolean canMoveBeMade = activeBlock.getOccupiedSquares()
             .stream()
-            .map(square -> new Block.ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
+            .map(square -> new ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
             .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
                                     isOpen(moveSquare.getRow(), moveSquare.getColumn()));
 
@@ -249,6 +248,7 @@ public class TetrisGame extends TetrisPubSub {
             .stream()
             .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
                                     isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+
     if (areRotatedSquaresLegal) {
       return true;
     } else {
@@ -257,7 +257,7 @@ public class TetrisGame extends TetrisPubSub {
     }
   }
 
-  private Collection<Block.ColoredSquare> getGhostSquares() {
+  private Collection<ColoredSquare> getGhostSquares() {
     if (activeBlock == null) {
       return List.of();
     }
@@ -267,8 +267,8 @@ public class TetrisGame extends TetrisPubSub {
 
     dropCurrentBlock();
 
-    Collection<Block.ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
-    ghostSquares.forEach(Block.ColoredSquare::clearColor);
+    Collection<ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
+    ghostSquares.forEach(ColoredSquare::clearColor);
 
     // Returns block to location it was in before dropping to ghost position
     activeBlock.setLocation(currentRow, currentCol);
@@ -280,13 +280,25 @@ public class TetrisGame extends TetrisPubSub {
    * Attempts to vertically drop the current active piece 1 square.
    * If the piece could not be dropped, its colors are logged to the color grid and any complete rows removed
    */
-  public void tryFall() {
+  public void tryMoveActiveBlockDown() {
     if (moveActiveBlockDown()) {
       return;
     }
 
-    logActiveBlock();
+    persistActiveBlockColors();
+    int linesCleared = clearCompleteLines();
 
+    if (linesCleared > 0) {
+      increaseScore(linesCleared);
+      publish(TetrisEvent.LINES_CLEARED, linesCleared);
+    }
+
+    if (!isGameWon) {
+      spawn(conveyor.next());
+    }
+  }
+
+  private int clearCompleteLines() {
     int completeRowScanIndex = Math.min(activeBlock.getRow(), verticalDimension - 1);
     int minRowScanIndex = Math.max(0, completeRowScanIndex - 3);
 
@@ -304,17 +316,10 @@ public class TetrisGame extends TetrisPubSub {
       }
     }
 
-    if (linesCleared > 0) {
-      increaseScore(linesCleared);
-      publish(TetrisEvent.LINES_CLEARED, linesCleared);
-    }
-
-    if (!isGameWon) {
-      spawn(conveyor.next());
-    }
+    return linesCleared;
   }
 
-  public void logActiveBlock() {
+  public void persistActiveBlockColors() {
     if (activeBlock != null) {
       for (var square : activeBlock.getOccupiedSquares()) {
         setColor(square.getRow(), square.getColumn(), square.getColor());
@@ -322,7 +327,7 @@ public class TetrisGame extends TetrisPubSub {
     }
   }
 
-  public void beginNew() {
+  public void reset() {
     setGameTime(0);
     setScore(0);
     setLevel(1);
@@ -336,7 +341,7 @@ public class TetrisGame extends TetrisPubSub {
 
     this.persistedBlocks.forEach(row -> Arrays.fill(row, null));
 
-    this.conveyor.prepareForStart();
+    this.conveyor.reset();
     spawn(this.conveyor.next());
 
     this.gameTimer.start();
@@ -346,12 +351,13 @@ public class TetrisGame extends TetrisPubSub {
   private void increaseScore(int completedLines) {
     int newScore = this.score;
 
-    switch (completedLines) {
-      case 1: newScore += 10; break;
-      case 2: newScore += 30; break;
-      case 3: newScore += 50; break;
-      case 4: newScore += 100; break;
-    }
+    newScore += switch (completedLines) {
+      case 1 -> 10;
+      case 2 -> 30;
+      case 3 -> 50;
+      case 4 -> 100;
+      default -> throw new RuntimeException("Completed lines must be in range 1 - 4");
+    };
 
     // Special pieces bonus
     newScore += conveyor.getEnabledSpecials()
@@ -410,9 +416,9 @@ public class TetrisGame extends TetrisPubSub {
     }
   }
 
-  public Collection<Block.ColoredSquare> getColoredSquares() {
+  public Collection<ColoredSquare> getColoredSquares() {
 
-    Set<Block.ColoredSquare> squares = new HashSet<>();
+    Set<ColoredSquare> squares = new HashSet<>();
 
     // Important we add occupied squares before ghost squares so that ghost squares don't overwrite occupied squares
     if (activeBlock != null) {
@@ -426,7 +432,7 @@ public class TetrisGame extends TetrisPubSub {
       Color[] rowColors = persistedBlocks.get(rowIndex);
       for (int colIndex = 0; colIndex < rowColors.length; colIndex++) {
         if (rowColors[colIndex] != null) {
-          squares.add(new Block.ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
+          squares.add(new ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
         }
       }
     }

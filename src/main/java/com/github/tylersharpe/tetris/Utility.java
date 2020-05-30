@@ -1,5 +1,6 @@
 package com.github.tylersharpe.tetris;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
@@ -25,4 +26,7 @@ public final class Utility {
     return values[RANDOM.nextInt(values.length)];
   }
 
+  public static Color getRandomColor() {
+    return sample(BlockType.values()).getColor();
+  }
 }

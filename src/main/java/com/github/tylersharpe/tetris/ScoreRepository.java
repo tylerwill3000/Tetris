@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -31,7 +32,7 @@ public class ScoreRepository {
   }
 
   public List<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
-    var scoresStream = getAllScores().stream();
+    Stream<Score> scoresStream = getAllScores().stream();
 
     if (difficulty != null) {
       scoresStream = scoresStream.filter(score -> difficulty == score.difficulty);
@@ -43,21 +44,17 @@ public class ScoreRepository {
     return scoresStream.collect(toList());
   }
 
-  public int determineRank(int pointsOfScoreToSave) {
-    try {
-      long numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
-      return (int) numScoresGreater + 1;
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
+  public int determineRank(int pointsOfScoreToSave) throws IOException {
+    long numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
+    return (int) numScoresGreater + 1;
   }
 
   public void saveScore(Score score) throws IOException {
-    var allScores = new ArrayList<>(getAllScores());
+    List<Score> allScores = new ArrayList<>(getAllScores());
     allScores.add(score);
 
-    try (var objOut = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
-      objOut.writeObject(allScores);
+    try (var objectOutputStream = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
+      objectOutputStream.writeObject(allScores);
     }
   }
 
@@ -67,8 +64,8 @@ public class ScoreRepository {
       return Collections.emptyList();
     }
 
-    try (var scoresInput = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-      var scores = (List<Score>) scoresInput.readObject();
+    try (var scoresInputStream = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
+      List<Score> scores = (List<Score>) scoresInputStream.readObject();
       Collections.sort(scores);
       return scores;
     } catch (ClassNotFoundException e) {

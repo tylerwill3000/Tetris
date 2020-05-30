@@ -6,15 +6,15 @@ import static java.util.stream.Collectors.toList;
 
 public final class BlockConveyor {
 
-  private Set<Block.Type> enabledTypes;
-  private List<Block.Type> typeSampleList;
-  private Queue<Block> conveyor;
-  private Set<Block.Type> activeSpecialTypes; // Cached for performance when calculating score
+  private final Set<BlockType> enabledTypes;
+  private final List<BlockType> typeSampleList;
+  private final Queue<Block> conveyor;
+  private Set<BlockType> activeSpecialTypes; // Cached for performance when calculating score
 
   BlockConveyor() {
     typeSampleList = new ArrayList<>();
-    conveyor = new LinkedList<>();
-    enabledTypes = EnumSet.noneOf(Block.Type.class);
+    conveyor = new ArrayDeque<>();
+    enabledTypes = EnumSet.noneOf(BlockType.class);
   }
 
   public Block next() {
@@ -26,7 +26,7 @@ public final class BlockConveyor {
     return conveyor.peek();
   }
 
-  void prepareForStart() {
+  void reset() {
     conveyor.clear();
     conveyor.add(generateBlock());
     conveyor.add(generateBlock());
@@ -35,37 +35,37 @@ public final class BlockConveyor {
   void applySpawnRates(Difficulty difficulty) {
     typeSampleList.clear();
 
-    for (Block.Type defaultType : Block.Type.getDefaultBlocks()) {
+    for (BlockType defaultType : BlockType.getDefaultBlocks()) {
       enableBlock(difficulty, defaultType);
     }
   }
 
-  public void enableBlock(Difficulty diff, Block.Type type) {
+  public void enableBlock(Difficulty difficulty, BlockType blockType) {
     activeSpecialTypes = null;
-    enabledTypes.add(type);
-    typeSampleList.removeIf(sampleType -> sampleType == type);
+    enabledTypes.add(blockType);
+    typeSampleList.removeIf(sampleType -> sampleType == blockType);
 
-    int spawnRate = diff.getSpawnRate(type);
+    int spawnRate = difficulty.getSpawnRate(blockType);
     for (int i = 1; i <= spawnRate; i++) {
-      typeSampleList.add(type);
+      typeSampleList.add(blockType);
     }
   }
 
-  public void disableBlock(Block.Type toRemove) {
+  public void disableBlock(BlockType toRemove) {
     activeSpecialTypes = null;
     enabledTypes.remove(toRemove);
     typeSampleList.removeIf(type -> type == toRemove);
   }
 
-  Set<Block.Type> getEnabledSpecials() {
+  Set<BlockType> getEnabledSpecials() {
     if (activeSpecialTypes == null) {
-      var activeSpecialsList = Block.Type.getSpecialBlocks().stream().filter(this::isEnabled).collect(toList());
-      activeSpecialTypes = activeSpecialsList.isEmpty() ? EnumSet.noneOf(Block.Type.class) : EnumSet.copyOf(activeSpecialsList);
+      var activeSpecialsList = BlockType.getSpecialBlocks().stream().filter(this::isEnabled).collect(toList());
+      activeSpecialTypes = activeSpecialsList.isEmpty() ? EnumSet.noneOf(BlockType.class) : EnumSet.copyOf(activeSpecialsList);
     }
     return activeSpecialTypes;
   }
 
-  public boolean isEnabled(Block.Type type) {
+  public boolean isEnabled(BlockType type) {
     return enabledTypes.contains(type);
   }
 

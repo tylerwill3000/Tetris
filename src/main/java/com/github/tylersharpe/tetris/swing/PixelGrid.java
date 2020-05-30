@@ -1,6 +1,6 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.Block;
+import com.github.tylersharpe.tetris.ColoredSquare;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,11 +66,11 @@ abstract class PixelGrid extends JPanel {
     }
   }
 
-  protected int getXCoordinate(Block.ColoredSquare square) {
+  protected int getXCoordinate(ColoredSquare square) {
     return square.getColumn() * getUnitWidth();
   }
 
-  protected int getYCoordinate(Block.ColoredSquare square) {
+  protected int getYCoordinate(ColoredSquare square) {
     return square.getRow() * getUnitHeight();
   }
 
@@ -85,6 +85,6 @@ abstract class PixelGrid extends JPanel {
   /**
    * @return A collection of colored squares to paint in this grid
    */
-  abstract Collection<Block.ColoredSquare> getCurrentColors();
+  abstract Collection<ColoredSquare> getCurrentColors();
 
 }

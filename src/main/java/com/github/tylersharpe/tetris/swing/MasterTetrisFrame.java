@@ -2,9 +2,9 @@ package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.*;
 import com.github.tylersharpe.tetris.audio.AudioFileNotFound;
+import com.github.tylersharpe.tetris.audio.NoopTetrisAudioSystem;
 import com.github.tylersharpe.tetris.audio.TetrisAudioSystem;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
-import com.github.tylersharpe.tetris.ScoreRepository;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -13,8 +13,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -125,7 +125,7 @@ public class MasterTetrisFrame extends JFrame {
 
           game.dropCurrentBlock();
           audioSystem.playBlockPlacementSound();
-          game.tryFall();
+          game.tryMoveActiveBlockDown();
           break;
       }
 
@@ -187,16 +187,16 @@ public class MasterTetrisFrame extends JFrame {
 
     this.nextBlockPanel = new BlockDisplayPanel("Next") {
       @Override
-      public Collection<Block.ColoredSquare> getCurrentColors() {
+      public Collection<ColoredSquare> getCurrentColors() {
         Block nextBlock = game.getConveyor().peek();
-        return nextBlock == null ? List.of() : nextBlock.getNextPanelSquares();
+        return nextBlock == null ? List.of() : nextBlock.getPreviewPanelSquars();
       }
     };
 
     this.holdPanel = new BlockDisplayPanel("Hold") {
       @Override
-      public Collection<Block.ColoredSquare> getCurrentColors() {
-        return game.getHoldBlock().map(Block::getNextPanelSquares).orElse(Collections.emptyList());
+      public Collection<ColoredSquare> getCurrentColors() {
+        return game.getHoldBlock().map(Block::getPreviewPanelSquars).orElse(Collections.emptyList());
       }
     };
 
@@ -266,7 +266,7 @@ public class MasterTetrisFrame extends JFrame {
 
   private void onStart() {
 
-    game.beginNew();
+    game.reset();
 
     if (clearTask != null && !clearTask.isDone()) {
       clearTask.cancel(true);
@@ -416,10 +416,10 @@ public class MasterTetrisFrame extends JFrame {
 
     void spiralClear() {
       try {
-        game.logActiveBlock();
+        game.persistActiveBlockColors();
         game.clearActiveBlock();
 
-        Collection<Block.ColoredSquare> spiralSquares = new LinkedHashSet<>();
+        Collection<ColoredSquare> spiralSquares = new LinkedHashSet<>();
 
         int nextLeftCol = 0,
             nextRightCol = game.getHorizontalDimension() - 1,
@@ -433,31 +433,31 @@ public class MasterTetrisFrame extends JFrame {
 
           // All cells in the next leftmost column
           for (int row = nextTopRow; row <= nextBottomRow; row++) {
-            spiralSquares.add(new Block.ColoredSquare(row, nextLeftCol));
+            spiralSquares.add(new ColoredSquare(row, nextLeftCol));
           }
           nextLeftCol++;
 
           // All cells in the next bottom row
           for (int col = nextLeftCol; col <= nextRightCol; col++) {
-            spiralSquares.add(new Block.ColoredSquare(nextBottomRow, col));
+            spiralSquares.add(new ColoredSquare(nextBottomRow, col));
           }
           nextBottomRow--;
 
           // All cells in the next rightmost column
           for (int row = nextBottomRow; row >= nextTopRow; row--) {
-            spiralSquares.add(new Block.ColoredSquare(row, nextRightCol));
+            spiralSquares.add(new ColoredSquare(row, nextRightCol));
           }
           nextRightCol--;
 
           // All cells in the next top row
           for (int col = nextRightCol; col >= nextLeftCol; col--) {
-            spiralSquares.add(new Block.ColoredSquare(nextTopRow, col));
+            spiralSquares.add(new ColoredSquare(nextTopRow, col));
           }
           nextTopRow++;
         }
 
         // Run 1 loop to paint in all unoccupied squares
-        for (Block.ColoredSquare spiralSquare : spiralSquares) {
+        for (ColoredSquare spiralSquare : spiralSquares) {
           if (game.isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
             game.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
           }
@@ -466,7 +466,7 @@ public class MasterTetrisFrame extends JFrame {
         }
 
         // Run a second loop to erase all of them
-        for (Block.ColoredSquare spiralSquare : spiralSquares) {
+        for (ColoredSquare spiralSquare : spiralSquares) {
           game.clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
           repaint();
           Thread.sleep(SPIRAL_SLEEP_INTERVAL);
@@ -490,7 +490,7 @@ public class MasterTetrisFrame extends JFrame {
         for (int row = game.getVerticalDimension() - 1; row >= 3; row --) {
           for (int col = 0; col < game.getHorizontalDimension(); col++) {
             if (game.isOpen(row, col)) {
-              game.setColor(row, col, Block.Type.getRandomColor());
+              game.setColor(row, col, Utility.getRandomColor());
             }
           }
           repaint();
@@ -518,12 +518,12 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     @Override
-    public Collection<Block.ColoredSquare> getCurrentColors() {
+    public Collection<ColoredSquare> getCurrentColors() {
       return game.getColoredSquares();
     }
 
     @Override
-    protected int getYCoordinate(Block.ColoredSquare square) {
+    protected int getYCoordinate(ColoredSquare square) {
       return (square.getRow() - 3) * getUnitHeight(); // Adjusts for 3 invisible squares at top
     }
 
@@ -636,7 +636,7 @@ public class MasterTetrisFrame extends JFrame {
       soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
       soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
-      if (audioSystem instanceof TetrisAudioSystem.NoopTetrisAudioSystem) {
+      if (audioSystem instanceof NoopTetrisAudioSystem) {
         musicCheckbox.setVisible(false);
         soundEffectsCheckbox.setVisible(false);
       }
@@ -782,9 +782,9 @@ public class MasterTetrisFrame extends JFrame {
       this.btnClose = new TetrisButton("Close");
       this.btnClose.addActionListener(e -> dispose());
 
-      Collection<Block.Type> specialBlocks = Block.Type.getSpecialBlocks();
+      Collection<BlockType> specialBlocks = BlockType.getSpecialBlocks();
       JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
-      for (Block.Type specialType : specialBlocks) {
+      for (BlockType specialType : specialBlocks) {
 
         BlockDisplayPanel display = new BlockDisplayPanel("\"" + specialType + "\"", new Block(specialType));
         BlockSelectorButton selector = new BlockSelectorButton(specialType);
@@ -815,10 +815,10 @@ public class MasterTetrisFrame extends JFrame {
 
     private class BlockSelectorButton extends JButton {
 
-      private Block.Type type;
+      private BlockType type;
       private boolean active;
 
-      private BlockSelectorButton(Block.Type type) {
+      private BlockSelectorButton(BlockType type) {
         this.type = type;
         setActiveState(game.getConveyor().isEnabled(type));
         setFocusable(false);

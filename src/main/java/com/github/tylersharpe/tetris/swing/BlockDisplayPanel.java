@@ -2,6 +2,7 @@
 package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.Block;
+import com.github.tylersharpe.tetris.ColoredSquare;
 
 import javax.swing.border.TitledBorder;
 import java.util.Collection;
@@ -26,8 +27,8 @@ class BlockDisplayPanel extends PixelGrid {
   }
 
   @Override
-  public Collection<Block.ColoredSquare> getCurrentColors() {
-    return displayedBlock == null ? List.of() : displayedBlock.getNextPanelSquares();
+  public Collection<ColoredSquare> getCurrentColors() {
+    return displayedBlock == null ? List.of() : displayedBlock.getPreviewPanelSquars();
   }
 
 }

@@ -7,22 +7,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Allows game model components to communicate with UI components in a decoupled manner
+ * Dead simple message broker
  */
-public class TetrisPubSub {
+public class Broker {
 
-  private Map<TetrisEvent, Collection<Consumer<Object>>> listeners = new EnumMap<>(TetrisEvent.class);
+  private final Map<TetrisEvent, Collection<Consumer<Object>>> subscribers = new EnumMap<>(TetrisEvent.class);
 
   public void publish(TetrisEvent event) {
     publish(event, null);
   }
 
   public void publish(TetrisEvent event, Object eventData) {
-    listeners.computeIfAbsent(event, __ -> new ArrayList<>()).forEach(listener -> listener.accept(eventData));
+    subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).forEach(listener -> listener.accept(eventData));
   }
 
   public void subscribe(TetrisEvent event, Consumer<Object> listener) {
-    listeners.computeIfAbsent(event, __ -> new ArrayList<>()).add(listener);
+    subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).add(listener);
   }
 
 }

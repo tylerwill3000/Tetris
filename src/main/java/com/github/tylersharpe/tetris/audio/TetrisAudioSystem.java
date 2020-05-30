@@ -7,32 +7,6 @@ import java.util.jar.Manifest;
 
 public interface TetrisAudioSystem {
 
-    // Used when running the no-audio distribution
-    class NoopTetrisAudioSystem implements TetrisAudioSystem {
-
-        private static NoopTetrisAudioSystem INSTANCE;
-
-        private static NoopTetrisAudioSystem getInstance() {
-            return INSTANCE == null ? INSTANCE = new NoopTetrisAudioSystem() : INSTANCE;
-        }
-
-        public void setSoundtrackEnabled(boolean enabled) {}
-        public void setEffectsEnabled(boolean enabled) {}
-        public void startSoundtrack(int level) {}
-        public void resumeCurrentSoundtrack() {}
-        public void stopCurrentSoundtrack() {}
-        public void playGameOverSound() {}
-        public void playVictoryFanfare() {}
-        public void playPauseSound() {}
-        public void playBlockPlacementSound() {}
-        public void playHoldSound() {}
-        public void playReleaseSound() {}
-        public void playClearLineSound(int lineCount) {}
-        public void playClockwiseRotationSound() {}
-        public void playCounterClockwiseRotationSound() {}
-        public void playSuperSlideSound() {}
-    }
-
     static TetrisAudioSystem getInstance() {
       String audioEnabledAttr;
 

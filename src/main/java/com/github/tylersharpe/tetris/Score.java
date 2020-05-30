@@ -51,8 +51,16 @@ public class Score implements Serializable, Comparable<Score> {
 
   @Override
   public String toString() {
-    return String.format("Score(rank=%d, name=%s, points=%d, gameTime=%s, difficulty=%s, dateAchieved=%s, maxLevel=%d, linesCleared=%d)",
-                                rank,    name,    points, Utility.formatSeconds(gameTime), difficulty.toString(), dateAchieved.toString(), maxLevel, linesCleared);
+    return "Score(" +
+            "points=" + points +
+            ", linesCleared=" + linesCleared +
+            ", maxLevel=" + maxLevel +
+            ", rank=" + rank +
+            ", gameTime=" + gameTime +
+            ", name='" + name + '\'' +
+            ", difficulty=" + difficulty +
+            ", dateAchieved=" + dateAchieved +
+            ')';
   }
 
   @Override
