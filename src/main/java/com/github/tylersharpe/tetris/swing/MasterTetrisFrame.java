@@ -30,34 +30,35 @@ public class MasterTetrisFrame extends JFrame {
   private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
   private TetrisAudioSystem audioSystem;
-  private TetrisGame game;
-  private ScoreRepository scoresDao = new ScoreRepository();
+  private final TetrisGame game;
+  private final ScoreRepository scoreRepository = new ScoreRepository();
 
-  private BoardPanel boardPanel;
-  private BlockDisplayPanel nextBlockPanel;
-  private BlockDisplayPanel holdPanel;
-  private MenuPanel menuPanel;
-  private SettingsPanel settingsPanel;
+  private final BoardPanel boardPanel;
+  @SuppressWarnings("FieldCanBeLocal")
+  private final BlockDisplayPanel nextBlockPanel;
+  private final BlockDisplayPanel holdPanel;
+  private final MenuPanel menuPanel;
+  private final SettingsPanel settingsPanel;
   private ScorePanel scorePanel;
 
   // Tracks progress of Asynchronous UI effects
   private Future<?> clearTask;
   private Future<?> flashLabelTask;
 
-  private KeyAdapter keyHandler = new KeyAdapter() {
+  private final KeyAdapter keyHandler = new KeyAdapter() {
 
-    Set<Integer> pressed = new HashSet<>();
+    final Set<Integer> pressedKeyCodes = new HashSet<>();
 
     public void keyPressed(KeyEvent e) {
 
       int code = e.getKeyCode();
-      pressed.add(code);
+      pressedKeyCodes.add(code);
 
       switch (code) {
 
         case KeyEvent.VK_LEFT:
 
-          if (pressed.contains(KeyEvent.VK_S)) {
+          if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
             game.superSlideActiveBlockLeft();
             audioSystem.playSuperSlideSound();
           } else {
@@ -68,7 +69,7 @@ public class MasterTetrisFrame extends JFrame {
 
         case KeyEvent.VK_RIGHT:
 
-          if (pressed.contains(KeyEvent.VK_S)) {
+          if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
             game.superSlideActiveBlockRight();
             audioSystem.playSuperSlideSound();
           } else {
@@ -133,7 +134,7 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     public void keyReleased(KeyEvent e) {
-      pressed.remove(e.getKeyCode());
+      pressedKeyCodes.remove(e.getKeyCode());
     }
 
   };
@@ -155,7 +156,7 @@ public class MasterTetrisFrame extends JFrame {
       scorePanel.timeProgressBar.repaint();
     });
 
-    for (var gameOverEvent : List.of(TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL)) {
+    for (TetrisEvent gameOverEvent : List.of(TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL)) {
       this.game.subscribe(gameOverEvent, e -> onGameOver());
     }
     this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
@@ -189,14 +190,14 @@ public class MasterTetrisFrame extends JFrame {
       @Override
       public Collection<ColoredSquare> getCurrentColors() {
         Block nextBlock = game.getConveyor().peek();
-        return nextBlock == null ? List.of() : nextBlock.getPreviewPanelSquars();
+        return nextBlock == null ? List.of() : nextBlock.getPreviewPanelSquares();
       }
     };
 
     this.holdPanel = new BlockDisplayPanel("Hold") {
       @Override
       public Collection<ColoredSquare> getCurrentColors() {
-        return game.getHoldBlock().map(Block::getPreviewPanelSquars).orElse(Collections.emptyList());
+        return game.getHoldBlock().map(Block::getPreviewPanelSquares).orElse(Collections.emptyList());
       }
     };
 
@@ -204,38 +205,38 @@ public class MasterTetrisFrame extends JFrame {
     this.settingsPanel = new SettingsPanel();
     this.scorePanel = new ScorePanel();
 
-    LinkedHashMap<String, String> keys_action = new LinkedHashMap<>(); // LinkedHashMap because order matters for display
-    keys_action.put("Up:",          "Rotate CW");
-    keys_action.put("'F':",         "Rotate CCW");
-    keys_action.put("Down:",        "Shift down");
-    keys_action.put("Left:",        "Shift left");
-    keys_action.put("Right:",       "Shift right");
-    keys_action.put("'S' + left:",  "Super-slide left");
-    keys_action.put("'S' + right:", "Super-slide right");
-    keys_action.put("Spacebar:",    "Instant drop");
-    keys_action.put("'D':",         "Set hold");
-    keys_action.put("'E':",         "Release hold");
-    keys_action.put("Alt + 'S':",   "Start game");
-    keys_action.put("Alt + 'P':",   "Pause game");
-    keys_action.put("Alt + 'R':",   "Resume game");
-    keys_action.put("Alt + 'G':",   "Give up");
-    keys_action.put("Alt + 'L':",   "View leaderboard");
+    LinkedHashMap<String, String> controls = new LinkedHashMap<>(); // LinkedHashMap because order matters for display
+    controls.put("Up:",          "Rotate CW");
+    controls.put("'F':",         "Rotate CCW");
+    controls.put("Down:",        "Shift down");
+    controls.put("Left:",        "Shift left");
+    controls.put("Right:",       "Shift right");
+    controls.put("'S' + left:",  "Super-slide left");
+    controls.put("'S' + right:", "Super-slide right");
+    controls.put("Spacebar:",    "Instant drop");
+    controls.put("'D':",         "Set hold");
+    controls.put("'E':",         "Release hold");
+    controls.put("Alt + 'S':",   "Start game");
+    controls.put("Alt + 'P':",   "Pause game");
+    controls.put("Alt + 'R':",   "Resume game");
+    controls.put("Alt + 'G':",   "Give up");
+    controls.put("Alt + 'L':",   "View leaderboard");
 
-    JPanel keys = new JPanel(new GridLayout(keys_action.size(), 1));
-    JPanel actions = new JPanel(new GridLayout(keys_action.size(), 1));
-    keys_action.forEach((key, action) -> {
+    JPanel keys = new JPanel(new GridLayout(controls.size(), 1));
+    JPanel actions = new JPanel(new GridLayout(controls.size(), 1));
+    controls.forEach((key, action) -> {
       keys.add(new JLabel(key));
       actions.add(new JLabel(action));
     });
 
-    JPanel controls = new JPanel(new BorderLayout());
-    controls.setBorder(new TitledBorder("Controls"));
-    controls.add(keys, BorderLayout.WEST);
-    controls.add(actions, BorderLayout.EAST);
+    JPanel controlsPanel = new JPanel(new BorderLayout());
+    controlsPanel.setBorder(new TitledBorder("Controls"));
+    controlsPanel.add(keys, BorderLayout.WEST);
+    controlsPanel.add(actions, BorderLayout.EAST);
 
     JPanel holdContainer = new JPanel(new BorderLayout());
     holdContainer.add(holdPanel, BorderLayout.NORTH);
-    holdContainer.add(controls, BorderLayout.CENTER);
+    holdContainer.add(controlsPanel, BorderLayout.CENTER);
     add(holdContainer, BorderLayout.WEST);
 
     add(boardPanel, BorderLayout.CENTER);
@@ -282,7 +283,6 @@ public class MasterTetrisFrame extends JFrame {
     settingsPanel.timeAttackCheckbox.setEnabled(false);
     settingsPanel.ghostSquaresCheckbox.setEnabled(false);
     settingsPanel.musicCheckbox.setEnabled(false);
-    settingsPanel.saveScoresCheckbox.setEnabled(false);
     settingsPanel.soundEffectsCheckbox.setEnabled(false);
 
     menuPanel.startButton.setEnabled(false);
@@ -291,7 +291,7 @@ public class MasterTetrisFrame extends JFrame {
     menuPanel.giveUpButton.setEnabled(true);
     menuPanel.leaderboardButton.setEnabled(false);
 
-    boardPanel.enableBlockMovement();
+    boardPanel.enableKeyHandler();
 
     holdPanel.repaint();
 
@@ -307,12 +307,11 @@ public class MasterTetrisFrame extends JFrame {
     settingsPanel.ghostSquaresCheckbox.setEnabled(true);
     settingsPanel.musicCheckbox.setEnabled(true);
     settingsPanel.soundEffectsCheckbox.setEnabled(true);
-    settingsPanel.saveScoresCheckbox.setEnabled(true);
 
     audioSystem.stopCurrentSoundtrack();
     audioSystem.playPauseSound();
 
-    boardPanel.disableBlockMovement();
+    boardPanel.disableKeyHandler();
 
     menuPanel.resumeButton.setEnabled(true);
     menuPanel.pauseButton.setEnabled(false);
@@ -328,11 +327,10 @@ public class MasterTetrisFrame extends JFrame {
     settingsPanel.ghostSquaresCheckbox.setEnabled(false);
     settingsPanel.musicCheckbox.setEnabled(false);
     settingsPanel.soundEffectsCheckbox.setEnabled(false);
-    settingsPanel.saveScoresCheckbox.setEnabled(false);
 
     audioSystem.resumeCurrentSoundtrack();
 
-    boardPanel.enableBlockMovement();
+    boardPanel.enableKeyHandler();
 
     menuPanel.resumeButton.setEnabled(false);
     menuPanel.pauseButton.setEnabled(true);
@@ -347,7 +345,6 @@ public class MasterTetrisFrame extends JFrame {
     settingsPanel.timeAttackCheckbox.setEnabled(true);
     settingsPanel.ghostSquaresCheckbox.setEnabled(true);
     settingsPanel.musicCheckbox.setEnabled(true);
-    settingsPanel.saveScoresCheckbox.setEnabled(true);
     settingsPanel.soundEffectsCheckbox.setEnabled(true);
 
     menuPanel.startButton.setEnabled(true);
@@ -359,7 +356,7 @@ public class MasterTetrisFrame extends JFrame {
     audioSystem.stopCurrentSoundtrack();
     audioSystem.playVictoryFanfare();
 
-    boardPanel.disableBlockMovement();
+    boardPanel.disableKeyHandler();
     clearTask = THREAD_POOL.submit(boardPanel::jumpClear);
     scorePanel.levelLabel.setText("You Win!!!");
     flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.YELLOW));
@@ -382,12 +379,11 @@ public class MasterTetrisFrame extends JFrame {
     settingsPanel.ghostSquaresCheckbox.setEnabled(true);
     settingsPanel.musicCheckbox.setEnabled(true);
     settingsPanel.soundEffectsCheckbox.setEnabled(true);
-    settingsPanel.saveScoresCheckbox.setEnabled(true);
     settingsPanel.timeAttackCheckbox.setEnabled(true);
     settingsPanel.difficultyCombobox.setEnabled(true);
     settingsPanel.specialsButton.setEnabled(true);
 
-    boardPanel.disableBlockMovement();
+    boardPanel.disableKeyHandler();
 
     scorePanel.levelLabel.setText("Game Over!!!");
     flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.RED));
@@ -395,7 +391,7 @@ public class MasterTetrisFrame extends JFrame {
     clearTask = THREAD_POOL.submit(boardPanel::spiralClear);
   }
 
-  private class BoardPanel extends PixelGrid {
+  private class BoardPanel extends ColorGrid {
 
     private static final int SPIRAL_SLEEP_INTERVAL = 7;
     private static final int CLEAR_SLEEP_INTERVAL = 79;
@@ -406,11 +402,11 @@ public class MasterTetrisFrame extends JFrame {
       setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
     }
 
-    void enableBlockMovement() {
+    void enableKeyHandler() {
       addKeyListener(keyHandler);
     }
 
-    void disableBlockMovement() {
+    void disableKeyHandler() {
       removeKeyListener(keyHandler);
     }
 
@@ -472,10 +468,7 @@ public class MasterTetrisFrame extends JFrame {
           Thread.sleep(SPIRAL_SLEEP_INTERVAL);
         }
 
-        if (settingsPanel.saveScoresCheckbox.isSelected()) {
-          new ScoreResultsFrame(scoresDao, game);
-        }
-
+          new ScoreResultsFrame(scoreRepository, game);
       } catch (InterruptedException e) {
         // Will happen if new game is started before spiral clear is finished
       } catch (Exception e) {
@@ -506,10 +499,7 @@ public class MasterTetrisFrame extends JFrame {
           Thread.sleep(CLEAR_SLEEP_INTERVAL);
         }
 
-        if (settingsPanel.saveScoresCheckbox.isSelected()) {
-          new ScoreResultsFrame(scoresDao, game);
-        }
-
+        new ScoreResultsFrame(scoreRepository, game);
       } catch (InterruptedException e) {
         // Will happen if we start a new game before task is done
       } catch (Exception e) {
@@ -531,9 +521,9 @@ public class MasterTetrisFrame extends JFrame {
 
   private class ScorePanel extends JPanel {
 
-    private GridLayout layout;
+    private final GridLayout layout;
 
-    private JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER) {
+    private final JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER) {
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -541,7 +531,7 @@ public class MasterTetrisFrame extends JFrame {
       }
     };
 
-    private JLabel totalLinesLabel = new JLabel("Lines: 0 / " + game.getDifficulty().getLinesPerLevel(), JLabel.CENTER) {
+    private final JLabel totalLinesLabel = new JLabel("Lines: 0 / " + game.getDifficulty().getLinesPerLevel(), JLabel.CENTER) {
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -549,9 +539,9 @@ public class MasterTetrisFrame extends JFrame {
       }
     };
 
-    private FlashLabel levelLabel = new FlashLabel("Level: 1", JLabel.CENTER);
+    private final FlashableLabel levelLabel = new FlashableLabel("Level: 1", JLabel.CENTER);
 
-    private JLabel timeLabel = new JLabel("Time: 00:00", JLabel.CENTER) {
+    private final JLabel timeLabel = new JLabel("Time: 00:00", JLabel.CENTER) {
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -563,31 +553,29 @@ public class MasterTetrisFrame extends JFrame {
       }
     };
 
-    private ProgressBar linesClearedProgressBar = new ProgressBar(11, Color.GREEN) {
+    private final ProgressBar linesClearedProgressBar = new ProgressBar(11, Color.GREEN) {
       @Override
       protected double getCurrentPercentage() {
         return 100.0 * (game.getCurrentLevelLinesCleared() * 1.0 / game.getDifficulty().getLinesPerLevel());
       }
     };
 
-    private ProgressBar timeProgressBar = new ProgressBar(11, Color.YELLOW) {
+    private final ProgressBar timeProgressBar = new ProgressBar(11, Color.YELLOW) {
       @Override
       protected double getCurrentPercentage() {
-
         int currentTime = game.getCurrentLevelTime();
-        int maxLimit = game.getDifficulty().getTimeAttackSecondsPerLevel();
-        double percentage = 100.0 * currentTime / maxLimit;
+        int totalTime = game.getDifficulty().getTimeAttackSecondsPerLevel();
+        int timeRemaining = totalTime - currentTime;
 
-        int timeTillMax = maxLimit - currentTime;
-        if (timeTillMax <= 10) {
+        if (timeRemaining <= 10) {
           this.barColor = Color.RED;
-        } else if (timeTillMax <= 20) {
+        } else if (timeRemaining <= 20) {
           this.barColor = Color.YELLOW;
         } else {
           this.barColor = Color.GREEN;
         }
 
-        return percentage;
+        return 100.0 * currentTime / totalTime;
       }
     };
 
@@ -616,15 +604,12 @@ public class MasterTetrisFrame extends JFrame {
 
   private class SettingsPanel extends JPanel {
 
-    private JCheckBox ghostSquaresCheckbox;
-    private JCheckBox musicCheckbox;
-    private JCheckBox soundEffectsCheckbox;
-    private JCheckBox saveScoresCheckbox;
-    private JCheckBox timeAttackCheckbox;
-
-    private JComboBox<Difficulty> difficultyCombobox;
-
-    private TetrisButton specialsButton;
+    private final JCheckBox ghostSquaresCheckbox;
+    private final JCheckBox musicCheckbox;
+    private final JCheckBox soundEffectsCheckbox;
+    private final JCheckBox timeAttackCheckbox;
+    private final JComboBox<Difficulty> difficultyCombobox;
+    private final TetrisButton specialsButton;
 
     SettingsPanel() {
 
@@ -640,9 +625,6 @@ public class MasterTetrisFrame extends JFrame {
         musicCheckbox.setVisible(false);
         soundEffectsCheckbox.setVisible(false);
       }
-
-      saveScoresCheckbox = new JCheckBox("Save Scores", true);
-      saveScoresCheckbox.setToolTipText("Controls whether you are prompted to save your score after the game is finished");
 
       ghostSquaresCheckbox = new JCheckBox("Ghost Squares", true);
       ghostSquaresCheckbox.setToolTipText("Controls whether block placement squares are shown as the block falls");
@@ -674,7 +656,7 @@ public class MasterTetrisFrame extends JFrame {
       setLayout(new BorderLayout());
       setBorder(new TitledBorder("Settings"));
 
-      List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, saveScoresCheckbox, timeAttackCheckbox)
+      List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, timeAttackCheckbox)
               .stream()
               .filter(Component::isVisible)// Sound checkboxes will be invisible if we are running the no-sound distribution
               .collect(Collectors.toList());
@@ -735,11 +717,11 @@ public class MasterTetrisFrame extends JFrame {
 
   private class MenuPanel extends JPanel {
 
-    TetrisButton startButton = new TetrisButton("Start");
-    TetrisButton pauseButton = new TetrisButton("Pause");
-    TetrisButton resumeButton = new TetrisButton("Resume");
-    TetrisButton giveUpButton = new TetrisButton("Give Up");
-    TetrisButton leaderboardButton = new TetrisButton("Leaderboard");
+    final TetrisButton startButton = new TetrisButton("Start");
+    final TetrisButton pauseButton = new TetrisButton("Pause");
+    final TetrisButton resumeButton = new TetrisButton("Resume");
+    final TetrisButton giveUpButton = new TetrisButton("Give Up");
+    final TetrisButton leaderboardButton = new TetrisButton("Leaderboard");
 
     private MenuPanel() {
 
@@ -762,7 +744,7 @@ public class MasterTetrisFrame extends JFrame {
 
       leaderboardButton.setMnemonic('l');
       leaderboardButton.setEnabled(true);
-      leaderboardButton.addActionListener(e -> new LeaderBoardFrame(scoresDao));
+      leaderboardButton.addActionListener(e -> new LeaderBoardFrame(scoreRepository));
       add(leaderboardButton);
 
       giveUpButton.setMnemonic('g');
@@ -775,25 +757,22 @@ public class MasterTetrisFrame extends JFrame {
 
   private class SpecialPiecesFrame extends JFrame {
 
-    private TetrisButton btnClose;
-
     SpecialPiecesFrame() {
-
-      this.btnClose = new TetrisButton("Close");
-      this.btnClose.addActionListener(e -> dispose());
+      TetrisButton closeButton = new TetrisButton("Close");
+      closeButton.addActionListener(e -> dispose());
 
       Collection<BlockType> specialBlocks = BlockType.getSpecialBlocks();
       JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
       for (BlockType specialType : specialBlocks) {
 
         BlockDisplayPanel display = new BlockDisplayPanel("\"" + specialType + "\"", new Block(specialType));
-        BlockSelectorButton selector = new BlockSelectorButton(specialType);
+        BlockEnabledToggleButton blockEnabledToggleButton = new BlockEnabledToggleButton(specialType);
 
         JLabel pointBonus = new JLabel("+" + specialType.getBonusPointsPerLine() + " points per line");
         pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 
         JPanel toggleControlPanel = new JPanel(new BorderLayout());
-        toggleControlPanel.add(selector, BorderLayout.NORTH);
+        toggleControlPanel.add(blockEnabledToggleButton, BorderLayout.NORTH);
         toggleControlPanel.add(pointBonus, BorderLayout.SOUTH);
 
         JPanel blockPanel = new JPanel(new BorderLayout());
@@ -803,7 +782,7 @@ public class MasterTetrisFrame extends JFrame {
       }
 
       add(blockPanels, BorderLayout.CENTER);
-      add(SwingUtility.nestInPanel(btnClose), BorderLayout.SOUTH);
+      add(SwingUtility.nestInPanel(closeButton), BorderLayout.SOUTH);
 
       SwingUtility.setIcon(this, "/images/star.png");
       setTitle("Special Pieces");
@@ -813,14 +792,14 @@ public class MasterTetrisFrame extends JFrame {
       setVisible(true);
     }
 
-    private class BlockSelectorButton extends JButton {
+    private class BlockEnabledToggleButton extends JButton {
 
-      private BlockType type;
+      private final BlockType blockType;
       private boolean active;
 
-      private BlockSelectorButton(BlockType type) {
-        this.type = type;
-        setActiveState(game.getConveyor().isEnabled(type));
+      private BlockEnabledToggleButton(BlockType blockType) {
+        this.blockType = blockType;
+        setActiveState(game.getConveyor().isEnabled(blockType));
         setFocusable(false);
         addMouseMotionListener(new MouseAdapter() {
           public void mouseMoved(MouseEvent e) {
@@ -834,9 +813,9 @@ public class MasterTetrisFrame extends JFrame {
       private void toggle() {
         setActiveState(!active);
         if (active) {
-          game.getConveyor().enableBlock(settingsPanel.getSelectedDifficulty(), type);
+          game.getConveyor().enableBlock(settingsPanel.getSelectedDifficulty(), blockType);
         } else {
-          game.getConveyor().disableBlock(type);
+          game.getConveyor().disableBlock(blockType);
         }
       }
 
@@ -845,7 +824,6 @@ public class MasterTetrisFrame extends JFrame {
         setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
         setText(active ? "Active" : "Inactive");
       }
-
     }
   }
 

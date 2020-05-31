@@ -9,26 +9,26 @@ import java.util.Collection;
 /**
  * Grid-based panels that represent a matrix of colorable squares
  */
-abstract class PixelGrid extends JPanel {
+abstract class ColorGrid extends JPanel {
 
-  private int rows, columns;
-  private int padding;
-  private SquareStyle squareStyle;
+  private final int rows, columns;
+  private final int padding;
+  private final SquareStyle squareStyle;
 
-  PixelGrid(int rows, int columns, int pixelDimension) {
-    this(rows, columns, pixelDimension, 0, SquareStyle.DEFAULT);
+  ColorGrid(int rows, int columns, int cellDimension) {
+    this(rows, columns, cellDimension, 0, SquareStyle.DEFAULT);
   }
 
-  PixelGrid(int rows, int columns, int pixelDimension, int padding) {
-    this(rows, columns, pixelDimension, padding, SquareStyle.DEFAULT);
+  ColorGrid(int rows, int columns, int cellDimension, int padding) {
+    this(rows, columns, cellDimension, padding, SquareStyle.DEFAULT);
   }
 
-  PixelGrid(int rows, int columns, int pixelDimension, int padding, SquareStyle style) {
+  ColorGrid(int rows, int columns, int cellDimension, int padding, SquareStyle style) {
     this.rows = rows;
     this.columns = columns;
     this.squareStyle = style;
     this.padding = padding;
-    setPreferredSize(new Dimension(columns * pixelDimension, rows * pixelDimension));
+    setPreferredSize(new Dimension(columns * cellDimension, rows * cellDimension));
   }
 
   int getRows() {
@@ -37,12 +37,6 @@ abstract class PixelGrid extends JPanel {
 
   int getColumns() {
     return columns;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("PixelGrid(rows=%d, columns=%d, padding=%d, unitWidth=%d, unitHeight=%d, squareStyle=%s)",
-                                    rows,    columns,    padding,    getUnitWidth(), getUnitHeight(), squareStyle);
   }
 
   /**

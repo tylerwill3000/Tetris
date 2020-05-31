@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-abstract class ProgressBar extends PixelGrid {
+abstract class ProgressBar extends ColorGrid {
 
   private static final int PROGRESS_BAR_DIMENSION = 13;
 
-  Color barColor;
-  private double percentagePerPanel;
+  protected Color barColor;
+  private final double percentagePerPanel;
 
   ProgressBar(int cols, Color barColor) {
     super(1, cols, PROGRESS_BAR_DIMENSION);

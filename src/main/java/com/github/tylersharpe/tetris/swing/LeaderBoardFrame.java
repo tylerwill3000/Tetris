@@ -23,10 +23,10 @@ class LeaderBoardFrame extends JFrame {
     Stream.of("All")
   ).toArray(String[]::new);
 
-  private JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
-  private int highlightRank;
-  private JTable scoresTable = new JTable();
-  private ScoreRepository scoreRepository;
+  private final JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
+  private final int highlightRank;
+  private final JTable scoresTable = new JTable();
+  private final ScoreRepository scoreRepository;
 
   LeaderBoardFrame(ScoreRepository scoreRepository) {
     this(scoreRepository, -1);
@@ -46,12 +46,12 @@ class LeaderBoardFrame extends JFrame {
     closeButton.setMnemonic('l');
     closeButton.addActionListener(e -> dispose());
 
-    JPanel recordSelectorPanel = new JPanel();
-    recordSelectorPanel.add(new JLabel("Difficulty: "));
-    recordSelectorPanel.add(difficulties);
+    JPanel difficultySelectorPanel = new JPanel();
+    difficultySelectorPanel.add(new JLabel("Difficulty: "));
+    difficultySelectorPanel.add(difficulties);
 
     JPanel menuPanel = new JPanel(new GridLayout(2, 1));
-    menuPanel.add(recordSelectorPanel);
+    menuPanel.add(difficultySelectorPanel);
 
     setLayout(new BorderLayout());
     add(new JScrollPane(scoresTable), BorderLayout.CENTER);
@@ -101,7 +101,7 @@ class LeaderBoardFrame extends JFrame {
   }
 
   private static class HighScoreCellRenderer implements TableCellRenderer {
-    private int rankToHighlight;
+    private final int rankToHighlight;
     private int rowToHighlight = -1;
 
     private HighScoreCellRenderer(int rankToHighlight) {

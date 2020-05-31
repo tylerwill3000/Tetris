@@ -3,9 +3,9 @@ package com.github.tylersharpe.tetris.swing;
 import javax.swing.*;
 import java.awt.*;
 
-class FlashLabel extends JLabel {
+class FlashableLabel extends JLabel {
 
-  FlashLabel(String text, int center) {
+  FlashableLabel(String text, int center) {
     super(text, center);
   }
 

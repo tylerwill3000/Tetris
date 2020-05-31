@@ -8,12 +8,12 @@ import javax.swing.border.TitledBorder;
 import java.util.Collection;
 import java.util.List;
 
-class BlockDisplayPanel extends PixelGrid {
+class BlockDisplayPanel extends ColorGrid {
 
   public static final int DEFAULT_BLOCK_DIMENSION = 35;
   public static final int DEFAULT_BLOCK_PADDING = 15;
 
-  private Block displayedBlock;
+  private final Block displayedBlock;
 
   BlockDisplayPanel(String title) {
     this(title, null);
@@ -28,7 +28,7 @@ class BlockDisplayPanel extends PixelGrid {
 
   @Override
   public Collection<ColoredSquare> getCurrentColors() {
-    return displayedBlock == null ? List.of() : displayedBlock.getPreviewPanelSquars();
+    return displayedBlock == null ? List.of() : displayedBlock.getPreviewPanelSquares();
   }
 
 }

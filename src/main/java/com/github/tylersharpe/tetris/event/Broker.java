@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Dead simple message broker
+ * Dead simple synchronous, in-process message broker
  */
 public class Broker {
 

@@ -26,7 +26,7 @@ public class Block {
     return type.calculateOccupiedSquares(orientation, row, column);
   }
 
-  public Collection<ColoredSquare> getPreviewPanelSquars() {
+  public Collection<ColoredSquare> getPreviewPanelSquares() {
     return type.getPreviewPanelSquares();
   }
 

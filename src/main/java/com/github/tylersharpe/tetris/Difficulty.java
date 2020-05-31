@@ -55,15 +55,15 @@ public enum Difficulty {
   private final int timeAttackBonus;
   private final int timeAttackSecondsPerLevel;
   private final int winBonus;
-  private final Map<BlockType, Integer> type_spawn;
+  private final Map<BlockType, Integer> spawnRates;
 
-  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> type_spawn) {
+  Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> spawnRates) {
     this.linesPerLevel = linesPerLevel;
     this.initialTimerDelay = initialTimerDelay;
     this.timeAttackBonus = timeAttackBonus;
     this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
     this.winBonus = winBonus;
-    this.type_spawn = type_spawn;
+    this.spawnRates = spawnRates;
   }
 
   public int getLinesPerLevel() {
@@ -87,7 +87,7 @@ public enum Difficulty {
   }
 
   public int getSpawnRate(BlockType type) {
-    return type_spawn.get(type);
+    return spawnRates.get(type);
   }
 
   public static Difficulty fromDisplay(String display) {

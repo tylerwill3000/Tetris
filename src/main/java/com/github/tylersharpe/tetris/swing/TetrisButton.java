@@ -30,7 +30,6 @@ class TetrisButton extends JButton {
       public void mouseExited(MouseEvent e) {
         setBackground(null);
       }
-
     });
   }
 
