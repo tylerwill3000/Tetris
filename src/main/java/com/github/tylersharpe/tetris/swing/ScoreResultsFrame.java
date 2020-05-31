@@ -63,8 +63,8 @@ class ScoreResultsFrame extends JFrame {
         }
 
         try {
-          scoreRepository.saveScore(new Score(
-                  rank,
+          scoreRepository.saveScore(
+              new Score(
                   saveName,
                   game.getScore(),
                   game.getGameTime(),

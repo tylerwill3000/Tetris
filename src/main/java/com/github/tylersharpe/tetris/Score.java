@@ -7,14 +7,12 @@ import java.util.Objects;
 public class Score implements Serializable, Comparable<Score> {
 
   public final int points, linesCleared, maxLevel;
-  public final int rank;
   public final long gameTime;
   public final String name;
   public final Difficulty difficulty;
   public final LocalDate dateAchieved;
 
-  public Score(int rank, String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
-    this.rank = rank;
+  public Score(String name, int score, long gameTime, Difficulty difficulty, int linesCleared, int maxLevel, LocalDate date) {
     this.name = name;
     this.points = score;
     this.gameTime = gameTime;
@@ -30,7 +28,7 @@ public class Score implements Serializable, Comparable<Score> {
 
   @Override
   public int hashCode() {
-    return Objects.hash(rank, name, points, gameTime, difficulty, linesCleared, maxLevel, dateAchieved);
+    return Objects.hash(name, points, gameTime, difficulty, linesCleared, maxLevel, dateAchieved);
   }
 
   @Override
@@ -38,7 +36,6 @@ public class Score implements Serializable, Comparable<Score> {
     if (o instanceof Score) {
       Score other = (Score) o;
       return Objects.equals(name, other.name) &&
-             Objects.equals(rank, other.rank) &&
              Objects.equals(points, other.points) &&
              Objects.equals(gameTime, other.gameTime) &&
              Objects.equals(difficulty, other.difficulty) &&
@@ -55,7 +52,6 @@ public class Score implements Serializable, Comparable<Score> {
             "points=" + points +
             ", linesCleared=" + linesCleared +
             ", maxLevel=" + maxLevel +
-            ", rank=" + rank +
             ", gameTime=" + gameTime +
             ", name='" + name + '\'' +
             ", difficulty=" + difficulty +

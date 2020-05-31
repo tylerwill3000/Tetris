@@ -11,6 +11,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -79,9 +80,10 @@ class LeaderBoardFrame extends JFrame {
       return;
     }
 
+    AtomicInteger rank = new AtomicInteger(0);
     Object[][] formattedScoreData = scores.stream()
             .map(score -> new Object[]{
-              score.rank,
+              rank.incrementAndGet(),
               score.name,
               score.points,
               score.linesCleared,
