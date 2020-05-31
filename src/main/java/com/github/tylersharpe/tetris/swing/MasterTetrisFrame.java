@@ -2,7 +2,6 @@ package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.*;
 import com.github.tylersharpe.tetris.audio.AudioFileNotFound;
-import com.github.tylersharpe.tetris.audio.NoopTetrisAudioSystem;
 import com.github.tylersharpe.tetris.audio.TetrisAudioSystem;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
 
@@ -620,11 +619,6 @@ public class MasterTetrisFrame extends JFrame {
       soundEffectsCheckbox = new JCheckBox("Sound Effects", true);
       soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
       soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
-
-      if (audioSystem instanceof NoopTetrisAudioSystem) {
-        musicCheckbox.setVisible(false);
-        soundEffectsCheckbox.setVisible(false);
-      }
 
       ghostSquaresCheckbox = new JCheckBox("Ghost Squares", true);
       ghostSquaresCheckbox.setToolTipText("Controls whether block placement squares are shown as the block falls");

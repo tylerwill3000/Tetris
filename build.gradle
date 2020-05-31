@@ -33,25 +33,18 @@ processResources.dependsOn(scaleImages)
 
 final String mainClass = 'com.github.tylersharpe.tetris.Main'
 jar {
-    boolean packageAudio = project.hasProperty('packageAudio') ? Boolean.parseBoolean(project.property('packageAudio').toString()) : true
-    if (!packageAudio) {
-        exclude 'audio'
-        archivesBaseName += '-NoAudio'
-    }
-
     manifest {
-        attributes 'Main-Class': mainClass, 'Audio-Enabled': packageAudio
+        attributes 'Main-Class': mainClass
     }
 }
 
 task deploy(type: Copy, group: 'build', dependsOn: jar) {
     from new File(buildDir, 'libs')
-    into new File(System.getenv('USERPROFILE'), 'Development/bin')
+    into new File(System.getenv('USERPROFILE'), 'Desktop')
 }
 
 task run(type: JavaExec) {
     main = mainClass
-    systemProperty 'audio.enabled', System.getProperty('audio.enabled', 'true')
     classpath sourceSets.main.runtimeClasspath
 }
 
