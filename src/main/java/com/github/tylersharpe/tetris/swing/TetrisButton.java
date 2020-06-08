@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 class TetrisButton extends JButton {
 
@@ -29,6 +31,25 @@ class TetrisButton extends JButton {
 
       public void mouseExited(MouseEvent e) {
         setBackground(null);
+      }
+    });
+  }
+
+  public void bindDisabledStateToFrame(JFrame frame) {
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowOpened(WindowEvent e) {
+        setEnabled(false);
+      }
+
+      @Override
+      public void windowClosing(WindowEvent e) {
+        setEnabled(true);
+      }
+
+      @Override
+      public void windowClosed(WindowEvent e) {
+        setEnabled(true);
       }
     });
   }

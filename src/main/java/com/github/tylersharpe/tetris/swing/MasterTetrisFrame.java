@@ -645,7 +645,9 @@ public class MasterTetrisFrame extends JFrame {
       difficultyCombobox.setSelectedIndex(0);
 
       specialsButton = new TetrisButton("Special Pieces...");
-      specialsButton.addActionListener(e -> new SpecialPiecesFrame());
+      specialsButton.addActionListener(e ->
+        specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame())
+      );
 
       setLayout(new BorderLayout());
       setBorder(new TitledBorder("Settings"));
@@ -738,7 +740,9 @@ public class MasterTetrisFrame extends JFrame {
 
       leaderboardButton.setMnemonic('l');
       leaderboardButton.setEnabled(true);
-      leaderboardButton.addActionListener(e -> new LeaderBoardFrame(scoreRepository));
+      leaderboardButton.addActionListener(e ->
+        leaderboardButton.bindDisabledStateToFrame(new LeaderBoardFrame(scoreRepository))
+      );
       add(leaderboardButton);
 
       giveUpButton.setMnemonic('g');
