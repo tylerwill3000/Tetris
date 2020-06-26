@@ -360,7 +360,7 @@ public class TetrisGame extends Broker {
     };
 
     // Special pieces bonus
-    newScore += conveyor.getEnabledSpecials()
+    newScore += conveyor.getEnabledSpecialTypes()
                         .stream()
                         .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                         .sum();

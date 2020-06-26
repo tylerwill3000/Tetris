@@ -2,20 +2,12 @@ package com.github.tylersharpe.tetris;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 public final class BlockConveyor {
 
-  private final Set<BlockType> enabledTypes;
-  private final List<BlockType> typeSampleList;
-  private final Queue<Block> conveyor;
-  private Set<BlockType> activeSpecialTypes; // Cached for performance when calculating score
-
-  BlockConveyor() {
-    typeSampleList = new ArrayList<>();
-    conveyor = new ArrayDeque<>();
-    enabledTypes = EnumSet.noneOf(BlockType.class);
-  }
+  private final Set<BlockType> enabledTypes = EnumSet.noneOf(BlockType.class);
+  private final List<BlockType> typeSampleList = new ArrayList<>();
+  private final Queue<Block> conveyor = new ArrayDeque<>();
+  private final Set<BlockType> enabledSpecialTypes = EnumSet.noneOf(BlockType.class);
 
   public Block next() {
     conveyor.offer(generateBlock());
@@ -41,7 +33,9 @@ public final class BlockConveyor {
   }
 
   public void enableBlock(Difficulty difficulty, BlockType blockType) {
-    activeSpecialTypes = null;
+    if (blockType.isSpecial()) {
+      enabledSpecialTypes.add(blockType);
+    }
     enabledTypes.add(blockType);
     typeSampleList.removeIf(sampleType -> sampleType == blockType);
 
@@ -52,17 +46,13 @@ public final class BlockConveyor {
   }
 
   public void disableBlock(BlockType toRemove) {
-    activeSpecialTypes = null;
+    enabledSpecialTypes.remove(toRemove);
     enabledTypes.remove(toRemove);
     typeSampleList.removeIf(type -> type == toRemove);
   }
 
-  Set<BlockType> getEnabledSpecials() {
-    if (activeSpecialTypes == null) {
-      var activeSpecialsList = BlockType.getSpecialBlocks().stream().filter(this::isEnabled).collect(toList());
-      activeSpecialTypes = activeSpecialsList.isEmpty() ? EnumSet.noneOf(BlockType.class) : EnumSet.copyOf(activeSpecialsList);
-    }
-    return activeSpecialTypes;
+  Set<BlockType> getEnabledSpecialTypes() {
+    return enabledSpecialTypes;
   }
 
   public boolean isEnabled(BlockType type) {

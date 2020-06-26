@@ -439,6 +439,10 @@ public enum BlockType {
     return color;
   }
 
+  public boolean isSpecial() {
+    return isSpecial;
+  }
+
   public Collection<ColoredSquare> calculateOccupiedSquares(int orientation, int row, int col) {
     if (orientation < 0 || orientation > 3) {
       throw new IllegalArgumentException("Orientation value must be between 0 and 3");
