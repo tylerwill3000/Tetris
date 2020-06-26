@@ -467,7 +467,7 @@ public class MasterTetrisFrame extends JFrame {
           Thread.sleep(SPIRAL_SLEEP_INTERVAL);
         }
 
-          new ScoreResultsFrame(scoreRepository, game);
+          menuPanel.leaderboardButton.bindDisabledStateToFrame(new ScoreResultsFrame(scoreRepository, game));
       } catch (InterruptedException e) {
         // Will happen if new game is started before spiral clear is finished
       } catch (Exception e) {
@@ -498,7 +498,7 @@ public class MasterTetrisFrame extends JFrame {
           Thread.sleep(CLEAR_SLEEP_INTERVAL);
         }
 
-        new ScoreResultsFrame(scoreRepository, game);
+        menuPanel.leaderboardButton.bindDisabledStateToFrame(new ScoreResultsFrame(scoreRepository, game));
       } catch (InterruptedException e) {
         // Will happen if we start a new game before task is done
       } catch (Exception e) {
