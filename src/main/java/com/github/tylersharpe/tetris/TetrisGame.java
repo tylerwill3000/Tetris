@@ -7,27 +7,22 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toCollection;
 
 public class TetrisGame extends Broker {
 
   public static final int MAX_LEVEL = 10;
-  private static final int VERTICAL_CELLS = 23;
-  private static final int HORIZONTAL_CELLS = 10;
+  public static final int VERTICAL_DIMENSION = 23; // includes 3 invisible rows at top
+  public static final int HORIZONTAL_DIMENSION = 10;
 
   private Block activeBlock;
   private Block holdBlock;
-  private final BlockConveyor conveyor = new BlockConveyor();
+  private final BlockConveyor conveyor;
   private final LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
   private Difficulty difficulty;
   private int totalLinesCleared;
   private int score;
   private int level;
-  private final int verticalDimension;
   private int gameTime;
-  private final int horizontalDimension;
   private boolean ghostSquaresEnabled = true;
   private boolean timeAttack;
   private int currentLevelTime;
@@ -36,15 +31,12 @@ public class TetrisGame extends Broker {
   private boolean isGameWon;
 
   public TetrisGame() {
-    this(VERTICAL_CELLS, HORIZONTAL_CELLS);
-  }
+    this.conveyor = new BlockConveyor();
 
-  private TetrisGame(int verticalDimension, int horizontalDimension) {
-    this.verticalDimension = verticalDimension;
-    this.horizontalDimension = horizontalDimension;
-    this.persistedBlocks = IntStream.range(0, verticalDimension)
-                                    .mapToObj(i -> new Color[horizontalDimension])
-                                    .collect(toCollection(LinkedList::new));
+    this.persistedBlocks = new LinkedList<>();
+    for (int i = 1; i <= VERTICAL_DIMENSION; i++) {
+      persistedBlocks.add(new Color[HORIZONTAL_DIMENSION]);
+    }
 
     this.fallTimer = new Timer(0, e -> tryMoveActiveBlockDown());
 
@@ -58,14 +50,6 @@ public class TetrisGame extends Broker {
         fallTimer.stop();
       }
     });
-  }
-
-  public int getHorizontalDimension() {
-    return horizontalDimension;
-  }
-
-  public int getVerticalDimension() {
-    return verticalDimension;
   }
 
   public Block getActiveBlock() {
@@ -169,11 +153,7 @@ public class TetrisGame extends Broker {
   }
 
   public boolean isOpen(int row, int col) {
-    return getColor(row, col) == null;
-  }
-
-  private Color getColor(int row, int col) {
-    return persistedBlocks.get(row)[col];
+    return persistedBlocks.get(row)[col] == null;
   }
 
   public void setColor(int row, int col, Color c) {
@@ -230,8 +210,8 @@ public class TetrisGame extends Broker {
     boolean canMoveBeMade = activeBlock.getOccupiedSquares()
             .stream()
             .map(square -> new ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
-            .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
-                                    isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+            .allMatch(squareAfterMove -> isInBounds(squareAfterMove.getRow(), squareAfterMove.getColumn()) &&
+                                         isOpen(squareAfterMove.getRow(), squareAfterMove.getColumn()));
 
     if (canMoveBeMade) {
       activeBlock.move(rowMove, colMove);
@@ -299,7 +279,7 @@ public class TetrisGame extends Broker {
   }
 
   private int clearCompleteLines() {
-    int completeRowScanIndex = Math.min(activeBlock.getRow(), verticalDimension - 1);
+    int completeRowScanIndex = Math.min(activeBlock.getRow(), VERTICAL_DIMENSION - 1);
     int minRowScanIndex = Math.max(0, completeRowScanIndex - 3);
 
     int linesCleared = 0;
@@ -309,7 +289,7 @@ public class TetrisGame extends Broker {
       boolean isRowComplete = Arrays.stream(rowToScan).allMatch(Objects::nonNull);
       if (isRowComplete) {
         persistedBlocks.remove(completeRowScanIndex);
-        persistedBlocks.offerFirst(new Color[horizontalDimension]);
+        persistedBlocks.offerFirst(new Color[HORIZONTAL_DIMENSION]);
         linesCleared++;
       } else {
         completeRowScanIndex--;
@@ -392,7 +372,7 @@ public class TetrisGame extends Broker {
    */
   public void spawn(Block block) {
     int startRow = block.getType().getStartRow();
-    int startCol = horizontalDimension / 2;
+    int startCol = HORIZONTAL_DIMENSION / 2;
 
     while (true) {
       var spawnSquares = block.getType().calculateOccupiedSquares(0, startRow, startCol);
@@ -428,7 +408,7 @@ public class TetrisGame extends Broker {
       }
     }
 
-    for (int rowIndex = 0; rowIndex < verticalDimension; rowIndex++) {
+    for (int rowIndex = 0; rowIndex < VERTICAL_DIMENSION; rowIndex++) {
       Color[] rowColors = persistedBlocks.get(rowIndex);
       for (int colIndex = 0; colIndex < rowColors.length; colIndex++) {
         if (rowColors[colIndex] != null) {
@@ -441,7 +421,7 @@ public class TetrisGame extends Broker {
   }
 
   private boolean isInBounds(int row, int col) {
-    return row >= 0 && row < verticalDimension && col >= 0 && col < horizontalDimension;
+    return row >= 0 && row < VERTICAL_DIMENSION && col >= 0 && col < HORIZONTAL_DIMENSION;
   }
 
 }

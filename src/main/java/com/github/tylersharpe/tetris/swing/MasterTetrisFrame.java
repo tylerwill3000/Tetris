@@ -396,7 +396,7 @@ public class MasterTetrisFrame extends JFrame {
     private static final int CLEAR_SLEEP_INTERVAL = 79;
 
     BoardPanel() {
-      super(game.getVerticalDimension() - 3, game.getHorizontalDimension(), BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
+      super(TetrisGame.VERTICAL_DIMENSION - 3, TetrisGame.HORIZONTAL_DIMENSION, BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
       setFocusable(true);
       setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
     }
@@ -417,12 +417,12 @@ public class MasterTetrisFrame extends JFrame {
         Collection<ColoredSquare> spiralSquares = new LinkedHashSet<>();
 
         int nextLeftCol = 0,
-            nextRightCol = game.getHorizontalDimension() - 1,
+            nextRightCol = TetrisGame.HORIZONTAL_DIMENSION - 1,
             nextTopRow = 3,
-            nextBottomRow = game.getVerticalDimension() - 1;
+            nextBottomRow = TetrisGame.VERTICAL_DIMENSION - 1;
 
-        int maxSquares = game.getVerticalDimension() * game.getHorizontalDimension();
-        maxSquares -= (3 * game.getHorizontalDimension()); // Knock off invisible rows at top
+        int maxSquares = TetrisGame.VERTICAL_DIMENSION * TetrisGame.HORIZONTAL_DIMENSION;
+        maxSquares -= (3 * TetrisGame.HORIZONTAL_DIMENSION); // Knock off invisible rows at top
 
         while (spiralSquares.size() < maxSquares) {
 
@@ -479,8 +479,8 @@ public class MasterTetrisFrame extends JFrame {
       try {
 
         // Fill all rows bottom to top
-        for (int row = game.getVerticalDimension() - 1; row >= 3; row --) {
-          for (int col = 0; col < game.getHorizontalDimension(); col++) {
+        for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= 3; row --) {
+          for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
             if (game.isOpen(row, col)) {
               game.setColor(row, col, Utility.getRandomColor());
             }
@@ -490,8 +490,8 @@ public class MasterTetrisFrame extends JFrame {
         }
 
         // Clear all rows top to bottom.
-        for (int row = 3; row < game.getVerticalDimension(); row ++) {
-          for (int col = 0; col < game.getHorizontalDimension(); col++) {
+        for (int row = 3; row < TetrisGame.VERTICAL_DIMENSION; row ++) {
+          for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
             game.clearSquare(row, col);
           }
           repaint();
