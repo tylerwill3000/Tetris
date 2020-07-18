@@ -100,9 +100,10 @@ public enum Difficulty {
   }
 
   public String getDisplay() {
-    return name().charAt(0) + name().substring(1).toLowerCase();
+    return Utility.capitalize(name());
   }
 
+  @Override
   public String toString() {
     return getDisplay();
   }

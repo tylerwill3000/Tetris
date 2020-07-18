@@ -13,6 +13,9 @@ class BlockDisplayPanel extends ColorGrid {
   public static final int DEFAULT_BLOCK_DIMENSION = 35;
   public static final int DEFAULT_BLOCK_PADDING = 15;
 
+  private static final int BLOCK_DISPLAY_PANEL_ROWS = 4;
+  private static final int BLOCK_DISPLAY_PANEL_COLUMNS = 5;
+
   private final Block displayedBlock;
 
   BlockDisplayPanel(String title) {
@@ -20,7 +23,7 @@ class BlockDisplayPanel extends ColorGrid {
   }
 
   BlockDisplayPanel(String title, Block displayedBlock) {
-    super(4, 5, DEFAULT_BLOCK_DIMENSION, DEFAULT_BLOCK_PADDING);
+    super(BLOCK_DISPLAY_PANEL_ROWS, BLOCK_DISPLAY_PANEL_COLUMNS, DEFAULT_BLOCK_DIMENSION, DEFAULT_BLOCK_PADDING);
     setBorder(new TitledBorder(title));
     setFocusable(false);
     this.displayedBlock = displayedBlock;

@@ -24,7 +24,10 @@ class LeaderBoardFrame extends JFrame {
     Stream.of("All")
   ).toArray(String[]::new);
 
-  private final JComboBox<String> difficulties = new JComboBox<>(DIFFICULTY_OPTIONS);
+  private static final int LEADERBOARD_FRAME_WIDTH = 600;
+  private static final int LEADERBOARD_FRAME_HEIGHT = 400;
+
+  private final JComboBox<String> difficultyComboBox = new JComboBox<>(DIFFICULTY_OPTIONS);
   private final int highlightRank;
   private final JTable scoresTable = new JTable();
   private final ScoreRepository scoreRepository;
@@ -40,8 +43,8 @@ class LeaderBoardFrame extends JFrame {
     scoresTable.setFillsViewportHeight(true);
     scoresTable.setEnabled(false);
 
-    difficulties.setSelectedItem("All");
-    difficulties.addActionListener(e -> refreshTable());
+    difficultyComboBox.setSelectedItem("All");
+    difficultyComboBox.addActionListener(e -> refreshTable());
 
     TetrisButton closeButton = new TetrisButton("Close");
     closeButton.setMnemonic('l');
@@ -49,7 +52,7 @@ class LeaderBoardFrame extends JFrame {
 
     JPanel difficultySelectorPanel = new JPanel();
     difficultySelectorPanel.add(new JLabel("Difficulty: "));
-    difficultySelectorPanel.add(difficulties);
+    difficultySelectorPanel.add(difficultyComboBox);
 
     JPanel menuPanel = new JPanel(new GridLayout(2, 1));
     menuPanel.add(difficultySelectorPanel);
@@ -58,7 +61,7 @@ class LeaderBoardFrame extends JFrame {
     add(new JScrollPane(scoresTable), BorderLayout.CENTER);
     add(menuPanel, BorderLayout.SOUTH);
     SwingUtility.setIcon(this, "/images/trophy.png");
-    setSize(600, 400);
+    setSize(LEADERBOARD_FRAME_WIDTH, LEADERBOARD_FRAME_HEIGHT);
     setTitle("Leaderboard");
     setLocationRelativeTo(null);
     setVisible(true);
@@ -67,7 +70,7 @@ class LeaderBoardFrame extends JFrame {
 
   // Populates table with appropriate data depending on selected row count
   private void refreshTable() {
-    String selectedDifficultyDisplay = (String) difficulties.getSelectedItem();
+    String selectedDifficultyDisplay = (String) difficultyComboBox.getSelectedItem();
     Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromDisplay(selectedDifficultyDisplay);
 
     List<Score> scores;
