@@ -171,15 +171,15 @@ public class TetrisGame extends Broker {
   }
 
   public boolean moveActiveBlockRight() {
-    return moveActiveBlock(0, 1);
+    return moveBlock(activeBlock, 0, 1);
   }
 
   public boolean moveActiveBlockLeft() {
-    return moveActiveBlock(0, -1);
+    return moveBlock(activeBlock, 0, -1);
   }
 
   public boolean moveActiveBlockDown() {
-    return moveActiveBlock(1, 0);
+    return moveBlock(activeBlock, 1, 0);
   }
 
   public void clearActiveBlock() {
@@ -207,14 +207,14 @@ public class TetrisGame extends Broker {
     }
   }
 
-  private boolean moveActiveBlock(int rowMove, int colMove) {
-    boolean canMoveBeMade = activeBlock.getOccupiedSquares()
+  private boolean moveBlock(Block block, int rowMove, int columnMove) {
+    boolean canMoveBeMade = block.getOccupiedSquares()
             .stream()
-            .map(currentSquare -> new ColoredSquare(currentSquare.getRow() + rowMove, currentSquare.getColumn() + colMove))
+            .map(currentSquare -> new ColoredSquare(currentSquare.getRow() + rowMove, currentSquare.getColumn() + columnMove))
             .allMatch(squareAfterMove -> isOpenAndInBounds(squareAfterMove.getRow(), squareAfterMove.getColumn()));
 
     if (canMoveBeMade) {
-      activeBlock.move(rowMove, colMove);
+      block.move(rowMove, columnMove);
       return true;
     } else {
       return false;
@@ -236,22 +236,28 @@ public class TetrisGame extends Broker {
     }
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   private Collection<ColoredSquare> getGhostSquares() {
     if (activeBlock == null) {
       return List.of();
     }
 
-    int currentRow = activeBlock.getRow();
-    int currentCol = activeBlock.getColumn();
+    Block activeBlockCopy = activeBlock.copy();
+    Collection<ColoredSquare> currentActiveBlockSquares = activeBlockCopy.getOccupiedSquares();
 
-    dropCurrentBlock();
+    while (moveBlock(activeBlockCopy, 1, 0)) {
+      // drop as far as possible
+    }
+    Collection<ColoredSquare> ghostSquares = activeBlockCopy.getOccupiedSquares();
 
-    Collection<ColoredSquare> ghostSquares = activeBlock.getOccupiedSquares();
+    // remove any ghost squares that overlap with the current active block
+    ghostSquares.removeIf(ghostSquare ->
+      currentActiveBlockSquares.stream().anyMatch(activeBlockSquare ->
+        activeBlockSquare.getRow() == ghostSquare.getRow() && activeBlockSquare.getColumn() == ghostSquare.getColumn()
+      )
+    );
+
     ghostSquares.forEach(ColoredSquare::clearColor);
-
-    // Returns block to location it was in before dropping to ghost position
-    activeBlock.setLocation(currentRow, currentCol);
-
     return ghostSquares;
   }
 
@@ -396,10 +402,8 @@ public class TetrisGame extends Broker {
   }
 
   public Collection<ColoredSquare> getColoredSquares() {
+    List<ColoredSquare> squares = new ArrayList<>(HORIZONTAL_DIMENSION * VERTICAL_DIMENSION);
 
-    Set<ColoredSquare> squares = new HashSet<>();
-
-    // Important we add occupied squares before ghost squares so that ghost squares don't overwrite occupied squares
     if (activeBlock != null) {
       squares.addAll(activeBlock.getOccupiedSquares());
       if (this.ghostSquaresEnabled) {
@@ -409,9 +413,9 @@ public class TetrisGame extends Broker {
 
     for (int rowIndex = 0; rowIndex < VERTICAL_DIMENSION; rowIndex++) {
       Color[] rowColors = persistedBlocks.get(rowIndex);
-      for (int colIndex = 0; colIndex < rowColors.length; colIndex++) {
-        if (rowColors[colIndex] != null) {
-          squares.add(new ColoredSquare(rowColors[colIndex], rowIndex, colIndex));
+      for (int columnIndex = 0; columnIndex < rowColors.length; columnIndex++) {
+        if (rowColors[columnIndex] != null) {
+          squares.add(new ColoredSquare(rowColors[columnIndex], rowIndex, columnIndex));
         }
       }
     }
