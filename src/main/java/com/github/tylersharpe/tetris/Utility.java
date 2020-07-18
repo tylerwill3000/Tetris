@@ -29,4 +29,16 @@ public final class Utility {
   public static Color getRandomColor() {
     return sample(BlockType.values()).getColor();
   }
+
+  public static String capitalize(String str) {
+    if (str == null || str.isBlank()) {
+      return str;
+    }
+
+    if (str.length() > 1) {
+      return Character.toUpperCase(str.charAt(0)) + str.substring(1).toLowerCase();
+    } else {
+      return String.valueOf(Character.toUpperCase(str.charAt(0)));
+    }
+  }
 }

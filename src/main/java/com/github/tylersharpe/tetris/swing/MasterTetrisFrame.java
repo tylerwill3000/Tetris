@@ -453,7 +453,7 @@ public class MasterTetrisFrame extends JFrame {
 
         // Run 1 loop to paint in all unoccupied squares
         for (ColoredSquare spiralSquare : spiralSquares) {
-          if (game.isOpen(spiralSquare.getRow(), spiralSquare.getColumn())) {
+          if (game.isOpenAndInBounds(spiralSquare.getRow(), spiralSquare.getColumn())) {
             game.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
           }
           repaint();
@@ -481,7 +481,7 @@ public class MasterTetrisFrame extends JFrame {
         // Fill all rows bottom to top
         for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= 3; row --) {
           for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
-            if (game.isOpen(row, col)) {
+            if (game.isOpenAndInBounds(row, col)) {
               game.setColor(row, col, Utility.getRandomColor());
             }
           }

@@ -50,6 +50,6 @@ public class ColoredSquare {
 
   @Override
   public String toString() {
-    return String.format("ColoredSquare(row=%d, column=%d, color=%s)", row, column, color);
+    return "ColoredSquare(row=" + row + ", column=" + column + ", color=" + color + ")";
   }
 }

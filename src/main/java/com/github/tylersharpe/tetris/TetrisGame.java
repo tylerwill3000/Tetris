@@ -148,16 +148,17 @@ public class TetrisGame extends Broker {
     }
   }
 
-  public void clearSquare(int row, int col) {
-    setColor(row, col, null);
+  public void clearSquare(int row, int column) {
+    setColor(row, column, null);
   }
 
-  public boolean isOpen(int row, int col) {
-    return persistedBlocks.get(row)[col] == null;
+  public boolean isOpenAndInBounds(int row, int column) {
+    boolean isInBounds = row >= 0 && row < VERTICAL_DIMENSION && column >= 0 && column < HORIZONTAL_DIMENSION;
+    return isInBounds && persistedBlocks.get(row)[column] == null;
   }
 
-  public void setColor(int row, int col, Color c) {
-    persistedBlocks.get(row)[col] = c;
+  public void setColor(int row, int col, Color color) {
+    persistedBlocks.get(row)[col] = color;
   }
 
   public int getTotalLinesCleared() {
@@ -209,9 +210,8 @@ public class TetrisGame extends Broker {
   private boolean moveActiveBlock(int rowMove, int colMove) {
     boolean canMoveBeMade = activeBlock.getOccupiedSquares()
             .stream()
-            .map(square -> new ColoredSquare(square.getRow() + rowMove, square.getColumn() + colMove))
-            .allMatch(squareAfterMove -> isInBounds(squareAfterMove.getRow(), squareAfterMove.getColumn()) &&
-                                         isOpen(squareAfterMove.getRow(), squareAfterMove.getColumn()));
+            .map(currentSquare -> new ColoredSquare(currentSquare.getRow() + rowMove, currentSquare.getColumn() + colMove))
+            .allMatch(squareAfterMove -> isOpenAndInBounds(squareAfterMove.getRow(), squareAfterMove.getColumn()));
 
     if (canMoveBeMade) {
       activeBlock.move(rowMove, colMove);
@@ -222,17 +222,16 @@ public class TetrisGame extends Broker {
   }
 
   public boolean rotateActiveBlock(Rotation rotation) {
-    activeBlock.rotate(rotation);
+    Collection<ColoredSquare> squaresAfterRotation = activeBlock.copy().rotate(rotation).getOccupiedSquares();
 
-    boolean areRotatedSquaresLegal = activeBlock.getOccupiedSquares()
+    boolean areRotatedSquaresLegal = squaresAfterRotation
             .stream()
-            .allMatch(moveSquare -> isInBounds(moveSquare.getRow(), moveSquare.getColumn()) &&
-                                    isOpen(moveSquare.getRow(), moveSquare.getColumn()));
+            .allMatch(squareAfterRotation -> isOpenAndInBounds(squareAfterRotation.getRow(), squareAfterRotation.getColumn()));
 
     if (areRotatedSquaresLegal) {
+      activeBlock.rotate(rotation);
       return true;
     } else {
-      activeBlock.rotate(rotation.reverse());
       return false;
     }
   }
@@ -385,7 +384,7 @@ public class TetrisGame extends Broker {
         return;
       }
 
-      boolean allOpen = spawnSquares.stream().allMatch(square -> isOpen(square.getRow(), square.getColumn()));
+      boolean allOpen = spawnSquares.stream().allMatch(square -> isOpenAndInBounds(square.getRow(), square.getColumn()));
       if (allOpen) {
         block.setLocation(startRow, startCol);
         this.activeBlock = block;
@@ -418,10 +417,6 @@ public class TetrisGame extends Broker {
     }
 
     return squares;
-  }
-
-  private boolean isInBounds(int row, int col) {
-    return row >= 0 && row < VERTICAL_DIMENSION && col >= 0 && col < HORIZONTAL_DIMENSION;
   }
 
 }

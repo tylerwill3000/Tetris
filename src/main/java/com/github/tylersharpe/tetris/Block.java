@@ -51,7 +51,7 @@ public class Block {
     this.column = column;
   }
 
-  void rotate(Rotation rotation) {
+  Block rotate(Rotation rotation) {
     int orientationChange = rotation == Rotation.CLOCKWISE ? 1 : -1;
     orientation += orientationChange;
     if (orientation > 3) {
@@ -60,6 +60,17 @@ public class Block {
     if (orientation < 0) {
       orientation = 3;
     }
+
+    return this;
+  }
+
+  Block copy() {
+    Block blockCopy = new Block(type);
+    blockCopy.row = row;
+    blockCopy.column = column;
+    blockCopy.orientation = orientation;
+    blockCopy.isHoldBlock = isHoldBlock;
+    return blockCopy;
   }
 
 }

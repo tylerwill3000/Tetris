@@ -4,8 +4,9 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public enum BlockType {
@@ -457,9 +458,7 @@ public enum BlockType {
 
   @Override
   public String toString() {
-    return Arrays.stream(name().split("_"))
-            .map(word -> word.charAt(0) + word.substring(1).toLowerCase())
-            .collect(Collectors.joining(" "));
+    return Stream.of(name().split("_")).map(Utility::capitalize).collect(joining(" "));
   }
 
 }
