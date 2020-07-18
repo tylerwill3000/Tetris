@@ -16,8 +16,12 @@ class ScoreResultsFrame extends JFrame {
   private final static int NAME_LENGTH = 40;
 
   private final JTextField nameField = new JTextField(10);
+  private final ScoreRepository scoreRepository;
+  private final TetrisGame tetrisGame;
 
-  ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame game) {
+  ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame tetrisGame) {
+    this.scoreRepository = scoreRepository;
+    this.tetrisGame = tetrisGame;
 
     setLayout(new GridLayout(3, 1));
 
@@ -31,7 +35,7 @@ class ScoreResultsFrame extends JFrame {
 
     int rank;
     try {
-      rank = scoreRepository.determineRank(game.getScore());
+      rank = scoreRepository.determineRank(tetrisGame.getScore());
     } catch (IOException ex) {
       ex.printStackTrace();
       JOptionPane.showMessageDialog(null, "Could not determine rank: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -41,45 +45,20 @@ class ScoreResultsFrame extends JFrame {
     JLabel scoreLabel = new JLabel();
     scoreLabel.setFont(MasterTetrisFrame.ARIAL_HEADER);
     scoreLabel.setHorizontalAlignment(JLabel.CENTER);
-    scoreLabel.setText("Your score: " + game.getScore() + "      Your rank: " + rank);
+    scoreLabel.setText("Your score: " + tetrisGame.getScore() + "      Your rank: " + rank);
     add(scoreLabel);
 
     if (ScoreRepository.isLeaderBoardRank(rank)) {
-      JLabel congrats = new JLabel("Congratulations! You made the leaderboard! Enter the name to save your score under or press cancel: ");
-      congrats.setFont(MasterTetrisFrame.ARIAL_DESCRIPTION);
+      JLabel congratsLabel = new JLabel("Congratulations! You made the leaderboard! Enter the name to save your score under or press cancel: ");
+      congratsLabel.setFont(MasterTetrisFrame.ARIAL_DESCRIPTION);
 
       var inputPanel = new JPanel();
-      inputPanel.add(congrats);
+      inputPanel.add(congratsLabel);
       inputPanel.add(nameField);
 
       var saveScoreButton = new TetrisButton("Save");
       saveScoreButton.setMnemonic('s');
-      saveScoreButton.addActionListener(e -> {
-        String saveName = nameField.getText().trim();
-
-        if (saveName.equals("")) {
-          JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
-          return;
-        }
-
-        try {
-          scoreRepository.saveScore(
-              new Score(
-                  saveName,
-                  game.getScore(),
-                  game.getGameTime(),
-                  game.getDifficulty(),
-                  game.getTotalLinesCleared(),
-                  game.getLevel(),
-                  LocalDate.now())
-          );
-          dispose();
-          new LeaderBoardFrame(scoreRepository, rank);
-        } catch (IOException ex) {
-          ex.printStackTrace();
-          JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-      });
+      saveScoreButton.addActionListener(e -> onSaveScoreClicked(rank));
 
       var closeButton = new TetrisButton("Cancel");
       closeButton.setMnemonic('c');
@@ -99,6 +78,33 @@ class ScoreResultsFrame extends JFrame {
     pack();
     setLocationRelativeTo(null);
     setVisible(true);
+  }
+
+  private void onSaveScoreClicked(int rank) {
+    String saveName = nameField.getText().trim();
+
+    if (saveName.isBlank()) {
+      JOptionPane.showMessageDialog(null, "You must enter a name to save your score");
+      return;
+    }
+
+    try {
+      scoreRepository.saveScore(
+        new Score(
+          saveName,
+          tetrisGame.getScore(),
+          tetrisGame.getGameTime(),
+          tetrisGame.getDifficulty(),
+          tetrisGame.getTotalLinesCleared(),
+          tetrisGame.getLevel(),
+          LocalDate.now())
+      );
+      dispose();
+      new LeaderBoardFrame(scoreRepository, rank);
+    } catch (IOException ex) {
+      ex.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
   }
 
 }
