@@ -410,7 +410,7 @@ public enum BlockType {
     this.bonusPointsPerLine = bonusPointsPerLine;
   }
 
-  public static Collection<BlockType> getDefaultBlocks() {
+  public static Collection<BlockType> getDefaultBlockTypes() {
     return filterTypes(type -> !type.isSpecial);
   }
 

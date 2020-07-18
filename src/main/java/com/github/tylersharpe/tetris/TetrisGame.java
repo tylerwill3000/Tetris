@@ -109,7 +109,7 @@ public class TetrisGame extends Broker {
 
   public void setDifficulty(Difficulty difficulty) {
     this.difficulty = difficulty;
-    this.conveyor.applySpawnRates(difficulty);
+    this.conveyor.setDifficulty(difficulty);
     this.fallTimer.setDelay(difficulty.getInitialTimerDelay());
   }
 
@@ -345,7 +345,7 @@ public class TetrisGame extends Broker {
     };
 
     // Special pieces bonus
-    newScore += conveyor.getEnabledSpecialTypes()
+    newScore += conveyor.getEnabledSpecialBlockTypes()
                         .stream()
                         .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                         .sum();

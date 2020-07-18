@@ -4,10 +4,10 @@ import java.util.*;
 
 public final class BlockConveyor {
 
-  private final Set<BlockType> enabledTypes = EnumSet.noneOf(BlockType.class);
-  private final List<BlockType> typeSampleList = new ArrayList<>();
+  private final Set<BlockType> enabledBlockTypes = EnumSet.noneOf(BlockType.class);
+  private final List<BlockType> blockTypeSampleList = new ArrayList<>();
   private final Queue<Block> conveyor = new ArrayDeque<>();
-  private final Set<BlockType> enabledSpecialTypes = EnumSet.noneOf(BlockType.class);
+  private final Set<BlockType> enabledSpecialBlockTypes = EnumSet.noneOf(BlockType.class);
 
   public Block next() {
     conveyor.offer(generateBlock());
@@ -24,43 +24,43 @@ public final class BlockConveyor {
     conveyor.add(generateBlock());
   }
 
-  void applySpawnRates(Difficulty difficulty) {
-    typeSampleList.clear();
+  void setDifficulty(Difficulty difficulty) {
+    blockTypeSampleList.clear();
 
-    for (BlockType defaultType : BlockType.getDefaultBlocks()) {
-      enableBlock(difficulty, defaultType);
+    for (BlockType defaultBlockType : BlockType.getDefaultBlockTypes()) {
+      enableBlockType(difficulty, defaultBlockType);
     }
   }
 
-  public void enableBlock(Difficulty difficulty, BlockType blockType) {
+  public void enableBlockType(Difficulty difficulty, BlockType blockType) {
     if (blockType.isSpecial()) {
-      enabledSpecialTypes.add(blockType);
+      enabledSpecialBlockTypes.add(blockType);
     }
-    enabledTypes.add(blockType);
-    typeSampleList.removeIf(sampleType -> sampleType == blockType);
+    enabledBlockTypes.add(blockType);
+    blockTypeSampleList.removeIf(sampleType -> sampleType == blockType);
 
     int spawnRate = difficulty.getSpawnRate(blockType);
     for (int i = 1; i <= spawnRate; i++) {
-      typeSampleList.add(blockType);
+      blockTypeSampleList.add(blockType);
     }
   }
 
-  public void disableBlock(BlockType toRemove) {
-    enabledSpecialTypes.remove(toRemove);
-    enabledTypes.remove(toRemove);
-    typeSampleList.removeIf(type -> type == toRemove);
+  public void disableBlockType(BlockType typeToDisable) {
+    enabledSpecialBlockTypes.remove(typeToDisable);
+    enabledBlockTypes.remove(typeToDisable);
+    blockTypeSampleList.removeIf(type -> type == typeToDisable);
   }
 
-  Set<BlockType> getEnabledSpecialTypes() {
-    return enabledSpecialTypes;
+  Set<BlockType> getEnabledSpecialBlockTypes() {
+    return enabledSpecialBlockTypes;
   }
 
   public boolean isEnabled(BlockType type) {
-    return enabledTypes.contains(type);
+    return enabledBlockTypes.contains(type);
   }
 
   private Block generateBlock() {
-    return new Block(Utility.sample(typeSampleList));
+    return new Block(Utility.sample(blockTypeSampleList));
   }
 
 }

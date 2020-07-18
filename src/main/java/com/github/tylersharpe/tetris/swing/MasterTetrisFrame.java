@@ -811,9 +811,9 @@ public class MasterTetrisFrame extends JFrame {
       private void toggle() {
         setActiveState(!active);
         if (active) {
-          game.getConveyor().enableBlock(settingsPanel.getSelectedDifficulty(), blockType);
+          game.getConveyor().enableBlockType(settingsPanel.getSelectedDifficulty(), blockType);
         } else {
-          game.getConveyor().disableBlock(blockType);
+          game.getConveyor().disableBlockType(blockType);
         }
       }
 
