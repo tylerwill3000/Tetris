@@ -32,25 +32,27 @@ public class ScoreRepository {
   }
 
   public List<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
-    Stream<Score> scoresStream = getAllScores().stream();
+    Stream<Score> scores = readScoresFromDisk().stream();
+
+    scores = scores.sorted();
 
     if (difficulty != null) {
-      scoresStream = scoresStream.filter(score -> difficulty == score.difficulty);
+      scores = scores.filter(score -> difficulty == score.difficulty);
     }
     if (limit != null) {
-      scoresStream = scoresStream.limit(limit);
+      scores = scores.limit(limit);
     }
 
-    return scoresStream.collect(toList());
+    return scores.collect(toList());
   }
 
   public int determineRank(int pointsOfScoreToSave) throws IOException {
-    long numScoresGreater = getAllScores().stream().filter(score -> score.points > pointsOfScoreToSave).count();
+    long numScoresGreater = readScoresFromDisk().stream().filter(score -> score.points > pointsOfScoreToSave).count();
     return (int) numScoresGreater + 1;
   }
 
   public void saveScore(Score score) throws IOException {
-    List<Score> allScores = new ArrayList<>(getAllScores());
+    List<Score> allScores = new ArrayList<>(readScoresFromDisk());
     allScores.add(score);
 
     try (var objectOutputStream = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
@@ -59,16 +61,14 @@ public class ScoreRepository {
   }
 
   @SuppressWarnings("unchecked")
-  private List<Score> getAllScores() throws IOException {
+  private List<Score> readScoresFromDisk() throws IOException {
     if (!Files.exists(SAVE_PATH)) {
       return Collections.emptyList();
     }
 
     try (var scoresInputStream = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-      List<Score> scores = (List<Score>) scoresInputStream.readObject();
-      Collections.sort(scores);
-      return scores;
-    } catch (ClassNotFoundException e) {
+      return (List<Score>) scoresInputStream.readObject();
+    } catch (ClassCastException | ClassNotFoundException e) {
       throw new RuntimeException("Malformed high scores file", e);
     }
   }
