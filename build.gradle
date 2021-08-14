@@ -1,5 +1,5 @@
 import javax.imageio.ImageIO
-import java.awt.Image
+import java.awt.*
 import java.awt.image.BufferedImage
 
 plugins {
@@ -7,7 +7,7 @@ plugins {
     id 'java'
 }
 
-wrapper.gradleVersion = '6.5.1'
+wrapper.gradleVersion = '7.1.1'
 
 task scaleImages(group: 'build', description: 'Scales down all image assets and writes them to the build directory') {
     File sourceDir = file('src/main/resources/images')
@@ -38,9 +38,11 @@ jar {
     }
 }
 
-task deploy(type: Copy, group: 'build', dependsOn: jar) {
-    from new File(buildDir, 'libs')
-    into new File(System.getenv('USERPROFILE'), 'Desktop')
+task deploy(group: 'build', dependsOn: jar) {
+    doFirst {
+        ant.move file: "${buildDir}\\libs\\Tetris.jar",
+                 todir: 'F:\\Programs'
+    }
 }
 
 task run(type: JavaExec) {
