@@ -22,7 +22,7 @@ public class Block {
         return column;
     }
 
-    Collection<ColoredSquare> getOccupiedSquares() {
+    Collection<ColoredSquare> calculateOccupiedSquares() {
         return type.calculateOccupiedSquares(orientation, row, column);
     }
 

@@ -424,33 +424,33 @@ public class MasterTetrisFrame extends JFrame {
 
                     // All cells in the next leftmost column
                     for (int row = nextTopRow; row <= nextBottomRow; row++) {
-                        spiralSquares.add(new ColoredSquare(row, nextLeftCol));
+                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), row, nextLeftCol));
                     }
                     nextLeftCol++;
 
                     // All cells in the next bottom row
                     for (int col = nextLeftCol; col <= nextRightCol; col++) {
-                        spiralSquares.add(new ColoredSquare(nextBottomRow, col));
+                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), nextBottomRow, col));
                     }
                     nextBottomRow--;
 
                     // All cells in the next rightmost column
                     for (int row = nextBottomRow; row >= nextTopRow; row--) {
-                        spiralSquares.add(new ColoredSquare(row, nextRightCol));
+                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), row, nextRightCol));
                     }
                     nextRightCol--;
 
                     // All cells in the next top row
                     for (int col = nextRightCol; col >= nextLeftCol; col--) {
-                        spiralSquares.add(new ColoredSquare(nextTopRow, col));
+                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), nextTopRow, col));
                     }
                     nextTopRow++;
                 }
 
                 // Run 1 loop to paint in all unoccupied squares
                 for (ColoredSquare spiralSquare : spiralSquares) {
-                    if (game.isOpenAndInBounds(spiralSquare.getRow(), spiralSquare.getColumn())) {
-                        game.setColor(spiralSquare.getRow(), spiralSquare.getColumn(), spiralSquare.getColor());
+                    if (game.isOpenAndInBounds(spiralSquare.row(), spiralSquare.column())) {
+                        game.setColor(spiralSquare.row(), spiralSquare.column(), spiralSquare.color());
                     }
                     repaint();
                     Thread.sleep(SPIRAL_SLEEP_INTERVAL);
@@ -458,7 +458,7 @@ public class MasterTetrisFrame extends JFrame {
 
                 // Run a second loop to erase all of them
                 for (ColoredSquare spiralSquare : spiralSquares) {
-                    game.clearSquare(spiralSquare.getRow(), spiralSquare.getColumn());
+                    game.clearSquare(spiralSquare.row(), spiralSquare.column());
                     repaint();
                     Thread.sleep(SPIRAL_SLEEP_INTERVAL);
                 }
@@ -509,7 +509,7 @@ public class MasterTetrisFrame extends JFrame {
 
         @Override
         protected int getYCoordinate(ColoredSquare square) {
-            return (square.getRow() - 3) * getUnitHeight(); // Adjusts for 3 invisible squares at top
+            return (square.row() - 3) * getUnitHeight(); // Adjusts for 3 invisible squares at top
         }
 
     }

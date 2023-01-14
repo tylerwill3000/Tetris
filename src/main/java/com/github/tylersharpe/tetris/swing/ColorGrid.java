@@ -52,20 +52,20 @@ abstract class ColorGrid extends JPanel {
             int width = getUnitWidth();
             int height = getUnitHeight();
 
-            if (square.getColor() == null) {
+            if (square.color() == null) {
                 squareStyle.paintGhost(g, squareX, squareY, width, height);
             } else {
-                squareStyle.paintSquare(g, square.getColor(), squareX, squareY, width, height);
+                squareStyle.paintSquare(g, square.color(), squareX, squareY, width, height);
             }
         }
     }
 
     protected int getXCoordinate(ColoredSquare square) {
-        return square.getColumn() * getUnitWidth();
+        return square.column() * getUnitWidth();
     }
 
     protected int getYCoordinate(ColoredSquare square) {
-        return square.getRow() * getUnitHeight();
+        return square.row() * getUnitHeight();
     }
 
     protected int getUnitWidth() {
