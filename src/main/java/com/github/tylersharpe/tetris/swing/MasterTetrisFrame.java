@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 public class MasterTetrisFrame extends JFrame {
 
@@ -29,7 +28,7 @@ public class MasterTetrisFrame extends JFrame {
     static final Font ARIAL_DESCRIPTION = new Font("Arial", Font.PLAIN, 13);
     private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
-    private TetrisAudioSystem audioSystem;
+    private final TetrisAudioSystem audioSystem;
     private final TetrisGame game;
     private final ScoreRepository scoreRepository = new ScoreRepository();
 
@@ -50,57 +49,45 @@ public class MasterTetrisFrame extends JFrame {
         final Set<Integer> pressedKeyCodes = new HashSet<>();
 
         public void keyPressed(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+            pressedKeyCodes.add(keyCode);
 
-            int code = e.getKeyCode();
-            pressedKeyCodes.add(code);
-
-            switch (code) {
-
-                case KeyEvent.VK_LEFT:
-
+            switch (keyCode) {
+                case KeyEvent.VK_LEFT -> {
                     if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
                         game.superSlideActiveBlockLeft();
                         audioSystem.playSuperSlideSound();
                     } else {
                         game.moveActiveBlockLeft();
                     }
+                }
 
-                    break;
-
-                case KeyEvent.VK_RIGHT:
-
+                case KeyEvent.VK_RIGHT -> {
                     if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
                         game.superSlideActiveBlockRight();
                         audioSystem.playSuperSlideSound();
                     } else {
                         game.moveActiveBlockRight();
                     }
+                }
 
-                    break;
+                case KeyEvent.VK_DOWN -> game.moveActiveBlockDown();
 
-                case KeyEvent.VK_DOWN:
-
-                    game.moveActiveBlockDown();
-                    break;
-
-                case KeyEvent.VK_UP:
-
+                case KeyEvent.VK_UP -> {
                     if (game.rotateActiveBlock(Rotation.CLOCKWISE)) {
                         audioSystem.playClockwiseRotationSound();
                     }
-                    break;
+                }
 
-                case KeyEvent.VK_F:
-
+                case KeyEvent.VK_F -> {
                     if (game.rotateActiveBlock(Rotation.COUNTER_CLOCKWISE)) {
                         audioSystem.playCounterClockwiseRotationSound();
                     }
-                    break;
+                }
 
-                case KeyEvent.VK_D: // Hold set
+                case KeyEvent.VK_D -> { // Hold set
 
                     Block activeBlock = game.getActiveBlock();
-
                     if (game.getHoldBlock().isEmpty() && !activeBlock.isHoldBlock()) {
                         activeBlock.tagAsHoldBlock();
                         audioSystem.playHoldSound();
@@ -108,10 +95,9 @@ public class MasterTetrisFrame extends JFrame {
                         Block nextBlock = game.getConveyor().next();
                         game.spawn(nextBlock);
                     }
+                }
 
-                    break;
-
-                case KeyEvent.VK_E: // Hold release
+                case KeyEvent.VK_E -> { // Hold release
 
                     if (game.getHoldBlock().isPresent()) {
                         Block heldPiece = game.getHoldBlock().get();
@@ -119,15 +105,13 @@ public class MasterTetrisFrame extends JFrame {
                         game.clearHoldBlock();
                         audioSystem.playReleaseSound();
                     }
+                }
 
-                    break;
-
-                case KeyEvent.VK_SPACE:
-
+                case KeyEvent.VK_SPACE -> {
                     game.dropCurrentBlock();
                     audioSystem.playBlockPlacementSound();
                     game.tryMoveActiveBlockDown();
-                    break;
+                }
             }
 
             repaint();
@@ -136,7 +120,6 @@ public class MasterTetrisFrame extends JFrame {
         public void keyReleased(KeyEvent e) {
             pressedKeyCodes.remove(e.getKeyCode());
         }
-
     };
 
     public MasterTetrisFrame() {
@@ -261,7 +244,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onStart() {
-
         game.reset();
 
         if (clearTask != null && !clearTask.isDone()) {
@@ -295,7 +277,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onPause() {
-
         game.getFallTimer().stop();
         game.getGameTimer().stop();
 
@@ -315,7 +296,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onResume() {
-
         game.getFallTimer().start();
         game.getGameTimer().start();
 
@@ -334,7 +314,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onWin() {
-
         settingsPanel.difficultyCombobox.setEnabled(true);
         settingsPanel.specialsButton.setEnabled(true);
         settingsPanel.timeAttackCheckbox.setEnabled(true);
@@ -358,7 +337,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onGameOver() {
-
         game.getFallTimer().stop();
         game.getGameTimer().stop();
 
@@ -387,7 +365,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private class BoardPanel extends ColorGrid {
-
         private static final int SPIRAL_SLEEP_INTERVAL = 7;
         private static final int CLEAR_SLEEP_INTERVAL = 79;
 
@@ -410,18 +387,17 @@ public class MasterTetrisFrame extends JFrame {
                 game.persistActiveBlockColors();
                 game.clearActiveBlock();
 
-                Collection<ColoredSquare> spiralSquares = new LinkedHashSet<>();
+                List<ColoredSquare> spiralSquares = new ArrayList<>();
 
                 int nextLeftCol = 0,
                         nextRightCol = TetrisGame.HORIZONTAL_DIMENSION - 1,
                         nextTopRow = 3,
                         nextBottomRow = TetrisGame.VERTICAL_DIMENSION - 1;
 
-                int maxSquares = TetrisGame.VERTICAL_DIMENSION * TetrisGame.HORIZONTAL_DIMENSION;
-                maxSquares -= (3 * TetrisGame.HORIZONTAL_DIMENSION); // Knock off invisible rows at top
+                // Knock off invisible rows at top
+                int maxSquares = (TetrisGame.VERTICAL_DIMENSION - 3) * TetrisGame.HORIZONTAL_DIMENSION;
 
                 while (spiralSquares.size() < maxSquares) {
-
                     // All cells in the next leftmost column
                     for (int row = nextTopRow; row <= nextBottomRow; row++) {
                         spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), row, nextLeftCol));
@@ -473,7 +449,6 @@ public class MasterTetrisFrame extends JFrame {
 
         void jumpClear() {
             try {
-
                 // Fill all rows bottom to top
                 for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= 3; row--) {
                     for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
@@ -511,12 +486,9 @@ public class MasterTetrisFrame extends JFrame {
         protected int getYCoordinate(ColoredSquare square) {
             return (square.row() - 3) * getUnitHeight(); // Adjusts for 3 invisible squares at top
         }
-
     }
 
     private class ScorePanel extends JPanel {
-
-        private final GridLayout layout;
 
         private final JLabel scoreLabel = new JLabel("Score: 0", JLabel.CENTER) {
             @Override
@@ -577,8 +549,7 @@ public class MasterTetrisFrame extends JFrame {
         ScorePanel() {
             setBorder(new TitledBorder("Score"));
 
-            layout = new GridLayout(6, 1);
-            setLayout(layout);
+            setLayout(new GridLayout(6, 1));
 
             scoreLabel.setFont(ARIAL_HEADER);
             totalLinesLabel.setFont(ARIAL_HEADER);
@@ -598,7 +569,6 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private class SettingsPanel extends JPanel {
-
         private final JCheckBox ghostSquaresCheckbox;
         private final JCheckBox musicCheckbox;
         private final JCheckBox soundEffectsCheckbox;
@@ -641,27 +611,21 @@ public class MasterTetrisFrame extends JFrame {
             difficultyCombobox.setSelectedIndex(0);
 
             specialsButton = new TetrisButton("Special Pieces...");
-            specialsButton.addActionListener(e ->
-                    specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame())
-            );
+            specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
 
             setLayout(new BorderLayout());
             setBorder(new TitledBorder("Settings"));
 
-            List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, timeAttackCheckbox)
-                    .stream()
-                    .filter(Component::isVisible)// Sound checkboxes will be invisible if we are running the no-sound distribution
-                    .collect(Collectors.toList());
-
+            List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, timeAttackCheckbox);
             JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
             for (JCheckBox checkbox : checkboxes) {
                 checkboxPanel.add(checkbox);
                 checkbox.setFocusable(false);
             }
 
-            JPanel diffPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            diffPanel.add(new JLabel("Difficulty:  "));
-            diffPanel.add(difficultyCombobox);
+            JPanel difficultyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            difficultyPanel.add(new JLabel("Difficulty:  "));
+            difficultyPanel.add(difficultyCombobox);
             difficultyCombobox.setToolTipText(
                     "<html>" +
                             "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
@@ -697,18 +661,16 @@ public class MasterTetrisFrame extends JFrame {
             );
 
             add(checkboxPanel, BorderLayout.NORTH);
-            add(diffPanel, BorderLayout.CENTER);
+            add(difficultyPanel, BorderLayout.CENTER);
             add(specialsButton, BorderLayout.SOUTH);
         }
 
         Difficulty getSelectedDifficulty() {
             return (Difficulty) difficultyCombobox.getSelectedItem();
         }
-
     }
 
     private class MenuPanel extends JPanel {
-
         final TetrisButton startButton = new TetrisButton("Start");
         final TetrisButton pauseButton = new TetrisButton("Pause");
         final TetrisButton resumeButton = new TetrisButton("Resume");
@@ -716,7 +678,6 @@ public class MasterTetrisFrame extends JFrame {
         final TetrisButton leaderboardButton = new TetrisButton("Leaderboard");
 
         private MenuPanel() {
-
             setLayout(new FlowLayout());
 
             startButton.setMnemonic('s');
@@ -746,11 +707,9 @@ public class MasterTetrisFrame extends JFrame {
             giveUpButton.addActionListener(e -> onGameOver());
             add(giveUpButton);
         }
-
     }
 
     private class SpecialPiecesFrame extends JFrame {
-
         SpecialPiecesFrame() {
             TetrisButton closeButton = new TetrisButton("Close");
             closeButton.addActionListener(e -> dispose());
@@ -787,7 +746,6 @@ public class MasterTetrisFrame extends JFrame {
         }
 
         private class BlockEnabledToggleButton extends JButton {
-
             private final BlockType blockType;
             private boolean active;
 
