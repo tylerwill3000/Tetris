@@ -14,16 +14,16 @@ public class TetrisAudioSystem {
     private static final Clip SOUNDTRACK_CLIP = retrieveSystemAudioClip();
 
     private static final String[] SOUNDTRACK_FILE_PATHS = {
-        "/audio/soundtrack/tetris-theme.wav",
-        "/audio/soundtrack/bean-machine-1-4.wav",
-        "/audio/soundtrack/tetris-music-3.wav",
-        "/audio/soundtrack/metroid-kraid.wav",
-        "/audio/soundtrack/sonic-scrap-brain-zone.wav",
-        "/audio/soundtrack/chrono-trigger-bike-theme.wav",
-        "/audio/soundtrack/mega-man-dr-wily.wav",
-        "/audio/soundtrack/sonic-ice-cap-zone.wav",
-        "/audio/soundtrack/bean-machine-9-12.wav",
-        "/audio/soundtrack/chrono-trigger-final-battle.wav"
+            "/audio/soundtrack/tetris-theme.wav",
+            "/audio/soundtrack/bean-machine-1-4.wav",
+            "/audio/soundtrack/tetris-music-3.wav",
+            "/audio/soundtrack/metroid-kraid.wav",
+            "/audio/soundtrack/sonic-scrap-brain-zone.wav",
+            "/audio/soundtrack/chrono-trigger-bike-theme.wav",
+            "/audio/soundtrack/mega-man-dr-wily.wav",
+            "/audio/soundtrack/sonic-ice-cap-zone.wav",
+            "/audio/soundtrack/bean-machine-9-12.wav",
+            "/audio/soundtrack/chrono-trigger-final-battle.wav"
     };
 
     private static final String GAME_OVER_FILE_PATH = "/audio/soundtrack/zelda-game-over.wav";

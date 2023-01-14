@@ -11,18 +11,18 @@ import java.util.function.Consumer;
  */
 public class Broker {
 
-  private final Map<TetrisEvent, Collection<Consumer<Object>>> subscribers = new EnumMap<>(TetrisEvent.class);
+    private final Map<TetrisEvent, Collection<Consumer<Object>>> subscribers = new EnumMap<>(TetrisEvent.class);
 
-  public void publish(TetrisEvent event) {
-    publish(event, null);
-  }
+    public void publish(TetrisEvent event) {
+        publish(event, null);
+    }
 
-  public void publish(TetrisEvent event, Object eventData) {
-    subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).forEach(listener -> listener.accept(eventData));
-  }
+    public void publish(TetrisEvent event, Object eventData) {
+        subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).forEach(listener -> listener.accept(eventData));
+    }
 
-  public void subscribe(TetrisEvent event, Consumer<Object> listener) {
-    subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).add(listener);
-  }
+    public void subscribe(TetrisEvent event, Consumer<Object> listener) {
+        subscribers.computeIfAbsent(event, __ -> new ArrayList<>()).add(listener);
+    }
 
 }

@@ -4,8 +4,8 @@ import com.github.tylersharpe.tetris.swing.MasterTetrisFrame;
 
 public class Main {
 
-  public static void main(String[] args) {
-    new MasterTetrisFrame().setVisible(true);
-  }
+    public static void main(String[] args) {
+        new MasterTetrisFrame().setVisible(true);
+    }
 
 }
