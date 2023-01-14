@@ -7,9 +7,30 @@ plugins {
     id 'java'
 }
 
-wrapper.gradleVersion = '7.1.1'
+wrapper.gradleVersion = '7.6'
 
-task scaleImages(group: 'build', description: 'Scales down all image assets and writes them to the build directory') {
+final String mainClass = 'com.github.tylersharpe.tetris.Main'
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+}
+
+tasks.register('deploy', Copy) {
+    group('build')
+    from(jar)
+    into("F:\\Programs")
+}
+
+tasks.register('run', JavaExec) {
+    main(mainClass)
+    classpath sourceSets.main.runtimeClasspath
+}
+
+tasks.register('scaleImages') {
+    group('build')
+    description('Scales down all image assets and writes them to the build directory')
+
     File sourceDir = file('src/main/resources/images')
     File outputDir = new File(buildDir, 'resources/main/images')
     inputs.dir(sourceDir)
@@ -30,25 +51,6 @@ task scaleImages(group: 'build', description: 'Scales down all image assets and 
 }
 
 processResources.dependsOn(scaleImages)
-
-final String mainClass = 'com.github.tylersharpe.tetris.Main'
-jar {
-    manifest {
-        attributes 'Main-Class': mainClass
-    }
-}
-
-task deploy(group: 'build', dependsOn: jar) {
-    doFirst {
-        ant.move file: "${buildDir}\\libs\\Tetris.jar",
-                 todir: 'F:\\Programs'
-    }
-}
-
-task run(type: JavaExec) {
-    main = mainClass
-    classpath sourceSets.main.runtimeClasspath
-}
 
 private static BufferedImage scaleImage(File image, int desiredWidth) {
     BufferedImage buffImage = ImageIO.read(image)
