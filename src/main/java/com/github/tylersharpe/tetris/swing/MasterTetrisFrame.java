@@ -1,7 +1,6 @@
 package com.github.tylersharpe.tetris.swing;
 
 import com.github.tylersharpe.tetris.*;
-import com.github.tylersharpe.tetris.audio.AudioFileNotFound;
 import com.github.tylersharpe.tetris.audio.TetrisAudioSystem;
 import com.github.tylersharpe.tetris.event.TetrisEvent;
 
@@ -141,12 +140,7 @@ public class MasterTetrisFrame extends JFrame {
     };
 
     public MasterTetrisFrame() {
-        try {
-            this.audioSystem = TetrisAudioSystem.getInstance();
-        } catch (AudioFileNotFound ex) {
-            JOptionPane.showMessageDialog(null, "Audio files were not found. Please re-build the archive", "Error", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
+        this.audioSystem = TetrisAudioSystem.getInstance();
 
         this.game = new TetrisGame();
         this.game.getFallTimer().setInitialDelay(0);
