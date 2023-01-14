@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toList;
 
 public class ScoreRepository {
@@ -32,12 +33,12 @@ public class ScoreRepository {
     }
 
     public List<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
-        Stream<Score> scores = readScoresFromDisk().stream();
-
-        scores = scores.sorted();
+        Stream<Score> scores = readScoresFromDisk()
+                .stream()
+                .sorted(comparingInt(Score::points));
 
         if (difficulty != null) {
-            scores = scores.filter(score -> difficulty == score.difficulty);
+            scores = scores.filter(score -> difficulty == score.difficulty());
         }
         if (limit != null) {
             scores = scores.limit(limit);
@@ -47,7 +48,7 @@ public class ScoreRepository {
     }
 
     public int determineRank(int pointsOfScoreToSave) throws IOException {
-        long numScoresGreater = readScoresFromDisk().stream().filter(score -> score.points > pointsOfScoreToSave).count();
+        long numScoresGreater = readScoresFromDisk().stream().filter(score -> score.points() > pointsOfScoreToSave).count();
         return (int) numScoresGreater + 1;
     }
 

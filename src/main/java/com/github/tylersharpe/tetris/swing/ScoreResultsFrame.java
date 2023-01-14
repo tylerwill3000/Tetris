@@ -1,5 +1,6 @@
 package com.github.tylersharpe.tetris.swing;
 
+import com.github.tylersharpe.tetris.Difficulty;
 import com.github.tylersharpe.tetris.Score;
 import com.github.tylersharpe.tetris.ScoreRepository;
 import com.github.tylersharpe.tetris.TetrisGame;
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 
 class ScoreResultsFrame extends JFrame {
@@ -89,14 +91,18 @@ class ScoreResultsFrame extends JFrame {
         }
 
         try {
+            int totalLinesCleared = tetrisGame.getTotalLinesCleared();
+            Difficulty difficulty = tetrisGame.getDifficulty();
+            boolean completedGame = totalLinesCleared == difficulty.getLinesPerLevel() * TetrisGame.MAX_LEVEL;
+
             scoreRepository.saveScore(
-                    new Score(
-                            saveName,
-                            tetrisGame.getScore(),
-                            tetrisGame.getGameTime(),
-                            tetrisGame.getDifficulty(),
+                    new Score(tetrisGame.getScore(),
                             tetrisGame.getTotalLinesCleared(),
                             tetrisGame.getLevel(),
+                            Duration.ofMillis(tetrisGame.getGameTime()),
+                            saveName,
+                            tetrisGame.getDifficulty(),
+                            completedGame,
                             LocalDate.now())
             );
             dispose();

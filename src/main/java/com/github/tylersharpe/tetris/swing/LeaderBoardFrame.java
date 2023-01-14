@@ -87,13 +87,13 @@ class LeaderBoardFrame extends JFrame {
         Object[][] formattedScoreData = scores.stream()
                 .map(score -> new Object[]{
                         rank.incrementAndGet(),
-                        score.name,
-                        score.points,
-                        score.linesCleared,
-                        score.completedGame() ? "Complete" : score.maxLevel,
-                        score.difficulty,
-                        Utility.formatSeconds(score.gameTime),
-                        score.dateAchieved
+                        score.name(),
+                        score.points(),
+                        score.linesCleared(),
+                        score.completedGame() ? "Complete" : score.maxLevel(),
+                        score.difficulty(),
+                        Utility.formatSeconds(score.gameTime().getSeconds()),
+                        score.date()
                 })
                 .toArray(Object[][]::new);
 
