@@ -390,6 +390,8 @@ public enum BlockType {
             10
     );
 
+    private static final Color[] COLORS = Stream.of(values()).map(BlockType::getColor).toArray(Color[]::new);
+
     private final int[][][] offsets;
     private final int[][] previewPanelSquares;
     private final int startRow;
@@ -454,6 +456,10 @@ public enum BlockType {
         return Arrays.stream(offsetsForOrientation)
                 .map(offset -> new ColoredSquare(color, row + offset[0], col + offset[1]))
                 .collect(toList());
+    }
+
+    public static Color getRandomColor() {
+        return Utility.sample(COLORS);
     }
 
     @Override

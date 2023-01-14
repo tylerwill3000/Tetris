@@ -70,7 +70,7 @@ public class ScoreRepository {
         try (var scoresInputStream = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
             return (List<Score>) scoresInputStream.readObject();
         } catch (ClassCastException | ClassNotFoundException e) {
-            throw new RuntimeException("Malformed high scores file", e);
+            throw new IOException("Malformed high scores file", e);
         }
     }
 

@@ -9,7 +9,7 @@ public class ColoredSquare {
     private final int row, column;
 
     public ColoredSquare(int row, int column) {
-        this(Utility.getRandomColor(), row, column);
+        this(BlockType.getRandomColor(), row, column);
     }
 
     public ColoredSquare(Color color, int row, int column) {

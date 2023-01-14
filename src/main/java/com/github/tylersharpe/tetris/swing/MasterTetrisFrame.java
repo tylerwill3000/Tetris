@@ -478,7 +478,7 @@ public class MasterTetrisFrame extends JFrame {
                 for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= 3; row--) {
                     for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
                         if (game.isOpenAndInBounds(row, col)) {
-                            game.setColor(row, col, Utility.getRandomColor());
+                            game.setColor(row, col, BlockType.getRandomColor());
                         }
                     }
                     repaint();
