@@ -33,7 +33,7 @@ public enum BlockType {
             new Color(0, 70, 255)
     ),
 
-    L_BLOCK_L(
+    INVERTED_L(
 
             // Offsets
             new int[][][]{
@@ -70,7 +70,7 @@ public enum BlockType {
             Color.YELLOW
     ),
 
-    L_BLOCK_R(
+    L(
 
             // Offsets
             new int[][][]{
@@ -107,7 +107,7 @@ public enum BlockType {
             Color.PINK
     ),
 
-    S_BLOCK_L(
+    INVERTED_S(
 
             // Offsets
             new int[][][]{
@@ -139,7 +139,7 @@ public enum BlockType {
             Color.GREEN
     ),
 
-    S_BLOCK_R(
+    S(
 
             // Offsets
             new int[][][]{
@@ -171,7 +171,7 @@ public enum BlockType {
             new Color(170, 45, 255) // Purple
     ),
 
-    STRAIGHT_LINE(
+    LINE(
 
             // Offsets
             new int[][][]{
@@ -205,7 +205,7 @@ public enum BlockType {
             new Color(0, 200, 200) // Blue-green
     ),
 
-    T_BLOCK(
+    T(
 
             // Offsets
             new int[][][]{
