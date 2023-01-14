@@ -22,7 +22,7 @@ public class TetrisGame extends Broker {
     private int totalLinesCleared;
     private int score;
     private int level;
-    private int gameTime;
+    private int gameTimeSeconds;
     private boolean ghostSquaresEnabled = true;
     private boolean timeAttack;
     private int currentLevelTime;
@@ -41,7 +41,7 @@ public class TetrisGame extends Broker {
         this.fallTimer = new Timer(0, e -> tryMoveActiveBlockDown());
 
         this.gameTimer = new Timer(1000, e -> {
-            setGameTime(gameTime + 1);
+            setGameTime(gameTimeSeconds + 1);
             currentLevelTime++;
 
             if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
@@ -92,11 +92,11 @@ public class TetrisGame extends Broker {
     }
 
     public int getGameTime() {
-        return gameTime;
+        return gameTimeSeconds;
     }
 
     private void setGameTime(int time) {
-        gameTime = time;
+        gameTimeSeconds = time;
     }
 
     public BlockConveyor getConveyor() {

@@ -99,7 +99,7 @@ class ScoreResultsFrame extends JFrame {
                     new Score(tetrisGame.getScore(),
                             tetrisGame.getTotalLinesCleared(),
                             tetrisGame.getLevel(),
-                            Duration.ofMillis(tetrisGame.getGameTime()),
+                            Duration.ofSeconds(tetrisGame.getGameTime()),
                             saveName,
                             tetrisGame.getDifficulty(),
                             completedGame,
