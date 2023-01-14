@@ -18,10 +18,6 @@ public class Block {
         return row;
     }
 
-    int getColumn() {
-        return column;
-    }
-
     Collection<ColoredSquare> calculateOccupiedSquares() {
         return type.calculateOccupiedSquares(orientation, row, column);
     }
