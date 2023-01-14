@@ -20,14 +20,15 @@ class LeaderBoardFrame extends JFrame {
     private final static String[] COLUMN_HEADERS = {"Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
 
     private static final String[] DIFFICULTY_OPTIONS = Stream.concat(
-            Stream.of(Difficulty.values()).map(Difficulty::getDisplay),
+            Stream.of(Difficulty.values()).map(Difficulty::getName),
             Stream.of("All")
     ).toArray(String[]::new);
 
-    private static final int LEADERBOARD_FRAME_WIDTH = 600;
+    private static final int LEADERBOARD_FRAME_WIDTH = 800;
     private static final int LEADERBOARD_FRAME_HEIGHT = 400;
 
     private final JComboBox<String> difficultyComboBox = new JComboBox<>(DIFFICULTY_OPTIONS);
+    private final TableCellRenderer renderer = new HighScoreCellRenderer();
     private final int highlightRank;
     private final JTable scoresTable = new JTable();
     private final ScoreRepository scoreRepository;
@@ -71,11 +72,11 @@ class LeaderBoardFrame extends JFrame {
     // Populates table with appropriate data depending on selected row count
     private void refreshTable() {
         String selectedDifficultyDisplay = (String) difficultyComboBox.getSelectedItem();
-        Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromDisplay(selectedDifficultyDisplay);
+        Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromName(selectedDifficultyDisplay);
 
         List<Score> scores;
         try {
-            scores = scoreRepository.getScores(selectedDifficulty, null);
+            scores = scoreRepository.getScores(selectedDifficulty);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not read high scores", "Error", JOptionPane.ERROR_MESSAGE);
@@ -99,32 +100,23 @@ class LeaderBoardFrame extends JFrame {
 
         scoresTable.setModel(new DefaultTableModel(formattedScoreData, COLUMN_HEADERS));
 
-        TableCellRenderer renderer = new HighScoreCellRenderer(highlightRank);
         IntStream.range(0, scoresTable.getColumnCount())
                 .mapToObj(scoresTable.getColumnModel()::getColumn)
                 .forEach(column -> column.setCellRenderer(renderer));
     }
 
-    private static class HighScoreCellRenderer implements TableCellRenderer {
-        private final int rankToHighlight;
-        private int rowToHighlight = -1;
-
-        private HighScoreCellRenderer(int rankToHighlight) {
-            this.rankToHighlight = rankToHighlight;
-        }
+    private class HighScoreCellRenderer implements TableCellRenderer {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
-            if (column == 0 && Integer.parseInt(value.toString()) == rankToHighlight) {
-                rowToHighlight = row;
-            }
-
             JLabel cell = new JLabel(value.toString());
             cell.setHorizontalAlignment(SwingConstants.CENTER);
             cell.setOpaque(true); // Allows background to show through
             cell.setForeground(Color.BLACK);
-            cell.setBackground(row == rowToHighlight ? Color.YELLOW : table.getBackground());
+
+            boolean highlight = highlightRank != -1 && row == (highlightRank - 1);
+            cell.setBackground(highlight ? Color.YELLOW : table.getBackground());
+
             return cell;
         }
 

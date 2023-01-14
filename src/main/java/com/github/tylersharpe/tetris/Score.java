@@ -2,7 +2,7 @@ package com.github.tylersharpe.tetris;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record Score(int points,
                     int linesCleared,
@@ -11,4 +11,4 @@ public record Score(int points,
                     String name,
                     Difficulty difficulty,
                     boolean completedGame,
-                    LocalDate date) implements Serializable {}
+                    LocalDateTime date) implements Serializable {}

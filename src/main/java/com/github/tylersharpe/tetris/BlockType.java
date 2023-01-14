@@ -3,15 +3,14 @@ package com.github.tylersharpe.tetris;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public enum BlockType {
 
-    BOX(
+    BOX("Box",
 
         // Offsets. All the same for each direction
         // XX
@@ -33,7 +32,7 @@ public enum BlockType {
         new Color(0, 70, 255)
     ),
 
-    INVERTED_L(
+    INVERTED_L("Inverted L",
 
         // Offsets
         new int[][][]{
@@ -70,7 +69,7 @@ public enum BlockType {
         Color.YELLOW
     ),
 
-    L(
+    L("L",
 
         // Offsets
         new int[][][]{
@@ -107,7 +106,7 @@ public enum BlockType {
         Color.PINK
     ),
 
-    INVERTED_S(
+    INVERTED_S("Inverted S",
 
         // Offsets
         new int[][][]{
@@ -139,7 +138,7 @@ public enum BlockType {
         Color.GREEN
     ),
 
-    S(
+    S("S",
 
         // Offsets
         new int[][][]{
@@ -171,7 +170,7 @@ public enum BlockType {
         new Color(170, 45, 255) // Purple
     ),
 
-    LINE(
+    LINE("Line",
 
         // Offsets
         new int[][][]{
@@ -205,7 +204,7 @@ public enum BlockType {
         new Color(0, 200, 200) // Blue-green
     ),
 
-    T(
+    T("T",
 
         // Offsets
         new int[][][]{
@@ -242,7 +241,7 @@ public enum BlockType {
         new Color(255, 30, 0) // Red
     ),
 
-    TWIN_PILLARS(
+    TWIN_PILLARS("Twin Pillars",
 
         // Offsets
         new int[][][]{
@@ -279,7 +278,7 @@ public enum BlockType {
         4
     ),
 
-    WAVE(
+    WAVE("Wave",
 
         // Offsets
         new int[][][]{
@@ -318,7 +317,7 @@ public enum BlockType {
         6
     ),
 
-    ROCKET(
+    ROCKET("Rocket",
 
         // Offsets
         new int[][][]{
@@ -361,7 +360,7 @@ public enum BlockType {
         8
     ),
 
-    DIAMOND(
+    DIAMOND("Diamond",
 
         // Offsets. All the same for each direction:
         // .X.
@@ -391,7 +390,10 @@ public enum BlockType {
     );
 
     private static final Color[] COLORS = Stream.of(values()).map(BlockType::getColor).toArray(Color[]::new);
+    public static final List<BlockType> DEFAULT_TYPES = Stream.of(values()).filter(it -> !it.isSpecial).toList();
+    public static final List<BlockType> SPECIAL_TYPES = Stream.of(values()).filter(it -> it.isSpecial).toList();
 
+    private final String name;
     private final int[][][] offsets;
     private final int[][] previewPanelSquares;
     private final int startRow;
@@ -399,29 +401,18 @@ public enum BlockType {
     private final boolean isSpecial;
     private final int bonusPointsPerLine;
 
-    BlockType(int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
-        this(offsets, previewPanelSquares, startRow, color, false, 0);
+    BlockType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
+        this(name, offsets, previewPanelSquares, startRow, color, false, 0);
     }
 
-    BlockType(int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
+    BlockType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
+        this.name = name;
         this.offsets = offsets;
         this.previewPanelSquares = previewPanelSquares;
         this.startRow = startRow;
         this.color = color;
         this.isSpecial = isSpecial;
         this.bonusPointsPerLine = bonusPointsPerLine;
-    }
-
-    public static Collection<BlockType> getDefaultBlockTypes() {
-        return filterTypes(type -> !type.isSpecial);
-    }
-
-    public static Collection<BlockType> getSpecialBlocks() {
-        return filterTypes(type -> type.isSpecial);
-    }
-
-    private static Collection<BlockType> filterTypes(Predicate<BlockType> test) {
-        return Arrays.stream(BlockType.values()).filter(test).collect(toList());
     }
 
     public Collection<ColoredSquare> getPreviewPanelSquares() {
@@ -464,7 +455,6 @@ public enum BlockType {
 
     @Override
     public String toString() {
-        return Stream.of(name().split("_")).map(Utility::capitalize).collect(joining(" "));
+        return name;
     }
-
 }

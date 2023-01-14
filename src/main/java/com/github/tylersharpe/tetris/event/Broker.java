@@ -6,9 +6,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-/**
- * Dead simple synchronous, in-process message broker
- */
 public class Broker {
 
     private final Map<TetrisEvent, Collection<Consumer<Object>>> subscribers = new EnumMap<>(TetrisEvent.class);

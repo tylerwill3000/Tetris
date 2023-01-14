@@ -6,7 +6,7 @@ import static java.util.Map.entry;
 
 public enum Difficulty {
 
-    EASY(15, 600, 100, 60, 250, Map.ofEntries(
+    EASY("Easy", 15, 600, 100, 60, 250, Map.ofEntries(
             entry(BlockType.BOX, 14),
             entry(BlockType.INVERTED_L, 14),
             entry(BlockType.L, 14),
@@ -20,7 +20,7 @@ public enum Difficulty {
             entry(BlockType.DIAMOND, 7)
     )),
 
-    MEDIUM(20, 575, 150, 70, 500, Map.ofEntries(
+    MEDIUM("Medium", 20, 575, 150, 70, 500, Map.ofEntries(
             entry(BlockType.BOX, 13),
             entry(BlockType.INVERTED_L, 14),
             entry(BlockType.L, 14),
@@ -34,7 +34,7 @@ public enum Difficulty {
             entry(BlockType.DIAMOND, 7)
     )),
 
-    HARD(25, 550, 200, 80, 1000, Map.ofEntries(
+    HARD("Hard", 25, 550, 200, 80, 1000, Map.ofEntries(
             entry(BlockType.BOX, 12),
             entry(BlockType.INVERTED_L, 15),
             entry(BlockType.L, 14),
@@ -50,6 +50,7 @@ public enum Difficulty {
 
     public static final int TIMER_SPEEDUP = 55;
 
+    private final String name;
     private final int linesPerLevel;
     private final int initialTimerDelay;
     private final int timeAttackBonus;
@@ -57,13 +58,18 @@ public enum Difficulty {
     private final int winBonus;
     private final Map<BlockType, Integer> spawnRates;
 
-    Difficulty(int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> spawnRates) {
+    Difficulty(String name, int linesPerLevel, int initialTimerDelay, int timeAttackBonus, int timeAttackSecondsPerLevel, int winBonus, Map<BlockType, Integer> spawnRates) {
+        this.name = name;
         this.linesPerLevel = linesPerLevel;
         this.initialTimerDelay = initialTimerDelay;
         this.timeAttackBonus = timeAttackBonus;
         this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
         this.winBonus = winBonus;
         this.spawnRates = spawnRates;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public int getLinesPerLevel() {
@@ -90,22 +96,17 @@ public enum Difficulty {
         return spawnRates.get(type);
     }
 
-    public static Difficulty fromDisplay(String display) {
+    public static Difficulty fromName(String name) {
         for (var difficulty : values()) {
-            if (difficulty.getDisplay().equals(display)) {
+            if (difficulty.getName().equals(name)) {
                 return difficulty;
             }
         }
-        throw new IllegalArgumentException("No difficulty exists for display value '" + display + "'");
-    }
-
-    public String getDisplay() {
-        return Utility.capitalize(name());
+        throw new IllegalArgumentException("No difficulty exists with name '" + name + "'");
     }
 
     @Override
     public String toString() {
-        return getDisplay();
+        return getName();
     }
-
 }

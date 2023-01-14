@@ -11,7 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 class ScoreResultsFrame extends JFrame {
 
@@ -20,10 +20,12 @@ class ScoreResultsFrame extends JFrame {
     private final JTextField nameField = new JTextField(10);
     private final ScoreRepository scoreRepository;
     private final TetrisGame tetrisGame;
+    private final LocalDateTime scoreDate;
 
     ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame tetrisGame) {
         this.scoreRepository = scoreRepository;
         this.tetrisGame = tetrisGame;
+        this.scoreDate = LocalDateTime.now();
 
         setLayout(new GridLayout(3, 1));
 
@@ -37,7 +39,7 @@ class ScoreResultsFrame extends JFrame {
 
         int rank;
         try {
-            rank = scoreRepository.determineRank(tetrisGame.getScore());
+            rank = scoreRepository.determineRank(tetrisGame.getScore(), this.scoreDate);
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not determine rank: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -103,7 +105,7 @@ class ScoreResultsFrame extends JFrame {
                             saveName,
                             tetrisGame.getDifficulty(),
                             completedGame,
-                            LocalDate.now())
+                            scoreDate)
             );
             dispose();
             new LeaderBoardFrame(scoreRepository, rank);

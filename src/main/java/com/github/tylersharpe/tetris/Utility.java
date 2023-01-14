@@ -7,9 +7,6 @@ public final class Utility {
 
     private static final Random RANDOM = new Random();
 
-    private Utility() {
-    }
-
     public static String formatSeconds(long seconds) {
         long totalMinutes = seconds / 60;
         long secondsLeftover = seconds % 60;
@@ -24,17 +21,5 @@ public final class Utility {
 
     static <T> T sample(T[] values) {
         return values[RANDOM.nextInt(values.length)];
-    }
-
-    public static String capitalize(String str) {
-        if (str == null || str.isBlank()) {
-            return str;
-        }
-
-        if (str.length() > 1) {
-            return Character.toUpperCase(str.charAt(0)) + str.substring(1).toLowerCase();
-        } else {
-            return String.valueOf(Character.toUpperCase(str.charAt(0)));
-        }
     }
 }

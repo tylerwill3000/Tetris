@@ -27,7 +27,7 @@ public final class BlockConveyor {
     void setDifficulty(Difficulty difficulty) {
         blockTypeSampleList.clear();
 
-        for (BlockType defaultBlockType : BlockType.getDefaultBlockTypes()) {
+        for (BlockType defaultBlockType : BlockType.DEFAULT_TYPES) {
             enableBlockType(difficulty, defaultBlockType);
         }
     }

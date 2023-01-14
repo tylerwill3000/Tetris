@@ -4,15 +4,18 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.toList;
-
 public class ScoreRepository {
+
+    private static final Comparator<Score> SCORE_COMPARATOR = Comparator
+            .comparing(Score::points).reversed()
+            .thenComparing(Score::date);
 
     private static final Path SAVE_PATH = Paths.get(System.getProperty("user.home"), ".config", "tetris-scores");
     private static final int LEADER_BOARD_RANK_THRESHOLD = 20;
@@ -32,23 +35,26 @@ public class ScoreRepository {
         return rank <= LEADER_BOARD_RANK_THRESHOLD;
     }
 
-    public List<Score> getScores(Difficulty difficulty, Integer limit) throws IOException {
-        Stream<Score> scores = readScoresFromDisk()
-                .stream()
-                .sorted(comparingInt(Score::points));
+    public List<Score> getScores(Difficulty difficulty) throws IOException {
+        Stream<Score> scores = readScoresFromDisk().stream();
 
         if (difficulty != null) {
             scores = scores.filter(score -> difficulty == score.difficulty());
         }
-        if (limit != null) {
-            scores = scores.limit(limit);
-        }
 
-        return scores.collect(toList());
+        return scores.sorted(SCORE_COMPARATOR).toList();
     }
 
-    public int determineRank(int pointsOfScoreToSave) throws IOException {
-        long numScoresGreater = readScoresFromDisk().stream().filter(score -> score.points() > pointsOfScoreToSave).count();
+    public int determineRank(int pointsOfScoreToSave, LocalDateTime scoreDate) throws IOException {
+        long numScoresGreater = readScoresFromDisk().stream()
+                .filter(existingScore -> {
+                    if (existingScore.points() == pointsOfScoreToSave) {
+                        return existingScore.date().isBefore(scoreDate);
+                    }
+
+                    return existingScore.points() > pointsOfScoreToSave;
+                })
+                .count();
         return (int) numScoresGreater + 1;
     }
 

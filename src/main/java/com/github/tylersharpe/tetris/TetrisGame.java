@@ -188,23 +188,17 @@ public class TetrisGame extends Broker {
 
     @SuppressWarnings("StatementWithEmptyBody")
     public void dropCurrentBlock() {
-        while (moveActiveBlockDown()) {
-            // Move method returns boolean to control loop
-        }
+        while (moveActiveBlockDown()) {}
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     public void superSlideActiveBlockLeft() {
-        while (moveActiveBlockLeft()) {
-            // Move method returns boolean to control loop
-        }
+        while (moveActiveBlockLeft()) {}
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     public void superSlideActiveBlockRight() {
-        while (moveActiveBlockRight()) {
-            // Move method returns boolean to control loop
-        }
+        while (moveActiveBlockRight()) {}
     }
 
     private boolean moveBlock(Block block, int rowMove, int columnMove) {
@@ -257,8 +251,7 @@ public class TetrisGame extends Broker {
         // remove any ghost squares that overlap with the current active block
         ghostSquares.removeIf(ghostSquare ->
                 currentActiveBlockSquares.stream().anyMatch(activeBlockSquare ->
-                        activeBlockSquare.row() == ghostSquare.row() && activeBlockSquare.column() == ghostSquare.column()
-                )
+                        activeBlockSquare.row() == ghostSquare.row() && activeBlockSquare.column() == ghostSquare.column())
         );
 
         return ghostSquares.stream()
@@ -289,20 +282,20 @@ public class TetrisGame extends Broker {
     }
 
     private int clearCompleteLines() {
-        int completeRowScanIndex = Math.min(activeBlock.getRow(), VERTICAL_DIMENSION - 1);
-        int minRowScanIndex = Math.max(0, completeRowScanIndex - 3);
+        int indexOfRowToCheck = Math.min(activeBlock.getRow(), VERTICAL_DIMENSION - 1);
+        int minRowToCheck = Math.max(0, indexOfRowToCheck - 3);
 
         int linesCleared = 0;
-        while (completeRowScanIndex >= minRowScanIndex && linesCleared <= 4) {
+        while (indexOfRowToCheck >= minRowToCheck && linesCleared <= 4) {
 
-            Color[] rowToScan = persistedBlocks.get(completeRowScanIndex);
+            Color[] rowToScan = persistedBlocks.get(indexOfRowToCheck);
             boolean isRowComplete = Arrays.stream(rowToScan).allMatch(Objects::nonNull);
             if (isRowComplete) {
-                persistedBlocks.remove(completeRowScanIndex);
+                persistedBlocks.remove(indexOfRowToCheck);
                 persistedBlocks.offerFirst(new Color[HORIZONTAL_DIMENSION]);
                 linesCleared++;
             } else {
-                completeRowScanIndex--;
+                indexOfRowToCheck--;
             }
         }
 
