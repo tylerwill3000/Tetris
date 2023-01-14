@@ -254,10 +254,9 @@ public class MasterTetrisFrame extends JFrame {
             flashLabelTask.cancel(true);
         }
 
-        settingsPanel.difficultyCombobox.setEnabled(false);
-        settingsPanel.timeAttackCheckbox.isSelected();
+        settingsPanel.difficultyComboBox.setEnabled(false);
         settingsPanel.specialsButton.setEnabled(false);
-        settingsPanel.timeAttackCheckbox.setEnabled(false);
+        settingsPanel.gameModeComboBox.setEnabled(false);
         settingsPanel.ghostSquaresCheckbox.setEnabled(false);
         settingsPanel.musicCheckbox.setEnabled(false);
         settingsPanel.soundEffectsCheckbox.setEnabled(false);
@@ -272,7 +271,7 @@ public class MasterTetrisFrame extends JFrame {
 
         holdPanel.repaint();
 
-        scorePanel.timeProgressBar.setVisible(settingsPanel.timeAttackCheckbox.isSelected());
+        scorePanel.timeProgressBar.setVisible(game.getGameMode() == GameMode.TIME_ATTACK);
         scorePanel.totalLinesLabel.repaint();
     }
 
@@ -314,9 +313,9 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private void onWin() {
-        settingsPanel.difficultyCombobox.setEnabled(true);
+        settingsPanel.difficultyComboBox.setEnabled(true);
         settingsPanel.specialsButton.setEnabled(true);
-        settingsPanel.timeAttackCheckbox.setEnabled(true);
+        settingsPanel.gameModeComboBox.setEnabled(true);
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
         settingsPanel.musicCheckbox.setEnabled(true);
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
@@ -352,8 +351,8 @@ public class MasterTetrisFrame extends JFrame {
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
         settingsPanel.musicCheckbox.setEnabled(true);
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
-        settingsPanel.timeAttackCheckbox.setEnabled(true);
-        settingsPanel.difficultyCombobox.setEnabled(true);
+        settingsPanel.gameModeComboBox.setEnabled(true);
+        settingsPanel.difficultyComboBox.setEnabled(true);
         settingsPanel.specialsButton.setEnabled(true);
 
         boardPanel.disableKeyHandler();
@@ -382,6 +381,7 @@ public class MasterTetrisFrame extends JFrame {
             removeKeyListener(keyHandler);
         }
 
+        @SuppressWarnings("DataFlowIssue")
         void spiralClear() {
             try {
                 game.persistActiveBlockColors();
@@ -513,7 +513,7 @@ public class MasterTetrisFrame extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 String timeLabel = "Time: " + Utility.formatSeconds(game.getCurrentLevelTime());
-                if (game.isTimeAttack()) {
+                if (game.getGameMode() == GameMode.TIME_ATTACK) {
                     timeLabel += " / " + Utility.formatSeconds(game.getDifficulty().getTimeAttackSecondsPerLevel());
                 }
                 setText(timeLabel);
@@ -572,12 +572,11 @@ public class MasterTetrisFrame extends JFrame {
         private final JCheckBox ghostSquaresCheckbox;
         private final JCheckBox musicCheckbox;
         private final JCheckBox soundEffectsCheckbox;
-        private final JCheckBox timeAttackCheckbox;
-        private final JComboBox<Difficulty> difficultyCombobox;
+        private final JComboBox<GameMode> gameModeComboBox;
+        private final JComboBox<Difficulty> difficultyComboBox;
         private final TetrisButton specialsButton;
 
         SettingsPanel() {
-
             musicCheckbox = new JCheckBox("Music", true);
             musicCheckbox.setToolTipText("Controls whether music is played during game play");
             musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
@@ -593,80 +592,99 @@ public class MasterTetrisFrame extends JFrame {
                 boardPanel.repaint();
             });
 
-            timeAttackCheckbox = new JCheckBox("Time Attack Mode", false);
-            timeAttackCheckbox.addItemListener(e -> game.setTimeAttack(timeAttackCheckbox.isSelected()));
-            timeAttackCheckbox.setToolTipText(
-                    "<html>" +
-                            "<p>Limits available time per level as well as grants a point bonus per level cleared:</p>" +
-                            "<ul>" +
-                            "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
-                            "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
-                            "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
-                            "</ul>" +
-                            "</html>"
-            );
+            gameModeComboBox = new JComboBox<>(GameMode.values());
+            gameModeComboBox.addActionListener(e -> game.setGameMode(getSelectedGameMode()));
+            gameModeComboBox.setSelectedIndex(0);
 
-            difficultyCombobox = new JComboBox<>(Difficulty.values());
-            difficultyCombobox.addActionListener(e -> game.setDifficulty(getSelectedDifficulty()));
-            difficultyCombobox.setSelectedIndex(0);
+            difficultyComboBox = new JComboBox<>(Difficulty.values());
+            difficultyComboBox.addActionListener(e -> game.setDifficulty(getSelectedDifficulty()));
+            difficultyComboBox.setSelectedIndex(0);
 
-            specialsButton = new TetrisButton("Special Pieces...");
+            specialsButton = new TetrisButton("Special Pieces");
             specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
 
-            setLayout(new BorderLayout());
-            setBorder(new TitledBorder("Settings"));
-
-            List<JCheckBox> checkboxes = List.of(ghostSquaresCheckbox, musicCheckbox, soundEffectsCheckbox, timeAttackCheckbox);
-            JPanel checkboxPanel = new JPanel(new GridLayout(checkboxes.size(), 1));
-            for (JCheckBox checkbox : checkboxes) {
-                checkboxPanel.add(checkbox);
-                checkbox.setFocusable(false);
-            }
-
-            JPanel difficultyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JPanel difficultyPanel = new JPanel(new GridLayout(1, 2));
             difficultyPanel.add(new JLabel("Difficulty:  "));
-            difficultyPanel.add(difficultyCombobox);
-            difficultyCombobox.setToolTipText(
-                    "<html>" +
-                            "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
-                            "<ul>" +
-                            "<li>" +
+            difficultyPanel.add(difficultyComboBox);
+            difficultyComboBox.setToolTipText(
+                "<html>" +
+                    "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
+                    "<ul>" +
+                        "<li>" +
                             "Number of lines required to complete each level:" +
                             "<ul>" +
-                            "<li>" + Difficulty.EASY.getLinesPerLevel() + " on easy</li>" +
-                            "<li>" + Difficulty.MEDIUM.getLinesPerLevel() + " on medium</li>" +
-                            "<li>" + Difficulty.HARD.getLinesPerLevel() + " on hard</li>" +
+                                "<li>" + Difficulty.EASY.getLinesPerLevel() + " on easy</li>" +
+                                "<li>" + Difficulty.MEDIUM.getLinesPerLevel() + " on medium</li>" +
+                                "<li>" + Difficulty.HARD.getLinesPerLevel() + " on hard</li>" +
                             "</ul>" +
-                            "</li>" +
-                            "<li>" +
+                        "</li>" +
+                        "<li>" +
                             "Bonus points awarded upon game completion:" +
                             "<ul>" +
-                            "<li>" + Difficulty.EASY.getWinBonus() + " on easy</li>" +
-                            "<li>" + Difficulty.MEDIUM.getWinBonus() + " on medium</li>" +
-                            "<li>" + Difficulty.HARD.getWinBonus() + " on hard</li>" +
+                                "<li>" + Difficulty.EASY.getWinBonus() + " on easy</li>" +
+                                "<li>" + Difficulty.MEDIUM.getWinBonus() + " on medium</li>" +
+                                "<li>" + Difficulty.HARD.getWinBonus() + " on hard</li>" +
                             "</ul>" +
-                            "</li>" +
-                            "<li>The likelihood of different block types appearing. Harder difficulties will cause 'easier' blocks to appear less often</li>" +
-                            "<li>" +
+                        "</li>" +
+                        "<li>The likelihood of different block types appearing. Harder difficulties will cause 'easier' blocks to appear less often</li>" +
+                        "<li>" +
                             "Initial block speed:" +
                             "<ul>" +
-                            "<li>Initial fall delay of " + Difficulty.EASY.getInitialTimerDelay() + " milliseconds on easy</li>" +
-                            "<li>Initial fall delay of " + Difficulty.MEDIUM.getInitialTimerDelay() + " milliseconds on medium</li>" +
-                            "<li>Initial fall delay of " + Difficulty.HARD.getInitialTimerDelay() + " milliseconds on hard</li>" +
+                                "<li>Initial fall delay of " + Difficulty.EASY.getInitialTimerDelay() + " milliseconds on easy</li>" +
+                                "<li>Initial fall delay of " + Difficulty.MEDIUM.getInitialTimerDelay() + " milliseconds on medium</li>" +
+                                "<li>Initial fall delay of " + Difficulty.HARD.getInitialTimerDelay() + " milliseconds on hard</li>" +
                             "</ul>" +
-                            "</li>" +
-                            "<p>The block falling speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
-                            "</ul>" +
-                            "</html>"
+                        "</li>" +
+                        "<p>The block falling speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
+                    "</ul>" +
+                "</html>"
             );
 
-            add(checkboxPanel, BorderLayout.NORTH);
-            add(difficultyPanel, BorderLayout.CENTER);
-            add(specialsButton, BorderLayout.SOUTH);
+            JPanel gameModePanel = new JPanel(new GridLayout(1, 2));
+            gameModePanel.add(new JLabel("Game Mode: "));
+            gameModePanel.add(gameModeComboBox);
+            gameModeComboBox.setToolTipText(
+                "<html>" +
+                    "<ul>" +
+                        "<li>" +
+                            GameMode.NORMAL + ": 10 levels of play, with each successive level increasing block speed" +
+                        "</li>" +
+                        "<li>" +
+                            GameMode.TIME_ATTACK + ": Limits available time per level as well as grants a point bonus per level cleared" +
+                            "<ul>" +
+                                "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+                                "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+                                "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+                            "</ul>" +
+                        "</li>" +
+                        "<li>" +
+                            GameMode.FREE_PLAY + ": Unlimited free play until the player game overs. Block speed will increase every 20 lines cleared" +
+                        "</li>" +
+                "</html>"
+            );
+
+            setBorder(new TitledBorder("Settings"));
+
+            var settingComponents = List.of(
+                    ghostSquaresCheckbox,
+                    musicCheckbox,
+                    soundEffectsCheckbox,
+                    difficultyPanel,
+                    gameModePanel,
+                    specialsButton);
+
+            setLayout(new GridLayout(settingComponents.size(), 1, 0, 3));
+            for (var settingComponent : settingComponents) {
+                add(settingComponent);
+            }
+        }
+
+        GameMode getSelectedGameMode() {
+            return (GameMode) gameModeComboBox.getSelectedItem();
         }
 
         Difficulty getSelectedDifficulty() {
-            return (Difficulty) difficultyCombobox.getSelectedItem();
+            return (Difficulty) difficultyComboBox.getSelectedItem();
         }
     }
 

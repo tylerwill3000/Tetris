@@ -14,6 +14,7 @@ public class TetrisGame extends Broker {
     public static final int VERTICAL_DIMENSION = 23; // includes 3 invisible rows at top
     public static final int HORIZONTAL_DIMENSION = 10;
 
+    private GameMode gameMode;
     private Block activeBlock;
     private Block holdBlock;
     private final BlockConveyor conveyor;
@@ -24,13 +25,13 @@ public class TetrisGame extends Broker {
     private int level;
     private int gameTimeSeconds;
     private boolean ghostSquaresEnabled = true;
-    private boolean timeAttack;
     private int currentLevelTime;
     private final Timer fallTimer;
     private final Timer gameTimer;
     private boolean isGameWon;
 
     public TetrisGame() {
+        this.gameMode = GameMode.NORMAL;
         this.conveyor = new BlockConveyor();
 
         this.persistedBlocks = new LinkedList<>();
@@ -44,12 +45,20 @@ public class TetrisGame extends Broker {
             setGameTime(gameTimeSeconds + 1);
             currentLevelTime++;
 
-            if (timeAttack && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
+            if (gameMode == GameMode.TIME_ATTACK && currentLevelTime >= difficulty.getTimeAttackSecondsPerLevel()) {
                 publish(TetrisEvent.TIME_ATTACK_FAIL);
                 ((Timer) e.getSource()).stop();
                 fallTimer.stop();
             }
         });
+    }
+
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
     }
 
     public Block getActiveBlock() {
@@ -111,14 +120,6 @@ public class TetrisGame extends Broker {
         this.difficulty = difficulty;
         this.conveyor.setDifficulty(difficulty);
         this.fallTimer.setDelay(difficulty.getInitialTimerDelay());
-    }
-
-    public boolean isTimeAttack() {
-        return this.timeAttack;
-    }
-
-    public void setTimeAttack(boolean timeAttack) {
-        this.timeAttack = timeAttack;
     }
 
     public int getCurrentLevelTime() {
@@ -355,7 +356,7 @@ public class TetrisGame extends Broker {
         int newLevel = levelsCompleted + 1;
         int levelIncrease = newLevel - this.level;
 
-        if (timeAttack && levelIncrease > 0) {
+        if (gameMode == GameMode.TIME_ATTACK && levelIncrease > 0) {
             newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
         }
 
