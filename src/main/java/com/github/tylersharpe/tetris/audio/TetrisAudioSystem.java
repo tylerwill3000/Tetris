@@ -134,7 +134,7 @@ public class TetrisAudioSystem {
     private static void loadAudioStream(Clip clip, String audioFilePath) {
         URL audioFile = TetrisAudioSystem.class.getResource(audioFilePath);
         if (audioFile == null) {
-            throw new AudioFileNotFound(audioFilePath);
+            throw new AudioFileNotFound("Audio file '" + audioFilePath + "' was not found");
         }
 
         try {
