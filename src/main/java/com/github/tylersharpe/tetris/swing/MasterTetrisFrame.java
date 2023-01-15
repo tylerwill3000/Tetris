@@ -669,7 +669,7 @@ public class MasterTetrisFrame extends JFrame {
                         "</li>" +
                         "<li>" +
                             "<b>" + GameMode.FREE_PLAY + ":</b> Unlimited free play until the player game overs. " +
-                                "Each line cleared will decrease the fall timer interval by 1 millisecond, down to a minimum of <b>" + TetrisGame.FREE_PLAY_MINIMUM_FALL_TIMER_DELAY + "</b> milliseconds" +
+                                "Each line cleared will decrease the fall timer interval by 2 milliseconds, down to a minimum of <b>" + TetrisGame.FREE_PLAY_MINIMUM_FALL_TIMER_DELAY + "</b> milliseconds" +
                         "</li>" +
                 "</html>"
             );
