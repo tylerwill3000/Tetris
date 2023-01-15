@@ -183,7 +183,7 @@ public class MasterTetrisFrame extends JFrame {
         this.settingsPanel = new SettingsPanel();
         this.scorePanel = new ScorePanel();
 
-        LinkedHashMap<String, String> controls = new LinkedHashMap<>(); // LinkedHashMap because order matters for display
+        LinkedHashMap<String, String> controls = new LinkedHashMap<>();
         controls.put("Up:", "Rotate CW");
         controls.put("'F':", "Rotate CCW");
         controls.put("Down:", "Shift down");
@@ -194,11 +194,6 @@ public class MasterTetrisFrame extends JFrame {
         controls.put("Spacebar:", "Instant drop");
         controls.put("'D':", "Set hold");
         controls.put("'E':", "Release hold");
-        controls.put("Alt + 'S':", "Start game");
-        controls.put("Alt + 'P':", "Pause game");
-        controls.put("Alt + 'R':", "Resume game");
-        controls.put("Alt + 'G':", "Give up");
-        controls.put("Alt + 'L':", "View leaderboard");
 
         JPanel keys = new JPanel(new GridLayout(controls.size(), 1));
         JPanel actions = new JPanel(new GridLayout(controls.size(), 1));
@@ -681,13 +676,15 @@ public class MasterTetrisFrame extends JFrame {
 
             setBorder(new TitledBorder("Settings"));
 
+            JPanel specialsPanel = new JPanel();
+            specialsPanel.add(specialsButton);
             var settingComponents = List.of(
                     ghostSquaresCheckbox,
                     musicCheckbox,
                     soundEffectsCheckbox,
                     difficultyPanel,
                     gameModePanel,
-                    specialsButton);
+                    specialsPanel);
 
             setLayout(new GridLayout(settingComponents.size(), 1));
             for (var settingComponent : settingComponents) {
@@ -712,8 +709,6 @@ public class MasterTetrisFrame extends JFrame {
         final TetrisButton leaderboardButton = new TetrisButton("Leaderboard");
 
         private MenuPanel() {
-            setLayout(new FlowLayout());
-
             startButton.setMnemonic('s');
             startButton.setEnabled(true);
             startButton.addActionListener(e -> onStart());
