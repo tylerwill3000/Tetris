@@ -134,9 +134,8 @@ public class MasterTetrisFrame extends JFrame {
             scorePanel.timeProgressBar.repaint();
         });
 
-        for (TetrisEvent gameOverEvent : List.of(TetrisEvent.SPAWN_FAIL, TetrisEvent.TIME_ATTACK_FAIL)) {
-            this.game.subscribe(gameOverEvent, e -> onGameOver());
-        }
+        this.game.subscribe(TetrisEvent.TIME_ATTACK_FAIL, e -> onGameOver());
+        this.game.subscribe(TetrisEvent.SPAWN_FAIL, e -> onGameOver());
         this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
 
         this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
@@ -657,7 +656,7 @@ public class MasterTetrisFrame extends JFrame {
                 "<html>" +
                     "<ul>" +
                         "<li>" +
-                            "<b>" + GameMode.NORMAL + ":</b> 10 levels of play, with each successive level increasing block speed" +
+                            "<b>" + GameMode.CAMPAIGN + ":</b> 10 levels of play, with each successive level increasing block speed" +
                         "</li>" +
                         "<li>" +
                             "<b>" + GameMode.TIME_ATTACK + ":</b> Limits available time per level and grants a point bonus for each level cleared:" +

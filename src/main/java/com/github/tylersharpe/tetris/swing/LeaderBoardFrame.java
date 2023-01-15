@@ -46,7 +46,7 @@ class LeaderBoardFrame extends JFrame {
         scoresTable.setFillsViewportHeight(true);
         scoresTable.setEnabled(false);
 
-        gameModeComboBox.setSelectedItem(scoreToHighlight != null ? scoreToHighlight.gameMode() : GameMode.NORMAL);
+        gameModeComboBox.setSelectedItem(scoreToHighlight != null ? scoreToHighlight.gameMode() : GameMode.CAMPAIGN);
         gameModeComboBox.addActionListener(e -> refreshTable());
 
         difficultyComboBox.setSelectedItem(scoreToHighlight != null ? scoreToHighlight.difficulty() : Difficulty.EASY);

@@ -32,7 +32,7 @@ public class TetrisGame extends Broker {
     private boolean isGameWon;
 
     public TetrisGame() {
-        this.gameMode = GameMode.NORMAL;
+        this.gameMode = GameMode.CAMPAIGN;
         this.conveyor = new BlockConveyor();
 
         this.persistedBlocks = new LinkedList<>();
