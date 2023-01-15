@@ -1,9 +1,6 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.Difficulty;
-import com.github.tylersharpe.tetris.Score;
-import com.github.tylersharpe.tetris.ScoreRepository;
-import com.github.tylersharpe.tetris.TetrisGame;
+import com.github.tylersharpe.tetris.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +36,7 @@ class ScoreResultsFrame extends JFrame {
 
         int rank;
         try {
-            rank = scoreRepository.determineRank(tetrisGame.getScore(), this.scoreDate);
+            rank = scoreRepository.determineRank(tetrisGame.getScore(), tetrisGame.getDifficulty(), tetrisGame.getGameMode(), this.scoreDate);
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not determine rank: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -95,20 +92,29 @@ class ScoreResultsFrame extends JFrame {
         try {
             int totalLinesCleared = tetrisGame.getTotalLinesCleared();
             Difficulty difficulty = tetrisGame.getDifficulty();
-            boolean completedGame = totalLinesCleared == difficulty.getLinesPerLevel() * TetrisGame.MAX_LEVEL;
 
-            scoreRepository.saveScore(
-                    new Score(tetrisGame.getScore(),
-                            tetrisGame.getTotalLinesCleared(),
-                            tetrisGame.getLevel(),
-                            Duration.ofSeconds(tetrisGame.getGameTime()),
-                            saveName,
-                            tetrisGame.getDifficulty(),
-                            completedGame,
-                            scoreDate)
-            );
+            Boolean completedGame = null;
+            Integer maxLevel = null;
+            if (tetrisGame.getGameMode() != GameMode.FREE_PLAY) {
+                completedGame = totalLinesCleared == difficulty.getLinesPerLevel() * TetrisGame.MAX_LEVEL;
+                maxLevel = tetrisGame.getLevel();
+            }
+
+            Score score = new Score(tetrisGame.getScore(),
+                                    tetrisGame.getTotalLinesCleared(),
+                                    rank,
+                                    maxLevel,
+                                    Duration.ofSeconds(tetrisGame.getGameTime()),
+                                    saveName,
+                                    tetrisGame.getDifficulty(),
+                                    tetrisGame.getGameMode(),
+                                    completedGame,
+                                    scoreDate);
+            scoreRepository.saveScore(score);
+
             dispose();
-            new LeaderBoardFrame(scoreRepository, rank);
+
+            new LeaderBoardFrame(scoreRepository, score);
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

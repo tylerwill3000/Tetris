@@ -1,9 +1,6 @@
 package com.github.tylersharpe.tetris.swing;
 
-import com.github.tylersharpe.tetris.Difficulty;
-import com.github.tylersharpe.tetris.Score;
-import com.github.tylersharpe.tetris.ScoreRepository;
-import com.github.tylersharpe.tetris.Utility;
+import com.github.tylersharpe.tetris.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -13,54 +10,58 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 class LeaderBoardFrame extends JFrame {
-
-    private final static String[] COLUMN_HEADERS = {"Rank", "Name", "Score", "Lines", "Level", "Difficulty", "Game Time", "Date"};
-
-    private static final String[] DIFFICULTY_OPTIONS = Stream.concat(
-            Stream.of(Difficulty.values()).map(Difficulty::getName),
-            Stream.of("All")
-    ).toArray(String[]::new);
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     private static final int LEADERBOARD_FRAME_WIDTH = 800;
     private static final int LEADERBOARD_FRAME_HEIGHT = 400;
 
-    private final JComboBox<String> difficultyComboBox = new JComboBox<>(DIFFICULTY_OPTIONS);
+    private record Column(String name, BiFunction<Score, Integer, String> renderer) {}
+
+    private static final Column[] COLUMNS = {
+        new Column("Rank",      (s, r) -> String.valueOf(r + 1)),
+        new Column("Name",      (s, r) -> s.name()),
+        new Column("Score",     (s, r) -> String.valueOf(s.points())),
+        new Column("Lines",     (s, r) -> String.valueOf(s.linesCleared())),
+        new Column("Level",     (s, r) -> s.completedGame() == null ? "N/A" : (s.completedGame() ? "Complete" : String.valueOf(s.maxLevel()))),
+        new Column("Game Time", (s, r) -> Utility.formatSeconds(s.gameTime().getSeconds())),
+        new Column("Date",      (s, r) -> DATE_FORMATTER.format(s.date()))
+    };
+
+    private final JComboBox<GameMode> gameModeComboBox = new JComboBox<>(GameMode.values());
+    private final JComboBox<Difficulty> difficultyComboBox = new JComboBox<>(Difficulty.values());
     private final TableCellRenderer renderer = new HighScoreCellRenderer();
-    private final int highlightRank;
+    private final Score scoreToHighlight;
     private final JTable scoresTable = new JTable();
     private final ScoreRepository scoreRepository;
 
-    LeaderBoardFrame(ScoreRepository scoreRepository) {
-        this(scoreRepository, -1);
-    }
-
-    LeaderBoardFrame(ScoreRepository scoreRepository, int highlightRank) {
+    LeaderBoardFrame(ScoreRepository scoreRepository, Score scoreToHighlight) {
         this.scoreRepository = scoreRepository;
-        this.highlightRank = highlightRank;
+        this.scoreToHighlight = scoreToHighlight;
 
         scoresTable.setFillsViewportHeight(true);
         scoresTable.setEnabled(false);
 
-        difficultyComboBox.setSelectedItem("All");
+        gameModeComboBox.setSelectedItem(scoreToHighlight != null ? scoreToHighlight.gameMode() : GameMode.NORMAL);
+        gameModeComboBox.addActionListener(e -> refreshTable());
+
+        difficultyComboBox.setSelectedItem(scoreToHighlight != null ? scoreToHighlight.difficulty() : Difficulty.EASY);
         difficultyComboBox.addActionListener(e -> refreshTable());
 
         TetrisButton closeButton = new TetrisButton("Close");
         closeButton.setMnemonic('l');
         closeButton.addActionListener(e -> dispose());
 
-        JPanel difficultySelectorPanel = new JPanel();
-        difficultySelectorPanel.add(new JLabel("Difficulty: "));
-        difficultySelectorPanel.add(difficultyComboBox);
-
-        JPanel menuPanel = new JPanel(new GridLayout(2, 1));
-        menuPanel.add(difficultySelectorPanel);
+        JPanel menuPanel = new JPanel();
+        menuPanel.add(new JLabel("Game Mode:"));
+        menuPanel.add(gameModeComboBox);
+        menuPanel.add(new JLabel("            ")); // poor man's spacer (TODO clean this up when I get around to general UI polishing)
+        menuPanel.add(new JLabel("Difficulty:"));
+        menuPanel.add(difficultyComboBox);
 
         setLayout(new BorderLayout());
         add(new JScrollPane(scoresTable), BorderLayout.CENTER);
@@ -73,14 +74,13 @@ class LeaderBoardFrame extends JFrame {
         refreshTable();
     }
 
-    // Populates table with appropriate data depending on selected row count
     private void refreshTable() {
-        String selectedDifficultyDisplay = (String) difficultyComboBox.getSelectedItem();
-        Difficulty selectedDifficulty = "All".equals(selectedDifficultyDisplay) ? null : Difficulty.fromName(selectedDifficultyDisplay);
+        Difficulty difficulty = (Difficulty) difficultyComboBox.getSelectedItem();
+        GameMode gameMode = (GameMode) gameModeComboBox.getSelectedItem();
 
         List<Score> scores;
         try {
-            scores = scoreRepository.getScores(selectedDifficulty);
+            scores = scoreRepository.getScores(difficulty, gameMode);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not read high scores", "Error", JOptionPane.ERROR_MESSAGE);
@@ -88,21 +88,12 @@ class LeaderBoardFrame extends JFrame {
             return;
         }
 
-        AtomicInteger rank = new AtomicInteger(0);
-        Object[][] formattedScoreData = scores.stream()
-                .map(score -> new Object[]{
-                        rank.incrementAndGet(),
-                        score.name(),
-                        score.points(),
-                        score.linesCleared(),
-                        score.completedGame() ? "Complete" : score.maxLevel(),
-                        score.difficulty(),
-                        Utility.formatSeconds(score.gameTime().getSeconds()),
-                        DATE_FORMATTER.format(score.date())
-                })
+        Object[][] scoresTableData = scores.stream()
+                .map(score -> Stream.of(COLUMNS).map(__ -> score).toArray(Object[]::new))
                 .toArray(Object[][]::new);
 
-        scoresTable.setModel(new DefaultTableModel(formattedScoreData, COLUMN_HEADERS));
+        String[] columnHeaders = Stream.of(COLUMNS).map(Column::name).toArray(String[]::new);
+        scoresTable.setModel(new DefaultTableModel(scoresTableData, columnHeaders));
 
         IntStream.range(0, scoresTable.getColumnCount())
                 .mapToObj(scoresTable.getColumnModel()::getColumn)
@@ -113,17 +104,19 @@ class LeaderBoardFrame extends JFrame {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JLabel cell = new JLabel(value.toString());
+            Score score = (Score) value;
+
+            JLabel cell = new JLabel();
             cell.setHorizontalAlignment(SwingConstants.CENTER);
             cell.setOpaque(true); // Allows background to show through
             cell.setForeground(Color.BLACK);
 
-            boolean highlight = highlightRank != -1 && row == (highlightRank - 1);
-            cell.setBackground(highlight ? Color.YELLOW : table.getBackground());
+            String text = COLUMNS[column].renderer().apply(score, row);
+            cell.setText(text);
+
+            cell.setBackground(score.equals(scoreToHighlight) ? Color.YELLOW : table.getBackground());
 
             return cell;
         }
-
     }
-
 }

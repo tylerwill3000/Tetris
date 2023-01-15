@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ScoreRepository {
 
@@ -35,18 +34,18 @@ public class ScoreRepository {
         return rank <= LEADER_BOARD_RANK_THRESHOLD;
     }
 
-    public List<Score> getScores(Difficulty difficulty) throws IOException {
-        Stream<Score> scores = readScoresFromDisk().stream();
-
-        if (difficulty != null) {
-            scores = scores.filter(score -> difficulty == score.difficulty());
-        }
-
-        return scores.sorted(SCORE_COMPARATOR).toList();
+    public List<Score> getScores(Difficulty difficulty, GameMode gameMode) throws IOException {
+        return readScoresFromDisk()
+                .stream()
+                .filter(score -> score.difficulty() == difficulty && score.gameMode() == gameMode)
+                .sorted(SCORE_COMPARATOR)
+                .toList();
     }
 
-    public int determineRank(int pointsOfScoreToSave, LocalDateTime scoreDate) throws IOException {
-        long numScoresGreater = readScoresFromDisk().stream()
+    public int determineRank(int pointsOfScoreToSave, Difficulty difficulty, GameMode gameMode, LocalDateTime scoreDate) throws IOException {
+        long numScoresGreater = readScoresFromDisk()
+                .stream()
+                .filter(score -> score.difficulty() == difficulty && score.gameMode() == gameMode)
                 .filter(existingScore -> {
                     if (existingScore.points() == pointsOfScoreToSave) {
                         return existingScore.date().isBefore(scoreDate);

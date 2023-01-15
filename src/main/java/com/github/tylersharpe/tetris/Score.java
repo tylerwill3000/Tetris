@@ -6,9 +6,11 @@ import java.time.LocalDateTime;
 
 public record Score(int points,
                     int linesCleared,
-                    int maxLevel,
+                    int originalRank,
+                    Integer maxLevel,
                     Duration gameTime,
                     String name,
                     Difficulty difficulty,
-                    boolean completedGame,
+                    GameMode gameMode,
+                    Boolean completedGame,
                     LocalDateTime date) implements Serializable {}

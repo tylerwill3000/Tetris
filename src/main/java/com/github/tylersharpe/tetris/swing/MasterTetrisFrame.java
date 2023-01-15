@@ -725,7 +725,7 @@ public class MasterTetrisFrame extends JFrame {
             leaderboardButton.setMnemonic('l');
             leaderboardButton.setEnabled(true);
             leaderboardButton.addActionListener(e ->
-                    leaderboardButton.bindDisabledStateToFrame(new LeaderBoardFrame(scoreRepository))
+                    leaderboardButton.bindDisabledStateToFrame(new LeaderBoardFrame(scoreRepository, null))
             );
             add(leaderboardButton);
 
