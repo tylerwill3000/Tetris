@@ -227,7 +227,7 @@ public class MasterTetrisFrame extends JFrame {
 
         add(menuPanel, BorderLayout.SOUTH);
 
-        SwingUtility.setIcon(this, "/images/game-icon.png");
+        setIconImage(new ImageIcon(ImageFile.GAME_ICON.getUrl()).getImage());
         setTitle("Tetris");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -764,7 +764,7 @@ public class MasterTetrisFrame extends JFrame {
             add(blockPanels, BorderLayout.CENTER);
             add(SwingUtility.nestInPanel(closeButton), BorderLayout.SOUTH);
 
-            SwingUtility.setIcon(this, "/images/star.png");
+            setIconImage(new ImageIcon(ImageFile.STAR_ICON.getUrl()).getImage());
             setTitle("Special Pieces");
             setResizable(false);
             pack();

@@ -73,7 +73,7 @@ class ScoreResultsFrame extends JFrame {
             add(buttonPanel);
         }
 
-        SwingUtility.setIcon(this, "/images/save-icon.png");
+        setIconImage(new ImageIcon(ImageFile.SAVE_ICON.getUrl()).getImage());
         setTitle("Score Results");
         setResizable(false);
         pack();

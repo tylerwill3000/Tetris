@@ -66,7 +66,7 @@ class LeaderBoardFrame extends JFrame {
         setLayout(new BorderLayout());
         add(new JScrollPane(scoresTable), BorderLayout.CENTER);
         add(menuPanel, BorderLayout.SOUTH);
-        SwingUtility.setIcon(this, "/images/trophy.png");
+        setIconImage(new ImageIcon(ImageFile.TROPHY_ICON.getUrl()).getImage());
         setSize(LEADERBOARD_FRAME_WIDTH, LEADERBOARD_FRAME_HEIGHT);
         setTitle("Leaderboard");
         setLocationRelativeTo(null);
