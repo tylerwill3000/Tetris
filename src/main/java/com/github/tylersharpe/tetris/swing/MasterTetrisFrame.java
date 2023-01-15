@@ -584,15 +584,15 @@ public class MasterTetrisFrame extends JFrame {
         private final TetrisButton specialsButton;
 
         SettingsPanel() {
-            musicCheckbox = new JCheckBox("Music", false);
+            musicCheckbox = new JCheckBox("Music", audioSystem.isSoundtrackEnabled());
             musicCheckbox.setToolTipText("Controls whether music is played during game play");
             musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
 
-            soundEffectsCheckbox = new JCheckBox("Sound Effects", false);
+            soundEffectsCheckbox = new JCheckBox("Sound Effects", audioSystem.isEffectsEnabled());
             soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
             soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
-            ghostSquaresCheckbox = new JCheckBox("Ghost Squares", true);
+            ghostSquaresCheckbox = new JCheckBox("Ghost Squares", game.isGhostSquaresEnabled());
             ghostSquaresCheckbox.setToolTipText("Controls whether block placement squares are shown as the block falls");
             ghostSquaresCheckbox.addItemListener(e -> {
                 game.setGhostSquaresEnabled(ghostSquaresCheckbox.isSelected());

@@ -82,6 +82,10 @@ public class TetrisGame extends Broker {
         this.ghostSquaresEnabled = ghostSquaresEnabled;
     }
 
+    public boolean isGhostSquaresEnabled() {
+        return ghostSquaresEnabled;
+    }
+
     public Timer getFallTimer() {
         return fallTimer;
     }

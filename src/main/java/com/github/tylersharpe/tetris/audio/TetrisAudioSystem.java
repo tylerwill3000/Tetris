@@ -33,8 +33,8 @@ public class TetrisAudioSystem {
     private static final Clip HOLD = createBufferedClip(AudioFile.CLANG);
     private static final Clip RELEASE = createBufferedClip(AudioFile.CLANG);
 
-    private boolean soundtrackEnabled = true;
-    private boolean effectsEnabled = true;
+    private boolean soundtrackEnabled = false;
+    private boolean effectsEnabled = false;
 
     public static TetrisAudioSystem getInstance() {
         return INSTANCE;
@@ -44,8 +44,16 @@ public class TetrisAudioSystem {
         this.soundtrackEnabled = enabled;
     }
 
+    public boolean isSoundtrackEnabled() {
+        return soundtrackEnabled;
+    }
+
     public void setEffectsEnabled(boolean enabled) {
         this.effectsEnabled = enabled;
+    }
+
+    public boolean isEffectsEnabled() {
+        return effectsEnabled;
     }
 
     public void startSoundtrack(int level) {
