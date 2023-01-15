@@ -682,8 +682,8 @@ public class MasterTetrisFrame extends JFrame {
                     ghostSquaresCheckbox,
                     musicCheckbox,
                     soundEffectsCheckbox,
-                    difficultyPanel,
                     gameModePanel,
+                    difficultyPanel,
                     specialsPanel);
 
             setLayout(new GridLayout(settingComponents.size(), 1));

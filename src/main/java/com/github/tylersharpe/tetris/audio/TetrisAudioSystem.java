@@ -135,9 +135,9 @@ public class TetrisAudioSystem {
     private static void loadAudioStream(Clip clip, AudioFile audioFile) {
         try {
             clip.close();
-            clip.open(AudioSystem.getAudioInputStream(audioFile.url));
+            clip.open(AudioSystem.getAudioInputStream(audioFile.getUrl()));
         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-            throw new RuntimeException("Could not open audio stream for " + audioFile.url, e);
+            throw new RuntimeException("Could not open audio stream for " + audioFile.getUrl(), e);
         }
     }
 

@@ -25,12 +25,16 @@ enum AudioFile {
     CLANG("/audio/effects/clang.wav"),
     WATER_DROP("/audio/effects/water-drop.wav");
 
-    final URL url;
+    private final URL url;
 
     AudioFile(String resourcePath) {
         url = AudioFile.class.getResource(resourcePath);
         if (url == null) {
             throw new RuntimeException("Audio file at resource path '" + resourcePath + "' was not found");
         }
+    }
+
+    public URL getUrl() {
+        return url;
     }
 }
