@@ -3,7 +3,7 @@ package com.github.tylersharpe.tetris;
 public enum GameMode {
     NORMAL("Normal"),
     TIME_ATTACK("Time Attack"),
-    FREE_PLAY("Free Play"); // TODO implement
+    FREE_PLAY("Free Play");
 
     private final String name;
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.*;
 
 public class TetrisGame extends Broker {
+    public static final int FREE_PLAY_MINIMUM_FALL_TIMER_DELAY = 50;
 
     public static final int MAX_LEVEL = 10;
     public static final int VERTICAL_DIMENSION = 23; // includes 3 invisible rows at top
@@ -349,23 +350,36 @@ public class TetrisGame extends Broker {
                 .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                 .sum();
 
-        int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
-        totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
+        if (gameMode == GameMode.FREE_PLAY) {
+            // increase lines cleared
+            totalLinesCleared += completedLines;
 
-        int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
-        int newLevel = levelsCompleted + 1;
-        int levelIncrease = newLevel - this.level;
+            // speed up fall timer
+            int newDelay = Math.max(difficulty.getInitialTimerDelay() - totalLinesCleared, FREE_PLAY_MINIMUM_FALL_TIMER_DELAY);
+            if (fallTimer.getDelay() != newDelay) {
+                fallTimer.setDelay(newDelay);
+            }
+        } else {
+            // increase lines cleared
+            int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
+            totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
 
-        if (gameMode == GameMode.TIME_ATTACK && levelIncrease > 0) {
-            newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
-        }
+            // increase level
+            int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
+            int newLevel = levelsCompleted + 1;
+            int levelIncrease = newLevel - this.level;
 
-        if (newLevel > MAX_LEVEL) {
-            newScore += difficulty.getWinBonus();
-        }
+            if (gameMode == GameMode.TIME_ATTACK && levelIncrease > 0) {
+                newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
+            }
 
-        if (levelIncrease > 0) {
-            setLevel(newLevel);
+            if (newLevel > MAX_LEVEL) {
+                newScore += difficulty.getWinBonus();
+            }
+
+            if (levelIncrease > 0) {
+                setLevel(newLevel);
+            }
         }
 
         setScore(newScore);

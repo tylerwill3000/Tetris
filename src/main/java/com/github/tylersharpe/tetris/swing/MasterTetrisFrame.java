@@ -271,7 +271,9 @@ public class MasterTetrisFrame extends JFrame {
 
         holdPanel.repaint();
 
+        scorePanel.levelLabel.setVisible(game.getGameMode() != GameMode.FREE_PLAY);
         scorePanel.timeProgressBar.setVisible(game.getGameMode() == GameMode.TIME_ATTACK);
+        scorePanel.linesClearedProgressBar.setVisible(game.getGameMode() != GameMode.FREE_PLAY);
         scorePanel.totalLinesLabel.repaint();
     }
 
@@ -502,7 +504,12 @@ public class MasterTetrisFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                setText("Lines: " + game.getCurrentLevelLinesCleared() + " / " + game.getDifficulty().getLinesPerLevel());
+
+                String text = "Lines: " + game.getCurrentLevelLinesCleared();
+                if (game.getGameMode() != GameMode.FREE_PLAY) {
+                    text += " / " + game.getDifficulty().getLinesPerLevel();
+                }
+                setText(text);
             }
         };
 
@@ -577,11 +584,11 @@ public class MasterTetrisFrame extends JFrame {
         private final TetrisButton specialsButton;
 
         SettingsPanel() {
-            musicCheckbox = new JCheckBox("Music", true);
+            musicCheckbox = new JCheckBox("Music", false);
             musicCheckbox.setToolTipText("Controls whether music is played during game play");
             musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
 
-            soundEffectsCheckbox = new JCheckBox("Sound Effects", true);
+            soundEffectsCheckbox = new JCheckBox("Sound Effects", false);
             soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
             soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
@@ -603,8 +610,8 @@ public class MasterTetrisFrame extends JFrame {
             specialsButton = new TetrisButton("Special Pieces");
             specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
 
-            JPanel difficultyPanel = new JPanel(new GridLayout(1, 2));
-            difficultyPanel.add(new JLabel("Difficulty:  "));
+            JPanel difficultyPanel = new JPanel();
+            difficultyPanel.add(new JLabel("Difficulty:"));
             difficultyPanel.add(difficultyComboBox);
             difficultyComboBox.setToolTipText(
                 "<html>" +
@@ -635,22 +642,22 @@ public class MasterTetrisFrame extends JFrame {
                                 "<li>Initial fall delay of " + Difficulty.HARD.getInitialTimerDelay() + " milliseconds on hard</li>" +
                             "</ul>" +
                         "</li>" +
-                        "<p>The block falling speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
+                        "<p>The block speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
                     "</ul>" +
                 "</html>"
             );
 
-            JPanel gameModePanel = new JPanel(new GridLayout(1, 2));
-            gameModePanel.add(new JLabel("Game Mode: "));
+            JPanel gameModePanel = new JPanel();
+            gameModePanel.add(new JLabel("Mode:"));
             gameModePanel.add(gameModeComboBox);
             gameModeComboBox.setToolTipText(
                 "<html>" +
                     "<ul>" +
                         "<li>" +
-                            GameMode.NORMAL + ": 10 levels of play, with each successive level increasing block speed" +
+                            "<b>" + GameMode.NORMAL + ":</b> 10 levels of play, with each successive level increasing block speed" +
                         "</li>" +
                         "<li>" +
-                            GameMode.TIME_ATTACK + ": Limits available time per level as well as grants a point bonus per level cleared" +
+                            "<b>" + GameMode.TIME_ATTACK + ":</b> Limits available time per level and grants a point bonus for each level cleared:" +
                             "<ul>" +
                                 "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
                                 "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
@@ -658,7 +665,8 @@ public class MasterTetrisFrame extends JFrame {
                             "</ul>" +
                         "</li>" +
                         "<li>" +
-                            GameMode.FREE_PLAY + ": Unlimited free play until the player game overs. Block speed will increase every 20 lines cleared" +
+                            "<b>" + GameMode.FREE_PLAY + ":</b> Unlimited free play until the player game overs. " +
+                                "Each line cleared will decrease the fall timer interval by 1 millisecond, down to a minimum of <b>" + TetrisGame.FREE_PLAY_MINIMUM_FALL_TIMER_DELAY + "</b> milliseconds" +
                         "</li>" +
                 "</html>"
             );
@@ -673,7 +681,7 @@ public class MasterTetrisFrame extends JFrame {
                     gameModePanel,
                     specialsButton);
 
-            setLayout(new GridLayout(settingComponents.size(), 1, 0, 3));
+            setLayout(new GridLayout(settingComponents.size(), 1));
             for (var settingComponent : settingComponents) {
                 add(settingComponent);
             }
