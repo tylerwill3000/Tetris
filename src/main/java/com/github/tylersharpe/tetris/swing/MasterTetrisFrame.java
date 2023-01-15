@@ -567,11 +567,18 @@ public class MasterTetrisFrame extends JFrame {
             add(scoreLabel);
             add(levelLabel);
             add(totalLinesLabel);
-            add(SwingUtility.nestInPanel(linesClearedProgressBar));
+
+            JPanel linesClearedProgressBarPanel = new JPanel();
+            linesClearedProgressBarPanel.add(linesClearedProgressBar);
+            add(linesClearedProgressBarPanel);
+
             add(timeLabel);
 
             timeProgressBar.setVisible(false);
-            add(SwingUtility.nestInPanel(timeProgressBar));
+
+            JPanel timeProgressBarPanel = new JPanel();
+            timeProgressBarPanel.add(timeProgressBar);
+            add(timeProgressBarPanel);
         }
 
     }
@@ -762,7 +769,10 @@ public class MasterTetrisFrame extends JFrame {
             }
 
             add(blockPanels, BorderLayout.CENTER);
-            add(SwingUtility.nestInPanel(closeButton), BorderLayout.SOUTH);
+
+            JPanel closeButtonPanel = new JPanel();
+            closeButtonPanel.add(closeButton);
+            add(closeButtonPanel, BorderLayout.SOUTH);
 
             setIconImage(new ImageIcon(ImageFile.STAR_ICON.getUrl()).getImage());
             setTitle("Special Pieces");
