@@ -11,8 +11,9 @@ import java.util.*;
 public class TetrisGame extends Broker {
     public static final int FREE_PLAY_MINIMUM_FALL_TIMER_DELAY = 50;
 
+    public static final int LEADING_OVERFLOW_ROWS = 3;
     public static final int MAX_LEVEL = 10;
-    public static final int VERTICAL_DIMENSION = 23; // includes 3 invisible rows at top
+    public static final int VERTICAL_DIMENSION = 20 + LEADING_OVERFLOW_ROWS;
     public static final int HORIZONTAL_DIMENSION = 10;
 
     private GameMode gameMode;
@@ -399,7 +400,7 @@ public class TetrisGame extends Broker {
         while (true) {
             var spawnSquares = block.getType().calculateOccupiedSquares(0, startRow, startCol);
 
-            boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.row() >= 3);
+            boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.row() >= LEADING_OVERFLOW_ROWS);
             if (!anyVisible) {
                 fallTimer.stop();
                 gameTimer.stop();

@@ -7,45 +7,45 @@ import static java.util.Map.entry;
 public enum Difficulty {
 
     EASY("Easy", 15, 600, 100, 60, 250, Map.ofEntries(
-            entry(BlockType.BOX, 14),
-            entry(BlockType.INVERTED_L, 14),
-            entry(BlockType.L, 14),
-            entry(BlockType.INVERTED_S, 14),
-            entry(BlockType.S, 14),
-            entry(BlockType.LINE, 14),
-            entry(BlockType.T, 14),
-            entry(BlockType.TWIN_PILLARS, 11),
-            entry(BlockType.WAVE, 10),
-            entry(BlockType.ROCKET, 7),
-            entry(BlockType.DIAMOND, 7)
+        entry(BlockType.BOX, 14),
+        entry(BlockType.INVERTED_L, 14),
+        entry(BlockType.L, 14),
+        entry(BlockType.INVERTED_S, 14),
+        entry(BlockType.S, 14),
+        entry(BlockType.LINE, 14),
+        entry(BlockType.T, 14),
+        entry(BlockType.TWIN_PILLARS, 11),
+        entry(BlockType.WAVE, 10),
+        entry(BlockType.ROCKET, 7),
+        entry(BlockType.DIAMOND, 7)
     )),
 
     MEDIUM("Medium", 20, 575, 150, 70, 500, Map.ofEntries(
-            entry(BlockType.BOX, 13),
-            entry(BlockType.INVERTED_L, 14),
-            entry(BlockType.L, 14),
-            entry(BlockType.INVERTED_S, 15),
-            entry(BlockType.S, 14),
-            entry(BlockType.LINE, 13),
-            entry(BlockType.T, 14),
-            entry(BlockType.TWIN_PILLARS, 12),
-            entry(BlockType.WAVE, 10),
-            entry(BlockType.ROCKET, 7),
-            entry(BlockType.DIAMOND, 7)
+        entry(BlockType.BOX, 13),
+        entry(BlockType.INVERTED_L, 14),
+        entry(BlockType.L, 14),
+        entry(BlockType.INVERTED_S, 15),
+        entry(BlockType.S, 14),
+        entry(BlockType.LINE, 13),
+        entry(BlockType.T, 14),
+        entry(BlockType.TWIN_PILLARS, 12),
+        entry(BlockType.WAVE, 10),
+        entry(BlockType.ROCKET, 7),
+        entry(BlockType.DIAMOND, 7)
     )),
 
     HARD("Hard", 25, 550, 200, 80, 1000, Map.ofEntries(
-            entry(BlockType.BOX, 12),
-            entry(BlockType.INVERTED_L, 15),
-            entry(BlockType.L, 14),
-            entry(BlockType.INVERTED_S, 15),
-            entry(BlockType.S, 15),
-            entry(BlockType.LINE, 12),
-            entry(BlockType.T, 13),
-            entry(BlockType.TWIN_PILLARS, 12),
-            entry(BlockType.WAVE, 11),
-            entry(BlockType.ROCKET, 8),
-            entry(BlockType.DIAMOND, 8)
+        entry(BlockType.BOX, 12),
+        entry(BlockType.INVERTED_L, 15),
+        entry(BlockType.L, 14),
+        entry(BlockType.INVERTED_S, 15),
+        entry(BlockType.S, 15),
+        entry(BlockType.LINE, 12),
+        entry(BlockType.T, 13),
+        entry(BlockType.TWIN_PILLARS, 12),
+        entry(BlockType.WAVE, 11),
+        entry(BlockType.ROCKET, 8),
+        entry(BlockType.DIAMOND, 8)
     ));
 
     public static final int TIMER_SPEEDUP = 55;
@@ -94,15 +94,6 @@ public enum Difficulty {
 
     public int getSpawnRate(BlockType type) {
         return spawnRates.get(type);
-    }
-
-    public static Difficulty fromName(String name) {
-        for (var difficulty : values()) {
-            if (difficulty.getName().equals(name)) {
-                return difficulty;
-            }
-        }
-        throw new IllegalArgumentException("No difficulty exists with name '" + name + "'");
     }
 
     @Override

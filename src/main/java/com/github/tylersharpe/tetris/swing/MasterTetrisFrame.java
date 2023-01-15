@@ -365,7 +365,7 @@ public class MasterTetrisFrame extends JFrame {
         private static final int CLEAR_SLEEP_INTERVAL = 79;
 
         BoardPanel() {
-            super(TetrisGame.VERTICAL_DIMENSION - 3, TetrisGame.HORIZONTAL_DIMENSION, BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
+            super(TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS, TetrisGame.HORIZONTAL_DIMENSION, BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
             setFocusable(true);
             setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         }
@@ -388,11 +388,10 @@ public class MasterTetrisFrame extends JFrame {
 
                 int nextLeftCol = 0,
                         nextRightCol = TetrisGame.HORIZONTAL_DIMENSION - 1,
-                        nextTopRow = 3,
+                        nextTopRow = TetrisGame.LEADING_OVERFLOW_ROWS,
                         nextBottomRow = TetrisGame.VERTICAL_DIMENSION - 1;
 
-                // Knock off invisible rows at top
-                int maxSquares = (TetrisGame.VERTICAL_DIMENSION - 3) * TetrisGame.HORIZONTAL_DIMENSION;
+                int maxSquares = (TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS) * TetrisGame.HORIZONTAL_DIMENSION;
 
                 while (spiralSquares.size() < maxSquares) {
                     // All cells in the next leftmost column
@@ -447,7 +446,7 @@ public class MasterTetrisFrame extends JFrame {
         void jumpClear() {
             try {
                 // Fill all rows bottom to top
-                for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= 3; row--) {
+                for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= TetrisGame.LEADING_OVERFLOW_ROWS; row--) {
                     for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
                         if (game.isOpenAndInBounds(row, col)) {
                             game.setColor(row, col, BlockType.getRandomColor());
@@ -458,7 +457,7 @@ public class MasterTetrisFrame extends JFrame {
                 }
 
                 // Clear all rows top to bottom.
-                for (int row = 3; row < TetrisGame.VERTICAL_DIMENSION; row++) {
+                for (int row = TetrisGame.LEADING_OVERFLOW_ROWS; row < TetrisGame.VERTICAL_DIMENSION; row++) {
                     for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
                         game.clearSquare(row, col);
                     }
@@ -481,7 +480,7 @@ public class MasterTetrisFrame extends JFrame {
 
         @Override
         protected int getYCoordinate(ColoredSquare square) {
-            return (square.row() - 3) * getUnitHeight(); // Adjusts for 3 invisible squares at top
+            return (square.row() - TetrisGame.LEADING_OVERFLOW_ROWS) * getUnitHeight();
         }
     }
 
