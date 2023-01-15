@@ -359,9 +359,10 @@ public class MasterTetrisFrame extends JFrame {
 
         boardPanel.disableKeyHandler();
 
+        scorePanel.levelLabel.setVisible(true); // explicitly set visible in case it's hidden due to free play mode
         scorePanel.levelLabel.setText("Game Over!!!");
-        flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.RED));
 
+        flashLabelTask = THREAD_POOL.submit(() -> scorePanel.levelLabel.flash(Color.RED));
         clearTask = THREAD_POOL.submit(boardPanel::spiralClear);
     }
 
