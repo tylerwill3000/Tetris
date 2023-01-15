@@ -1,7 +1,3 @@
-import javax.imageio.ImageIO
-import java.awt.*
-import java.awt.image.BufferedImage
-
 plugins {
     id 'idea'
     id 'java'
@@ -25,40 +21,4 @@ tasks.register('deploy', Copy) {
 tasks.register('run', JavaExec) {
     main(mainClass)
     classpath sourceSets.main.runtimeClasspath
-}
-
-tasks.register('scaleImages') {
-    group('build')
-    description('Scales down all image assets and writes them to the build directory')
-
-    File sourceDir = file('src/main/resources/images')
-    File outputDir = new File(buildDir, 'resources/main/images')
-    inputs.dir(sourceDir)
-    outputs.dir(outputDir)
-
-    // Prevents copying over unscaled images from resource folder
-    sourceSets.main.resources.exclude 'images'
-
-    doFirst {
-        outputDir.mkdirs()
-
-        for (sourceImage in sourceDir.listFiles()) {
-            BufferedImage scaledImage = scaleImage(sourceImage, 60)
-            File resultFile = new File(outputDir, sourceImage.name)
-            ImageIO.write(scaledImage, 'png', resultFile)
-        }
-    }
-}
-
-processResources.dependsOn(scaleImages)
-
-private static BufferedImage scaleImage(File image, int desiredWidth) {
-    BufferedImage buffImage = ImageIO.read(image)
-    double scaleFactor = ((double) desiredWidth) / buffImage.width
-    int desiredHeight = (int) (buffImage.height * scaleFactor)
-    Image scaledImage = buffImage.getScaledInstance(desiredWidth, desiredHeight, Image.SCALE_SMOOTH)
-
-    BufferedImage buffScaledImage = new BufferedImage(desiredWidth, desiredHeight, BufferedImage.TYPE_INT_ARGB)
-    buffScaledImage.graphics.drawImage(scaledImage, 0, 0, null)
-    buffScaledImage
 }
