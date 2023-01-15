@@ -601,20 +601,9 @@ public class MasterTetrisFrame extends JFrame {
                 boardPanel.repaint();
             });
 
-            gameModeComboBox = new JComboBox<>(GameMode.values());
-            gameModeComboBox.addActionListener(e -> game.setGameMode(getSelectedGameMode()));
-            gameModeComboBox.setSelectedIndex(0);
-
             difficultyComboBox = new JComboBox<>(Difficulty.values());
             difficultyComboBox.addActionListener(e -> game.setDifficulty(getSelectedDifficulty()));
             difficultyComboBox.setSelectedIndex(0);
-
-            specialsButton = new TetrisButton("Special Pieces");
-            specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
-
-            JPanel difficultyPanel = new JPanel();
-            difficultyPanel.add(new JLabel("Difficulty:"));
-            difficultyPanel.add(difficultyComboBox);
             difficultyComboBox.setToolTipText(
                 "<html>" +
                     "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
@@ -649,9 +638,9 @@ public class MasterTetrisFrame extends JFrame {
                 "</html>"
             );
 
-            JPanel gameModePanel = new JPanel();
-            gameModePanel.add(new JLabel("Mode:"));
-            gameModePanel.add(gameModeComboBox);
+            gameModeComboBox = new JComboBox<>(GameMode.values());
+            gameModeComboBox.addActionListener(e -> game.setGameMode(getSelectedGameMode()));
+            gameModeComboBox.setSelectedIndex(0);
             gameModeComboBox.setToolTipText(
                 "<html>" +
                     "<ul>" +
@@ -673,22 +662,39 @@ public class MasterTetrisFrame extends JFrame {
                 "</html>"
             );
 
+            specialsButton = new TetrisButton("Special Pieces");
+            specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
+
             setBorder(new TitledBorder("Settings"));
 
+            // checkbox settings
+            JPanel checkboxPanel = new JPanel(new GridLayout(3, 1));
+            checkboxPanel.add(ghostSquaresCheckbox);
+            checkboxPanel.add(musicCheckbox);
+            checkboxPanel.add(soundEffectsCheckbox);
+
+            // combobox setting
+            JPanel comboBoxLabelsPanel = new JPanel(new GridLayout(2, 1, 7, 7));
+            comboBoxLabelsPanel.add(new JLabel("Game Mode: "));
+            comboBoxLabelsPanel.add(new JLabel("Difficulty: "));
+
+            JPanel comboBoxControlsPanel = new JPanel(new GridLayout(2, 1, 7, 7));
+            comboBoxControlsPanel.add(gameModeComboBox);
+            comboBoxControlsPanel.add(difficultyComboBox);
+
+            JPanel comboBoxPanel = new JPanel(new BorderLayout());
+            comboBoxPanel.add(comboBoxLabelsPanel, BorderLayout.WEST);
+            comboBoxPanel.add(comboBoxControlsPanel, BorderLayout.EAST);
+
+            // specials button
             JPanel specialsPanel = new JPanel();
             specialsPanel.add(specialsButton);
-            var settingComponents = List.of(
-                    ghostSquaresCheckbox,
-                    musicCheckbox,
-                    soundEffectsCheckbox,
-                    gameModePanel,
-                    difficultyPanel,
-                    specialsPanel);
 
-            setLayout(new GridLayout(settingComponents.size(), 1));
-            for (var settingComponent : settingComponents) {
-                add(settingComponent);
-            }
+            // assemble settings frame
+            setLayout(new BorderLayout());
+            add(checkboxPanel, BorderLayout.NORTH);
+            add(comboBoxPanel, BorderLayout.CENTER);
+            add(specialsPanel, BorderLayout.SOUTH);
         }
 
         GameMode getSelectedGameMode() {
