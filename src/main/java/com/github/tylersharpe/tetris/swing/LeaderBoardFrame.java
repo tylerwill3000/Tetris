@@ -10,6 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
@@ -23,6 +25,8 @@ class LeaderBoardFrame extends JFrame {
             Stream.of(Difficulty.values()).map(Difficulty::getName),
             Stream.of("All")
     ).toArray(String[]::new);
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     private static final int LEADERBOARD_FRAME_WIDTH = 800;
     private static final int LEADERBOARD_FRAME_HEIGHT = 400;
@@ -94,7 +98,7 @@ class LeaderBoardFrame extends JFrame {
                         score.completedGame() ? "Complete" : score.maxLevel(),
                         score.difficulty(),
                         Utility.formatSeconds(score.gameTime().getSeconds()),
-                        score.date()
+                        DATE_FORMATTER.format(score.date())
                 })
                 .toArray(Object[][]::new);
 
