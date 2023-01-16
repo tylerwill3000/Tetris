@@ -690,10 +690,10 @@ public class MasterTetrisFrame extends JFrame {
             specialsPanel.add(specialsButton);
 
             // assemble settings frame
-            setLayout(new BorderLayout());
-            add(checkboxPanel, BorderLayout.NORTH);
-            add(comboBoxPanel, BorderLayout.CENTER);
-            add(specialsPanel, BorderLayout.SOUTH);
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            add(checkboxPanel);
+            add(comboBoxPanel);
+            add(specialsPanel);
         }
 
         GameMode getSelectedGameMode() {
