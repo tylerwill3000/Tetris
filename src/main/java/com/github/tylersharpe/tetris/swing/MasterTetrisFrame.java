@@ -435,7 +435,7 @@ public class MasterTetrisFrame extends JFrame {
                     Thread.sleep(SPIRAL_SLEEP_INTERVAL);
                 }
 
-                menuPanel.leaderboardButton.bindDisabledStateToFrame(new ScoreResultsFrame(scoreRepository, game));
+                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(scoreRepository, game, menuPanel));
             } catch (InterruptedException e) {
                 // Will happen if new game is started before spiral clear is finished
             } catch (Exception e) {
@@ -465,7 +465,7 @@ public class MasterTetrisFrame extends JFrame {
                     Thread.sleep(CLEAR_SLEEP_INTERVAL);
                 }
 
-                menuPanel.leaderboardButton.bindDisabledStateToFrame(new ScoreResultsFrame(scoreRepository, game));
+                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(scoreRepository, game, menuPanel));
             } catch (InterruptedException e) {
                 // Will happen if we start a new game before task is done
             } catch (Exception e) {
@@ -662,7 +662,7 @@ public class MasterTetrisFrame extends JFrame {
             );
 
             specialsButton = new TetrisButton("Special Pieces");
-            specialsButton.addActionListener(e -> specialsButton.bindDisabledStateToFrame(new SpecialPiecesFrame()));
+            specialsButton.addActionListener(e -> specialsButton.disableWhileShown(new SpecialPiecesFrame()));
 
             setBorder(new TitledBorder("Settings"));
 
@@ -705,7 +705,7 @@ public class MasterTetrisFrame extends JFrame {
         }
     }
 
-    private class MenuPanel extends JPanel {
+    class MenuPanel extends JPanel {
         final TetrisButton startButton = new TetrisButton("Start");
         final TetrisButton pauseButton = new TetrisButton("Pause");
         final TetrisButton resumeButton = new TetrisButton("Resume");
@@ -731,7 +731,7 @@ public class MasterTetrisFrame extends JFrame {
             leaderboardButton.setMnemonic('l');
             leaderboardButton.setEnabled(true);
             leaderboardButton.addActionListener(e ->
-                    leaderboardButton.bindDisabledStateToFrame(new LeaderBoardFrame(scoreRepository, null))
+                leaderboardButton.disableWhileShown(new LeaderBoardFrame(scoreRepository, null))
             );
             add(leaderboardButton);
 

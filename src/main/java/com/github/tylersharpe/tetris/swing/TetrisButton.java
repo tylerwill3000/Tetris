@@ -35,7 +35,7 @@ class TetrisButton extends JButton {
         });
     }
 
-    public void bindDisabledStateToFrame(JFrame frame) {
+    public void disableWhileShown(JFrame frame) {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {

@@ -17,11 +17,13 @@ class ScoreResultsFrame extends JFrame {
     private final JTextField nameField = new JTextField(10);
     private final ScoreRepository scoreRepository;
     private final TetrisGame tetrisGame;
+    private final MasterTetrisFrame.MenuPanel menuPanel;
     private final LocalDateTime scoreDate;
 
-    ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame tetrisGame) {
+    ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame tetrisGame, MasterTetrisFrame.MenuPanel menuPanel) {
         this.scoreRepository = scoreRepository;
         this.tetrisGame = tetrisGame;
+        this.menuPanel = menuPanel;
         this.scoreDate = LocalDateTime.now();
 
         setLayout(new GridLayout(3, 1));
@@ -114,7 +116,7 @@ class ScoreResultsFrame extends JFrame {
 
             dispose();
 
-            new LeaderBoardFrame(scoreRepository, score);
+            menuPanel.leaderboardButton.disableWhileShown(new LeaderBoardFrame(scoreRepository, score));
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
