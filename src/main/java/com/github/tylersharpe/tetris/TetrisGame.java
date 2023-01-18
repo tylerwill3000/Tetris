@@ -211,12 +211,11 @@ public class TetrisGame extends Broker {
     private boolean moveBlock(Block block, int rowMove, int columnMove) {
         boolean canMoveBeMade = block.calculateOccupiedSquares()
                 .stream()
-                .map(currentSquare -> {
+                .allMatch(currentSquare -> {
                     int potentialRow = currentSquare.row() + rowMove;
                     int potentialColumn = currentSquare.column() + columnMove;
-                    return new ColoredSquare(BlockType.getRandomColor(),potentialRow, potentialColumn);
-                })
-                .allMatch(squareAfterMove -> isOpenAndInBounds(squareAfterMove.row(), squareAfterMove.column()));
+                    return isOpenAndInBounds(potentialRow, potentialColumn);
+                });
 
         if (canMoveBeMade) {
             block.move(rowMove, columnMove);
