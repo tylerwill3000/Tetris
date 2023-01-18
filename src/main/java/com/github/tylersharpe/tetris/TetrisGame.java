@@ -359,8 +359,8 @@ public class TetrisGame extends Broker {
             totalLinesCleared += completedLines;
 
             // speed up fall timer
-            int newDelay = Math.max(difficulty.getInitialTimerDelay() - (totalLinesCleared * 2), FREE_PLAY_MINIMUM_FALL_TIMER_DELAY);
-            if (fallTimer.getDelay() != newDelay) {
+            if (fallTimer.getDelay() > FREE_PLAY_MINIMUM_FALL_TIMER_DELAY) {
+                int newDelay = Math.max(difficulty.getInitialTimerDelay() - (totalLinesCleared * 2), FREE_PLAY_MINIMUM_FALL_TIMER_DELAY);
                 fallTimer.setDelay(newDelay);
             }
         } else {
