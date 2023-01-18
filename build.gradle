@@ -12,13 +12,24 @@ jar {
     }
 }
 
-tasks.register('deploy', Copy) {
-    group('build')
-    from(jar)
-    into("F:\\Programs")
-}
-
 tasks.register('run', JavaExec) {
     main(mainClass)
     classpath sourceSets.main.runtimeClasspath
+}
+
+// TODO launch4j gradle plugin is throwing an exception
+// this task uses a locally installed launch4j combined with a pre-defined config file
+tasks.register('createExe', Exec) {
+    group('build')
+    dependsOn('jar')
+
+    outputs.file('tetris.exe')
+
+    commandLine 'launch4j', file('tetris-launch4j.xml').absolutePath
+}
+
+tasks.register('deploy', Copy) {
+    group('build')
+    from(createExe.outputs)
+    into("${System.getenv('USERPROFILE')}\\Desktop")
 }
