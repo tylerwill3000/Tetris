@@ -14,7 +14,7 @@ enum AudioFile {
     BEAN_MACHINE_ADVANCED("/audio/soundtrack/bean-machine-9-12.wav"),
     CHRONO_TRIGGER_FINAL_BATTLE("/audio/soundtrack/chrono-trigger-final-battle.wav"),
     ZELDA_GAME_OVER("/audio/soundtrack/zelda-game-over.wav"),
-    FINAL_FANTASY_VICTORY_FANFARE("/audio/soundtrack/ff1-victory-fanfare.wav"),
+    FINAL_FANTASY_VICTORY_FANFARE("/audio/soundtrack/final-fantasy-victory-fanfare.wav"),
     MARIO_64_PAUSE("/audio/effects/mario-64-pause.wav"),
     PIPE("/audio/effects/pipe.wav"),
     LASER("/audio/effects/laser.wav"),
