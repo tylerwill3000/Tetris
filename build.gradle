@@ -32,4 +32,7 @@ tasks.register('deploy', Copy) {
     group('build')
     from(createExe.outputs)
     into("${System.getenv('USERPROFILE')}\\Desktop")
+    doLast {
+        delete(createExe.outputs)
+    }
 }
