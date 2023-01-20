@@ -3,14 +3,13 @@ package com.github.tylersharpe.tetris;
 import java.util.Collection;
 import java.util.Objects;
 
-public class Block {
-
-    private final BlockType type;
+public class Tetronimo {
+    private final TetronimoType type;
     private int row, column;
     private int orientation;
-    private boolean isHoldBlock;
+    private boolean isHold;
 
-    public Block(BlockType type) {
+    public Tetronimo(TetronimoType type) {
         this.type = Objects.requireNonNull(type, "'type' cannot be null");
     }
 
@@ -26,15 +25,15 @@ public class Block {
         return type.getPreviewPanelSquares();
     }
 
-    public void tagAsHoldBlock() {
-        isHoldBlock = true;
+    public void tagAsHold() {
+        isHold = true;
     }
 
-    public boolean isHoldBlock() {
-        return isHoldBlock;
+    public boolean isHold() {
+        return isHold;
     }
 
-    BlockType getType() {
+    TetronimoType getType() {
         return type;
     }
 
@@ -47,7 +46,7 @@ public class Block {
         this.column = column;
     }
 
-    Block rotate(Rotation rotation) {
+    Tetronimo rotate(Rotation rotation) {
         int orientationChange = rotation == Rotation.CLOCKWISE ? 1 : -1;
         orientation += orientationChange;
         if (orientation > 3) {
@@ -60,13 +59,13 @@ public class Block {
         return this;
     }
 
-    Block copy() {
-        Block blockCopy = new Block(type);
-        blockCopy.row = row;
-        blockCopy.column = column;
-        blockCopy.orientation = orientation;
-        blockCopy.isHoldBlock = isHoldBlock;
-        return blockCopy;
+    Tetronimo copy() {
+        Tetronimo tetronimoCopy = new Tetronimo(type);
+        tetronimoCopy.row = row;
+        tetronimoCopy.column = column;
+        tetronimoCopy.orientation = orientation;
+        tetronimoCopy.isHold = isHold;
+        return tetronimoCopy;
     }
 
 }

@@ -34,8 +34,8 @@ public class MasterTetrisFrame extends JFrame {
 
     private final BoardPanel boardPanel;
     @SuppressWarnings("FieldCanBeLocal")
-    private final BlockDisplayPanel nextBlockPanel;
-    private final BlockDisplayPanel holdPanel;
+    private final TetronimoDisplayPanel nextTetronimoPanel;
+    private final TetronimoDisplayPanel holdPanel;
     private final MenuPanel menuPanel;
     private final SettingsPanel settingsPanel;
     private ScorePanel scorePanel;
@@ -55,62 +55,62 @@ public class MasterTetrisFrame extends JFrame {
             switch (keyCode) {
                 case KeyEvent.VK_LEFT -> {
                     if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
-                        game.superSlideActiveBlockLeft();
+                        game.superSlideActiveTetronimoLeft();
                         audioSystem.playSuperSlideSound();
                     } else {
-                        game.moveActiveBlockLeft();
+                        game.moveActiveTetronimoLeft();
                     }
                 }
 
                 case KeyEvent.VK_RIGHT -> {
                     if (pressedKeyCodes.contains(KeyEvent.VK_S)) {
-                        game.superSlideActiveBlockRight();
+                        game.superSlideActiveTetronimoRight();
                         audioSystem.playSuperSlideSound();
                     } else {
-                        game.moveActiveBlockRight();
+                        game.moveActiveTetronimoRight();
                     }
                 }
 
-                case KeyEvent.VK_DOWN -> game.moveActiveBlockDown();
+                case KeyEvent.VK_DOWN -> game.moveActiveTetronimoDown();
 
                 case KeyEvent.VK_UP -> {
-                    if (game.rotateActiveBlock(Rotation.CLOCKWISE)) {
+                    if (game.rotateActiveTetronimo(Rotation.CLOCKWISE)) {
                         audioSystem.playClockwiseRotationSound();
                     }
                 }
 
                 case KeyEvent.VK_F -> {
-                    if (game.rotateActiveBlock(Rotation.COUNTER_CLOCKWISE)) {
+                    if (game.rotateActiveTetronimo(Rotation.COUNTER_CLOCKWISE)) {
                         audioSystem.playCounterClockwiseRotationSound();
                     }
                 }
 
                 case KeyEvent.VK_D -> { // Hold set
 
-                    Block activeBlock = game.getActiveBlock();
-                    if (game.getHoldBlock().isEmpty() && !activeBlock.isHoldBlock()) {
-                        activeBlock.tagAsHoldBlock();
+                    Tetronimo activeTetronimo = game.getActiveTetronimo();
+                    if (game.getHoldTetronimo().isEmpty() && !activeTetronimo.isHold()) {
+                        activeTetronimo.tagAsHold();
                         audioSystem.playHoldSound();
-                        game.setHoldBlock(activeBlock);
-                        Block nextBlock = game.getConveyor().next();
-                        game.spawn(nextBlock);
+                        game.setHoldTetronimo(activeTetronimo);
+                        Tetronimo nextTetronimo = game.getConveyor().next();
+                        game.spawn(nextTetronimo);
                     }
                 }
 
                 case KeyEvent.VK_E -> { // Hold release
 
-                    if (game.getHoldBlock().isPresent()) {
-                        Block heldPiece = game.getHoldBlock().get();
+                    if (game.getHoldTetronimo().isPresent()) {
+                        Tetronimo heldPiece = game.getHoldTetronimo().get();
                         game.spawn(heldPiece);
-                        game.clearHoldBlock();
+                        game.clearHoldTetronimo();
                         audioSystem.playReleaseSound();
                     }
                 }
 
                 case KeyEvent.VK_SPACE -> {
-                    game.dropCurrentBlock();
-                    audioSystem.playBlockPlacementSound();
-                    game.tryMoveActiveBlockDown();
+                    game.dropCurrentTetronimo();
+                    audioSystem.playTetronimoPlacementSound();
+                    game.tryMoveActiveTetronimoDown();
                 }
             }
 
@@ -163,18 +163,18 @@ public class MasterTetrisFrame extends JFrame {
 
         this.boardPanel = new BoardPanel();
 
-        this.nextBlockPanel = new BlockDisplayPanel("Next") {
+        this.nextTetronimoPanel = new TetronimoDisplayPanel("Next") {
             @Override
             public Collection<ColoredSquare> getCurrentColors() {
-                Block nextBlock = game.getConveyor().peek();
-                return nextBlock == null ? List.of() : nextBlock.getPreviewPanelSquares();
+                Tetronimo nextTetronimo = game.getConveyor().peek();
+                return nextTetronimo == null ? List.of() : nextTetronimo.getPreviewPanelSquares();
             }
         };
 
-        this.holdPanel = new BlockDisplayPanel("Hold") {
+        this.holdPanel = new TetronimoDisplayPanel("Hold") {
             @Override
             public Collection<ColoredSquare> getCurrentColors() {
-                return game.getHoldBlock().map(Block::getPreviewPanelSquares).orElse(Collections.emptyList());
+                return game.getHoldTetronimo().map(Tetronimo::getPreviewPanelSquares).orElse(Collections.emptyList());
             }
         };
 
@@ -214,7 +214,7 @@ public class MasterTetrisFrame extends JFrame {
         add(boardPanel, BorderLayout.CENTER);
 
         JPanel infoPanel = new JPanel(new BorderLayout());
-        infoPanel.add(nextBlockPanel, BorderLayout.NORTH);
+        infoPanel.add(nextTetronimoPanel, BorderLayout.NORTH);
         infoPanel.add(scorePanel, BorderLayout.CENTER);
         infoPanel.add(settingsPanel, BorderLayout.SOUTH);
         add(infoPanel, BorderLayout.EAST);
@@ -225,11 +225,11 @@ public class MasterTetrisFrame extends JFrame {
         setTitle("Tetris");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        int masterWidth = (holdPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION) +
-                (boardPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION) +
-                (nextBlockPanel.getColumns() * BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
+        int masterWidth = (holdPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION) +
+                (boardPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION) +
+                (nextTetronimoPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION);
 
-        int masterHeight = BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION * (boardPanel.getRows());
+        int masterHeight = TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION * (boardPanel.getRows());
 
         setSize(masterWidth, masterHeight);
         setResizable(false); // I don't want to mess with trying to make this work right
@@ -365,7 +365,7 @@ public class MasterTetrisFrame extends JFrame {
         private static final int CLEAR_SLEEP_INTERVAL = 79;
 
         BoardPanel() {
-            super(TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS, TetrisGame.HORIZONTAL_DIMENSION, BlockDisplayPanel.DEFAULT_BLOCK_DIMENSION);
+            super(TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS, TetrisGame.HORIZONTAL_DIMENSION, TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION);
             setFocusable(true);
             setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         }
@@ -381,8 +381,8 @@ public class MasterTetrisFrame extends JFrame {
         @SuppressWarnings("DataFlowIssue")
         void spiralClear() {
             try {
-                game.persistActiveBlockColors();
-                game.clearActiveBlock();
+                game.persistActiveTetronimoColors();
+                game.clearActiveTetronimo();
 
                 List<ColoredSquare> spiralSquares = new ArrayList<>();
 
@@ -396,25 +396,25 @@ public class MasterTetrisFrame extends JFrame {
                 while (spiralSquares.size() < maxSquares) {
                     // All cells in the next leftmost column
                     for (int row = nextTopRow; row <= nextBottomRow; row++) {
-                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), row, nextLeftCol));
+                        spiralSquares.add(new ColoredSquare(TetronimoType.getRandomColor(), row, nextLeftCol));
                     }
                     nextLeftCol++;
 
                     // All cells in the next bottom row
                     for (int col = nextLeftCol; col <= nextRightCol; col++) {
-                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), nextBottomRow, col));
+                        spiralSquares.add(new ColoredSquare(TetronimoType.getRandomColor(), nextBottomRow, col));
                     }
                     nextBottomRow--;
 
                     // All cells in the next rightmost column
                     for (int row = nextBottomRow; row >= nextTopRow; row--) {
-                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), row, nextRightCol));
+                        spiralSquares.add(new ColoredSquare(TetronimoType.getRandomColor(), row, nextRightCol));
                     }
                     nextRightCol--;
 
                     // All cells in the next top row
                     for (int col = nextRightCol; col >= nextLeftCol; col--) {
-                        spiralSquares.add(new ColoredSquare(BlockType.getRandomColor(), nextTopRow, col));
+                        spiralSquares.add(new ColoredSquare(TetronimoType.getRandomColor(), nextTopRow, col));
                     }
                     nextTopRow++;
                 }
@@ -449,7 +449,7 @@ public class MasterTetrisFrame extends JFrame {
                 for (int row = TetrisGame.VERTICAL_DIMENSION - 1; row >= TetrisGame.LEADING_OVERFLOW_ROWS; row--) {
                     for (int col = 0; col < TetrisGame.HORIZONTAL_DIMENSION; col++) {
                         if (game.isOpenAndInBounds(row, col)) {
-                            game.setColor(row, col, BlockType.getRandomColor());
+                            game.setColor(row, col, TetronimoType.getRandomColor());
                         }
                     }
                     repaint();
@@ -594,7 +594,7 @@ public class MasterTetrisFrame extends JFrame {
             soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
 
             ghostSquaresCheckbox = new JCheckBox("Ghost Squares", game.isGhostSquaresEnabled());
-            ghostSquaresCheckbox.setToolTipText("Controls whether block placement squares are shown as the block falls");
+            ghostSquaresCheckbox.setToolTipText("Controls whether tetronimo placement squares are shown as the tetronimo falls");
             ghostSquaresCheckbox.addItemListener(e -> {
                 game.setGhostSquaresEnabled(ghostSquaresCheckbox.isSelected());
                 boardPanel.repaint();
@@ -623,16 +623,16 @@ public class MasterTetrisFrame extends JFrame {
                                 "<li>" + Difficulty.HARD.getWinBonus() + " on hard</li>" +
                             "</ul>" +
                         "</li>" +
-                        "<li>The likelihood of different block types appearing. Harder difficulties will cause 'easier' blocks to appear less often</li>" +
+                        "<li>The likelihood of different tetronimo types appearing. Harder difficulties will cause 'easier' tetronimos to appear less often</li>" +
                         "<li>" +
-                            "Initial block speed:" +
+                            "Initial tetronimo speed:" +
                             "<ul>" +
                                 "<li>Initial fall delay of " + Difficulty.EASY.getInitialTimerDelay() + " milliseconds on easy</li>" +
                                 "<li>Initial fall delay of " + Difficulty.MEDIUM.getInitialTimerDelay() + " milliseconds on medium</li>" +
                                 "<li>Initial fall delay of " + Difficulty.HARD.getInitialTimerDelay() + " milliseconds on hard</li>" +
                             "</ul>" +
                         "</li>" +
-                        "<p>The block speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
+                        "<p>The tetronimo speed increases at a rate of " + Difficulty.TIMER_SPEEDUP + " milliseconds per level, regardless of difficulty</p>" +
                     "</ul>" +
                 "</html>"
             );
@@ -644,7 +644,7 @@ public class MasterTetrisFrame extends JFrame {
                 "<html>" +
                     "<ul>" +
                         "<li>" +
-                            "<b>" + GameMode.CAMPAIGN + ":</b> 10 levels of play, with each successive level increasing block speed" +
+                            "<b>" + GameMode.CAMPAIGN + ":</b> 10 levels of play, with each successive level increasing tetronimo speed" +
                         "</li>" +
                         "<li>" +
                             "<b>" + GameMode.TIME_ATTACK + ":</b> Limits available time per level and grants a point bonus for each level cleared:" +
@@ -662,7 +662,7 @@ public class MasterTetrisFrame extends JFrame {
             );
 
             specialsButton = new TetrisButton("Special Pieces");
-            specialsButton.addActionListener(e -> specialsButton.disableWhileShown(new SpecialPiecesFrame()));
+            specialsButton.addActionListener(e -> specialsButton.disableWhileShown(new SpecialTetronimosFrame()));
 
             setBorder(new TitledBorder("Settings"));
 
@@ -742,32 +742,32 @@ public class MasterTetrisFrame extends JFrame {
         }
     }
 
-    private class SpecialPiecesFrame extends JFrame {
-        SpecialPiecesFrame() {
+    private class SpecialTetronimosFrame extends JFrame {
+        SpecialTetronimosFrame() {
             TetrisButton closeButton = new TetrisButton("Close");
             closeButton.addActionListener(e -> dispose());
 
-            Collection<BlockType> specialBlocks = BlockType.SPECIAL_TYPES;
-            JPanel blockPanels = new JPanel(new GridLayout(1, specialBlocks.size()));
-            for (BlockType specialType : specialBlocks) {
+            Collection<TetronimoType> specialTypes = TetronimoType.SPECIAL_TYPES;
+            JPanel tetronimoPanels = new JPanel(new GridLayout(1, specialTypes.size()));
+            for (TetronimoType specialType : specialTypes) {
 
-                BlockDisplayPanel display = new BlockDisplayPanel("\"" + specialType + "\"", new Block(specialType));
-                BlockEnabledToggleButton blockEnabledToggleButton = new BlockEnabledToggleButton(specialType);
+                TetronimoDisplayPanel display = new TetronimoDisplayPanel("\"" + specialType + "\"", new Tetronimo(specialType));
+                TetronimoEnabledToggleButton tetronimoEnabledToggleButton = new TetronimoEnabledToggleButton(specialType);
 
                 JLabel pointBonus = new JLabel("+" + specialType.getBonusPointsPerLine() + " points per line");
                 pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
 
                 JPanel toggleControlPanel = new JPanel(new BorderLayout());
-                toggleControlPanel.add(blockEnabledToggleButton, BorderLayout.NORTH);
+                toggleControlPanel.add(tetronimoEnabledToggleButton, BorderLayout.NORTH);
                 toggleControlPanel.add(pointBonus, BorderLayout.SOUTH);
 
-                JPanel blockPanel = new JPanel(new BorderLayout());
-                blockPanel.add(display, BorderLayout.CENTER);
-                blockPanel.add(toggleControlPanel, BorderLayout.SOUTH);
-                blockPanels.add(blockPanel);
+                JPanel tetronimoPanel = new JPanel(new BorderLayout());
+                tetronimoPanel.add(display, BorderLayout.CENTER);
+                tetronimoPanel.add(toggleControlPanel, BorderLayout.SOUTH);
+                tetronimoPanels.add(tetronimoPanel);
             }
 
-            add(blockPanels, BorderLayout.CENTER);
+            add(tetronimoPanels, BorderLayout.CENTER);
 
             JPanel closeButtonPanel = new JPanel();
             closeButtonPanel.add(closeButton);
@@ -781,13 +781,13 @@ public class MasterTetrisFrame extends JFrame {
             setVisible(true);
         }
 
-        private class BlockEnabledToggleButton extends JButton {
-            private final BlockType blockType;
+        private class TetronimoEnabledToggleButton extends JButton {
+            private final TetronimoType tetronimoType;
             private boolean active;
 
-            private BlockEnabledToggleButton(BlockType blockType) {
-                this.blockType = blockType;
-                setActiveState(game.getConveyor().isEnabled(blockType));
+            private TetronimoEnabledToggleButton(TetronimoType tetronimoType) {
+                this.tetronimoType = tetronimoType;
+                setActiveState(game.getConveyor().isEnabled(tetronimoType));
                 setFocusable(false);
                 addMouseMotionListener(new MouseAdapter() {
                     public void mouseMoved(MouseEvent e) {
@@ -801,9 +801,9 @@ public class MasterTetrisFrame extends JFrame {
             private void toggle() {
                 setActiveState(!active);
                 if (active) {
-                    game.getConveyor().enableBlockType(settingsPanel.getSelectedDifficulty(), blockType);
+                    game.getConveyor().enableTetronimoType(settingsPanel.getSelectedDifficulty(), tetronimoType);
                 } else {
-                    game.getConveyor().disableBlockType(blockType);
+                    game.getConveyor().disableTetronimoType(tetronimoType);
                 }
             }
 

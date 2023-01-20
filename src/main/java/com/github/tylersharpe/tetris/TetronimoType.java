@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-public enum BlockType {
+public enum TetronimoType {
 
     BOX("Box",
 
@@ -389,9 +389,9 @@ public enum BlockType {
         10
     );
 
-    private static final Color[] COLORS = Stream.of(values()).map(BlockType::getColor).toArray(Color[]::new);
-    public static final List<BlockType> DEFAULT_TYPES = Stream.of(values()).filter(it -> !it.isSpecial).toList();
-    public static final List<BlockType> SPECIAL_TYPES = Stream.of(values()).filter(it -> it.isSpecial).toList();
+    private static final Color[] COLORS = Stream.of(values()).map(TetronimoType::getColor).toArray(Color[]::new);
+    public static final List<TetronimoType> DEFAULT_TYPES = Stream.of(values()).filter(it -> !it.isSpecial).toList();
+    public static final List<TetronimoType> SPECIAL_TYPES = Stream.of(values()).filter(it -> it.isSpecial).toList();
 
     private final String name;
     private final int[][][] offsets;
@@ -401,11 +401,11 @@ public enum BlockType {
     private final boolean isSpecial;
     private final int bonusPointsPerLine;
 
-    BlockType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
+    TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
         this(name, offsets, previewPanelSquares, startRow, color, false, 0);
     }
 
-    BlockType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
+    TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
         this.name = name;
         this.offsets = offsets;
         this.previewPanelSquares = previewPanelSquares;

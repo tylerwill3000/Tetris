@@ -91,7 +91,7 @@ public class TetrisAudioSystem {
         playEffect(PAUSE);
     }
 
-    public void playBlockPlacementSound() {
+    public void playTetronimoPlacementSound() {
         playEffect(PLACE_BLOCK);
     }
 

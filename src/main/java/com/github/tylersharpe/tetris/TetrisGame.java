@@ -10,17 +10,16 @@ import java.util.*;
 
 public class TetrisGame extends Broker {
     public static final int FREE_PLAY_MINIMUM_FALL_TIMER_DELAY = 50;
-
     public static final int LEADING_OVERFLOW_ROWS = 3;
     public static final int MAX_LEVEL = 10;
     public static final int VERTICAL_DIMENSION = 20 + LEADING_OVERFLOW_ROWS;
     public static final int HORIZONTAL_DIMENSION = 10;
 
     private GameMode gameMode;
-    private Block activeBlock;
-    private Block holdBlock;
-    private final BlockConveyor conveyor;
-    private final LinkedList<Color[]> persistedBlocks; // Persisted colors for previous blocks; doesn't include active block squares
+    private Tetronimo activeTetronimo;
+    private Tetronimo holdTetronimo;
+    private final TetronimoConveyor conveyor;
+    private final LinkedList<Color[]> persistedSquares; // persisted colors for placed tetronimos; doesn't include active tetronimo squares
     private Difficulty difficulty;
     private int totalLinesCleared;
     private int score;
@@ -34,14 +33,14 @@ public class TetrisGame extends Broker {
 
     public TetrisGame() {
         this.gameMode = GameMode.CAMPAIGN;
-        this.conveyor = new BlockConveyor();
+        this.conveyor = new TetronimoConveyor();
 
-        this.persistedBlocks = new LinkedList<>();
+        this.persistedSquares = new LinkedList<>();
         for (int i = 1; i <= VERTICAL_DIMENSION; i++) {
-            persistedBlocks.add(new Color[HORIZONTAL_DIMENSION]);
+            persistedSquares.add(new Color[HORIZONTAL_DIMENSION]);
         }
 
-        this.fallTimer = new Timer(0, e -> tryMoveActiveBlockDown());
+        this.fallTimer = new Timer(0, e -> tryMoveActiveTetronimoDown());
 
         this.gameTimer = new Timer(1000, e -> {
             setGameTime(gameTimeSeconds + 1);
@@ -63,20 +62,20 @@ public class TetrisGame extends Broker {
         this.gameMode = gameMode;
     }
 
-    public Block getActiveBlock() {
-        return activeBlock;
+    public Tetronimo getActiveTetronimo() {
+        return activeTetronimo;
     }
 
-    public Optional<Block> getHoldBlock() {
-        return Optional.ofNullable(holdBlock);
+    public Optional<Tetronimo> getHoldTetronimo() {
+        return Optional.ofNullable(holdTetronimo);
     }
 
-    public void setHoldBlock(Block block) {
-        this.holdBlock = block;
+    public void setHoldTetronimo(Tetronimo tetronimo) {
+        this.holdTetronimo = tetronimo;
     }
 
-    public void clearHoldBlock() {
-        setHoldBlock(null);
+    public void clearHoldTetronimo() {
+        setHoldTetronimo(null);
     }
 
     public void setGhostSquaresEnabled(boolean ghostSquaresEnabled) {
@@ -114,7 +113,7 @@ public class TetrisGame extends Broker {
         gameTimeSeconds = time;
     }
 
-    public BlockConveyor getConveyor() {
+    public TetronimoConveyor getConveyor() {
         return conveyor;
     }
 
@@ -143,7 +142,7 @@ public class TetrisGame extends Broker {
             this.isGameWon = true;
             fallTimer.stop();
             gameTimer.stop();
-            clearActiveBlock(); // Needed so that this block's squares don't get re-painted during victory clear animation
+            clearActiveTetronimo(); // Needed so that this tetronimo's squares don't get re-painted during victory clear animation
             publish(TetrisEvent.GAME_WON, level);
         } else {
             int initialDelay = difficulty.getInitialTimerDelay();
@@ -161,11 +160,11 @@ public class TetrisGame extends Broker {
 
     public boolean isOpenAndInBounds(int row, int column) {
         boolean isInBounds = row >= 0 && row < VERTICAL_DIMENSION && column >= 0 && column < HORIZONTAL_DIMENSION;
-        return isInBounds && persistedBlocks.get(row)[column] == null;
+        return isInBounds && persistedSquares.get(row)[column] == null;
     }
 
     public void setColor(int row, int col, Color color) {
-        persistedBlocks.get(row)[col] = color;
+        persistedSquares.get(row)[col] = color;
     }
 
     public int getTotalLinesCleared() {
@@ -177,39 +176,39 @@ public class TetrisGame extends Broker {
         return totalLinesCleared - lastLevelThreshold;
     }
 
-    public boolean moveActiveBlockRight() {
-        return moveBlock(activeBlock, 0, 1);
+    public boolean moveActiveTetronimoRight() {
+        return moveTetronimo(activeTetronimo, 0, 1);
     }
 
-    public boolean moveActiveBlockLeft() {
-        return moveBlock(activeBlock, 0, -1);
+    public boolean moveActiveTetronimoLeft() {
+        return moveTetronimo(activeTetronimo, 0, -1);
     }
 
-    public boolean moveActiveBlockDown() {
-        return moveBlock(activeBlock, 1, 0);
+    public boolean moveActiveTetronimoDown() {
+        return moveTetronimo(activeTetronimo, 1, 0);
     }
 
-    public void clearActiveBlock() {
-        this.activeBlock = null;
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    public void dropCurrentBlock() {
-        while (moveActiveBlockDown()) {}
+    public void clearActiveTetronimo() {
+        this.activeTetronimo = null;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public void superSlideActiveBlockLeft() {
-        while (moveActiveBlockLeft()) {}
+    public void dropCurrentTetronimo() {
+        while (moveActiveTetronimoDown()) {}
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
-    public void superSlideActiveBlockRight() {
-        while (moveActiveBlockRight()) {}
+    public void superSlideActiveTetronimoLeft() {
+        while (moveActiveTetronimoLeft()) {}
     }
 
-    private boolean moveBlock(Block block, int rowMove, int columnMove) {
-        boolean canMoveBeMade = block.calculateOccupiedSquares()
+    @SuppressWarnings("StatementWithEmptyBody")
+    public void superSlideActiveTetronimoRight() {
+        while (moveActiveTetronimoRight()) {}
+    }
+
+    private boolean moveTetronimo(Tetronimo tetronimo, int rowMove, int columnMove) {
+        boolean canMoveBeMade = tetronimo.calculateOccupiedSquares()
                 .stream()
                 .allMatch(currentSquare -> {
                     int potentialRow = currentSquare.row() + rowMove;
@@ -218,22 +217,22 @@ public class TetrisGame extends Broker {
                 });
 
         if (canMoveBeMade) {
-            block.move(rowMove, columnMove);
+            tetronimo.move(rowMove, columnMove);
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean rotateActiveBlock(Rotation rotation) {
-        Collection<ColoredSquare> squaresAfterRotation = activeBlock.copy().rotate(rotation).calculateOccupiedSquares();
+    public boolean rotateActiveTetronimo(Rotation rotation) {
+        Collection<ColoredSquare> squaresAfterRotation = activeTetronimo.copy().rotate(rotation).calculateOccupiedSquares();
 
         boolean areRotatedSquaresLegal = squaresAfterRotation
                 .stream()
                 .allMatch(squareAfterRotation -> isOpenAndInBounds(squareAfterRotation.row(), squareAfterRotation.column()));
 
         if (areRotatedSquaresLegal) {
-            activeBlock.rotate(rotation);
+            activeTetronimo.rotate(rotation);
             return true;
         } else {
             return false;
@@ -242,22 +241,22 @@ public class TetrisGame extends Broker {
 
     @SuppressWarnings("StatementWithEmptyBody")
     private Collection<ColoredSquare> getGhostSquares() {
-        if (activeBlock == null) {
+        if (activeTetronimo == null) {
             return List.of();
         }
 
-        Block activeBlockCopy = activeBlock.copy();
-        Collection<ColoredSquare> currentActiveBlockSquares = activeBlockCopy.calculateOccupiedSquares();
+        Tetronimo activeTetronimoCopy = activeTetronimo.copy();
+        Collection<ColoredSquare> currentActiveTetronimoSquares = activeTetronimoCopy.calculateOccupiedSquares();
 
-        while (moveBlock(activeBlockCopy, 1, 0)) {
+        while (moveTetronimo(activeTetronimoCopy, 1, 0)) {
             // drop as far as possible
         }
-        Collection<ColoredSquare> ghostSquares = activeBlockCopy.calculateOccupiedSquares();
+        Collection<ColoredSquare> ghostSquares = activeTetronimoCopy.calculateOccupiedSquares();
 
-        // remove any ghost squares that overlap with the current active block
+        // remove any ghost squares that overlap with the current active tetronimo
         ghostSquares.removeIf(ghostSquare ->
-                currentActiveBlockSquares.stream().anyMatch(activeBlockSquare ->
-                        activeBlockSquare.row() == ghostSquare.row() && activeBlockSquare.column() == ghostSquare.column())
+                currentActiveTetronimoSquares.stream().anyMatch(activeTetronimoSquare ->
+                        activeTetronimoSquare.row() == ghostSquare.row() && activeTetronimoSquare.column() == ghostSquare.column())
         );
 
         return ghostSquares.stream()
@@ -266,15 +265,15 @@ public class TetrisGame extends Broker {
     }
 
     /**
-     * Attempts to vertically drop the current active piece 1 square.
-     * If the piece could not be dropped, its colors are logged to the color grid and any complete rows removed
+     * Attempts to vertically drop the current active tetronimo 1 square.
+     * If the tetronimo could not be dropped, its colors are logged to the color grid and any complete rows removed
      */
-    public void tryMoveActiveBlockDown() {
-        if (moveActiveBlockDown()) {
+    public void tryMoveActiveTetronimoDown() {
+        if (moveActiveTetronimoDown()) {
             return;
         }
 
-        persistActiveBlockColors();
+        persistActiveTetronimoColors();
         int linesCleared = clearCompleteLines();
 
         if (linesCleared > 0) {
@@ -288,17 +287,17 @@ public class TetrisGame extends Broker {
     }
 
     private int clearCompleteLines() {
-        int indexOfRowToCheck = Math.min(activeBlock.getRow(), VERTICAL_DIMENSION - 1);
+        int indexOfRowToCheck = Math.min(activeTetronimo.getRow(), VERTICAL_DIMENSION - 1);
         int minRowToCheck = Math.max(0, indexOfRowToCheck - 3);
 
         int linesCleared = 0;
         while (indexOfRowToCheck >= minRowToCheck && linesCleared <= 4) {
 
-            Color[] rowToScan = persistedBlocks.get(indexOfRowToCheck);
+            Color[] rowToScan = persistedSquares.get(indexOfRowToCheck);
             boolean isRowComplete = Arrays.stream(rowToScan).allMatch(Objects::nonNull);
             if (isRowComplete) {
-                persistedBlocks.remove(indexOfRowToCheck);
-                persistedBlocks.offerFirst(new Color[HORIZONTAL_DIMENSION]);
+                persistedSquares.remove(indexOfRowToCheck);
+                persistedSquares.offerFirst(new Color[HORIZONTAL_DIMENSION]);
                 linesCleared++;
             } else {
                 indexOfRowToCheck--;
@@ -308,9 +307,9 @@ public class TetrisGame extends Broker {
         return linesCleared;
     }
 
-    public void persistActiveBlockColors() {
-        if (activeBlock != null) {
-            for (var square : activeBlock.calculateOccupiedSquares()) {
+    public void persistActiveTetronimoColors() {
+        if (activeTetronimo != null) {
+            for (var square : activeTetronimo.calculateOccupiedSquares()) {
                 setColor(square.row(), square.column(), square.color());
             }
         }
@@ -325,10 +324,10 @@ public class TetrisGame extends Broker {
         this.totalLinesCleared = 0;
         this.currentLevelTime = 0;
 
-        clearActiveBlock();
-        clearHoldBlock();
+        clearActiveTetronimo();
+        clearHoldTetronimo();
 
-        this.persistedBlocks.forEach(row -> Arrays.fill(row, null));
+        this.persistedSquares.forEach(row -> Arrays.fill(row, null));
 
         this.conveyor.reset();
         spawn(this.conveyor.next());
@@ -349,7 +348,7 @@ public class TetrisGame extends Broker {
         };
 
         // Special pieces bonus
-        newScore += conveyor.getEnabledSpecialBlockTypes()
+        newScore += conveyor.getEnabledSpecialTetronimoTypes()
                 .stream()
                 .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
                 .sum();
@@ -390,27 +389,27 @@ public class TetrisGame extends Broker {
     }
 
     /**
-     * Attempts to spawn the given block object in the board model, replacing the current active block.
+     * Attempts to spawn the given tetronimo object in the board model, replacing the current active tetronimo.
      */
-    public void spawn(Block block) {
-        int startRow = block.getType().getStartRow();
+    public void spawn(Tetronimo tetronimo) {
+        int startRow = tetronimo.getType().getStartRow();
         int startCol = HORIZONTAL_DIMENSION / 2;
 
         while (true) {
-            var spawnSquares = block.getType().calculateOccupiedSquares(0, startRow, startCol);
+            var spawnSquares = tetronimo.getType().calculateOccupiedSquares(0, startRow, startCol);
 
             boolean anyVisible = spawnSquares.stream().anyMatch(square -> square.row() >= LEADING_OVERFLOW_ROWS);
             if (!anyVisible) {
                 fallTimer.stop();
                 gameTimer.stop();
-                publish(TetrisEvent.SPAWN_FAIL, block);
+                publish(TetrisEvent.SPAWN_FAIL, tetronimo);
                 return;
             }
 
             boolean allOpen = spawnSquares.stream().allMatch(square -> isOpenAndInBounds(square.row(), square.column()));
             if (allOpen) {
-                block.setLocation(startRow, startCol);
-                this.activeBlock = block;
+                tetronimo.setLocation(startRow, startCol);
+                this.activeTetronimo = tetronimo;
                 return;
             } else {
                 startRow--; // Try to push piece upwards past board bounds if we can
@@ -421,15 +420,15 @@ public class TetrisGame extends Broker {
     public Collection<ColoredSquare> getColoredSquares() {
         List<ColoredSquare> squares = new ArrayList<>(HORIZONTAL_DIMENSION * VERTICAL_DIMENSION);
 
-        if (activeBlock != null) {
-            squares.addAll(activeBlock.calculateOccupiedSquares());
+        if (activeTetronimo != null) {
+            squares.addAll(activeTetronimo.calculateOccupiedSquares());
             if (this.ghostSquaresEnabled) {
                 squares.addAll(getGhostSquares());
             }
         }
 
         for (int rowIndex = 0; rowIndex < VERTICAL_DIMENSION; rowIndex++) {
-            Color[] rowColors = persistedBlocks.get(rowIndex);
+            Color[] rowColors = persistedSquares.get(rowIndex);
             for (int columnIndex = 0; columnIndex < rowColors.length; columnIndex++) {
                 if (rowColors[columnIndex] != null) {
                     squares.add(new ColoredSquare(rowColors[columnIndex], rowIndex, columnIndex));

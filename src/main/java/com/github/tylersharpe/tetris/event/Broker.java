@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class Broker {
-
     private final Map<TetrisEvent, Collection<Consumer<Object>>> subscribers;
 
     public Broker() {
