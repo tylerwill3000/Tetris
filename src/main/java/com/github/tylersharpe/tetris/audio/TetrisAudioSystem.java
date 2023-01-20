@@ -33,8 +33,8 @@ public class TetrisAudioSystem {
     private static final Clip HOLD = createBufferedClip(AudioFile.CLANG);
     private static final Clip RELEASE = createBufferedClip(AudioFile.CLANG);
 
-    private boolean soundtrackEnabled = false;
-    private boolean effectsEnabled = false;
+    private boolean soundtrackEnabled = true;
+    private boolean effectsEnabled = true;
 
     public static TetrisAudioSystem getInstance() {
         return INSTANCE;

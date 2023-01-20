@@ -21,8 +21,8 @@ tasks.register('run', JavaExec) {
 // this task uses a locally installed launch4j combined with a pre-defined config file
 tasks.register('createExe', Exec) {
     group('build')
-    dependsOn('jar')
 
+    inputs.files(jar.outputs)
     outputs.file('tetris.exe')
 
     commandLine 'launch4j', file('tetris-launch4j.xml').absolutePath
