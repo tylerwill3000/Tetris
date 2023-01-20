@@ -31,7 +31,7 @@ public class TetrisAudioSystem {
     private static final Clip SWISH_DOWN = createBufferedClip(AudioFile.SWISH_DOWN);
     private static final Clip SUPER_SLIDE = createBufferedClip(AudioFile.SUPER_SLIDE);
     private static final Clip HOLD = createBufferedClip(AudioFile.CLANG);
-    private static final Clip RELEASE = createBufferedClip(AudioFile.CLANG);
+    private static final Clip RELEASE = createBufferedClip(AudioFile.WATER_DROP);
 
     private boolean soundtrackEnabled = true;
     private boolean effectsEnabled = true;
