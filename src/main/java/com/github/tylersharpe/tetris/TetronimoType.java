@@ -1,7 +1,6 @@
 package com.github.tylersharpe.tetris;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -395,7 +394,7 @@ public enum TetronimoType {
 
     private final String name;
     private final int[][][] offsets;
-    private final int[][] previewPanelSquares;
+    private final Collection<ColoredSquare> previewPanelSquares;
     private final int startRow;
     private final Color color;
     private final boolean isSpecial;
@@ -408,7 +407,9 @@ public enum TetronimoType {
     TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
         this.name = name;
         this.offsets = offsets;
-        this.previewPanelSquares = previewPanelSquares;
+        this.previewPanelSquares = Stream.of(previewPanelSquares)
+                .map(coordinates -> new ColoredSquare(color, coordinates[0], coordinates[1]))
+                .toList();
         this.startRow = startRow;
         this.color = color;
         this.isSpecial = isSpecial;
@@ -416,9 +417,7 @@ public enum TetronimoType {
     }
 
     public Collection<ColoredSquare> getPreviewPanelSquares() {
-        return Arrays.stream(previewPanelSquares)
-                .map(coordinates -> new ColoredSquare(color, coordinates[0], coordinates[1]))
-                .collect(toList());
+        return this.previewPanelSquares;
     }
 
     public int getStartRow() {
@@ -444,9 +443,9 @@ public enum TetronimoType {
 
         int[][] offsetsForOrientation = this.offsets[orientation];
 
-        return Arrays.stream(offsetsForOrientation)
+        return Stream.of(offsetsForOrientation)
                 .map(offset -> new ColoredSquare(color, row + offset[0], col + offset[1]))
-                .collect(toList());
+                .toList();
     }
 
     public static Color getRandomColor() {

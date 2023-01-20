@@ -5,10 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class ScoreRepository {
 
@@ -58,7 +55,7 @@ public class ScoreRepository {
     }
 
     public void saveScore(Score score) throws IOException {
-        List<Score> allScores = new ArrayList<>(readScoresFromDisk());
+        Collection<Score> allScores = new ArrayList<>(readScoresFromDisk());
         allScores.add(score);
 
         try (var objectOutputStream = new ObjectOutputStream(new FileOutputStream(SAVE_PATH.toFile()))) {
@@ -67,13 +64,13 @@ public class ScoreRepository {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Score> readScoresFromDisk() throws IOException {
+    private Collection<Score> readScoresFromDisk() throws IOException {
         if (!Files.exists(SAVE_PATH)) {
             return Collections.emptyList();
         }
 
         try (var scoresInputStream = new ObjectInputStream(new FileInputStream(SAVE_PATH.toFile()))) {
-            return (List<Score>) scoresInputStream.readObject();
+            return (Collection<Score>) scoresInputStream.readObject();
         } catch (ClassCastException | ClassNotFoundException e) {
             throw new IOException("Malformed high scores file", e);
         }

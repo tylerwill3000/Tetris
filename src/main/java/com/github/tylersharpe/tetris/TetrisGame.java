@@ -7,6 +7,7 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class TetrisGame extends Broker {
     public static final int FREE_PLAY_MINIMUM_FALL_TIMER_DELAY = 50;
@@ -251,7 +252,7 @@ public class TetrisGame extends Broker {
         while (moveTetronimo(activeTetronimoCopy, 1, 0)) {
             // drop as far as possible
         }
-        Collection<ColoredSquare> ghostSquares = activeTetronimoCopy.calculateOccupiedSquares();
+        Collection<ColoredSquare> ghostSquares = new ArrayList<>(activeTetronimoCopy.calculateOccupiedSquares());
 
         // remove any ghost squares that overlap with the current active tetronimo
         ghostSquares.removeIf(ghostSquare ->
@@ -287,20 +288,15 @@ public class TetrisGame extends Broker {
     }
 
     private int clearCompleteLines() {
-        int indexOfRowToCheck = Math.min(activeTetronimo.getRow(), VERTICAL_DIMENSION - 1);
-        int minRowToCheck = Math.max(0, indexOfRowToCheck - 3);
-
         int linesCleared = 0;
-        while (indexOfRowToCheck >= minRowToCheck && linesCleared <= 4) {
 
-            Color[] rowToScan = persistedSquares.get(indexOfRowToCheck);
-            boolean isRowComplete = Arrays.stream(rowToScan).allMatch(Objects::nonNull);
+        for (int rowIndex = 0; rowIndex < VERTICAL_DIMENSION && linesCleared < 4; rowIndex++) {
+            Color[] colorsForRow = persistedSquares.get(rowIndex);
+            boolean isRowComplete = Stream.of(colorsForRow).allMatch(Objects::nonNull);
             if (isRowComplete) {
-                persistedSquares.remove(indexOfRowToCheck);
+                persistedSquares.remove(rowIndex);
                 persistedSquares.offerFirst(new Color[HORIZONTAL_DIMENSION]);
                 linesCleared++;
-            } else {
-                indexOfRowToCheck--;
             }
         }
 
