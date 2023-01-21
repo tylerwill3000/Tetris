@@ -17,6 +17,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static com.github.tylersharpe.tetris.Utility.formatSeconds;
+
 public class MasterTetrisFrame extends JFrame {
 
     // Prevents tooltips from disappearing while mouse is over them
@@ -513,11 +515,15 @@ public class MasterTetrisFrame extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                String timeLabel = "Time: " + Utility.formatSeconds(game.getCurrentLevelTime());
+
+                String timeDisplay;
                 if (game.getGameMode() == GameMode.TIME_ATTACK) {
-                    timeLabel += " / " + Utility.formatSeconds(game.getDifficulty().getTimeAttackSecondsPerLevel());
+                    timeDisplay = "Time: %s / %s".formatted(formatSeconds(game.getCurrentLevelTime()), formatSeconds(game.getDifficulty().getTimeAttackSecondsPerLevel()));
+                } else {
+                    timeDisplay = "Time: %s".formatted(formatSeconds(game.getGameTime()));
                 }
-                setText(timeLabel);
+
+                setText(timeDisplay);
             }
         };
 
