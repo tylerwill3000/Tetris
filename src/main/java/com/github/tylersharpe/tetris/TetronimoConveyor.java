@@ -1,13 +1,13 @@
 package com.github.tylersharpe.tetris;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
 
 public final class TetronimoConveyor {
-
-    private final Set<TetronimoType> enabledTetronimoTypes = EnumSet.noneOf(TetronimoType.class);
     private final List<TetronimoType> tetronimoTypeSampleList = new ArrayList<>();
     private final Queue<Tetronimo> conveyor = new ArrayDeque<>();
-    private final Set<TetronimoType> enabledSpecialTetronimoTypes = EnumSet.noneOf(TetronimoType.class);
 
     public Tetronimo next() {
         conveyor.offer(generateBlock());
@@ -24,44 +24,20 @@ public final class TetronimoConveyor {
         conveyor.add(generateBlock());
     }
 
-    void setDifficulty(Difficulty difficulty) {
+    void applySpawnRates(Difficulty difficulty) {
         tetronimoTypeSampleList.clear();
 
-        for (TetronimoType defaultTetronimoType : TetronimoType.DEFAULT_TYPES) {
-            enableTetronimoType(difficulty, defaultTetronimoType);
+        for (TetronimoType tetronimoType : TetronimoType.values()) {
+            int spawnRate = difficulty.getSpawnRate(tetronimoType);
+
+            for (int i = 1; i <= spawnRate; i++) {
+                tetronimoTypeSampleList.add(tetronimoType);
+            }
         }
-    }
-
-    public void enableTetronimoType(Difficulty difficulty, TetronimoType tetronimoType) {
-        if (tetronimoType.isSpecial()) {
-            enabledSpecialTetronimoTypes.add(tetronimoType);
-        }
-        enabledTetronimoTypes.add(tetronimoType);
-        tetronimoTypeSampleList.removeIf(sampleType -> sampleType == tetronimoType);
-
-        int spawnRate = difficulty.getSpawnRate(tetronimoType);
-        for (int i = 1; i <= spawnRate; i++) {
-            tetronimoTypeSampleList.add(tetronimoType);
-        }
-    }
-
-    public void disableTetronimoType(TetronimoType typeToDisable) {
-        enabledSpecialTetronimoTypes.remove(typeToDisable);
-        enabledTetronimoTypes.remove(typeToDisable);
-        tetronimoTypeSampleList.removeIf(type -> type == typeToDisable);
-    }
-
-    Set<TetronimoType> getEnabledSpecialTetronimoTypes() {
-        return enabledSpecialTetronimoTypes;
-    }
-
-    public boolean isEnabled(TetronimoType type) {
-        return enabledTetronimoTypes.contains(type);
     }
 
     private Tetronimo generateBlock() {
         return new Tetronimo(Utility.sample(tetronimoTypeSampleList));
     }
-
 }
 

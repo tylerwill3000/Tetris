@@ -9,8 +9,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -251,7 +249,6 @@ public class MasterTetrisFrame extends JFrame {
         }
 
         settingsPanel.difficultyComboBox.setEnabled(false);
-        settingsPanel.specialsButton.setEnabled(false);
         settingsPanel.gameModeComboBox.setEnabled(false);
         settingsPanel.ghostSquaresCheckbox.setEnabled(false);
         settingsPanel.musicCheckbox.setEnabled(false);
@@ -312,7 +309,6 @@ public class MasterTetrisFrame extends JFrame {
 
     private void onWin() {
         settingsPanel.difficultyComboBox.setEnabled(true);
-        settingsPanel.specialsButton.setEnabled(true);
         settingsPanel.gameModeComboBox.setEnabled(true);
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
         settingsPanel.musicCheckbox.setEnabled(true);
@@ -351,7 +347,6 @@ public class MasterTetrisFrame extends JFrame {
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
         settingsPanel.gameModeComboBox.setEnabled(true);
         settingsPanel.difficultyComboBox.setEnabled(true);
-        settingsPanel.specialsButton.setEnabled(true);
 
         boardPanel.disableKeyHandler();
 
@@ -588,7 +583,6 @@ public class MasterTetrisFrame extends JFrame {
         private final JCheckBox soundEffectsCheckbox;
         private final JComboBox<GameMode> gameModeComboBox;
         private final JComboBox<Difficulty> difficultyComboBox;
-        private final TetrisButton specialsButton;
 
         SettingsPanel() {
             musicCheckbox = new JCheckBox("Music", audioSystem.isSoundtrackEnabled());
@@ -659,39 +653,30 @@ public class MasterTetrisFrame extends JFrame {
                 "</html>"
             );
 
-            specialsButton = new TetrisButton("Special Pieces");
-            specialsButton.addActionListener(e -> specialsButton.disableWhileShown(new SpecialTetronimosFrame()));
-
             setBorder(new TitledBorder("Settings"));
-
-            // checkbox settings
-            JPanel checkboxPanel = new JPanel(new GridLayout(3, 1));
-            checkboxPanel.add(ghostSquaresCheckbox);
-            checkboxPanel.add(musicCheckbox);
-            checkboxPanel.add(soundEffectsCheckbox);
-
-            // combobox setting
-            JPanel comboBoxLabelsPanel = new JPanel(new GridLayout(2, 1, 7, 7));
-            comboBoxLabelsPanel.add(new JLabel("Game Mode: "));
-            comboBoxLabelsPanel.add(new JLabel("Difficulty: "));
-
-            JPanel comboBoxControlsPanel = new JPanel(new GridLayout(2, 1, 7, 7));
-            comboBoxControlsPanel.add(gameModeComboBox);
-            comboBoxControlsPanel.add(difficultyComboBox);
-
-            JPanel comboBoxPanel = new JPanel(new BorderLayout());
-            comboBoxPanel.add(comboBoxLabelsPanel, BorderLayout.WEST);
-            comboBoxPanel.add(comboBoxControlsPanel, BorderLayout.EAST);
-
-            // specials button
-            JPanel specialsPanel = new JPanel();
-            specialsPanel.add(specialsButton);
-
-            // assemble settings frame
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-            add(checkboxPanel);
-            add(comboBoxPanel);
-            add(specialsPanel);
+
+            add(ghostSquaresCheckbox);
+            add(musicCheckbox);
+            add(soundEffectsCheckbox);
+
+            add(Box.createRigidArea(new Dimension(0, 5)));
+
+            add(new JLabel("Game Mode"));
+            var gameModePanel = new JPanel();
+            gameModePanel.setLayout(new BoxLayout(gameModePanel, BoxLayout.X_AXIS));
+            gameModePanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+            gameModePanel.add(gameModeComboBox);
+            add(gameModePanel);
+
+            add(Box.createRigidArea(new Dimension(0, 5)));
+
+            add(new JLabel("Difficulty"));
+            var difficultyPanel = new JPanel();
+            difficultyPanel.setLayout(new BoxLayout(difficultyPanel, BoxLayout.X_AXIS));
+            difficultyPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+            difficultyPanel.add(difficultyComboBox);
+            add(difficultyPanel);
         }
 
         GameMode getSelectedGameMode() {
@@ -739,78 +724,4 @@ public class MasterTetrisFrame extends JFrame {
             add(giveUpButton);
         }
     }
-
-    private class SpecialTetronimosFrame extends JFrame {
-        SpecialTetronimosFrame() {
-            TetrisButton closeButton = new TetrisButton("Close");
-            closeButton.addActionListener(e -> dispose());
-
-            Collection<TetronimoType> specialTypes = TetronimoType.SPECIAL_TYPES;
-            JPanel tetronimoPanels = new JPanel(new GridLayout(1, specialTypes.size()));
-            for (TetronimoType specialType : specialTypes) {
-
-                TetronimoDisplayPanel display = new TetronimoDisplayPanel("\"" + specialType + "\"", new Tetronimo(specialType));
-                TetronimoEnabledToggleButton tetronimoEnabledToggleButton = new TetronimoEnabledToggleButton(specialType);
-
-                JLabel pointBonus = new JLabel("+" + specialType.getBonusPointsPerLine() + " points per line");
-                pointBonus.setHorizontalAlignment(SwingConstants.CENTER);
-
-                JPanel toggleControlPanel = new JPanel(new BorderLayout());
-                toggleControlPanel.add(tetronimoEnabledToggleButton, BorderLayout.NORTH);
-                toggleControlPanel.add(pointBonus, BorderLayout.SOUTH);
-
-                JPanel tetronimoPanel = new JPanel(new BorderLayout());
-                tetronimoPanel.add(display, BorderLayout.CENTER);
-                tetronimoPanel.add(toggleControlPanel, BorderLayout.SOUTH);
-                tetronimoPanels.add(tetronimoPanel);
-            }
-
-            add(tetronimoPanels, BorderLayout.CENTER);
-
-            JPanel closeButtonPanel = new JPanel();
-            closeButtonPanel.add(closeButton);
-            add(closeButtonPanel, BorderLayout.SOUTH);
-
-            setIconImage(new ImageIcon(ImageFile.STAR_ICON.getUrl()).getImage());
-            setTitle("Special Pieces");
-            setResizable(false);
-            pack();
-            setLocationRelativeTo(null);
-            setVisible(true);
-        }
-
-        private class TetronimoEnabledToggleButton extends JButton {
-            private final TetronimoType tetronimoType;
-            private boolean active;
-
-            private TetronimoEnabledToggleButton(TetronimoType tetronimoType) {
-                this.tetronimoType = tetronimoType;
-                setActiveState(game.getConveyor().isEnabled(tetronimoType));
-                setFocusable(false);
-                addMouseMotionListener(new MouseAdapter() {
-                    public void mouseMoved(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    }
-                });
-                addActionListener(e -> toggle());
-                setPreferredSize(new Dimension(getWidth(), 28));
-            }
-
-            private void toggle() {
-                setActiveState(!active);
-                if (active) {
-                    game.getConveyor().enableTetronimoType(settingsPanel.getSelectedDifficulty(), tetronimoType);
-                } else {
-                    game.getConveyor().disableTetronimoType(tetronimoType);
-                }
-            }
-
-            void setActiveState(boolean active) {
-                this.active = active;
-                setBackground(active ? Color.YELLOW : Color.LIGHT_GRAY);
-                setText(active ? "Active" : "Inactive");
-            }
-        }
-    }
-
 }

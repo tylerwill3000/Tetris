@@ -124,7 +124,7 @@ public class TetrisGame extends Broker {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
-        this.conveyor.setDifficulty(difficulty);
+        this.conveyor.applySpawnRates(difficulty);
         this.fallTimer.setDelay(difficulty.getInitialTimerDelay());
     }
 
@@ -342,12 +342,6 @@ public class TetrisGame extends Broker {
             case 4 -> 100;
             default -> throw new RuntimeException("Completed lines must be in range 1 - 4");
         };
-
-        // Special pieces bonus
-        newScore += conveyor.getEnabledSpecialTetronimoTypes()
-                .stream()
-                .mapToInt(special -> completedLines * special.getBonusPointsPerLine())
-                .sum();
 
         if (gameMode == GameMode.FREE_PLAY) {
             // increase lines cleared

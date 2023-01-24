@@ -2,10 +2,7 @@ package com.github.tylersharpe.tetris;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 public enum TetronimoType {
 
@@ -238,173 +235,22 @@ public enum TetronimoType {
 
         // Color
         new Color(255, 30, 0) // Red
-    ),
-
-    TWIN_PILLARS("Twin Pillars",
-
-        // Offsets
-        new int[][][]{
-
-            // ...
-            // X.X
-            // X.X
-            {{0, 0}, {-1, 0}, {-1, 2}, {0, 2}},
-
-            // XX.
-            // ...
-            // XX.
-            {{-2, 0}, {-2, 1}, {0, 0}, {0, 1}},
-
-            // Other two offsets are the same, so cycle through them again
-            {{0, 0}, {-1, 0}, {-1, 2}, {0, 2}},
-            {{-2, 0}, {-2, 1}, {0, 0}, {0, 1}}
-
-        },
-
-        // Preview panel squares
-        new int[][]{{1, 1}, {2, 1}, {1, 3}, {2, 3}},
-
-        // Start row
-        4,
-
-        // Color
-        new Color(80, 140, 45), // Forest-green
-
-        // Special
-        true,
-
-        // Bonus points per line
-        4
-    ),
-
-    WAVE("Wave",
-
-        // Offsets
-        new int[][][]{
-
-            // ..X..
-            // ..X..
-            // .X...
-            // .X...
-            {{0, 1}, {-1, 1}, {-2, 2}, {-3, 2}},
-
-
-            // ....
-            // XX..
-            // ..XX
-            // ....
-            {{-2, 0}, {-2, 1}, {-1, 2}, {-1, 3}},
-
-            // Other 2 orientations cycle back through
-            {{0, 1}, {-1, 1}, {-2, 2}, {-3, 2}},
-            {{-2, 0}, {-2, 1}, {-1, 2}, {-1, 3}},
-        },
-
-        // Preview panel squares
-        new int[][]{{3, 1}, {2, 1}, {1, 2}, {0, 2}},
-
-        // Start row
-        6,
-
-        // Color
-        Color.CYAN,
-
-        // Special
-        true,
-
-        // Bonus points per line
-        6
-    ),
-
-    ROCKET("Rocket",
-
-        // Offsets
-        new int[][][]{
-
-            // .X.
-            // .X.
-            // X.X
-            {{0, 0}, {-1, 1}, {-2, 1}, {0, 2}},
-
-            // X..
-            // .XX
-            // X..
-            {{-2, 0}, {0, 0}, {-1, 1}, {-1, 2}},
-
-            // X.X
-            // .X.
-            // .X.
-            {{-2, 0}, {-2, 2}, {-1, 1}, {0, 1}},
-
-            // ..X
-            // XX.
-            // ..X
-            {{-1, 0}, {-1, 1}, {0, 2}, {-2, 2}},
-
-        },
-
-        // Preview panel squares
-        new int[][]{{3, 1}, {3, 3}, {2, 2}, {1, 2}},
-
-        // Start row
-        5,
-
-        // Color
-        Color.ORANGE,
-
-        //Special
-        true,
-
-        // Bonus points per line
-        8
-    ),
-
-    DIAMOND("Diamond",
-
-        // Offsets. All the same for each direction:
-        // .X.
-        // X.X
-        // .X.
-        new int[][][]{
-            {{0, 1}, {-1, 0}, {-1, 2}, {-2, 1}},
-            {{0, 1}, {-1, 0}, {-1, 2}, {-2, 1}},
-            {{0, 1}, {-1, 0}, {-1, 2}, {-2, 1}},
-            {{0, 1}, {-1, 0}, {-1, 2}, {-2, 1}},
-        },
-
-        // Preview panel squares
-        new int[][]{{1, 2}, {2, 1}, {2, 3}, {3, 2}},
-
-        // Start row
-        4,
-
-        // Color
-        Color.LIGHT_GRAY,
-
-        // Special
-        true,
-
-        // Bonus points per line
-        10
     );
 
     private static final Color[] COLORS = Stream.of(values()).map(TetronimoType::getColor).toArray(Color[]::new);
-    public static final List<TetronimoType> DEFAULT_TYPES = Stream.of(values()).filter(it -> !it.isSpecial).toList();
-    public static final List<TetronimoType> SPECIAL_TYPES = Stream.of(values()).filter(it -> it.isSpecial).toList();
 
     private final String name;
     private final int[][][] offsets;
     private final Collection<ColoredSquare> previewPanelSquares;
     private final int startRow;
     private final Color color;
-    private final boolean isSpecial;
     private final int bonusPointsPerLine;
 
     TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
-        this(name, offsets, previewPanelSquares, startRow, color, false, 0);
+        this(name, offsets, previewPanelSquares, startRow, color, 0);
     }
 
-    TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, boolean isSpecial, int bonusPointsPerLine) {
+    TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, int bonusPointsPerLine) {
         this.name = name;
         this.offsets = offsets;
         this.previewPanelSquares = Stream.of(previewPanelSquares)
@@ -412,7 +258,6 @@ public enum TetronimoType {
                 .toList();
         this.startRow = startRow;
         this.color = color;
-        this.isSpecial = isSpecial;
         this.bonusPointsPerLine = bonusPointsPerLine;
     }
 
@@ -430,10 +275,6 @@ public enum TetronimoType {
 
     public Color getColor() {
         return color;
-    }
-
-    public boolean isSpecial() {
-        return isSpecial;
     }
 
     public Collection<ColoredSquare> calculateOccupiedSquares(int orientation, int row, int col) {

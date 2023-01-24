@@ -13,11 +13,7 @@ public enum Difficulty {
         entry(TetronimoType.INVERTED_S, 14),
         entry(TetronimoType.S, 14),
         entry(TetronimoType.LINE, 14),
-        entry(TetronimoType.T, 14),
-        entry(TetronimoType.TWIN_PILLARS, 11),
-        entry(TetronimoType.WAVE, 10),
-        entry(TetronimoType.ROCKET, 7),
-        entry(TetronimoType.DIAMOND, 7)
+        entry(TetronimoType.T, 14)
     )),
 
     MEDIUM("Medium", 20, 575, 70, Map.ofEntries(
@@ -27,11 +23,7 @@ public enum Difficulty {
         entry(TetronimoType.INVERTED_S, 15),
         entry(TetronimoType.S, 14),
         entry(TetronimoType.LINE, 13),
-        entry(TetronimoType.T, 14),
-        entry(TetronimoType.TWIN_PILLARS, 12),
-        entry(TetronimoType.WAVE, 10),
-        entry(TetronimoType.ROCKET, 7),
-        entry(TetronimoType.DIAMOND, 7)
+        entry(TetronimoType.T, 14)
     )),
 
     HARD("Hard", 25, 550, 80, Map.ofEntries(
@@ -41,11 +33,7 @@ public enum Difficulty {
         entry(TetronimoType.INVERTED_S, 15),
         entry(TetronimoType.S, 15),
         entry(TetronimoType.LINE, 12),
-        entry(TetronimoType.T, 13),
-        entry(TetronimoType.TWIN_PILLARS, 12),
-        entry(TetronimoType.WAVE, 11),
-        entry(TetronimoType.ROCKET, 8),
-        entry(TetronimoType.DIAMOND, 8)
+        entry(TetronimoType.T, 13)
     ));
 
     public static final int TIMER_SPEEDUP = 55;
