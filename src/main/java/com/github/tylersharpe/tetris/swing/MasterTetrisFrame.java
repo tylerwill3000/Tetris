@@ -209,31 +209,22 @@ public class MasterTetrisFrame extends JFrame {
         JPanel holdContainer = new JPanel(new BorderLayout());
         holdContainer.add(holdPanel, BorderLayout.NORTH);
         holdContainer.add(controlsPanel, BorderLayout.CENTER);
-        add(holdContainer, BorderLayout.WEST);
-
-        add(boardPanel, BorderLayout.CENTER);
 
         JPanel infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(nextTetronimoPanel, BorderLayout.NORTH);
         infoPanel.add(scorePanel, BorderLayout.CENTER);
         infoPanel.add(settingsPanel, BorderLayout.SOUTH);
-        add(infoPanel, BorderLayout.EAST);
 
+        add(holdContainer, BorderLayout.WEST);
+        add(boardPanel, BorderLayout.CENTER);
+        add(infoPanel, BorderLayout.EAST);
         add(menuPanel, BorderLayout.SOUTH);
 
         setIconImage(new ImageIcon(ImageFile.GAME_ICON.getUrl()).getImage());
         setTitle("Tetris");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        int masterWidth = (holdPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION) +
-                (boardPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION) +
-                (nextTetronimoPanel.getColumns() * TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION);
-
-        int masterHeight = TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION * (boardPanel.getRows());
-
-        setSize(masterWidth, masterHeight);
-        setResizable(false); // I don't want to mess with trying to make this work right
-
+        pack();
         setLocationRelativeTo(null);
     }
 
@@ -360,9 +351,10 @@ public class MasterTetrisFrame extends JFrame {
     private class BoardPanel extends ColorGrid {
         private static final int SPIRAL_SLEEP_INTERVAL = 7;
         private static final int CLEAR_SLEEP_INTERVAL = 79;
+        private static final int BOARD_PANEL_SQUARE_DIMENSION = 40;
 
         BoardPanel() {
-            super(TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS, TetrisGame.HORIZONTAL_DIMENSION, TetronimoDisplayPanel.DEFAULT_SQUARE_DIMENSION);
+            super(TetrisGame.VERTICAL_DIMENSION - TetrisGame.LEADING_OVERFLOW_ROWS, TetrisGame.HORIZONTAL_DIMENSION, BOARD_PANEL_SQUARE_DIMENSION);
             setFocusable(true);
             setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         }
