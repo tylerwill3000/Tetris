@@ -31,10 +31,6 @@ abstract class ColorGrid extends JPanel {
         setPreferredSize(new Dimension(columns * cellDimension, rows * cellDimension));
     }
 
-    int getRows() {
-        return rows;
-    }
-
     int getColumns() {
         return columns;
     }

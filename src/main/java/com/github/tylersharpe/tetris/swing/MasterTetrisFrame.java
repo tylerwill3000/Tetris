@@ -349,7 +349,7 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private class BoardPanel extends ColorGrid {
-        private static final int SPIRAL_SLEEP_INTERVAL = 7;
+        private static final int SPIRAL_SLEEP_INTERVAL = 6;
         private static final int CLEAR_SLEEP_INTERVAL = 79;
         private static final int BOARD_PANEL_SQUARE_DIMENSION = 40;
 
