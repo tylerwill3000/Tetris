@@ -367,15 +367,6 @@ public class TetrisGame extends Broker {
             int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
             int newLevel = levelsCompleted + 1;
             int levelIncrease = newLevel - this.level;
-
-            if (gameMode == GameMode.TIME_ATTACK && levelIncrease > 0) {
-                newScore += (difficulty.getTimeAttackBonus() * levelIncrease);
-            }
-
-            if (newLevel > MAX_LEVEL) {
-                newScore += difficulty.getWinBonus();
-            }
-
             if (levelIncrease > 0) {
                 setLevel(newLevel);
             }

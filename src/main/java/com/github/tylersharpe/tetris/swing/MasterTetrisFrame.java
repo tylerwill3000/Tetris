@@ -621,14 +621,6 @@ public class MasterTetrisFrame extends JFrame {
                                 "<li>" + Difficulty.HARD.getLinesPerLevel() + " on hard</li>" +
                             "</ul>" +
                         "</li>" +
-                        "<li>" +
-                            "Bonus points awarded upon game completion:" +
-                            "<ul>" +
-                                "<li>" + Difficulty.EASY.getWinBonus() + " on easy</li>" +
-                                "<li>" + Difficulty.MEDIUM.getWinBonus() + " on medium</li>" +
-                                "<li>" + Difficulty.HARD.getWinBonus() + " on hard</li>" +
-                            "</ul>" +
-                        "</li>" +
                         "<li>The likelihood of different tetronimo types appearing. Harder difficulties will cause 'easier' tetronimos to appear less often</li>" +
                         "<li>" +
                             "Initial tetronimo speed:" +
@@ -653,11 +645,11 @@ public class MasterTetrisFrame extends JFrame {
                             "<b>" + GameMode.CAMPAIGN + ":</b> 10 levels of play, with each successive level increasing tetronimo speed" +
                         "</li>" +
                         "<li>" +
-                            "<b>" + GameMode.TIME_ATTACK + ":</b> Limits available time per level and grants a point bonus for each level cleared:" +
+                            "<b>" + GameMode.TIME_ATTACK + ":</b> Limits available time per level:" +
                             "<ul>" +
-                                "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.EASY.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
-                                "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.MEDIUM.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
-                                "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLevel() + "</b> seconds per level and <b>+" + Difficulty.HARD.getTimeAttackBonus() + "</b> bonus points are awarded per level cleared</li>" +
+                                "<li>On easy, you are given <b>" + Difficulty.EASY.getTimeAttackSecondsPerLevel() + "</b> seconds per level</li>" +
+                                "<li>On medium, you are given <b>" + Difficulty.MEDIUM.getTimeAttackSecondsPerLevel() + "</b> seconds per level</li>" +
+                                "<li>On hard, you are given <b>" + Difficulty.HARD.getTimeAttackSecondsPerLevel() + "</b> seconds per level</li>" +
                             "</ul>" +
                         "</li>" +
                         "<li>" +
