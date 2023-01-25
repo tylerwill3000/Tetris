@@ -244,13 +244,8 @@ public enum TetronimoType {
     private final Collection<ColoredSquare> previewPanelSquares;
     private final int startRow;
     private final Color color;
-    private final int bonusPointsPerLine;
 
     TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color) {
-        this(name, offsets, previewPanelSquares, startRow, color, 0);
-    }
-
-    TetronimoType(String name, int[][][] offsets, int[][] previewPanelSquares, int startRow, Color color, int bonusPointsPerLine) {
         this.name = name;
         this.offsets = offsets;
         this.previewPanelSquares = Stream.of(previewPanelSquares)
@@ -258,7 +253,6 @@ public enum TetronimoType {
                 .toList();
         this.startRow = startRow;
         this.color = color;
-        this.bonusPointsPerLine = bonusPointsPerLine;
     }
 
     public Collection<ColoredSquare> getPreviewPanelSquares() {
@@ -267,10 +261,6 @@ public enum TetronimoType {
 
     public int getStartRow() {
         return startRow;
-    }
-
-    public int getBonusPointsPerLine() {
-        return bonusPointsPerLine;
     }
 
     public Color getColor() {
