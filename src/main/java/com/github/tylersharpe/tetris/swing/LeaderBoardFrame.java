@@ -37,10 +37,8 @@ class LeaderBoardFrame extends JFrame {
     private final TableCellRenderer renderer = new HighScoreCellRenderer();
     private final Score scoreToHighlight;
     private final JTable scoresTable = new JTable();
-    private final ScoreRepository scoreRepository;
 
-    LeaderBoardFrame(ScoreRepository scoreRepository, Score scoreToHighlight) {
-        this.scoreRepository = scoreRepository;
+    LeaderBoardFrame(Score scoreToHighlight) {
         this.scoreToHighlight = scoreToHighlight;
 
         scoresTable.setFillsViewportHeight(true);
@@ -80,7 +78,7 @@ class LeaderBoardFrame extends JFrame {
 
         List<Score> scores;
         try {
-            scores = scoreRepository.getScores(difficulty, gameMode);
+            scores = ScoreRepository.getScores(difficulty, gameMode);
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not read high scores", "Error", JOptionPane.ERROR_MESSAGE);

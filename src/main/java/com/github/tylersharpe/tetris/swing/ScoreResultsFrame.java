@@ -15,13 +15,11 @@ class ScoreResultsFrame extends JFrame {
     private final static int NAME_LENGTH = 40;
 
     private final JTextField nameField = new JTextField(10);
-    private final ScoreRepository scoreRepository;
     private final TetrisGame tetrisGame;
     private final MasterTetrisFrame.MenuPanel menuPanel;
     private final LocalDateTime scoreDate;
 
-    ScoreResultsFrame(ScoreRepository scoreRepository, TetrisGame tetrisGame, MasterTetrisFrame.MenuPanel menuPanel) {
-        this.scoreRepository = scoreRepository;
+    ScoreResultsFrame(TetrisGame tetrisGame, MasterTetrisFrame.MenuPanel menuPanel) {
         this.tetrisGame = tetrisGame;
         this.menuPanel = menuPanel;
         this.scoreDate = LocalDateTime.now();
@@ -38,7 +36,7 @@ class ScoreResultsFrame extends JFrame {
 
         int rank;
         try {
-            rank = scoreRepository.determineRank(tetrisGame.getScore(), tetrisGame.getDifficulty(), tetrisGame.getGameMode(), this.scoreDate);
+            rank = ScoreRepository.determineRank(tetrisGame.getScore(), tetrisGame.getDifficulty(), tetrisGame.getGameMode(), this.scoreDate);
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not determine rank: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -112,11 +110,11 @@ class ScoreResultsFrame extends JFrame {
                                     tetrisGame.getGameMode(),
                                     completedGame,
                                     scoreDate);
-            scoreRepository.saveScore(score);
+            ScoreRepository.saveScore(score);
 
             dispose();
 
-            menuPanel.leaderboardButton.disableWhileShown(new LeaderBoardFrame(scoreRepository, score));
+            menuPanel.leaderboardButton.disableWhileShown(new LeaderBoardFrame(score));
         } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Could not save score: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

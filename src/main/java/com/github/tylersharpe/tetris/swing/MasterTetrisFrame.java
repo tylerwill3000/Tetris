@@ -30,8 +30,6 @@ public class MasterTetrisFrame extends JFrame {
 
     private final TetrisAudioSystem audioSystem;
     private final TetrisGame game;
-    private final ScoreRepository scoreRepository = new ScoreRepository();
-
     private final BoardPanel boardPanel;
     @SuppressWarnings("FieldCanBeLocal")
     private final TetronimoDisplayPanel nextTetronimoPanel;
@@ -242,7 +240,7 @@ public class MasterTetrisFrame extends JFrame {
         settingsPanel.difficultyComboBox.setEnabled(false);
         settingsPanel.gameModeComboBox.setEnabled(false);
         settingsPanel.ghostSquaresCheckbox.setEnabled(false);
-        settingsPanel.musicCheckbox.setEnabled(false);
+        settingsPanel.soundtrackCheckbox.setEnabled(false);
         settingsPanel.soundEffectsCheckbox.setEnabled(false);
 
         menuPanel.startButton.setEnabled(false);
@@ -266,7 +264,7 @@ public class MasterTetrisFrame extends JFrame {
         game.getGameTimer().stop();
 
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
-        settingsPanel.musicCheckbox.setEnabled(true);
+        settingsPanel.soundtrackCheckbox.setEnabled(true);
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
 
         audioSystem.stopCurrentSoundtrack();
@@ -285,7 +283,7 @@ public class MasterTetrisFrame extends JFrame {
         game.getGameTimer().start();
 
         settingsPanel.ghostSquaresCheckbox.setEnabled(false);
-        settingsPanel.musicCheckbox.setEnabled(false);
+        settingsPanel.soundtrackCheckbox.setEnabled(false);
         settingsPanel.soundEffectsCheckbox.setEnabled(false);
 
         audioSystem.resumeCurrentSoundtrack();
@@ -302,7 +300,7 @@ public class MasterTetrisFrame extends JFrame {
         settingsPanel.difficultyComboBox.setEnabled(true);
         settingsPanel.gameModeComboBox.setEnabled(true);
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
-        settingsPanel.musicCheckbox.setEnabled(true);
+        settingsPanel.soundtrackCheckbox.setEnabled(true);
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
 
         menuPanel.startButton.setEnabled(true);
@@ -334,7 +332,7 @@ public class MasterTetrisFrame extends JFrame {
         menuPanel.leaderboardButton.setEnabled(true);
 
         settingsPanel.ghostSquaresCheckbox.setEnabled(true);
-        settingsPanel.musicCheckbox.setEnabled(true);
+        settingsPanel.soundtrackCheckbox.setEnabled(true);
         settingsPanel.soundEffectsCheckbox.setEnabled(true);
         settingsPanel.gameModeComboBox.setEnabled(true);
         settingsPanel.difficultyComboBox.setEnabled(true);
@@ -424,7 +422,7 @@ public class MasterTetrisFrame extends JFrame {
                     Thread.sleep(SPIRAL_SLEEP_INTERVAL);
                 }
 
-                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(scoreRepository, game, menuPanel));
+                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(game, menuPanel));
             } catch (InterruptedException e) {
                 // Will happen if new game is started before spiral clear is finished
             } catch (Exception e) {
@@ -454,7 +452,7 @@ public class MasterTetrisFrame extends JFrame {
                     Thread.sleep(CLEAR_SLEEP_INTERVAL);
                 }
 
-                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(scoreRepository, game, menuPanel));
+                menuPanel.leaderboardButton.disableWhileShown(new ScoreResultsFrame(game, menuPanel));
             } catch (InterruptedException e) {
                 // Will happen if we start a new game before task is done
             } catch (Exception e) {
@@ -570,31 +568,53 @@ public class MasterTetrisFrame extends JFrame {
     }
 
     private class SettingsPanel extends JPanel {
+        private final Settings settings;
         private final JCheckBox ghostSquaresCheckbox;
-        private final JCheckBox musicCheckbox;
+        private final JCheckBox soundtrackCheckbox;
         private final JCheckBox soundEffectsCheckbox;
         private final JComboBox<GameMode> gameModeComboBox;
         private final JComboBox<Difficulty> difficultyComboBox;
 
         SettingsPanel() {
-            musicCheckbox = new JCheckBox("Music", audioSystem.isSoundtrackEnabled());
-            musicCheckbox.setToolTipText("Controls whether music is played during game play");
-            musicCheckbox.addItemListener(e -> audioSystem.setSoundtrackEnabled(musicCheckbox.isSelected()));
+            settings = SettingsRepository.load().orElseGet(Settings::new);
 
-            soundEffectsCheckbox = new JCheckBox("Sound Effects", audioSystem.isEffectsEnabled());
+            soundtrackCheckbox = new JCheckBox("Soundtrack", settings.soundtrack);
+            soundtrackCheckbox.setToolTipText("Controls whether soundtrack is played during game play");
+            soundtrackCheckbox.addItemListener(e -> {
+                audioSystem.setSoundtrackEnabled(soundtrackCheckbox.isSelected());
+                settings.soundtrack = soundtrackCheckbox.isSelected();
+                SettingsRepository.save(settings);
+            });
+            audioSystem.setSoundtrackEnabled(settings.soundtrack);
+
+            soundEffectsCheckbox = new JCheckBox("Sound Effects", settings.soundEffects);
             soundEffectsCheckbox.setToolTipText("Controls whether sound effects (rotation, drop, etc.) are played");
-            soundEffectsCheckbox.addItemListener(e -> audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected()));
+            soundEffectsCheckbox.addItemListener(e -> {
+                audioSystem.setEffectsEnabled(soundEffectsCheckbox.isSelected());
+                settings.soundEffects = soundEffectsCheckbox.isSelected();
+                SettingsRepository.save(settings);
+            });
+            audioSystem.setEffectsEnabled(settings.soundEffects);
 
-            ghostSquaresCheckbox = new JCheckBox("Ghost Squares", game.isGhostSquaresEnabled());
+            ghostSquaresCheckbox = new JCheckBox("Ghost Squares", settings.ghostSquares);
             ghostSquaresCheckbox.setToolTipText("Controls whether tetronimo placement squares are shown as the tetronimo falls");
             ghostSquaresCheckbox.addItemListener(e -> {
                 game.setGhostSquaresEnabled(ghostSquaresCheckbox.isSelected());
+                settings.ghostSquares = ghostSquaresCheckbox.isSelected();
+                SettingsRepository.save(settings);
+
                 boardPanel.repaint();
             });
+            game.setGhostSquaresEnabled(settings.ghostSquares);
 
             difficultyComboBox = new JComboBox<>(Difficulty.values());
-            difficultyComboBox.addActionListener(e -> game.setDifficulty(getSelectedDifficulty()));
-            difficultyComboBox.setSelectedIndex(0);
+            difficultyComboBox.setSelectedItem(settings.difficulty);
+            difficultyComboBox.addActionListener(e -> {
+                var difficulty = getSelectedDifficulty();
+                game.setDifficulty(difficulty);
+                settings.difficulty = difficulty;
+                SettingsRepository.save(settings);
+            });
             difficultyComboBox.setToolTipText(
                 "<html>" +
                     "<p>Sets the game difficulty. The difficulty affects the following game parameters:</p>" +
@@ -620,10 +640,16 @@ public class MasterTetrisFrame extends JFrame {
                     "</ul>" +
                 "</html>"
             );
+            game.setDifficulty(settings.difficulty);
 
             gameModeComboBox = new JComboBox<>(GameMode.values());
-            gameModeComboBox.addActionListener(e -> game.setGameMode(getSelectedGameMode()));
-            gameModeComboBox.setSelectedIndex(0);
+            gameModeComboBox.setSelectedItem(settings.gameMode);
+            gameModeComboBox.addActionListener(e -> {
+                var gameMode = getSelectedGameMode();
+                game.setGameMode(gameMode);
+                settings.gameMode = gameMode;
+                SettingsRepository.save(settings);
+            });
             gameModeComboBox.setToolTipText(
                 "<html>" +
                     "<ul>" +
@@ -644,12 +670,13 @@ public class MasterTetrisFrame extends JFrame {
                         "</li>" +
                 "</html>"
             );
+            game.setGameMode(settings.gameMode);
 
             setBorder(new TitledBorder("Settings"));
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
             add(ghostSquaresCheckbox);
-            add(musicCheckbox);
+            add(soundtrackCheckbox);
             add(soundEffectsCheckbox);
 
             add(Box.createRigidArea(new Dimension(0, 5)));
@@ -706,7 +733,7 @@ public class MasterTetrisFrame extends JFrame {
             leaderboardButton.setMnemonic('l');
             leaderboardButton.setEnabled(true);
             leaderboardButton.addActionListener(e ->
-                leaderboardButton.disableWhileShown(new LeaderBoardFrame(scoreRepository, null))
+                leaderboardButton.disableWhileShown(new LeaderBoardFrame(null))
             );
             add(leaderboardButton);
 
