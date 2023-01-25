@@ -1,5 +1,6 @@
 package com.github.tylersharpe.tetris;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import static java.util.Map.entry;
@@ -49,7 +50,7 @@ public enum Difficulty {
         this.linesPerLevel = linesPerLevel;
         this.initialTimerDelay = initialTimerDelay;
         this.timeAttackSecondsPerLevel = timeAttackSecondsPerLevel;
-        this.spawnRates = spawnRates;
+        this.spawnRates = new EnumMap<>(spawnRates);
     }
 
     public String getName() {
