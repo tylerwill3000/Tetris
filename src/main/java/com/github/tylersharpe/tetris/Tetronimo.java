@@ -9,16 +9,17 @@ public class Tetronimo {
     private int orientation;
     private boolean isHold;
 
+    private Collection<ColoredSquare> currentSquaresCached = null;
+
     public Tetronimo(TetronimoType type) {
         this.type = Objects.requireNonNull(type, "'type' cannot be null");
     }
 
-    int getRow() {
-        return row;
-    }
-
-    Collection<ColoredSquare> calculateOccupiedSquares() {
-        return type.calculateOccupiedSquares(orientation, row, column);
+    Collection<ColoredSquare> getCurrentSquares() {
+        if (currentSquaresCached == null) {
+            currentSquaresCached = type.calculateOccupiedSquares(orientation, row, column);
+        }
+        return currentSquaresCached;
     }
 
     public Collection<ColoredSquare> getPreviewPanelSquares() {
@@ -44,6 +45,7 @@ public class Tetronimo {
     void setLocation(int row, int column) {
         this.row = row;
         this.column = column;
+        this.currentSquaresCached = null;
     }
 
     Tetronimo rotate(Rotation rotation) {
@@ -56,6 +58,8 @@ public class Tetronimo {
             orientation = 3;
         }
 
+        this.currentSquaresCached = null;
+
         return this;
     }
 
@@ -65,6 +69,7 @@ public class Tetronimo {
         tetronimoCopy.column = column;
         tetronimoCopy.orientation = orientation;
         tetronimoCopy.isHold = isHold;
+        tetronimoCopy.currentSquaresCached = currentSquaresCached;
         return tetronimoCopy;
     }
 

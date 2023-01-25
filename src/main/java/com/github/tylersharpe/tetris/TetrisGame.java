@@ -209,7 +209,7 @@ public class TetrisGame extends Broker {
     }
 
     private boolean moveTetronimo(Tetronimo tetronimo, int rowMove, int columnMove) {
-        boolean canMoveBeMade = tetronimo.calculateOccupiedSquares()
+        boolean canMoveBeMade = tetronimo.getCurrentSquares()
                 .stream()
                 .allMatch(currentSquare -> {
                     int potentialRow = currentSquare.row() + rowMove;
@@ -226,7 +226,7 @@ public class TetrisGame extends Broker {
     }
 
     public boolean rotateActiveTetronimo(Rotation rotation) {
-        Collection<ColoredSquare> squaresAfterRotation = activeTetronimo.copy().rotate(rotation).calculateOccupiedSquares();
+        Collection<ColoredSquare> squaresAfterRotation = activeTetronimo.copy().rotate(rotation).getCurrentSquares();
 
         boolean areRotatedSquaresLegal = squaresAfterRotation
                 .stream()
@@ -247,12 +247,12 @@ public class TetrisGame extends Broker {
         }
 
         Tetronimo activeTetronimoCopy = activeTetronimo.copy();
-        Collection<ColoredSquare> currentActiveTetronimoSquares = activeTetronimoCopy.calculateOccupiedSquares();
+        Collection<ColoredSquare> currentActiveTetronimoSquares = activeTetronimoCopy.getCurrentSquares();
 
         while (moveTetronimo(activeTetronimoCopy, 1, 0)) {
             // drop as far as possible
         }
-        Collection<ColoredSquare> ghostSquares = new ArrayList<>(activeTetronimoCopy.calculateOccupiedSquares());
+        Collection<ColoredSquare> ghostSquares = new ArrayList<>(activeTetronimoCopy.getCurrentSquares());
 
         // remove any ghost squares that overlap with the current active tetronimo
         ghostSquares.removeIf(ghostSquare ->
@@ -305,7 +305,7 @@ public class TetrisGame extends Broker {
 
     public void persistActiveTetronimoColors() {
         if (activeTetronimo != null) {
-            for (var square : activeTetronimo.calculateOccupiedSquares()) {
+            for (var square : activeTetronimo.getCurrentSquares()) {
                 setColor(square.row(), square.column(), square.color());
             }
         }
@@ -402,7 +402,7 @@ public class TetrisGame extends Broker {
         List<ColoredSquare> squares = new ArrayList<>(HORIZONTAL_DIMENSION * VERTICAL_DIMENSION);
 
         if (activeTetronimo != null) {
-            squares.addAll(activeTetronimo.calculateOccupiedSquares());
+            squares.addAll(activeTetronimo.getCurrentSquares());
             if (this.ghostSquaresEnabled) {
                 squares.addAll(getGhostSquares());
             }
