@@ -83,10 +83,6 @@ public class TetrisGame extends Broker {
         this.ghostSquaresEnabled = ghostSquaresEnabled;
     }
 
-    public boolean isGhostSquaresEnabled() {
-        return ghostSquaresEnabled;
-    }
-
     public Timer getFallTimer() {
         return fallTimer;
     }
@@ -139,20 +135,14 @@ public class TetrisGame extends Broker {
     private void setLevel(int newLevel) {
         this.level = newLevel;
 
-        if (newLevel > MAX_LEVEL) {
-            this.isGameWon = true;
-            fallTimer.stop();
-            gameTimer.stop();
-            clearActiveTetronimo(); // Needed so that this tetronimo's squares don't get re-painted during victory clear animation
-            publish(TetrisEvent.GAME_WON, level);
-        } else {
-            int initialDelay = difficulty.getInitialTimerDelay();
-            int totalSpeedup = (level - 1) * Difficulty.TIMER_SPEEDUP;
-            int newDelay = initialDelay - totalSpeedup;
-            fallTimer.setDelay(newDelay);
-            this.currentLevelTime = 0;
-            publish(TetrisEvent.LEVEL_CHANGED, newLevel);
-        }
+        int initialDelay = difficulty.getInitialTimerDelay();
+        int totalSpeedup = (level - 1) * Difficulty.TIMER_SPEEDUP;
+        int newDelay = initialDelay - totalSpeedup;
+        this.fallTimer.setDelay(newDelay);
+
+        this.currentLevelTime = 0;
+
+        publish(TetrisEvent.LEVEL_CHANGED, newLevel);
     }
 
     public void clearSquare(int row, int column) {
@@ -278,8 +268,7 @@ public class TetrisGame extends Broker {
         int linesCleared = clearCompleteLines();
 
         if (linesCleared > 0) {
-            increaseScore(linesCleared);
-            publish(TetrisEvent.LINES_CLEARED, linesCleared);
+            onLinesCleared(linesCleared);
         }
 
         if (!isGameWon) {
@@ -332,41 +321,44 @@ public class TetrisGame extends Broker {
         this.fallTimer.start();
     }
 
-    private void increaseScore(int completedLines) {
-        int newScore = this.score;
-
-        newScore += switch (completedLines) {
+    private void onLinesCleared(int completedLines) {
+        int newScore = score + switch (completedLines) {
             case 1 -> 10;
             case 2 -> 30;
-            case 3 -> 50;
+            case 3 -> 60;
             case 4 -> 100;
             default -> throw new RuntimeException("Completed lines must be in range 1 - 4");
         };
 
         if (gameMode == GameMode.FREE_PLAY) {
-            // increase lines cleared
             totalLinesCleared += completedLines;
 
-            // speed up fall timer
             if (fallTimer.getDelay() > FREE_PLAY_MINIMUM_FALL_TIMER_DELAY) {
                 int newDelay = Math.max(difficulty.getInitialTimerDelay() - (totalLinesCleared * 2), FREE_PLAY_MINIMUM_FALL_TIMER_DELAY);
                 fallTimer.setDelay(newDelay);
             }
         } else {
-            // increase lines cleared
             int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
             totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
 
-            // increase level
-            int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
-            int newLevel = levelsCompleted + 1;
-            int levelIncrease = newLevel - this.level;
-            if (levelIncrease > 0) {
-                setLevel(newLevel);
+            if (totalLinesCleared == maxGameLines) {
+                this.isGameWon = true;
+                this.fallTimer.stop();
+                this.gameTimer.stop();
+                clearActiveTetronimo(); // Needed so that this tetronimo's squares don't get re-painted during victory clear animation
+                publish(TetrisEvent.GAME_WON, level);
+            } else {
+                int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
+                int newLevel = levelsCompleted + 1;
+                int levelIncrease = newLevel - this.level;
+                if (levelIncrease > 0) {
+                    setLevel(newLevel);
+                }
             }
         }
 
         setScore(newScore);
+        publish(TetrisEvent.LINES_CLEARED, completedLines);
     }
 
     /**

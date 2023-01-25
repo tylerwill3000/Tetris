@@ -10,7 +10,7 @@ public final class TetronimoConveyor {
     private final Queue<Tetronimo> conveyor = new ArrayDeque<>();
 
     public Tetronimo next() {
-        conveyor.offer(generateBlock());
+        conveyor.offer(generateTetronimo());
         return conveyor.poll();
     }
 
@@ -20,8 +20,8 @@ public final class TetronimoConveyor {
 
     void reset() {
         conveyor.clear();
-        conveyor.add(generateBlock());
-        conveyor.add(generateBlock());
+        conveyor.add(generateTetronimo());
+        conveyor.add(generateTetronimo());
     }
 
     void applySpawnRates(Difficulty difficulty) {
@@ -36,8 +36,9 @@ public final class TetronimoConveyor {
         }
     }
 
-    private Tetronimo generateBlock() {
-        return new Tetronimo(Utility.sample(tetronimoTypeSampleList));
+    private Tetronimo generateTetronimo() {
+        TetronimoType randomType = Utility.sample(tetronimoTypeSampleList);
+        return new Tetronimo(randomType);
     }
 }
 

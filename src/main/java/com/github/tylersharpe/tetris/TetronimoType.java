@@ -2,6 +2,7 @@ package com.github.tylersharpe.tetris;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 public enum TetronimoType {
@@ -237,7 +238,7 @@ public enum TetronimoType {
         new Color(255, 30, 0) // Red
     );
 
-    private static final Color[] COLORS = Stream.of(values()).map(TetronimoType::getColor).toArray(Color[]::new);
+    private static final List<Color> COLORS = Stream.of(values()).map(TetronimoType::getColor).toList();
 
     private final String name;
     private final int[][][] offsets;
