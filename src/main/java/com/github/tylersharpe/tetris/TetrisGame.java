@@ -338,20 +338,19 @@ public class TetrisGame extends Broker {
                 fallTimer.setDelay(newDelay);
             }
         } else {
-            int maxGameLines = difficulty.getLinesPerLevel() * MAX_LEVEL;
-            totalLinesCleared = Math.min(maxGameLines, totalLinesCleared + completedLines);
+            int maxLinesCleared = difficulty.getLinesPerLevel() * MAX_LEVEL;
+            totalLinesCleared = Math.min(maxLinesCleared, totalLinesCleared + completedLines);
 
-            if (totalLinesCleared == maxGameLines) {
-                this.isGameWon = true;
-                this.fallTimer.stop();
-                this.gameTimer.stop();
+            if (totalLinesCleared == maxLinesCleared) {
+                isGameWon = true;
+                fallTimer.stop();
+                gameTimer.stop();
                 clearActiveTetronimo(); // Needed so that this tetronimo's squares don't get re-painted during victory clear animation
-                publish(TetrisEvent.GAME_WON, level);
+                publish(TetrisEvent.GAME_WON);
             } else {
                 int levelsCompleted = totalLinesCleared / difficulty.getLinesPerLevel();
                 int newLevel = levelsCompleted + 1;
-                int levelIncrease = newLevel - this.level;
-                if (levelIncrease > 0) {
+                if (newLevel > level) {
                     setLevel(newLevel);
                 }
             }
