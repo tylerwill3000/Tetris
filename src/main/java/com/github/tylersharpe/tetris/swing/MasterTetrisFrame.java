@@ -137,9 +137,7 @@ public class MasterTetrisFrame extends JFrame {
         this.game.subscribe(TetrisEvent.GAME_WON, e -> onWin());
 
         this.game.subscribe(TetrisEvent.LINES_CLEARED, event -> {
-            int lines = (int) event;
-
-            audioSystem.playClearLineSound(lines);
+            audioSystem.playClearLineSound();
             scorePanel.totalLinesLabel.repaint();
             scorePanel.linesClearedProgressBar.repaint();
         });

@@ -26,7 +26,6 @@ public class TetrisAudioSystem {
     private static final Clip PAUSE = createBufferedClip(AudioFile.MARIO_64_PAUSE);
     private static final Clip PLACE_BLOCK = createBufferedClip(AudioFile.PIPE);
     private static final Clip CLEAR_LINE = createBufferedClip(AudioFile.LASER);
-    private static final Clip ULTRA_LINE = createBufferedClip(AudioFile.EXPLOSION);
     private static final Clip SWISH_UP = createBufferedClip(AudioFile.SWISH_UP);
     private static final Clip SWISH_DOWN = createBufferedClip(AudioFile.SWISH_DOWN);
     private static final Clip SUPER_SLIDE = createBufferedClip(AudioFile.SUPER_SLIDE);
@@ -103,8 +102,8 @@ public class TetrisAudioSystem {
         playEffect(RELEASE);
     }
 
-    public void playClearLineSound(int lineCount) {
-        playEffect(lineCount == 4 ? ULTRA_LINE : CLEAR_LINE);
+    public void playClearLineSound() {
+        playEffect(CLEAR_LINE);
     }
 
     public void playClockwiseRotationSound() {

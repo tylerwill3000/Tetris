@@ -18,7 +18,6 @@ enum AudioFile {
     MARIO_64_PAUSE("/audio/effects/mario-64-pause.wav"),
     PIPE("/audio/effects/pipe.wav"),
     LASER("/audio/effects/laser.wav"),
-    EXPLOSION("/audio/effects/explosion.wav"),
     SWISH_UP("/audio/effects/swish-up.wav"),
     SWISH_DOWN("/audio/effects/swish-down.wav"),
     SUPER_SLIDE("/audio/effects/superslide.wav"),
