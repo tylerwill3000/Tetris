@@ -13,7 +13,7 @@ public class ScoreRepository {
             .thenComparing(Score::date);
 
     private static final Path LEADERBOARD_FILE = TetrisConfigDir.resolve("leaderboard");
-    private static final int LEADER_BOARD_RANK_THRESHOLD = 20;
+    private static final int LEADER_BOARD_RANK_THRESHOLD = 10;
 
     public static boolean isLeaderBoardRank(int rank) {
         return rank <= LEADER_BOARD_RANK_THRESHOLD;
@@ -24,6 +24,7 @@ public class ScoreRepository {
                 .stream()
                 .filter(score -> score.difficulty() == difficulty && score.gameMode() == gameMode)
                 .sorted(SCORE_COMPARATOR)
+                .limit(LEADER_BOARD_RANK_THRESHOLD)
                 .toList();
     }
 
