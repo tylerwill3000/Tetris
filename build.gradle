@@ -3,8 +3,6 @@ plugins {
     id 'java'
 }
 
-wrapper.gradleVersion = '7.6'
-
 final String mainClass = 'com.github.tylerwilliams.tetris.Main'
 jar {
     manifest {
@@ -17,22 +15,45 @@ tasks.register('run', JavaExec) {
     classpath sourceSets.main.runtimeClasspath
 }
 
-// TODO launch4j gradle plugin is throwing an exception
-// this task uses a locally installed launch4j combined with a pre-defined config file
-tasks.register('createExe', Exec) {
+File tetrisRuntimeDir = layout.buildDirectory.dir('runtime').get().asFile
+
+tasks.register('jlink', Exec) {
     group('build')
+    dependsOn(classes)
 
-    inputs.files(jar.outputs)
-    outputs.file('tetris.exe')
+    File mainSources = layout.buildDirectory.dir('classes\\java\\main').get().asFile
+    inputs.dir(mainSources)
 
-    commandLine 'launch4j', file('tetris-launch4j.xml').absolutePath
+    outputs.dir(tetrisRuntimeDir)
+
+    // jlink complains if the output dir already exists - this is annoying
+    doFirst(tetrisRuntimeDir.&deleteDir)
+
+    commandLine(
+        'jlink',
+        '--module-path', mainSources.absolutePath,
+        '--add-modules', 'tylerwilliams.tetris',
+        '--output', tetrisRuntimeDir.absolutePath
+    )
 }
 
-tasks.register('deploy', Copy) {
+tasks.register('jpackage', Exec) {
     group('build')
-    from(createExe.outputs)
-    into("${System.getenv('USERPROFILE')}\\Development\\Binaries")
-    doLast {
-        delete(createExe.outputs)
-    }
+    dependsOn('jlink', 'jar')
+
+    File inputDir = layout.buildDirectory.dir('libs').get().asFile
+    inputs.dir(inputDir)
+
+    File installerDir = layout.buildDirectory.dir('installer').get().asFile
+    outputs.dir(installerDir)
+
+    commandLine(
+        'jpackage',
+        '-n', 'Tetris',
+        '--icon', 'src\\main\\resources\\images\\game-icon.ico',
+        '--input', inputDir,
+        '--runtime-image', tetrisRuntimeDir.absolutePath,
+        '--main-jar', jar.archiveFileName.get(),
+        '--dest', installerDir
+    )
 }
