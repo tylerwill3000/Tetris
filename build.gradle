@@ -5,7 +5,7 @@ plugins {
 
 wrapper.gradleVersion = '7.6'
 
-final String mainClass = 'com.github.tylersharpe.tetris.Main'
+final String mainClass = 'com.github.tylerwilliams.tetris.Main'
 jar {
     manifest {
         attributes 'Main-Class': mainClass
@@ -31,7 +31,7 @@ tasks.register('createExe', Exec) {
 tasks.register('deploy', Copy) {
     group('build')
     from(createExe.outputs)
-    into("${System.getenv('USERPROFILE')}\\Desktop")
+    into("${System.getenv('USERPROFILE')}\\Development\\Binaries")
     doLast {
         delete(createExe.outputs)
     }
