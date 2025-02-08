@@ -1,4 +1,3 @@
-module com.github.tylersharpe.tetris {
-    requires java.base;
+module tylerwilliams.tetris {
     requires java.desktop;
 }

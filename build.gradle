@@ -3,9 +3,7 @@ plugins {
     id 'java'
 }
 
-wrapper.gradleVersion = '7.6'
-
-final String mainClass = 'com.github.tylersharpe.tetris.Main'
+String mainClass = 'com.github.tylerwilliams.tetris.Main'
 jar {
     manifest {
         attributes 'Main-Class': mainClass
@@ -17,22 +15,45 @@ tasks.register('run', JavaExec) {
     classpath sourceSets.main.runtimeClasspath
 }
 
-// TODO launch4j gradle plugin is throwing an exception
-// this task uses a locally installed launch4j combined with a pre-defined config file
-tasks.register('createExe', Exec) {
-    group('build')
+File tetrisRuntimeDir = layout.buildDirectory.dir('runtime').get().asFile
 
-    inputs.files(jar.outputs)
-    outputs.file('tetris.exe')
+TaskProvider<Exec> jlink = tasks.register('jlink', Exec) {
+    group('package')
+    dependsOn(classes)
 
-    commandLine 'launch4j', file('tetris-launch4j.xml').absolutePath
+    File mainSources = layout.buildDirectory.dir('classes\\java\\main').get().asFile
+    inputs.dir(mainSources)
+
+    outputs.dir(tetrisRuntimeDir)
+
+    // jlink complains if the output dir already exists - this is annoying
+    doFirst(tetrisRuntimeDir.&deleteDir)
+
+    commandLine(
+        'jlink',
+        '--module-path', mainSources.absolutePath,
+        '--add-modules', 'tylerwilliams.tetris',
+        '--output', tetrisRuntimeDir.absolutePath
+    )
 }
 
-tasks.register('deploy', Copy) {
-    group('build')
-    from(createExe.outputs)
-    into("${System.getenv('USERPROFILE')}\\Desktop")
-    doLast {
-        delete(createExe.outputs)
-    }
+tasks.register('jpackage', Exec) {
+    group('package')
+    dependsOn(jlink, jar)
+
+    File inputDir = layout.buildDirectory.dir('libs').get().asFile
+    inputs.dir(inputDir)
+
+    File installerDir = layout.buildDirectory.dir('installer').get().asFile
+    outputs.dir(installerDir)
+
+    commandLine(
+        'jpackage',
+        '-n', 'Tetris',
+        '--icon', 'src\\main\\resources\\images\\game-icon.ico',
+        '--input', inputDir,
+        '--runtime-image', tetrisRuntimeDir.absolutePath,
+        '--main-jar', jar.archiveFileName.get(),
+        '--dest', installerDir
+    )
 }
